@@ -1,29 +1,147 @@
 @import 'tailwindcss';
 
 :root {
-	--background: #ffffff;
-	--foreground: #171717;
+  --background: #ffffff;
+  --foreground: #171717;
+  --backgroundaccent: #21242b;
+  --accentcolor: #b89b5e;
+  --titlecolor: #171717;
+  --textcolor: #93969d;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accentbackground: var(--accentcolor);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-eukrainehead: var(--font-eukrainehead);
+  --font-eukraine: var(--font-eukraine);
+  --font-manrope: var(--font-manrope);
+  --font-sacramento: var(--font-sacramento);
+}
+html {
+  scroll-behavior: smooth;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@theme inline {
-	--color-background: var(--background);
-	--color-foreground: var(--foreground);
-	--font-sans: var(--font-geist-sans);
-	--font-mono: var(--font-geist-mono);
-	--font-eukrainehead: var(--font-eukrainehead);
-	--font-eukraine: var(--font-eukraine);
-	--font-manrope: var(--font-manrope);
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--background: #0a0a0a;
-		--foreground: #ededed;
-	}
+@layer utilities {
+  .bg-app {
+    background-color: var(--background);
+  }
+  .fg-app {
+    background-color: var(--foreground);
+  }
+  .bg-accent {
+    background-color: var(--accentcolor);
+  }
+  .title-app {
+    color: var(--titlecolor);
+  }
+  .text-app {
+    color: var(--textcolor);
+  }
+  .text-accent {
+    color: var(--accentcolor);
+  }
+  .border-accent {
+    border-color: var(--accentcolor);
+  }
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+  .font-eukrainehead {
+    font-family: var(--font-eukrainehead);
+  }
+  .font-eukraine {
+    font-family: var(--font-eukraine);
+  }
+  .font-manrope {
+    font-family: var(--font-manrope);
+  }
+  .font-sacramento {
+    font-family: var(--font-sacramento);
+  }
+  .footer-title {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-eukrainehead);
+    font-size: 1.125rem;
+  }
+
+  .footer-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.25rem;
+    height: 2px;
+    width: 2rem;
+    background-color: var(--accentcolor);
+  }
+
+  .footer-link {
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .footer-link:hover {
+    color: var(--accentcolor);
+  }
 }
 
 body {
-	background: var(--background);
-	color: var(--foreground);
-	font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-manrope), system-ui, sans-serif;
 }
+
+.container {
+  margin: 0 auto;
+  padding: 12px 32px 0 32px;
+}
+
+.nav {
+  position: relative;
+  transition: all 0.3s ease;
+}
+.nav:hover,
+.nav:focus {
+  fill: #b89b5e;
+}
+.nav::after {
+  content: '';
+  background-color: #b89b5e;
+  height: 2px;
+  width: 0;
+  left: 0;
+  bottom: -2px;
+  border-radius: 8px;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+.nav:hover::after,
+.nav:focus::after {
+  width: 100%;
+}
+
+/* 
+Контрольные точки Tailwind CSS
+sm: 640px и выше (@media (min-width: 640px))
+md: 768px и выше (@media (min-width: 768px))
+lg: 1024px и выше (@media (min-width: 1024px))
+xl: 1280px и выше (@media (min-width: 1280px))
+2xl: 1536px и выше (@media (min-width: 1536px))  
+*/
