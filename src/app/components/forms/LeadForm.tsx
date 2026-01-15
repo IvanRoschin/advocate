@@ -2,13 +2,14 @@
 
 import { Form, Formik } from 'formik';
 
-import orderFormSchema from '@/app/helpers/validationSchemas/orderFormSchema';
+import leadSchema from '@/app/helpers/validation-schemas/lead-schema';
+import { apiFetch } from '@/app/lib/api-client';
 import Btn from '@/app/ui/button/Btn';
 
 import Checkbox from '../inputs/Checkbox';
 import Input from '../inputs/Input';
 
-const OrderForm = () => {
+const LeadForm = () => {
   return (
     <Formik
       initialValues={{
@@ -17,9 +18,20 @@ const OrderForm = () => {
         phone: '+380',
         consent: false,
       }}
-      validationSchema={orderFormSchema}
-      onSubmit={(values, { resetForm }) => {
-        console.log(values);
+      validationSchema={leadSchema}
+      onSubmit={async (values, { resetForm }) => {
+        try {
+          const lead = await apiFetch('/api/leads', {
+            method: 'POST',
+            body: JSON.stringify(values),
+          });
+
+          console.log('✅ Lead created', lead);
+        } catch (e) {
+          if (e instanceof Error) {
+            console.error('❌ Error:', e.message);
+          }
+        }
         resetForm();
       }}
     >
@@ -55,4 +67,4 @@ const OrderForm = () => {
   );
 };
 
-export default OrderForm;
+export default LeadForm;

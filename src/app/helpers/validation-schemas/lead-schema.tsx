@@ -4,7 +4,7 @@ const emailRegex =
   /^(?=.{1,63}$)(?=.{2,}@)[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^\+380\d{9}$/;
 
-const orderFormSchema = Yup.object({
+const leadSchema = Yup.object({
   name: Yup.string()
     .min(2, 'Мінімум 2 символи')
     .max(20, 'Максимум 20 символів')
@@ -24,4 +24,4 @@ const orderFormSchema = Yup.object({
   consent: Yup.boolean().oneOf([true], 'Потрібна згода на обробку даних'),
 });
 
-export default orderFormSchema;
+export default leadSchema;

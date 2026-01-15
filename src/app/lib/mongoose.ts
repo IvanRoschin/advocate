@@ -20,7 +20,7 @@ globalWithMongoose.mongooseGlobal = globalWithMongoose.mongooseGlobal || {
   promise: null,
 };
 
-export const connectToDB = async () => {
+export const connectDB = async () => {
   mongoose.set('strictQuery', true);
 
   const mongodbUri = process.env.MONGODB_URI;
@@ -35,7 +35,7 @@ export const connectToDB = async () => {
     const options = {
       serverSelectionTimeoutMS: 20000,
       connectTimeoutMS: 20000,
-      dbName: 'paromaster',
+      dbName: 'advocate',
     };
     globalWithMongoose.mongooseGlobal.promise = mongoose.connect(
       mongodbUri,

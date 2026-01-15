@@ -21,7 +21,10 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/components/*": ["./src/app/components/*"],
-      "@/sections/*": ["./src/app/components/sections/*"]
+      "@/sections/*": ["./src/app/components/sections/*"],
+      "@/lib/*": ["./src/app/lib/*"],
+      "@/models": ["./src/app/models/index.ts"],
+      "@/models/*": ["./src/app/models/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
