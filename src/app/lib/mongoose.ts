@@ -20,14 +20,14 @@ globalWithMongoose.mongooseGlobal = globalWithMongoose.mongooseGlobal || {
   promise: null,
 };
 
-export const connectToDB = async () => {
+export const connectDB = async () => {
   mongoose.set('strictQuery', true);
 
   const mongodbUri = process.env.MONGODB_URI;
   if (!mongodbUri) throw new Error('MONGODB_URI is not defined');
 
   if (globalWithMongoose.mongooseGlobal.conn) {
-    console.log('MongoDB is already connected');
+    console.warn('MongoDB is already connected');
     return globalWithMongoose.mongooseGlobal.conn;
   }
 
@@ -35,7 +35,7 @@ export const connectToDB = async () => {
     const options = {
       serverSelectionTimeoutMS: 20000,
       connectTimeoutMS: 20000,
-      dbName: 'paromaster',
+      dbName: 'advocate',
     };
     globalWithMongoose.mongooseGlobal.promise = mongoose.connect(
       mongodbUri,
@@ -46,7 +46,7 @@ export const connectToDB = async () => {
   try {
     globalWithMongoose.mongooseGlobal.conn =
       await globalWithMongoose.mongooseGlobal.promise;
-    console.log('MongoDB connected');
+    console.warn('MongoDB connected');
     return globalWithMongoose.mongooseGlobal.conn;
   } catch (error) {
     console.error('MongoDB connection error:', error);
@@ -58,7 +58,7 @@ export const connectToDB = async () => {
 
 // Опционально: мониторинг состояния
 mongoose.connection.on('connected', () => {
-  console.log('MongoDB connection established');
+  console.warn('MongoDB connection established');
 });
 
 mongoose.connection.on('error', error => {
@@ -67,6 +67,6 @@ mongoose.connection.on('error', error => {
 });
 
 mongoose.connection.on('disconnected', () => {
-  console.log('MongoDB connection lost');
+  console.warn('MongoDB connection lost');
   globalWithMongoose.mongooseGlobal.conn = null;
 });

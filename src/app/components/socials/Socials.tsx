@@ -1,24 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { FaEnvelope, FaFacebookSquare } from 'react-icons/fa';
 import { FaSquareInstagram, FaSquarePhone } from 'react-icons/fa6';
 
 const Socials = () => {
-  const [email, setEmail] = useState<string | null>(null);
-  const [phone1, setPhone1] = useState<string | null>(null);
-  const [phone2, setPhone2] = useState<string | null>(null);
-  const [facebook, setFacebook] = useState<string | null>(null);
-  const [instagram, setInstagram] = useState<string | null>(null);
-
-  useEffect(() => {
-    setEmail(process.env.NEXT_PUBLIC_ADVOCATE_EMAIL || null);
-    setPhone1(process.env.NEXT_PUBLIC_ADVOCATE_PN_1 || null);
-    setPhone2(process.env.NEXT_PUBLIC_ADVOCATE_PN_2 || null);
-    setFacebook(process.env.NEXT_PUBLIC_FACEBOOK_URL || null);
-    setInstagram(process.env.NEXT_PUBLIC_INSTAGRAM_URL || null);
-  }, []);
+  const phone1 = process.env.NEXT_PUBLIC_ADVOCATE_PN_1 ?? null;
+  const phone2 = process.env.NEXT_PUBLIC_ADVOCATE_PN_2 ?? null;
+  const email = process.env.NEXT_PUBLIC_ADVOCATE_EMAIL ?? null;
+  const facebook = process.env.NEXT_PUBLIC_FACEBOOK_URL ?? null;
+  const instagram = process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? null;
 
   return (
     <div className="hidden bg-black pb-3 text-white sm:block">

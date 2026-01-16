@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-import OrderForm from '@/app/components/forms/OrderForm';
+import LeadForm from '../../forms/LeadForm';
 
 const Order = () => {
   return (
@@ -41,7 +41,7 @@ const Order = () => {
 
         {/* RIGHT — form */}
         <div className="bg-app/85 flex w-full max-w-md flex-1 flex-col rounded-2xl p-6 shadow-md backdrop-blur-md">
-          <OrderForm />
+          <LeadForm />
         </div>
       </div>
     </section>

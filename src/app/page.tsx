@@ -11,7 +11,7 @@ import {
 } from './components/sections';
 import Services from './components/services/Services';
 import Socials from './components/socials/Socials';
-import { generateMetadata } from './helpers/generateMetadata';
+import { generateMetadata } from './helpers/generate-metadata';
 import ScrollToTopButton from './ui/button/ScrollToTopButton';
 
 export const metadata = generateMetadata({
