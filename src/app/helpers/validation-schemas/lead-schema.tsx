@@ -25,3 +25,5 @@ const leadSchema = Yup.object({
 });
 
 export default leadSchema;
+
+export type LeadInput = Yup.InferType<typeof leadSchema>;

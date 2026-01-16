@@ -1,41 +1,49 @@
+// src/app/config/routes.ts
 export const routes = {
   publicRoutes: {
     home: '/',
-    auth: {
-      verifyEmail: '/auth/verify-email',
-      signIn: '/auth/signin',
-      forgotPassword: '/auth/forgot-password',
-      restorePassword: '/auth/restore-password',
-    },
-    catalog: '/catalog',
-    ourworks: '/works',
-    services: '/services',
-    delivery: '/delivery',
-    guarantee: '/guarantee',
+    about: '#about',
+    practices: '#practices',
+    blog: '/blog',
+    payments: '/payments',
     contact: '/contact',
     page404: '/not-found',
   },
-  customerRoutes: {
-    dashboard: '/customer',
-    changePassword: '/customer/auth/change-password',
-    changeUserData: '/customer/change-user-data',
-    changeDeliveryAddress: '/customer/change-delivery-address',
-    favorites: '/customer/favorites',
-    ordersHistroy: '/customer/orders-history',
+  apiRoutes: {
+    leads: '/api/leads',
   },
   adminRoutes: {
     dashboard: '/admin',
-    customers: '/admin/customers',
-    orders: '/admin/orders',
+    leads: '/admin/leads',
+    clients: '/admin/clients',
     goods: '/admin/goods',
-    brands: '/admin/brands',
     payments: '/admin/payments',
-    users: '/admin/users',
-    categories: '/admin/categories',
     testimonials: '/admin/testimonials',
     slides: '/admin/slides',
   },
+} as const;
+
+// -----------------------------
+// Types for safety
+export type PublicRoute = keyof typeof routes.publicRoutes;
+export type ApiRoute = keyof typeof routes.apiRoutes;
+export type AdminRoute = keyof typeof routes.adminRoutes;
+
+// -----------------------------
+// Base URL (prod or localhost)
+export const baseUrl =
+  process.env.NEXT_PUBLIC_PUBLIC_URL?.replace(/\/$/, '') ||
+  'http://localhost:3000';
+
+// -----------------------------
+// Helpers
+export const getRoute = (route: PublicRoute | AdminRoute): string => {
+  if (route in routes.publicRoutes)
+    return routes.publicRoutes[route as PublicRoute];
+  if (route in routes.adminRoutes)
+    return routes.adminRoutes[route as AdminRoute];
+  throw new Error(`Route "${route}" does not exist`);
 };
 
-export const baseUrl =
-  process.env.PUBLIC_URL?.replace(/\/$/, '') || 'http://localhost:3000';
+export const apiUrl = (route: ApiRoute) =>
+  `${baseUrl}${routes.apiRoutes[route]}`;

@@ -1,8 +1,11 @@
 import { ApiError } from './api-error';
 
 export class ValidationError extends ApiError {
-  constructor(message = 'Validation error') {
-    super(message, 400, 'VALIDATION_ERROR');
+  constructor(
+    message = 'Validation failed',
+    public details?: unknown
+  ) {
+    super(message, 422, 'VALIDATION_ERROR');
   }
 }
 

@@ -1,20 +1,18 @@
-import type { AnyObjectSchema } from 'yup';
+// helpers/validate.ts
+import type { AnySchema, InferType } from 'yup';
 
-import { ValidationError } from '@/lib/errors/http-errors';
+import { ValidationError } from '@/app/lib/errors/http-errors';
 
-export async function validate<T>(
-  schema: AnyObjectSchema,
+export async function validate<S extends AnySchema>(
+  schema: S,
   data: unknown
-): Promise<T> {
+): Promise<InferType<S>> {
   try {
-    return (await schema.validate(data, {
+    return await schema.validate(data, {
       abortEarly: false,
       stripUnknown: true,
-    })) as T;
+    });
   } catch (err) {
-    if (err instanceof Error) {
-      throw new ValidationError(err.message);
-    }
-    throw err;
+    throw new ValidationError('Validation failed', err);
   }
 }

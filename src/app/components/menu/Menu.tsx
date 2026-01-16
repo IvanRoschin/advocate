@@ -3,13 +3,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { HiOutlineMenu, HiX } from 'react-icons/hi';
 
+import { getRoute } from '@/app/config/routes';
+
 const menu = [
-  { title: 'Головна', link: '/#' },
-  { title: 'Про мене', link: '/#about' },
-  { title: 'Практики', link: '/#practices' },
-  { title: 'Блог', link: '/blog' },
-  { title: 'Оплата послуг', link: '/payment' },
-  { title: 'Контакти', link: '/contacts' },
+  { title: 'Головна', route: 'home' as const },
+  { title: 'Про мене', route: 'about' as const },
+  { title: 'Практики', route: 'practices' as const },
+  { title: 'Блог', route: 'blog' as const },
+  { title: 'Оплата послуг', route: 'payments' as const },
+  { title: 'Контакти', route: 'contact' as const },
 ];
 
 const Menu = () => {
@@ -22,19 +24,13 @@ const Menu = () => {
   // Закрытие по Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsOpen(false);
-      }
+      if (e.key === 'Escape') setIsOpen(false);
     };
-
     document.addEventListener('keydown', handler);
-
-    return () => {
-      document.removeEventListener('keydown', handler);
-    };
+    return () => document.removeEventListener('keydown', handler);
   }, []);
 
-  // Запрет прокрутки body
+  // Запрет прокрутки body при открытом меню
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => {
@@ -42,11 +38,10 @@ const Menu = () => {
     };
   }, [isOpen]);
 
-  // Свайп влево
+  // Свайп влево для мобильного меню
   useEffect(() => {
-    const start = (e: TouchEvent) => {
-      touchStartX.current = e.touches[0].clientX;
-    };
+    const start = (e: TouchEvent) =>
+      (touchStartX.current = e.touches[0].clientX);
     const move = (e: TouchEvent) => {
       if (!touchStartX.current) return;
       if (e.touches[0].clientX - touchStartX.current < -50) {
@@ -83,10 +78,10 @@ const Menu = () => {
 
       {/* Десктопное меню */}
       <ul className="mx-auto hidden w-full max-w-5xl grid-cols-3 gap-2 text-sm font-medium text-gray-700 sm:mb-4 sm:grid sm:gap-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-4 xl:pt-8">
-        {menu.map(({ title, link }) => (
+        {menu.map(({ title, route }) => (
           <li key={title} className="text-center">
             <a
-              href={link}
+              href={getRoute(route)}
               className="group hover:text-accent focus:text-accent relative block py-2 transition-colors duration-500 ease-out"
             >
               {title}
@@ -122,10 +117,10 @@ const Menu = () => {
           }`}
         >
           <ul className="flex h-full flex-col divide-y divide-gray-200">
-            {menu.map(({ title, link }) => (
+            {menu.map(({ title, route }) => (
               <li key={title}>
                 <a
-                  href={link}
+                  href={getRoute(route)}
                   onClick={() => setIsOpen(false)}
                   className="hover:text-accent block px-6 py-4 text-gray-800 hover:bg-gray-100"
                 >
@@ -136,10 +131,7 @@ const Menu = () => {
             <li className="mt-auto px-6 py-6">
               <button
                 type="button"
-                onClick={() => {
-                  console.warn('Cnock-Cnock');
-                  setIsOpen(false);
-                }}
+                onClick={() => setIsOpen(false)}
                 className="bg-accent hover:bg-accent w-full rounded-md py-3 font-semibold text-white"
               >
                 Записатись на консультацію

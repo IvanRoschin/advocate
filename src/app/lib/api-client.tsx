@@ -42,11 +42,11 @@ export async function apiFetch<T>(
   }
 
   if (!res.ok || !json.ok) {
-    throw new ApiClientError(
-      json.ok ? 'HTTP_ERROR' : json.error.code,
-      json.ok ? res.statusText : json.error.message,
-      res.status
-    );
+    // Если сервер вернул свой error с кодом — используем его
+    const code = !json.ok ? json.error.code : 'HTTP_ERROR';
+    const message = !json.ok ? json.error.message : res.statusText;
+
+    throw new ApiClientError(code, message, res.status);
   }
 
   return json.data;

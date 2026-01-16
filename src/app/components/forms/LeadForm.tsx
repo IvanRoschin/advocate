@@ -1,13 +1,13 @@
 'use client';
 
 import { Form, Formik } from 'formik';
+import { toast } from 'sonner';
 
+import { apiUrl } from '@/app/config/routes';
 import leadSchema from '@/app/helpers/validation-schemas/lead-schema';
-import { apiFetch } from '@/app/lib/api-client';
+import { ApiClientError } from '@/app/lib/api-client';
 import Btn from '@/app/ui/button/Btn';
-
-import Checkbox from '../inputs/Checkbox';
-import Input from '../inputs/Input';
+import { Checkbox, Input } from '@/components/index';
 
 const LeadForm = () => {
   return (
@@ -17,49 +17,75 @@ const LeadForm = () => {
         email: '',
         phone: '+380',
         consent: false,
+        website: '', // Honeypot
+        recaptchaToken: '', // reCAPTCHA v3
       }}
       validationSchema={leadSchema}
       onSubmit={async (values, { resetForm }) => {
         try {
-          const lead = await apiFetch('/api/leads', {
+          // 🔹 Получаем token reCAPTCHA
+          const token = await window.grecaptcha.execute(
+            process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
+            { action: 'submit' }
+          );
+          values.recaptchaToken = token;
+
+          const res = await fetch(apiUrl('leads'), {
             method: 'POST',
             body: JSON.stringify(values),
           });
 
-          console.warn('✅ Lead created', lead);
-        } catch (e) {
-          if (e instanceof Error) {
-            console.error('❌ Error:', e.message);
+          if (res.status === 409) {
+            toast.error('❌ Лід з таким email вже існує!');
+            return;
           }
+
+          if (!res.ok) {
+            const json = await res.json();
+            toast.error(
+              `❌ Помилка: ${json?.error?.message || res.statusText}`
+            );
+            return;
+          }
+
+          toast.success('✅ Ваша заявка успішно надіслана!');
+        } catch (e: unknown) {
+          if (e instanceof ApiClientError) {
+            if (e.status === 409) {
+              toast.error('Лід з таким email вже існує!');
+              return;
+            }
+            toast.error(`Помилка: ${e.message}`);
+            return;
+          }
+
+          if (e instanceof Error) {
+            toast.error(`Невідома помилка: ${e.message}`);
+            return;
+          }
+
+          toast.error('Сталася невідома помилка');
+        } finally {
+          resetForm();
         }
-        resetForm();
       }}
     >
       {({ isValid, isSubmitting }) => (
         <Form className="space-y-4 text-left">
-          {/* Form header */}
-          <div className="mb-2">
-            <h3 className="text-lg font-semibold text-white">
-              Залишити заявку
-            </h3>
-            <p className="text-app/70 text-sm">
-              Ми звʼяжемось з вами протягом години
-            </p>
-          </div>
-
           <Input name="name" label="Імʼя" required />
           <Input name="email" label="Email" type="email" required />
           <Input name="phone" label="Телефон" type="tel" required />
-
           <Checkbox name="consent">
             Заповнюючи форму, я даю згоду на збір та обробку персональних даних
           </Checkbox>
+
+          {/* Honeypot поле скрыто */}
+          <input type="text" name="website" style={{ display: 'none' }} />
 
           <Btn
             type="submit"
             title="Надіслати"
             disabled={!isValid || isSubmitting}
-            className={`transition-opacity duration-300 ${!isValid ? 'cursor-not-allowed opacity-60' : 'opacity-100'}`}
           />
         </Form>
       )}
