@@ -1,22 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { FaEnvelope } from 'react-icons/fa';
 import { FaSquarePhone } from 'react-icons/fa6';
 
 import Logo from '../logo/Logo';
 
 const Footer = () => {
-  const [email, setEmail] = useState<string | null>(null);
-  const [phone1, setPhone1] = useState<string | null>(null);
-  const [phone2, setPhone2] = useState<string | null>(null);
-
-  useEffect(() => {
-    setEmail(process.env.NEXT_PUBLIC_ADVOCATE_EMAIL || null);
-    setPhone1(process.env.NEXT_PUBLIC_ADVOCATE_PN_1 || null);
-    setPhone2(process.env.NEXT_PUBLIC_ADVOCATE_PN_2 || null);
-  }, []);
+  const phone1 = process.env.NEXT_PUBLIC_ADVOCATE_PN_1 ?? null;
+  const phone2 = process.env.NEXT_PUBLIC_ADVOCATE_PN_2 ?? null;
+  const email = process.env.NEXT_PUBLIC_ADVOCATE_EMAIL ?? null;
 
   return (
     <footer className="fg-app text-white">

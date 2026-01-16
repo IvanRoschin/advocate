@@ -1,21 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 
 import Btn from '@/app/ui/button/Btn';
 
 import AdvantageItem from './AdvantageItem';
 
 const Advantages = () => {
-  const [phone, setPhone] = useState<string | null>(null);
-
-  // Подставляем номер на клиенте
-  useEffect(() => {
-    if (process.env.ADVOCATE_PN_1) {
-      setPhone(process.env.ADVOCATE_PN_1);
-    }
-  }, []);
+  const phone = process.env.NEXT_PUBLIC_ADVOCATE_PN_1 ?? null;
 
   return (
     <section
