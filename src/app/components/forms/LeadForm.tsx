@@ -50,21 +50,16 @@ const LeadForm = () => {
 
           toast.success('✅ Ваша заявка успішно надіслана!');
         } catch (e: unknown) {
-          if (e instanceof ApiClientError) {
-            if (e.status === 409) {
-              toast.error('Лід з таким email вже існує!');
-              return;
-            }
-            toast.error(`Помилка: ${e.message}`);
-            return;
-          }
+          const message =
+            e instanceof ApiClientError
+              ? e.status === 409
+                ? 'Лід з таким email вже існує!'
+                : `Помилка: ${e.message}`
+              : e instanceof Error
+                ? `Невідома помилка: ${e.message}`
+                : 'Сталася невідома помилка';
 
-          if (e instanceof Error) {
-            toast.error(`Невідома помилка: ${e.message}`);
-            return;
-          }
-
-          toast.error('Сталася невідома помилка');
+          toast.error(message);
         } finally {
           resetForm();
         }
