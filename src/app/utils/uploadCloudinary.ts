@@ -1,4 +1,4 @@
-export const uploadCloudinary = async (file: any) => {
+export const uploadCloudinary = async (file: File) => {
   if (!file) {
     return;
   }
@@ -25,6 +25,6 @@ export const uploadCloudinary = async (file: any) => {
     const res = await response.json();
     return { publicId: res?.public_id, url: res?.secure_url };
   } catch (error) {
-    console.log(error);
+    console.warn(error);
   }
 };

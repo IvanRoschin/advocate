@@ -137,7 +137,7 @@ const Menu = () => {
               <button
                 type="button"
                 onClick={() => {
-                  console.log('Cnock-Cnock');
+                  console.warn('Cnock-Cnock');
                   setIsOpen(false);
                 }}
                 className="bg-accent hover:bg-accent w-full rounded-md py-3 font-semibold text-white"

@@ -26,7 +26,7 @@ const LeadForm = () => {
             body: JSON.stringify(values),
           });
 
-          console.log('✅ Lead created', lead);
+          console.warn('✅ Lead created', lead);
         } catch (e) {
           if (e instanceof Error) {
             console.error('❌ Error:', e.message);

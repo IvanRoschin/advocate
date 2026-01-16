@@ -36,7 +36,7 @@ export async function sendMail({
   // Проверка соединения (опционально)
   try {
     await transporter.verify();
-    console.log('✅ SMTP connection verified');
+    console.warn('✅ SMTP connection verified');
   } catch (err) {
     console.error('❌ SMTP connection failed:', err);
   }
@@ -54,6 +54,6 @@ export async function sendMail({
     html: body,
   });
 
-  console.log('✅ Email sent:', result.messageId);
+  console.warn('✅ Email sent:', result.messageId);
   return result;
 }
