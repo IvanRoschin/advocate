@@ -10,7 +10,7 @@ import {
 } from '@/app/ui/fonts';
 import ToastProvider from './providers/ToastProvider';
 
-import './globals.css';
+import '@/app/globals.css';
 
 export default function RootLayout({
   children,
