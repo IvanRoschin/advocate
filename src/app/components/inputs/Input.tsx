@@ -9,6 +9,7 @@ interface FormikInputProps {
   disabled?: boolean;
   required?: boolean;
   prefixIcon?: ReactNode;
+  className?: string;
 }
 
 const Input = memo(
@@ -19,12 +20,13 @@ const Input = memo(
     disabled = false,
     required = false,
     prefixIcon,
+    className = '',
   }: FormikInputProps) => {
     const [field, meta] = useField(name);
     const hasError = meta.touched && meta.error;
 
     return (
-      <div className="relative w-full">
+      <div className={`relative w-full ${className}`}>
         {prefixIcon && (
           <span className="absolute top-4 left-3 z-10">{prefixIcon}</span>
         )}

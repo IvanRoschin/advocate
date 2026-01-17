@@ -23,13 +23,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${eUkrainehead.variable} ${manrope.variable} ${eUkraine.variable} ${sacramento.variable} antialiased`}
     >
       <body className="font-manrope">
-        {children} <ToastProvider />
         {/* Google reCAPTCHA */}
         <Script
-          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-          async
-          strategy="beforeInteractive"
+          src={`https://www.google.com/recaptcha/api.js`}
+          strategy="afterInteractive"
         />
+        {children} <ToastProvider />
       </body>
     </html>
   );

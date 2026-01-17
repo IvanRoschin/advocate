@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 
+import { getRoute } from '@/app/config/routes';
 import Btn from '@/app/ui/button/Btn';
 
 const data = {
@@ -54,7 +55,11 @@ const Hero = () => {
         </p>
 
         <div className="flex flex-col gap-4 sm:flex-row">
-          <Btn title="Отримати консультацію" />
+          <Btn
+            title="Отримати консультацію"
+            component="a"
+            href={getRoute('order')}
+          />
 
           {phone && (
             <Btn

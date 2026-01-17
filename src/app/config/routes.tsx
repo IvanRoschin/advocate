@@ -4,6 +4,7 @@ export const routes = {
     home: '/',
     about: '#about',
     practices: '#practices',
+    order: '#order',
     blog: '/blog',
     payments: '/payments',
     contact: '/contact',
@@ -11,12 +12,13 @@ export const routes = {
   },
   apiRoutes: {
     leads: '/api/leads',
+    subscribe: '/api/subscribe',
   },
   adminRoutes: {
     dashboard: '/admin',
     leads: '/admin/leads',
     clients: '/admin/clients',
-    goods: '/admin/goods',
+    categories: '/admin/categories',
     payments: '/admin/payments',
     testimonials: '/admin/testimonials',
     slides: '/admin/slides',
