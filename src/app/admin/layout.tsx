@@ -1,6 +1,6 @@
 'use client';
 
-import { Socials } from '../components';
+import { Header, Socials } from '../components';
 
 export default function AdminLayout({
   children,
@@ -10,6 +10,7 @@ export default function AdminLayout({
   return (
     <div className="blog-wrapper">
       <Socials />
+      <Header />
       {children}
     </div>
   );

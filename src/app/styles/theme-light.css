@@ -1,0 +1,43 @@
+:root {
+  /* base */
+  --background: #ffffff;
+  --foreground: #171717;
+  --backgroundaccent: #21242b;
+  --accentcolor: #b89b5e;
+  --titlecolor: #f6f7f9;
+  --textcolor: #93969d;
+
+  /* input surfaces — LIGHT */
+  --surface-input: #ffffff;
+  --surface-input-focus: #fafafa;
+  --surface-input-muted: #f6f7f9;
+
+  /* borders */
+  --border-input: rgba(0,0,0,0.08);
+  --border-input-hover: rgba(0,0,0,0.14);
+  --border-input-focus: var(--accentcolor);
+
+  /* input text */
+  --text-input: #2a2a2a;
+  --text-input-focus: #2a2a2a;
+  --text-input-muted: #93969d;
+
+    /* label */
+  --text-label: #93969d;
+  --text-label-focus: #6b7280; /* neutral, не accent */
+  --text-label-filled: #6b7280;
+  --text-label-error: #ef4444;
+
+  /* semantic aliases */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accentbackground: var(--accentcolor);
+
+  /* fonts */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-eukrainehead: var(--font-eukrainehead);
+  --font-eukraine: var(--font-eukraine);
+  --font-manrope: var(--font-manrope);
+  --font-sacramento: var(--font-sacramento);
+}

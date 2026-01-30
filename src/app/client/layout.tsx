@@ -16,7 +16,7 @@ export default function BlogLayout({
         {children}
         <aside className="">
           <p>Category</p>
-          <p className="nav mb-4 text-lg font-semibold">
+          <p className="nav font-eukrainehead mb-4 text-lg font-semibold">
             Інформаційна розсилка
           </p>
           <SubscribeForm />

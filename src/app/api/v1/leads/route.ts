@@ -2,17 +2,18 @@ import { NextResponse } from 'next/server';
 
 import { validate } from '@/app/helpers/validate';
 import leadSchema from '@/app/helpers/validation-schemas/lead-schema';
-import { ValidationError } from '@/app/lib/errors/http-errors';
 import {
   leadAdminTemplate,
   leadClientTemplate,
 } from '@/app/lib/mail-templates';
 import { sendMail } from '@/app/lib/send-mail';
 import { sendTelegramMessage } from '@/app/lib/send-telegram';
-import type { ApiResponse } from '@/lib/api-response';
-import { errorToResponse } from '@/lib/errors/error-to-response';
-import { connectDB } from '@/lib/mongoose';
+import { errorToResponse } from '@/app/lib/server/errors/error-to-response';
+import { ValidationError } from '@/app/lib/server/errors/http-errors';
+import { connectDB } from '@/app/lib/server/mongoose';
 import { Lead } from '@/models';
+
+import type { ApiResponse } from '@/app/lib/server/api-response';
 const ADMIN_EMAIL = 'advocate.roschin@gmail.com';
 
 async function verifyRecaptcha(token: string) {

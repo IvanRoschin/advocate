@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 import { apiUrl } from '@/app/config/routes';
 import leadSchema from '@/app/helpers/validation-schemas/lead-schema';
-import { ApiClientError } from '@/app/lib/api-client';
+import { ApiClientError } from '@/app/lib/client/api-client';
 import Btn from '@/app/ui/button/Btn';
 import { Checkbox, Input } from '@/components/index';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { getRoute } from '@/app/config/routes';
+import { routes } from '@/app/config/routes';
 import Btn from '@/app/ui/button/Btn';
 
 import Logo from '../logo/Logo';
@@ -21,7 +21,7 @@ const Header = () => {
             <Btn
               title="Запис на консультацію"
               component="a"
-              href={getRoute('order')}
+              href={routes.public.order}
             />
           </div>
         </div>
