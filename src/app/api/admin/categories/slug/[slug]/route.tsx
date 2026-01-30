@@ -13,11 +13,14 @@ interface Params {
 }
 
 // GET категория по slug
-export async function GET(_req: Request, { params }: { params: Params }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<Params> }
+) {
   try {
     await connectDB();
 
-    const { slug } = params;
+    const { slug } = await params;
     if (!slug) throw new ValidationError('Slug не вказано');
 
     const category = await Category.findOne({ slug });
@@ -30,40 +33,50 @@ export async function GET(_req: Request, { params }: { params: Params }) {
 }
 
 // PUT обновление категории по slug
-export async function PUT(req: Request, { params }: { params: Params }) {
+export async function PUT(
+  req: Request,
+  { params }: { params: Promise<Params> }
+) {
   try {
     await connectDB();
 
-    const { slug } = params;
+    const { slug } = await params;
     if (!slug) throw new ValidationError('Slug не вказано');
 
     const body = (await req.json()) as CategoryInput;
-    const data = await categorySchema.validate(body, { abortEarly: false });
+    const data = (await categorySchema.validate(body, {
+      abortEarly: false,
+    })) as CategoryInput & { slug: string };
 
-    // Проверка уникальности slug для других категорий
+    const current = await Category.findOne({ slug });
+    if (!current) throw new ValidationError('Категорія не знайдена');
+
     const existing = await Category.findOne({
       slug: data.slug,
-      _id: { $ne: (await Category.findOne({ slug }))?._id },
+      _id: { $ne: current._id },
     });
+
     if (existing) throw new ValidationError('Категорія з таким slug вже існує');
 
     const updatedCategory = await Category.findOneAndUpdate({ slug }, data, {
       new: true,
     });
-    if (!updatedCategory) throw new ValidationError('Категорія не знайдена');
 
-    return NextResponse.json({ ok: true, data: updatedCategory.toObject() });
+    return NextResponse.json({ ok: true, data: updatedCategory!.toObject() });
   } catch (err) {
     return errorToResponse(err);
   }
 }
 
 // DELETE удаление категории по slug
-export async function DELETE(_req: Request, { params }: { params: Params }) {
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<Params> }
+) {
   try {
     await connectDB();
 
-    const { slug } = params;
+    const { slug } = await params;
     if (!slug) throw new ValidationError('Slug не вказано');
 
     const deleted = await Category.findOneAndDelete({ slug });

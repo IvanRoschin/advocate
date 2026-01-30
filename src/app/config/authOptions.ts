@@ -1,10 +1,11 @@
 import { DefaultSession, DefaultUser, NextAuthOptions } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
 import User from '@/models/User';
-import { routes } from './routes';
 import { connectDB } from '../lib/server/mongoose';
+import { routes } from './routes';
 
 declare module 'next-auth' {
   interface Session {
@@ -30,12 +31,19 @@ declare module 'next-auth/jwt' {
     role?: string;
     phone?: string;
     surname?: string;
-
-    city?: string;
-    warehouse?: string;
-    payment?: string;
   }
 }
+
+export type AuthUser =
+  | { id: string } // credentials
+  | {
+      id: string;
+      name?: string;
+      surname?: string;
+      email?: string;
+      phone?: string;
+      role?: string;
+    };
 
 // -------------------------------
 // Helpers
@@ -140,15 +148,16 @@ export const authOptions: NextAuthOptions = {
 
       // 1) Login → записываем только id
       if (user) {
-        token.id = (user as any).id;
+        token.id = (user as AuthUser).id;
       }
 
       // 2) update() → обновляем только переданные поля
       if (trigger === 'update' && session?.user) {
-        for (const key of Object.keys(session.user)) {
-          (token as any)[key] = (session.user as any)[key];
-        }
-        return token;
+        const typedToken = token as JWT & Record<string, unknown>;
+        Object.entries(session.user).forEach(([key, value]) => {
+          typedToken[key] = value;
+        });
+        return typedToken;
       }
 
       // 3) Любой обычный вызов → загружаем свежие данные из БД
