@@ -1,0 +1,86 @@
+:root {
+  /* ---------- Font Sizes ---------- */
+  --fs-h1: clamp(2rem, 5vw, 3rem);   /* 32px–48px */
+  --fs-h2: clamp(1.75rem, 4.5vw, 2.5rem);
+  --fs-h3: clamp(1.5rem, 4vw, 2rem);
+  --fs-h4: clamp(1.25rem, 3vw, 1.5rem);
+  --fs-h5: clamp(1.125rem, 2.5vw, 1.25rem);
+  --fs-h6: clamp(1rem, 2vw, 1.125rem);
+
+  --fs-lead: 1.125rem;   /* чуть больше обычного текста */
+  --fs-base: 1rem;       /* основной текст */
+  --fs-small: 0.875rem;  /* мелкий текст */
+  --fs-muted: 0.75rem;   /* очень мелкий текст */
+
+  /* ---------- Line Heights ---------- */
+  --lh-tight: 1.2;
+  --lh-normal: 1.5;
+  --lh-loose: 1.8;
+
+  /* ---------- Colors (Theme-aware) ---------- */
+  --text-default: var(--textcolor);        /* обычный текст */
+  --text-muted: #93969d;                   /* подписи, вспомогательный текст */
+  --text-lead: #171717;                    /* lead текст */
+  --heading-color: var(--titlecolor);      /* заголовки */
+}
+
+
+@layer base {
+  /* ---------- Body / Base ---------- */
+  body {
+    font-family: var(--font-manrope), system-ui, sans-serif;
+    font-size: var(--fs-base);
+    line-height: var(--lh-normal);
+    color: var(--text-default);
+  }
+
+  /* ---------- Headings ---------- */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-eukrainehead), system-ui, sans-serif;
+    font-weight: 600;
+    color: var(--heading-color);
+    margin-top: 0;
+    margin-bottom: 0.5em;
+  }
+
+  h1 { font-size: var(--fs-h1); line-height: var(--lh-tight); }
+  h2 { font-size: var(--fs-h2); line-height: var(--lh-tight); }
+  h3 { font-size: var(--fs-h3); line-height: var(--lh-tight); }
+  h4 { font-size: var(--fs-h4); line-height: var(--lh-normal); }
+  h5 { font-size: var(--fs-h5); line-height: var(--lh-normal); }
+  h6 { font-size: var(--fs-h6); line-height: var(--lh-loose); }
+
+  /* ---------- Lead ---------- */
+  .lead {
+    font-size: var(--fs-lead);
+    line-height: var(--lh-normal);
+    font-weight: 500;
+    color: var(--text-lead);
+  }
+
+  /* ---------- Small / Muted ---------- */
+  small, .small {
+    font-size: var(--fs-small);
+    line-height: var(--lh-normal);
+    color: var(--text-muted);
+  }
+
+  .muted {
+    font-size: var(--fs-muted);
+    line-height: var(--lh-normal);
+    color: var(--text-muted);
+  }
+
+  /* ---------- Code / Pre ---------- */
+  code, pre, kbd, samp {
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.95em;
+    line-height: var(--lh-normal);
+    background-color: var(--surface-input-muted);
+    padding: 0.1em 0.3em;
+    border-radius: 0.25rem;
+  }
+  .sign {
+  font-family: var(--font-sacramento), cursive;
+}
+}

@@ -1,0 +1,37 @@
+:root {
+  /* base */
+  --background: ;
+  --foreground: ;
+  --backgroundaccent: ;
+  --accentcolor: ;
+  --titlecolor: ;
+  --textcolor: ;
+
+  /* input surfaces */
+  --surface-input: ;
+  --surface-input-focus: ;
+  --surface-input-muted: ;
+
+  /* borders */
+  --border-input: ;
+  --border-input-hover: ;
+  --border-input-focus: ;
+
+  /* input text */
+  --text-input: ;
+  --text-input-focus: ;
+  --text-input-muted: ;
+
+  /* semantic aliases (НЕ трогаем, если используются) */
+  --color-background: ;
+  --color-foreground: ;
+  --color-accentbackground: ;
+
+  /* fonts */
+  --font-sans: ;
+  --font-mono: ;
+  --font-eukrainehead: ;
+  --font-eukraine: ;
+  --font-manrope: ;
+  --font-sacramento: ;
+}

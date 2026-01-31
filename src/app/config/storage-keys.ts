@@ -1,10 +1,5 @@
 const storageKeys = {
-  cart: 'cart',
-  totalPrice: 'totalPrice',
-  customer: 'customer',
-  good: 'good',
-  favorites: 'favorites',
-  filters: 'filters',
+  article: 'article',
   compare: 'compare',
 };
 

@@ -1,0 +1,128 @@
+@layer utilities {
+  /* ===== base colors ===== */
+  .bg-app { background-color: var(--background); }
+  .fg-app { background-color: var(--foreground); }
+  .bg-accent { background-color: var(--accentcolor); }
+
+  .title-app { color: var(--titlecolor); }
+  .text-app { color: var(--textcolor); }
+  .text-accent { color: var(--accentcolor); }
+
+  /* ===== footer ===== */
+  .footer-title {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-eukrainehead);
+    font-size: 1.125rem;
+  }
+
+  .footer-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.25rem;
+    height: 2px;
+    width: 2rem;
+    background-color: var(--accentcolor);
+  }
+
+  .footer-link {
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .footer-link:hover {
+    color: var(--accentcolor);
+  }
+
+  /* ===== input core ===== */
+  .input-field {
+    border-width: 1px 1px 2px 1px; /* нижний бордер всегда толще */
+    border-style: solid;
+    border-color: var(--border-input);
+    background-color: var(--surface-input);
+    color: var(--text-input);
+    box-sizing: border-box;
+    transition:
+      border-color 0.25s ease,
+      background-color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .input-field:hover {
+    border-color: var(--border-input-hover);
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: var(--border-input);
+    border-bottom-color: var(--border-input-focus);
+    background-color: var(--surface-input-focus);
+    box-shadow: 0 4px 8px -6px
+      color-mix(in srgb, var(--accentcolor), transparent 70%);
+  }
+
+  .input-field:disabled {
+    background-color: var(--surface-input-muted);
+    color: var(--text-input-muted);
+    cursor: not-allowed;
+  }
+
+  /* ===== input label ===== */
+  .text-label {
+    color: var(--text-label);
+  }
+
+  .text-label-focus {
+    color: var(--text-label-focus);
+  }
+
+  .text-label-error {
+    color: var(--text-label-error);
+  }
+
+  /* ===== surface modifier (dark context) ===== */
+  .surface-dark {
+    --surface-input: #1c1f26;
+    --surface-input-focus: #20242c;
+    --surface-input-muted: #2a2e38;
+
+    --border-input: rgba(255,255,255,0.14);
+    --border-input-hover: rgba(255,255,255,0.22);
+    --border-input-focus: var(--accentcolor);
+
+    --text-input: #f6f7f9;
+    --text-input-muted: #9aa0aa;
+
+    --text-label: #9aa0aa;
+    --text-label-focus: #cbd0d8;
+  }
+
+  /* ===== nav (component, не тема) ===== */
+  .nav {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .nav:hover,
+  .nav:focus {
+    fill: var(--accentcolor);
+  }
+
+  .nav::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 2px;
+    width: 0;
+    border-radius: 8px;
+    background-color: var(--accentcolor);
+    transition: width 0.3s ease;
+  }
+
+  .nav:hover::after,
+  .nav:focus::after {
+    width: 100%;
+  }
+}

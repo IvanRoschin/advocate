@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { HiOutlineMenu, HiX } from 'react-icons/hi';
 
-import { getRoute } from '@/app/config/routes';
+import { getRouteUrl, PublicRouteKey } from '@/app/config/routes';
 
 const menu = [
   { title: 'Головна', route: 'home' as const },
@@ -81,7 +81,7 @@ const Menu = () => {
         {menu.map(({ title, route }) => (
           <li key={title} className="text-center">
             <a
-              href={getRoute(route)}
+              href={getRouteUrl(route as PublicRouteKey)}
               className="group hover:text-accent focus:text-accent relative block py-2 transition-colors duration-500 ease-out"
             >
               {title}
@@ -120,7 +120,7 @@ const Menu = () => {
             {menu.map(({ title, route }) => (
               <li key={title}>
                 <a
-                  href={getRoute(route)}
+                  href={getRouteUrl(route as PublicRouteKey)}
                   onClick={() => setIsOpen(false)}
                   className="hover:text-accent block px-6 py-4 text-gray-800 hover:bg-gray-100"
                 >

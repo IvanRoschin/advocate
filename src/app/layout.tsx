@@ -1,3 +1,5 @@
+import '@/app/styles/globals.css';
+
 import Script from 'next/script';
 
 import {
@@ -8,9 +10,8 @@ import {
   manrope,
   sacramento,
 } from '@/app/ui/fonts';
-import ToastProvider from './providers/ToastProvider';
 
-import '@/app/globals.css';
+import ToastProvider from './providers/ToastProvider';
 
 export default function RootLayout({
   children,
@@ -20,15 +21,19 @@ export default function RootLayout({
   return (
     <html
       lang="uk"
-      className={`${geistSans.variable} ${geistMono.variable} ${eUkrainehead.variable} ${manrope.variable} ${eUkraine.variable} ${sacramento.variable} antialiased`}
+      className={` ${geistSans.variable} ${geistMono.variable} ${eUkrainehead.variable} ${eUkraine.variable} ${manrope.variable} ${sacramento.variable} `}
     >
-      <body className="font-manrope">
+      <body>
         {children} <ToastProvider />
         {/* Google reCAPTCHA */}
         <Script
-          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-          async
-          strategy="beforeInteractive"
+          src="https://www.google.com/recaptcha/api.js?render=explicit"
+          strategy="afterInteractive"
+        />
+        {/* Cloudinary */}
+        <Script
+          src="https://widget.cloudinary.com/v2.0/global/all.js"
+          strategy="afterInteractive"
         />
       </body>
     </html>

@@ -25,11 +25,13 @@ export const metadata = generateMetadata({
 export default function Home() {
   return (
     <main className="relative">
-      <p className="font-sans">Geist Sans</p>
-      <p className="font-eukrainehead">e-Ukraine Head</p>
-      <p className="font-eukraine">e-Ukraine</p>
-      <p className="font-manrope">Manrope</p>
-      <p className="font-sacramento">Sacramento</p>
+      {/* <h1>Заголовок H1</h1>
+      <h2>Заголовок H2</h2>
+      <p className="lead">Это lead текст</p>
+      <p>Обычный текст</p>
+      <small>Маленький текст</small>
+      <p className="muted">Вспомогательный / muted текст</p>
+      <code>const a = 1;</code> */}
       <Socials />
       <Header />
       {/* Секция Hero */}

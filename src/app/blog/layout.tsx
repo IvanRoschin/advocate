@@ -1,25 +1,28 @@
-import {
-  eUkraine,
-  eUkrainehead,
-  geistMono,
-  geistSans,
-  manrope,
-  sacramento,
-} from '@/app/ui/fonts';
+'use client';
 
-import '@/app/globals.css';
+import { Header, Socials } from '../components';
+import { SubscribeForm } from '../components/forms';
 
-export default function RootLayout({
+export default function BlogLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="uk"
-      className={`${geistSans.variable} ${geistMono.variable} ${eUkrainehead.variable} ${manrope.variable} ${eUkraine.variable} ${sacramento.variable} antialiased`}
-    >
-      <body className="font-manrope">{children}</body>
-    </html>
+    <div className="blog-wrapper">
+      <Socials />
+      <Header />
+      <div className="flex w-3/4 justify-around">
+        {children}
+        <aside className="">
+          <p>Category</p>
+          <p className="nav mb-4 text-lg font-semibold">
+            Інформаційна розсилка
+          </p>
+          <SubscribeForm />
+          <p>Недавні записи</p>
+        </aside>
+      </div>
+    </div>
   );
 }

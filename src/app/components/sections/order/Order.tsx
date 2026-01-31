@@ -40,7 +40,7 @@ const Order = () => {
         </div>
 
         {/* RIGHT — form */}
-        <div className="bg-app/85 flex w-full max-w-md flex-1 flex-col rounded-2xl p-6 shadow-md backdrop-blur-md">
+        <div className="bg-app/85 surface-dark flex w-full max-w-md flex-1 flex-col rounded-2xl p-6 shadow-md backdrop-blur-md">
           <LeadForm />
         </div>
       </div>

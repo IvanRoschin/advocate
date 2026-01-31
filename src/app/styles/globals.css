@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+
+@import './tokens.css';
+@import './theme-light.css';
+@import './theme-dark.css';
+@import './components.css';
+
+@import'./base/typography.css';
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-manrope), system-ui, sans-serif;
+}
+
+/* layout helpers */
+.container {
+  margin: 0 auto;
+  padding: 12px 32px 0 32px;
+}

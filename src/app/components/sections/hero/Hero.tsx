@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 
+import { getRouteUrl } from '@/app/config/routes';
 import Btn from '@/app/ui/button/Btn';
 
 const data = {
@@ -14,6 +15,7 @@ const data = {
 
 const Hero = () => {
   const phone = process.env.NEXT_PUBLIC_ADVOCATE_PN_1 ?? null;
+
   return (
     <section
       className="relative flex min-h-screen w-full items-center overflow-hidden"
@@ -54,7 +56,11 @@ const Hero = () => {
         </p>
 
         <div className="flex flex-col gap-4 sm:flex-row">
-          <Btn title="Отримати консультацію" />
+          <Btn
+            title="Отримати консультацію"
+            component="a"
+            href={getRouteUrl('order')}
+          />
 
           {phone && (
             <Btn

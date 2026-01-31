@@ -2,66 +2,57 @@ import { NextResponse } from 'next/server';
 
 import { validate } from '@/app/helpers/validate';
 import leadSchema from '@/app/helpers/validation-schemas/lead-schema';
-import { ValidationError } from '@/app/lib/errors/http-errors';
 import {
   leadAdminTemplate,
   leadClientTemplate,
-} from '@/app/lib/mail-templates/index';
+} from '@/app/lib/mail-templates';
 import { sendMail } from '@/app/lib/send-mail';
-import { LeadRequestBody } from '@/app/types/lead-request';
-import type { ApiResponse } from '@/lib/api-response';
-import { errorToResponse } from '@/lib/errors/error-to-response';
-import { connectDB } from '@/lib/mongoose';
+import { sendTelegramMessage } from '@/app/lib/send-telegram';
+import { errorToResponse } from '@/app/lib/server/errors/error-to-response';
+import { ValidationError } from '@/app/lib/server/errors/http-errors';
+import { connectDB } from '@/app/lib/server/mongoose';
 import { Lead } from '@/models';
+
+import type { ApiResponse } from '@/app/lib/server/api-response';
 const ADMIN_EMAIL = 'advocate.roschin@gmail.com';
-const RATE_LIMIT = 30_000; // 30 секунд
-const requests: Record<string, number> = {}; // in-memory, для продакшена лучше Redis
 
 async function verifyRecaptcha(token: string) {
   const secret = process.env.RECAPTCHA_SECRET!;
-  const res = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+  const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: `secret=${secret}&response=${token}`,
   });
   const data = await res.json();
-  if (!data.success || (data.score && data.score < 0.5)) {
-    throw new ValidationError('Captcha failed');
-  }
+  if (!data.success) throw new ValidationError('Captcha failed');
 }
 
 export async function POST(req: Request) {
   try {
     await connectDB();
 
-    let body: unknown;
-    try {
-      body = await req.json();
-    } catch {
-      throw new ValidationError('Invalid JSON body');
-    }
-
-    const payload = body as LeadRequestBody;
+    const body = (await req.json()) as {
+      name: string;
+      email: string;
+      phone: string;
+      consent: boolean;
+      website?: string;
+      recaptchaToken: string;
+    };
 
     // 🐝 Honeypot
-    if (payload.website) throw new ValidationError('Bot detected');
+    if (body.website) throw new ValidationError('Bot detected');
 
-    // ⏱ Rate limiting
-    const ip = req.headers.get('x-forwarded-for') || 'unknown';
-    if (requests[ip] && Date.now() - requests[ip] < RATE_LIMIT) {
-      throw new ValidationError('Too many requests');
-    }
-    requests[ip] = Date.now();
-
-    // ✅ reCAPTCHA проверка
-    if (!payload.recaptchaToken)
+    // ✅ reCAPTCHA v2
+    if (!body.recaptchaToken)
       throw new ValidationError('Captcha token missing');
-    await verifyRecaptcha(payload.recaptchaToken);
+    await verifyRecaptcha(body.recaptchaToken);
 
     const data = await validate(leadSchema, body);
+
     const lead = await Lead.create(data);
 
-    // ✉️ письма
+    // ✉️ письма клиенту и админу
     sendMail({
       to: data.email,
       subject: 'Ми отримали вашу заявку',
@@ -77,6 +68,11 @@ export async function POST(req: Request) {
         phone: data.phone,
       }),
     }).catch(console.error);
+
+    // ✉️ Telegram
+    sendTelegramMessage(
+      `🚨 <b>Новий лід</b>\nІм'я: ${data.name}\nEmail: ${data.email}\nТелефон: ${data.phone}`
+    ).catch(console.error);
 
     return NextResponse.json<ApiResponse<typeof lead>>(
       { ok: true, data: lead.toObject() },

@@ -102,7 +102,7 @@ const About = () => {
             )}
 
             <p>Ваш адвокат</p>
-            <p className="font-sacramento text-accent text-4xl">Ivan Roschin</p>
+            <p className="sign text-accent text-4xl">Ivan Roschin</p>
           </div>
         </div>
       </div>
