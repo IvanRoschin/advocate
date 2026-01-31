@@ -4,7 +4,7 @@ import { CategoryForm } from '../components/forms';
 
 const adminPage = () => {
   return (
-    <div>
+    <div className="container">
       adminPage
       <CategoryForm />
     </div>
