@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 
-import type { ApiResponse } from '@/lib/api-response';
 import { ApiError } from './api-error';
 import { isMongoDuplicateKeyError } from './mongo-errors';
+
+import type { ApiResponse } from '@/app/lib/server/api-response';
 /**
  * Преобразует любую ошибку в стандартизированный HTTP response
  * Используется во всех route.ts и server actions
