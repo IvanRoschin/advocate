@@ -1,12 +1,13 @@
 'use client';
 
-import { CategoryForm } from '../components/forms';
+import { ArticleForm } from '../components/forms';
 
 const adminPage = () => {
   return (
     <div className="container">
       adminPage
-      <CategoryForm />
+      <ArticleForm />
+      {/* <CategoryForm /> */}
     </div>
   );
 };

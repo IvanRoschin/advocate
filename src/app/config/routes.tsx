@@ -77,7 +77,11 @@ export const baseUrl =
   process.env.NEXT_PUBLIC_PUBLIC_URL?.replace(/\/$/, '') ??
   'http://localhost:3000';
 
-export const apiUrl = (path: string) => `${baseUrl}${path}`;
+export const apiUrl = (path: string) => {
+  const base = baseUrl.replace(/\/$/, '');
+  const p = path.replace(/^\//, '');
+  return `${base}/${p}`;
+};
 
 export const protectedRoutes = [
   routes.admin.dashboard,

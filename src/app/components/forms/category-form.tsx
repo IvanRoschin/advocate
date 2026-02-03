@@ -9,10 +9,9 @@ import { apiUrl } from '@/app/config/routes';
 import categorySchema, {
   CategoryFormValues,
 } from '@/app/helpers/validation-schemas/category-schema';
-// import { CloudinaryUploadWidget } from '@/app/lib';
 import ImageUploadCloudinary from '@/app/lib/client/cloudinary-multiplay-upload-widget';
 import Btn from '@/app/ui/button/Btn';
-import { Input } from '@/components/index';
+import { AutoSlugField, Input } from '@/components/index';
 
 const CategoryForm = () => {
   return (
@@ -35,7 +34,7 @@ const CategoryForm = () => {
         };
 
         try {
-          const res = await fetch(apiUrl('categories'), {
+          const res = await fetch(apiUrl('api/v1/categories'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
@@ -60,7 +59,19 @@ const CategoryForm = () => {
     >
       {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
         <Form className="flex w-full max-w-lg flex-col gap-4">
-          <Input name="title" label="Назва категорії" required />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Input name="title" label="Назва категорії" required />{' '}
+            <AutoSlugField
+              sourceField="title"
+              targetField="slug"
+              touchedFlagField="slugTouchedManually"
+              options={{ locale: 'uk' }}
+            />
+          </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

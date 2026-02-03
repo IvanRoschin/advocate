@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-import LeadForm from '../../forms/LeadForm';
+import { LeadForm } from '../../forms';
 
 const Order = () => {
   return (
