@@ -5,8 +5,8 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
 import { apiUrl } from '@/app/config/routes';
-import { articleValidationSchema } from '@/app/helpers/validation-schemas/article-schema';
-import ImageUploadCloudinary from '@/app/lib/client/cloudinary-multiplay-upload-widget';
+import { articleSchema } from '@/app/helpers/validationSchemas/articleSchema';
+import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
 import Btn from '@/app/ui/button/Btn';
 import {
   AutoSlugField,
@@ -185,7 +185,7 @@ const ArticleForm = () => {
         featured: false,
         pinned: false,
       }}
-      validationSchema={articleValidationSchema}
+      validationSchema={articleSchema}
       onSubmit={async (values, { resetForm }) => {
         try {
           const res = await fetch(apiUrl('/api/v1/articles'), {

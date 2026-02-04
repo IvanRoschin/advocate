@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-import { articleValidationSchema } from '@/app/helpers/validation-schemas';
-import { errorToResponse } from '@/app/lib/server/errors/error-to-response';
+import { articleSchema } from '@/app/helpers/validationSchemas';
+import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { connectDB } from '@/app/lib/server/mongoose';
 import { Article, ArticleInput } from '@/models';
 
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const body = (await req.json()) as ArticleInput;
 
     // Валидация через Yup
-    const data = await articleValidationSchema.validate(body, {
+    const data = await articleSchema.validate(body, {
       abortEarly: false,
     });
 

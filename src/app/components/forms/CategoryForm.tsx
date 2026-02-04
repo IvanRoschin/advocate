@@ -8,8 +8,8 @@ import { toast } from 'sonner';
 import { apiUrl } from '@/app/config/routes';
 import categorySchema, {
   CategoryFormValues,
-} from '@/app/helpers/validation-schemas/category-schema';
-import ImageUploadCloudinary from '@/app/lib/client/cloudinary-multiplay-upload-widget';
+} from '@/app/helpers/validationSchemas/categorySchema';
+import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
 import Btn from '@/app/ui/button/Btn';
 import { AutoSlugField, Input } from '@/components/index';
 

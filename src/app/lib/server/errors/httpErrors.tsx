@@ -1,4 +1,4 @@
-import { ApiError } from './api-error';
+import { ApiError } from './ApiError';
 
 export class ValidationError extends ApiError {
   constructor(

@@ -1,4 +1,4 @@
-export { default as CloudinaryUploadWidget } from '@/app/lib/client/cloudinary-upload-widget';
+export { default as CloudinaryUploadWidget } from '@/app/lib/client/CloudinaryUploadWidget';
+export { sendMail } from '@/app/lib/sendMail';
+export { sendTelegramMessage } from '@/app/lib/sendTelegram';
 export { cn } from '@/lib/cn';
-export { sendMail } from '@/lib/send-mail';
-export { sendTelegramMessage } from '@/lib/send-telegram';

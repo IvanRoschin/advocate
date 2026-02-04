@@ -23,7 +23,7 @@ const seoSchema = yup.object({
     .optional(),
 });
 
-export const articleValidationSchema = yup.object({
+export const articleSchema = yup.object({
   slug: yup.string().required('Обязательное поле'),
   status: yup
     .mixed<'draft' | 'published' | 'archived'>()
