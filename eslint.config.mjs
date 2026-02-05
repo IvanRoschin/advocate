@@ -1,6 +1,5 @@
 import { FlatCompat } from '@eslint/eslintrc';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
-import prettier from 'eslint-config-prettier';
 import unicorn from 'eslint-plugin-unicorn';
 
 import { dirname } from 'path';
@@ -54,7 +53,7 @@ const config = [
         {
           cases: {
             pascalCase: true,
-            camelCase: true, // index.ts, index.tsx
+            camelCase: true,
           },
           ignore: ['^index\\.tsx?$', '^page\\.tsx?$', '^layout\\.tsx?$'],
         },
@@ -70,8 +69,8 @@ const config = [
     },
   },
 
-  // Prettier
-  prettier,
+  // Prettier через FlatCompat
+  ...compat.extends('prettier'),
 ];
 
 export default config;
