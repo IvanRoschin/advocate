@@ -50,7 +50,7 @@
     "@types/nodemailer": "^7.0.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@typescript-eslint/eslint-plugin": "^8.53.0",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.53.0",
     "autoprefixer": "^10.4.23",
     "eslint": "^9.39.2",
