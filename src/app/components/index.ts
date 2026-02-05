@@ -8,4 +8,10 @@ export { default as Services } from '@/app/components/services/Services';
 
 export { default as Socials } from '@/app/components/socials/Socials';
 
-export * from '@/app/components/inputs';
+export {
+  AutoSlugField,
+  Checkbox,
+  Input,
+  Select,
+  Textarea,
+} from '@/app/components/inputs';
