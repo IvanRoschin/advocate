@@ -51,10 +51,7 @@ const config = [
       'unicorn/filename-case': [
         'error',
         {
-          cases: {
-            pascalCase: true,
-            camelCase: true,
-          },
+          cases: { pascalCase: true, camelCase: true },
           ignore: ['^index\\.tsx?$', '^page\\.tsx?$', '^layout\\.tsx?$'],
         },
       ],
@@ -69,7 +66,7 @@ const config = [
     },
   },
 
-  // Prettier через FlatCompat
+  // Подключаем Prettier через FlatCompat
   ...compat.extends('prettier'),
 ];
 
