@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 
 import categorySchema, {
   CategoryInput,
-} from '@/app/helpers/validation-schemas/category-schema';
-import { errorToResponse } from '@/app/lib/server/errors/error-to-response';
+} from '@/app/helpers/validationSchemas/categorySchema';
+import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { connectDB } from '@/app/lib/server/mongoose';
 import { Category, CategoryDocument } from '@/models';
 

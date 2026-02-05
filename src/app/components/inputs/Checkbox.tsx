@@ -4,11 +4,13 @@ import { useField } from 'formik';
 
 interface CheckboxProps {
   name: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  label?: string;
 }
 
-const Checkbox = memo(({ name, children }: CheckboxProps) => {
+const Checkbox = memo(({ name, children, label }: CheckboxProps) => {
   const [field, meta] = useField({ name, type: 'checkbox' });
+  const display = label ?? children;
 
   return (
     <div className="space-y-1">
@@ -19,7 +21,7 @@ const Checkbox = memo(({ name, children }: CheckboxProps) => {
           style={{ accentColor: '#C89B3C' }}
           className="mt-1 h-4 w-4 border-white/30 accent-white"
         />
-        <span className="leading-snug">{children}</span>
+        <span className="leading-snug">{display}</span>
       </label>
       <p className="mt-1 min-h-4 text-xs text-red-500">
         {meta.touched && meta.error ? meta.error : ' '}
