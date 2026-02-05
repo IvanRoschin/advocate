@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 
 import categorySchema, {
   CategoryInput,
-} from '@/app/helpers/validation-schemas/category-schema';
-import { errorToResponse } from '@/app/lib/server/errors/error-to-response';
-import { ValidationError } from '@/app/lib/server/errors/http-errors';
+} from '@/app/helpers/validationSchemas/categorySchema';
+import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
+import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import { connectDB } from '@/app/lib/server/mongoose';
 import { Category } from '@/models';
 

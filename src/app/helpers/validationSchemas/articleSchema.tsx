@@ -1,21 +1,14 @@
-import { Types } from 'mongoose';
 import * as yup from 'yup';
 
-/* ---------------------------- */
-/* Media validation */
-/* ---------------------------- */
-const coverImageSchema = yup.object({
-  url: yup.string().url('Неверный URL').required('Обязательное поле'),
-  publicId: yup.string().required('Обязательное поле'),
-  alt: yup.string().required('Обязательное поле'),
-  width: yup.number().min(1).required('Обязательное поле'),
-  height: yup.number().min(1).required('Обязательное поле'),
-  dominantColor: yup.string().optional(),
-});
+const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 
-/* ---------------------------- */
-/* SEO validation */
-/* ---------------------------- */
+const coverImageSchema = yup
+  .array()
+  .of(yup.string())
+  .min(1, 'Додайте хоча б одне фото')
+  .max(3, 'Максимум 3 фото')
+  .required(`Обов'язкове поле`);
+
 const seoSchema = yup.object({
   title: yup.string().optional(),
   description: yup.string().optional(),
@@ -30,10 +23,7 @@ const seoSchema = yup.object({
     .optional(),
 });
 
-/* ---------------------------- */
-/* Article validation */
-/* ---------------------------- */
-export const articleValidationSchema = yup.object({
+export const articleSchema = yup.object({
   slug: yup.string().required('Обязательное поле'),
   status: yup
     .mixed<'draft' | 'published' | 'archived'>()
@@ -54,56 +44,22 @@ export const articleValidationSchema = yup.object({
     .oneOf(['uk', 'ru', 'en'])
     .required(),
 
-  author: yup
-    .mixed<Types.ObjectId>()
-    .test(
-      'is-objectid',
-      'Неверный ObjectId',
-      val => val instanceof Types.ObjectId
-    )
-    .required('Обязательное поле'),
-
+  author: yup.string().matches(objectIdRegex, 'Неверный ObjectId').required(),
   coAuthors: yup
     .array()
-    .of(
-      yup
-        .mixed<Types.ObjectId>()
-        .test(
-          'is-objectid',
-          'Неверный ObjectId',
-          val => val instanceof Types.ObjectId
-        )
-    )
+    .of(yup.string().matches(objectIdRegex, 'Неверный ObjectId'))
+    .optional(),
+  categories: yup
+    .array()
+    .of(yup.string().matches(objectIdRegex, 'Неверный ObjectId'))
+    .optional(),
+  comments: yup
+    .array()
+    .of(yup.string().matches(objectIdRegex, 'Неверный ObjectId'))
     .optional(),
 
   coverImage: coverImageSchema.optional(),
-
   tags: yup.array().of(yup.string()).optional(),
-  categories: yup
-    .array()
-    .of(
-      yup
-        .mixed<Types.ObjectId>()
-        .test(
-          'is-objectid',
-          'Неверный ObjectId',
-          val => val instanceof Types.ObjectId
-        )
-    )
-    .optional(),
-
-  comments: yup
-    .array()
-    .of(
-      yup
-        .mixed<Types.ObjectId>()
-        .test(
-          'is-objectid',
-          'Неверный ObjectId',
-          val => val instanceof Types.ObjectId
-        )
-    )
-    .optional(),
 
   commentsCount: yup.number().min(0).optional(),
   likesCount: yup.number().min(0).optional(),

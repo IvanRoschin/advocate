@@ -1,7 +1,7 @@
 // helpers/validate.ts
 import type { AnySchema, InferType } from 'yup';
 
-import { ValidationError } from '@/app/lib/server/errors/http-errors';
+import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 
 export async function validate<S extends AnySchema>(
   schema: S,

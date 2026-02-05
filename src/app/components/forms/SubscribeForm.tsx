@@ -4,7 +4,7 @@ import { Form, Formik } from 'formik';
 import { toast } from 'sonner';
 
 import { apiUrl } from '@/app/config/routes';
-import subscriberSchema from '@/app/helpers/validation-schemas/subscriber-schema';
+import subscriberSchema from '@/app/helpers/validationSchemas/subscriberSchema';
 import Btn from '@/app/ui/button/Btn';
 import { Input } from '@/components/index';
 

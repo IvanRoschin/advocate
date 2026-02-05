@@ -1,6 +1,7 @@
 import { FlatCompat } from '@eslint/eslintrc';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import prettier from 'eslint-config-prettier';
+import unicorn from 'eslint-plugin-unicorn';
 
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -25,11 +26,12 @@ const config = [
     ],
   },
 
-  // TypeScript rules
+  // TypeScript + Unicorn rules
   {
     files: ['**/*.ts', '**/*.tsx'],
     plugins: {
       '@typescript-eslint': tsPlugin,
+      unicorn,
     },
     languageOptions: {
       parserOptions: {
@@ -46,6 +48,17 @@ const config = [
 
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
+
+      'unicorn/filename-case': [
+        'error',
+        {
+          cases: {
+            pascalCase: true,
+            camelCase: true, // index.ts, index.tsx
+          },
+          ignore: ['^index\\.tsx?$', '^page\\.tsx?$', '^layout\\.tsx?$'],
+        },
+      ],
     },
   },
 
@@ -57,7 +70,7 @@ const config = [
     },
   },
 
-  // Turn off ESLint rules that conflict with Prettier
+  // Prettier
   prettier,
 ];
 

@@ -1,7 +1,10 @@
 import * as Yup from 'yup';
 
 const categorySchema = Yup.object({
-  title: Yup.string().min(2).max(50).required(),
+  title: Yup.string()
+    .min(2, 'Мінімальна кількість символів 2')
+    .max(50, 'Максимальна кількість символів 50')
+    .required(`Обов'язкове поле`),
 
   src: Yup.array()
     .of(Yup.string())
