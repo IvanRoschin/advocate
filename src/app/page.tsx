@@ -9,10 +9,10 @@ import {
   Reviews,
   WhyChooseMe,
 } from './components/sections';
-import Services from './components/services/Services';
+import Services from './components/sections/services/Services';
 import Socials from './components/socials/Socials';
+import ScrollToTopButton from './components/ui/button/ScrollToTopButton';
 import { generateMetadata } from './helpers/generateMetadata';
-import ScrollToTopButton from './ui/button/ScrollToTopButton';
 
 export const metadata = generateMetadata({
   title: 'Головна | Адвокат Іван Рощин',

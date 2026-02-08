@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { validate } from '@/app/helpers/validate';
-import leadSchema from '@/app/helpers/validationSchemas/leadSchema';
+import leadSchema from '@/app/helpers/validationSchemas/lead.schema';
 import { leadAdminTemplate, leadClientTemplate } from '@/app/lib/mailTemplates';
 import { sendMail } from '@/app/lib/sendMail';
 import { sendTelegramMessage } from '@/app/lib/sendTelegram';

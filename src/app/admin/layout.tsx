@@ -1,6 +1,7 @@
 'use client';
 
 import { Header, Socials } from '../components';
+import AdminSidebar from './components/AdminSidebar';
 
 export default function AdminLayout({
   children,
@@ -11,7 +12,10 @@ export default function AdminLayout({
     <div className="blog-wrapper">
       <Socials />
       <Header />
-      {children}
+      <div className="flex">
+        <AdminSidebar />
+        {children}
+      </div>
     </div>
   );
 }

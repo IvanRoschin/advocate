@@ -1,19 +1,27 @@
 'use client';
 
+import { IconType } from 'react-icons/lib';
+
 import Button, { ButtonProps } from '@mui/material/Button';
 
 type BtnVariant = 'accent' | 'outline' | 'ghost';
 
+type BtnType = 'submit' | 'reset' | 'button';
+
 interface BtnProps extends Omit<ButtonProps, 'variant'> {
-  title: string;
+  label?: string;
   uiVariant?: BtnVariant;
   radius?: number | string;
+  type?: BtnType;
+  icon?: IconType;
 }
 
 const Btn = ({
-  title,
+  label,
   uiVariant = 'accent',
   radius = 6,
+  icon: Icon,
+  type = 'button',
   sx,
   ...rest
 }: BtnProps) => {
@@ -48,6 +56,7 @@ const Btn = ({
 
   return (
     <Button
+      type={type}
       disableElevation
       sx={{
         borderRadius: radius,
@@ -61,7 +70,8 @@ const Btn = ({
       }}
       {...rest}
     >
-      {title}
+      {Icon && <Icon size={14} className={'mx-auto'} />}
+      {label}
     </Button>
   );
 };

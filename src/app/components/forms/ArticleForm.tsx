@@ -4,10 +4,10 @@ import { Form, Formik, FormikProps } from 'formik';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
+import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
-import { articleSchema } from '@/app/helpers/validationSchemas/articleSchema';
+import { articleSchema } from '@/app/helpers/validationSchemas/article/createArticle.schema';
 import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
-import Btn from '@/app/ui/button/Btn';
 import {
   AutoSlugField,
   Checkbox,
@@ -142,7 +142,7 @@ const InnerArticleForm = ({
       <div className="flex justify-end">
         <Btn
           type="submit"
-          title="Створити статтю"
+          label="Створити статтю"
           disabled={!isValid || isSubmitting}
         />
       </div>

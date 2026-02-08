@@ -4,14 +4,9 @@ export { default as Header } from '@/app/components/header/Header';
 
 export { default as Logo } from '@/app/components/logo/Logo';
 
-export { default as Services } from '@/app/components/services/Services';
-
 export { default as Socials } from '@/app/components/socials/Socials';
 
-export {
-  AutoSlugField,
-  Checkbox,
-  Input,
-  Select,
-  Textarea,
-} from '@/app/components/inputs';
+export * from './common';
+export * from './inputs';
+export * from './sections';
+export * from './ui';

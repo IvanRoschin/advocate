@@ -2,8 +2,8 @@
 
 import Image from 'next/image';
 
+import Btn from '@/app/components/ui/button/Btn';
 import { getRouteUrl } from '@/app/config/routes';
-import Btn from '@/app/ui/button/Btn';
 
 const data = {
   uptitle: 'Адвокатська допомога • Захист інтересів • Результат',
@@ -57,14 +57,14 @@ const Hero = () => {
 
         <div className="flex flex-col gap-4 sm:flex-row">
           <Btn
-            title="Отримати консультацію"
+            label="Отримати консультацію"
             component="a"
             href={getRouteUrl('order')}
           />
 
           {phone && (
             <Btn
-              title={`Зателефонувати зараз ${phone}`}
+              label={`Зателефонувати зараз ${phone}`}
               component="a"
               href={`tel:${phone}`}
               uiVariant="outline"

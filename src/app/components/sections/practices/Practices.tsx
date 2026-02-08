@@ -1,4 +1,4 @@
-import Btn from '@/app/ui/button/Btn';
+import Btn from '@/app/components/ui/button/Btn';
 import PracticesCard from './PracticesCard';
 
 const data = [
@@ -56,7 +56,7 @@ const Practices = () => {
           ))}
         </div>
         <div className="flex items-center justify-center">
-          <Btn title="Більше послуг" />
+          <Btn label="Більше послуг" />
         </div>
       </div>
     </section>

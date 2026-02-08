@@ -1,4 +1,4 @@
-import Btn from '@/app/ui/button/Btn';
+import Btn from '@/app/components/ui/button/Btn';
 
 type Props = {
   title: string;
@@ -33,7 +33,7 @@ const PracticesCard = ({ title, text, link }: Props) => {
 
       {/* Низ карточки */}
       <div className="mt-6 flex justify-center">
-        <Btn title="Далі" uiVariant="outline" />
+        <Btn label="Далі" uiVariant="outline" />
       </div>
     </div>
   );

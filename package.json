@@ -36,11 +36,13 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
+    "react-loader-spinner": "^8.0.2",
     "react-slot-counter": "^3.3.2",
     "slugify": "^1.6.6",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
-    "yup": "^1.7.1"
+    "yup": "^1.7.1",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
