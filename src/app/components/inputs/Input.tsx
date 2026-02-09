@@ -11,6 +11,7 @@ interface InputProps {
   prefixIcon?: ReactNode;
   className?: string;
   type?: string;
+  autoComplete?: string;
 }
 
 const Input = memo(function Input({
@@ -21,6 +22,7 @@ const Input = memo(function Input({
   prefixIcon,
   className = '',
   type,
+  autoComplete,
 }: InputProps) {
   const [, meta] = useField(name);
   const hasError = Boolean(meta.touched && meta.error);
@@ -35,6 +37,7 @@ const Input = memo(function Input({
         id={name}
         type={type}
         name={name}
+        autoComplete={autoComplete}
         disabled={disabled}
         placeholder=" "
         className={`peer input-field w-full rounded-xl px-4 pt-6 pb-2 transition-all ${prefixIcon ? 'pl-10' : 'pl-4'} ${hasError ? 'border-red-500' : ''} ${disabled ? 'cursor-not-allowed opacity-60' : ''} `}

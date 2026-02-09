@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 
 import { NextImage } from '@/app/components/common';
-import Btn from '@/app/ui/button/Btn';
+import Btn from '@/app/components/ui/button/Btn';
 
 interface ImageUploadCloudinaryProps {
   setFieldValue: (field: string, value: unknown) => void;
@@ -127,7 +127,7 @@ const ImageUploadCloudinary: React.FC<ImageUploadCloudinaryProps> = ({
                 </div>
                 <Btn
                   type="button"
-                  title="✕"
+                  label="✕"
                   uiVariant="ghost"
                   radius={999}
                   onClick={e => {

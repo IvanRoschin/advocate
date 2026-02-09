@@ -7,10 +7,10 @@ const testimonialSchema = new Schema(
     article: {
       type: Types.ObjectId,
       ref: 'Article',
-      required: false, // можно true, если отзыв всегда к товару
+      required: false,
     },
     author: {
-      type: String, // Имя автора
+      type: String,
       required: true,
       trim: true,
     },

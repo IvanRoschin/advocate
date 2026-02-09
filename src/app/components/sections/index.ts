@@ -1,7 +1,8 @@
-export { default as About } from '@/app/components/sections/about/About';
-export { default as Advantages } from '@/app/components/sections/advantages/Advantages';
-export { default as Hero } from '@/app/components/sections/hero/Hero';
-export { default as Order } from '@/app/components/sections/order/Order';
-export { default as Practices } from '@/app/components/sections/practices/Practices';
-export { default as Reviews } from '@/app/components/sections/reviews/Reviews';
-export { default as WhyChooseMe } from '@/app/components/sections/whyChooseMe/WhyChooseMe';
+export { default as About } from './about/About';
+export { default as Advantages } from './advantages/Advantages';
+export { default as Hero } from './hero/Hero';
+export { default as Order } from './order/Order';
+export { default as Practices } from './practices/Practices';
+export { default as Reviews } from './reviews/Reviews';
+export { default as Services } from './services/Services';
+export { default as WhyChooseMe } from './whyChooseMe/WhyChooseMe';

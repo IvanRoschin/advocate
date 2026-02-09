@@ -1,9 +1,8 @@
 'use client';
 
-import Image from 'next/image';
+import Btn from '@/app/components/ui/button/Btn';
 
-import Btn from '@/app/ui/button/Btn';
-
+import { NextImage } from '../../common';
 import AdvantageItem from './AdvantageItem';
 
 const Advantages = () => {
@@ -16,12 +15,13 @@ const Advantages = () => {
       itemType="https://schema.org/LegalService"
     >
       {/* Background */}
-      <Image
+      <NextImage
         src="/advantages_bg_v1.webp"
         alt="Юридичні послуги адвоката"
         fill
         priority
         className="-z-20 object-cover"
+        useSkeleton
       />
 
       {/* Overlay */}
@@ -75,7 +75,7 @@ const Advantages = () => {
           {/* Кнопка рендерится только на клиенте */}
           {phone && (
             <Btn
-              title={`Зателефонувати адвокату ${phone}`}
+              label={`Зателефонувати адвокату ${phone}`}
               component="a"
               href={`tel:${phone}`}
               uiVariant="accent"

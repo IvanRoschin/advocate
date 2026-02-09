@@ -4,10 +4,10 @@ import { Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
-import leadSchema from '@/app/helpers/validationSchemas/leadSchema';
+import leadSchema from '@/app/helpers/validationSchemas/lead.schema';
 import { ApiClientError } from '@/app/lib/client/apiFetch';
-import Btn from '@/app/ui/button/Btn';
 import { Checkbox, Input } from '@/components/index';
 
 declare global {
@@ -97,7 +97,7 @@ const LeadForm = () => {
           <div className="flex items-center justify-center">
             <Btn
               type="submit"
-              title="Надіслати"
+              label="Надіслати"
               disabled={!isValid || isSubmitting}
             />
           </div>

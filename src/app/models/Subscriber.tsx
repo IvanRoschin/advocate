@@ -2,7 +2,6 @@ import mongoose, { InferSchemaType, Types } from 'mongoose';
 
 const { Schema } = mongoose;
 
-// Схема подписчика
 const subscriberSchema = new Schema(
   {
     email: {

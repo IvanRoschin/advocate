@@ -1,15 +1,103 @@
 'use client';
 
-import { ArticleForm, CategoryForm } from '../components/forms';
+import Link from 'next/link';
+import {
+  FaBullhorn,
+  FaFileAlt,
+  FaShoppingCart,
+  FaTags,
+  FaUsers,
+  FaUserTie,
+} from 'react-icons/fa';
 
-const adminPage = () => {
+const stats = [
+  {
+    title: 'Клиенты',
+    value: '512',
+    icon: <FaUserTie className="h-6 w-6 text-white" />,
+    color: 'bg-teal-500',
+    trend: 80,
+    link: 'admin/clients',
+  },
+  {
+    title: 'Пользователи',
+    value: '1,245',
+    icon: <FaUsers className="h-6 w-6 text-white" />,
+    color: 'bg-blue-500',
+    trend: 75,
+    link: 'admin/users',
+  },
+  {
+    title: 'Статьи',
+    value: '78',
+    icon: <FaFileAlt className="h-6 w-6 text-white" />,
+    color: 'bg-green-500',
+    trend: 60,
+    link: 'admin/articles',
+  },
+  {
+    title: 'Категории',
+    value: '12',
+    icon: <FaTags className="h-6 w-6 text-white" />,
+    color: 'bg-yellow-500',
+    trend: 90,
+    link: 'admin/categories',
+  },
+  {
+    title: 'Заказы',
+    value: '12',
+    icon: <FaShoppingCart className="h-6 w-6 text-white" />,
+    color: 'bg-purple-500',
+    trend: 40,
+    link: 'admin/orders',
+  },
+  {
+    title: 'Лиды',
+    value: '34',
+    icon: <FaBullhorn className="h-6 w-6 text-white" />,
+    color: 'bg-pink-500',
+    trend: 55,
+    link: 'admin/leads',
+  },
+];
+
+const AdminPage = () => {
   return (
-    <div className="container">
-      adminPage
-      <ArticleForm />
-      <CategoryForm />
+    <div className="grid grid-cols-1 gap-6 p-6 lg:grid-cols-3">
+      {stats.map(stat => (
+        <Link
+          key={stat.title}
+          href={stat.link}
+          className="relative overflow-hidden rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+        >
+          {/* Фоновый цвет полосы */}
+          <div className={`${stat.color} absolute top-0 left-0 h-2 w-full`} />
+
+          <div className="relative z-10 flex items-center gap-4 bg-white p-6">
+            <div
+              className={`flex h-12 w-12 items-center justify-center rounded-full ${stat.color}`}
+            >
+              {stat.icon}
+            </div>
+            <div className="flex flex-col">
+              <h3 className="text-lg font-semibold text-zinc-500">
+                {stat.title}
+              </h3>
+              <p className="text-sm text-gray-500">{stat.value}</p>
+
+              {/* Прогресс-бар */}
+              <div className="mt-2 h-2 w-full rounded-full bg-gray-200">
+                <div
+                  className={`${stat.color} h-2 rounded-full transition-all`}
+                  style={{ width: `${stat.trend}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </Link>
+      ))}
     </div>
   );
 };
 
-export default adminPage;
+export default AdminPage;

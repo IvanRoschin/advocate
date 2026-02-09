@@ -23,6 +23,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.2.0",
+    "@tanstack/react-table": "^8.21.3",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
@@ -36,11 +37,14 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-icons": "^5.5.0",
+    "react-loader-spinner": "^8.0.2",
     "react-slot-counter": "^3.3.2",
     "slugify": "^1.6.6",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
-    "yup": "^1.7.1"
+    "use-debounce": "^10.1.0",
+    "yup": "^1.7.1",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -1,7 +1,7 @@
 'use client';
 
+import Btn from '@/app/components/ui/button/Btn';
 import { routes } from '@/app/config/routes';
-import Btn from '@/app/ui/button/Btn';
 
 import Logo from '../logo/Logo';
 import Menu from '../menu/Menu';
@@ -19,7 +19,7 @@ const Header = () => {
         <div className="mt-4 hidden w-full sm:mt-0 sm:block xl:w-auto xl:shrink-0">
           <div className="flex justify-center xl:justify-end">
             <Btn
-              title="Запис на консультацію"
+              label="Запис на консультацію"
               component="a"
               href={routes.public.order}
             />
