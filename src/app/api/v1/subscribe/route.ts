@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server';
 
 import { validate } from '@/app/helpers/validate';
 import { subscriberSchema } from '@/app/helpers/validationSchemas/index';
-import { sendMail } from '@/app/lib/sendMail';
-import { sendTelegramMessage } from '@/app/lib/sendTelegram';
+import { sendEmail } from '@/app/lib';
+import type { ApiResponse } from '@/app/lib/server/ApiError';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import { connectDB } from '@/app/lib/server/mongoose';
+import { sendTelegramMessage } from '@/app/lib/server/sendTelegram';
 import { Subscriber } from '@/app/models/index';
-
-import type { ApiResponse } from '@/app/lib/server/ApiError';
+import { EmailTemplateType } from '@/app/templates/email';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'advocate.roschin@gmail.com';
 
 async function verifyRecaptcha(token: string) {
@@ -54,11 +54,22 @@ export async function POST(req: Request) {
       subscriber = await Subscriber.create(data);
     }
 
+    // ✉️ Отправка уведомления клиенту
+    await sendEmail({
+      to: data.email,
+      type: EmailTemplateType.SUBSCRIBER_CLIENT,
+      props: {
+        email: data.email,
+      },
+    }).catch(console.error);
+
     // ✉️ Отправка уведомления админу
-    sendMail({
+    await sendEmail({
       to: ADMIN_EMAIL,
-      subject: '🚨 Новый подписчик на рассылку',
-      body: `Новый подписчик: ${data.email}`,
+      type: EmailTemplateType.SUBSCRIBER_ADMIN,
+      props: {
+        email: data.email,
+      },
     }).catch(console.error);
 
     // ✉️ Telegram уведомление

@@ -6,11 +6,11 @@ import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
-import { resetPasswordAction } from '@/app/actions/auth';
-import { restorePasswordFormSchema } from '@/app/helpers/validationSchemas';
-import { useNotificationModal } from '@/app/hooks';
-import { FormField, ModalNotification } from '@/components/common';
-import { Button, Modal } from '@/components/ui';
+import { useModal } from '@/app/hooks/useModal';
+// import { resetPasswordAction } from '@/app/actions/auth';
+// import { restorePasswordFormSchema } from '@/app/helpers/validationSchemas';
+// import { useNotificationModal } from '@/app/hooks';
+import { Btn, Input, Modal, ModalNotification } from '@/components';
 
 interface InitialStateType {
   newPassword: string;
@@ -23,12 +23,12 @@ const RestorePasswordForm = () => {
   const [showPassword2, setShowPassword2] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message] = useState('');
 
   const searchParams = useSearchParams();
   const token = searchParams.get('token') as string;
 
-  const notificationModal = useNotificationModal();
+  const notificationModal = useModal('notificationModal');
 
   const initialValues: InitialStateType = {
     newPassword: '',
@@ -42,22 +42,22 @@ const RestorePasswordForm = () => {
   ) => {
     setIsLoading(true);
 
-    const res = await resetPasswordAction(
-      values.token, // token
-      values.newPassword, // password
-      values.confirmNewPassword // confirmPassword
-    );
+    // const res = await resetPasswordAction(
+    //   values.token, // token
+    //   values.newPassword, // password
+    //   values.confirmNewPassword // confirmPassword
+    // );
 
-    setMessage(res.message);
-    notificationModal.onOpen();
+    // setMessage(res.message);
+    notificationModal.open();
 
     setIsLoading(false);
     resetForm();
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-      <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8 md:p-10">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl md:p-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -68,26 +68,23 @@ const RestorePasswordForm = () => {
           <Formik
             initialValues={initialValues}
             onSubmit={handleSubmit}
-            validationSchema={restorePasswordFormSchema}
+            // validationSchema={restorePasswordFormSchema}
             enableReinitialize
           >
-            {({ errors }) => (
+            {() => (
               <Form className="flex flex-col gap-5">
                 {/* New password */}
                 <div className="relative">
-                  <FormField
-                    item={{
-                      label: 'Новий пароль',
-                      type: showPassword1 ? 'text' : 'password',
-                      id: 'newPassword',
-                      required: true,
-                    }}
-                    errors={errors}
+                  <Input
+                    name="Новий пароль"
+                    label="Новий пароль"
+                    type={`${showPassword1} ? 'text' : 'password'`}
+                    required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword1(prev => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500"
                     tabIndex={-1}
                   >
                     {showPassword1 ? (
@@ -100,19 +97,16 @@ const RestorePasswordForm = () => {
 
                 {/* Confirm password */}
                 <div className="relative">
-                  <FormField
-                    item={{
-                      label: 'Повторіть пароль',
-                      type: showPassword2 ? 'text' : 'password',
-                      id: 'confirmNewPassword',
-                      required: true,
-                    }}
-                    errors={errors}
+                  <Input
+                    name="Повторіть пароль"
+                    label="Повторіть пароль"
+                    type={`${showPassword2} ? 'text' : 'password'`}
+                    required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword2(prev => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500"
                     tabIndex={-1}
                   >
                     {showPassword2 ? (
@@ -130,7 +124,7 @@ const RestorePasswordForm = () => {
                   }}
                   whileTap={{ scale: 0.97 }}
                 >
-                  <Button
+                  <Btn
                     type="submit"
                     label={isLoading ? 'Завантаження...' : 'Змінити пароль'}
                     disabled={isLoading}
@@ -148,11 +142,11 @@ const RestorePasswordForm = () => {
           <ModalNotification
             title="Повідомлення"
             message={message}
-            onConfirm={notificationModal.onClose}
+            onConfirm={notificationModal.close}
           />
         }
         isOpen={notificationModal.isOpen}
-        onClose={notificationModal.onClose}
+        onClose={notificationModal.close}
       />
     </div>
   );

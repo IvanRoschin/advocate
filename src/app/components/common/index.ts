@@ -4,5 +4,7 @@ export { default as EmptyState } from '@/components/common/EmptyState';
 export { default as Heading } from '@/components/common/Heading';
 export { default as Loader } from '@/components/common/Loader';
 export { default as Modal } from '@/components/common/Modal';
+export { default as ModalNotification } from '@/components/common/ModalNotification';
 export { default as NextImage } from '@/components/common/NextImage';
 export { default as Skeleton } from '@/components/common/Skeleton';
+export { default as Switcher } from '@/components/common/Switcher';

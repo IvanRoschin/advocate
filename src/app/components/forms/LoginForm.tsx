@@ -9,11 +9,9 @@ import { FcGoogle } from 'react-icons/fc';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { toast } from 'sonner';
 
-import { routes } from '@/app/helpers/routes';
-import { FormField } from '@/components/common';
-import { Button } from '@/components/ui';
-import { userLoginSchema } from '@/helpers/index';
-import { UserRole } from '@/types/IUser';
+import { routes } from '@/app/config/routes';
+import { Btn, Input } from '@/components';
+import { UserRole } from '@/types';
 
 interface InitialStateType {
   email: string;
@@ -50,11 +48,10 @@ const LoginForm = () => {
 
       const session = await getSession();
 
-      console.log('session', session);
       const role = session?.user?.role as UserRole;
 
       if (role === UserRole.ADMIN) router.replace('/admin');
-      else router.replace('/customer');
+      else router.replace('/client');
 
       router.refresh();
     } else {
@@ -68,59 +65,40 @@ const LoginForm = () => {
     });
   };
 
-  const inputs = [
-    {
-      label: 'Email',
-      type: 'text',
-      id: 'email',
-      required: true,
-      autoComplete: 'username',
-    },
-    {
-      label: 'Password',
-      type: 'password',
-      id: 'password',
-      required: true,
-      autoComplete: 'current-password',
-    },
-  ];
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-      <div className="w-full max-w-md md:max-w-lg bg-white shadow-2xl rounded-2xl p-8 md:p-10">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl md:max-w-lg md:p-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <h2 className="text-center text-2xl md:text-3xl font-bold text-gray-800 mb-6">
+          <h2 className="mb-6 text-center text-2xl font-bold text-gray-800 md:text-3xl">
             Сторінка авторизації
           </h2>
 
           <Formik
             initialValues={initialValues}
             onSubmit={handleSubmit}
-            validationSchema={userLoginSchema}
+            // validationSchema={userLoginSchema}
             enableReinitialize
           >
-            {({ errors, handleChange, values }) => (
+            {() => (
               <Form className="flex flex-col gap-5">
                 {/* Email */}
-                <FormField item={inputs[0]} errors={errors} />
-
+                <Input name="email" label="Email" type="text" required />
                 {/* Password с глазиком 👇 */}
                 <div className="relative">
-                  <FormField
-                    item={{
-                      ...inputs[1],
-                      type: showPassword ? 'text' : 'password',
-                    }}
-                    errors={errors}
+                  <Input
+                    name="password"
+                    label="Password"
+                    type={`${showPassword ? 'text' : 'password'}`}
+                    required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(prev => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 transition-colors hover:text-gray-700"
                     tabIndex={-1}
                   >
                     {showPassword ? (
@@ -139,21 +117,20 @@ const LoginForm = () => {
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
-                  <Button
+                  <Btn
                     type="submit"
                     label={isLoading ? 'Завантаження...' : 'Увійти'}
                     disabled={isLoading}
-                    className="min-w-[120px] px-5 py-2 text-base md:min-w-[150px]"
                   />
                 </motion.div>
               </Form>
             )}
           </Formik>
 
-          <div className="flex items-center my-8">
-            <hr className="flex-grow border-gray-300" />
-            <span className="px-3 text-gray-500 text-sm">або</span>
-            <hr className="flex-grow border-gray-300" />
+          <div className="my-8 flex items-center">
+            <hr className="grow border-gray-300" />
+            <span className="px-3 text-sm text-gray-500">або</span>
+            <hr className="grow border-gray-300" />
           </div>
 
           <motion.div
@@ -164,8 +141,8 @@ const LoginForm = () => {
             whileTap={{ scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 300 }}
           >
-            <Button
-              outline
+            <Btn
+              uiVariant="outline"
               label="Continue with Google"
               icon={FcGoogle}
               onClick={handleGoogleLogin}
@@ -176,8 +153,8 @@ const LoginForm = () => {
           <p className="mt-8 text-center text-sm text-gray-500">
             Забули пароль?{' '}
             <a
-              href={routes.publicRoutes.auth.forgotPassword}
-              className="nav hover:text-gray-500 font-medium"
+              href={routes.public.auth.forgotPassword}
+              className="nav font-medium hover:text-gray-500"
             >
               Відновити
             </a>

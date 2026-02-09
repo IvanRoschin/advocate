@@ -4,11 +4,11 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
-import { sendPasswordResetEmailAction } from '@/app/actions/auth';
-import { forgotPasswordFormSchema } from '@/app/helpers/validationSchemas';
-import { useNotificationModal } from '@/app/hooks';
-import { FormField, ModalNotification } from '@/components/common';
-import { Button, Modal } from '@/components/ui';
+import { useModal } from '@/app/hooks/useModal';
+// import { sendPasswordResetEmailAction } from '@/app/actions/auth';
+// import { forgotPasswordFormSchema } from '@/app/helpers/validationSchemas';
+// import { useNotificationModal } from '@/app/hooks';
+import { Btn, Input, Modal, ModalNotification } from '@/components';
 
 interface InitialStateType {
   email: string;
@@ -18,7 +18,7 @@ const ForgotPasswordForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  const notificationModal = useNotificationModal();
+  const notificationModal = useModal('notificationModal');
 
   const initialValues: InitialStateType = {
     email: '',
@@ -31,22 +31,18 @@ const ForgotPasswordForm = () => {
     setIsLoading(true);
     setMessage('');
 
-    const res = await sendPasswordResetEmailAction(values.email);
+    // const res = await sendPasswordResetEmailAction(values.email);
 
-    setMessage(res.message);
-    notificationModal.onOpen(); // ← открыть модалку
+    // setMessage(res.message);
+    notificationModal.open(); // ← открыть модалку
 
     setIsLoading(false);
     resetForm(); // ← вызвать resetForm
   };
 
-  const inputs = [
-    { label: 'Email', type: 'text', id: 'email', required: true },
-  ];
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
-      <div className="w-full max-w-md md:max-w-lg bg-white shadow-2xl rounded-2xl p-8 md:p-10">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl md:max-w-lg md:p-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -56,12 +52,12 @@ const ForgotPasswordForm = () => {
           <Formik
             initialValues={initialValues}
             onSubmit={handleSubmit}
-            validationSchema={forgotPasswordFormSchema}
+            // validationSchema={forgotPasswordFormSchema}
             enableReinitialize
           >
-            {({ errors }) => (
+            {() => (
               <Form className="flex flex-col gap-5">
-                <FormField item={inputs[0]} errors={errors} />
+                <Input label="Email" type="text" name="email" required />
 
                 <motion.div
                   whileHover={{
@@ -71,13 +67,13 @@ const ForgotPasswordForm = () => {
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
-                  <Button
+                  <Btn
                     type="submit"
                     label={
                       isLoading ? 'Завантаження...' : 'Надіслати посилання'
                     }
                     disabled={isLoading}
-                    className="min-w-[120px] px-5 py-2 text-base md:min-w-[150px]"
+                    className="min-w-30 px-5 py-2 text-base md:min-w-37.5"
                   />
                 </motion.div>
               </Form>
@@ -91,11 +87,11 @@ const ForgotPasswordForm = () => {
           <ModalNotification
             title="Повідомлення"
             message={message}
-            onConfirm={notificationModal.onClose}
+            onConfirm={notificationModal.close}
           />
         }
         isOpen={notificationModal.isOpen}
-        onClose={notificationModal.onClose}
+        onClose={notificationModal.close}
       />
     </div>
   );

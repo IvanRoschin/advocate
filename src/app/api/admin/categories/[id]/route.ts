@@ -5,9 +5,16 @@ import { connectDB } from '@/app/lib/server/mongoose';
 import { categoryService } from '@/app/lib/services/category.service';
 import { UpdateCategoryDTO } from '@/app/types';
 
-export async function GET(id: string) {
+/* ---------------- GET ---------------- */
+
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connectDB();
+
+    const { id } = await params;
 
     const category = await categoryService.getById(id);
 
@@ -17,9 +24,17 @@ export async function GET(id: string) {
   }
 }
 
-export async function PATCH(id: string, payload: UpdateCategoryDTO) {
+/* ---------------- PATCH ---------------- */
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connectDB();
+
+    const { id } = await params;
+    const payload: UpdateCategoryDTO = await request.json();
 
     const updatedCategory = await categoryService.update(id, payload);
 
@@ -29,9 +44,16 @@ export async function PATCH(id: string, payload: UpdateCategoryDTO) {
   }
 }
 
-export async function DELETE(id: string) {
+/* ---------------- DELETE ---------------- */
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connectDB();
+
+    const { id } = await params;
 
     await categoryService.delete(id);
 

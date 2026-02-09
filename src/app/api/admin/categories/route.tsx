@@ -1,26 +1,19 @@
 import { NextResponse } from 'next/server';
 
-import { Category } from '@/models';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { connectDB } from '@/app/lib/server/mongoose';
-import { CreateCategoryRequestDTO, createCategorySchema } from '@/app/types';
+import { categoryService } from '@/app/lib/services/category.service';
+import { CreateCategoryRequestDTO } from '@/app/types';
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
     await connectDB();
 
-    const body = (await req.json()) as CreateCategoryRequestDTO;
+    const payload: CreateCategoryRequestDTO = await request.json();
 
-    const data = await createCategorySchema.validate(body, {
-      abortEarly: false,
-    });
+    const newCategory = await categoryService.create(payload);
 
-    const category = await Category.create(data);
-
-    return NextResponse.json(
-      { ok: true, data: category.toObject() },
-      { status: 201 }
-    );
+    return NextResponse.json({ ok: true, data: newCategory });
   } catch (err) {
     return errorToResponse(err);
   }

@@ -1,8 +1,8 @@
+'use client';
+
 import { ForgotPasswordForm } from '@/app/components';
 
-type Props = {};
-
-const ForgotPasswordClient = (props: Props) => {
+const ForgotPasswordClient = () => {
   return <ForgotPasswordForm />;
 };
 

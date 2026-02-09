@@ -37,3 +37,29 @@ export const createUserSchema = Yup.object({
 });
 
 export type CreateUserFormValues = Yup.InferType<typeof createUserSchema>;
+
+/* -------------------------------- Update (PATCH) -------------------------------- */
+
+export const updateUserSchema = Yup.object({
+  name: baseUserSchema.name.optional(),
+
+  email: baseUserSchema.email.optional(),
+  password: baseUserSchema.password.optional(),
+
+  phone: baseUserSchema.phone.optional(),
+  role: baseUserSchema.role.optional(),
+  isActive: baseUserSchema.isActive,
+  googleId: baseUserSchema.googleId,
+})
+  .noUnknown(true)
+  .test(
+    'at-least-one-field',
+    'Потрібно змінити хоча б одне поле',
+    value =>
+      value != null &&
+      Object.values(value).some(v =>
+        Array.isArray(v) ? v.length > 0 : v !== undefined
+      )
+  );
+
+export type UpdateUserFormValues = Yup.InferType<typeof updateUserSchema>;

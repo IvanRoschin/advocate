@@ -1,5 +1,5 @@
+import { CreateUserRequestDTO, UpdateUserDTO } from '@/app/types';
 import { User } from '@/models';
-import { IUser } from '@/models/User';
 
 export const userRepo = {
   findAll() {
@@ -16,11 +16,11 @@ export const userRepo = {
     return User.findOne({ email });
   },
 
-  create(data: Partial<IUser>) {
+  create(data: CreateUserRequestDTO) {
     return User.create(data);
   },
 
-  update(id: string, data: Partial<IUser>) {
+  update(id: string, data: UpdateUserDTO) {
     return User.findByIdAndUpdate(id, data, { new: true });
   },
 

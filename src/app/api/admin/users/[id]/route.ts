@@ -1,12 +1,9 @@
 import { NextResponse } from 'next/server';
 
-import {
-  UpdateUserDTO,
-  updateUserSchema,
-} from '@/app/helpers/validationSchemas/user/updateUser.schema';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import { connectDB } from '@/app/lib/server/mongoose';
+import { UpdateUserDTO, updateUserSchema } from '@/app/types';
 import { userService } from '@/lib/services/user.service';
 
 interface Params {

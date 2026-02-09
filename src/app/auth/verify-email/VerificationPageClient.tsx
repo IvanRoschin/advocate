@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { routes } from '@/helpers/routes';
+import { routes } from '@/app/config/routes';
 
 export default function VerificationPageClient() {
   const searchParams = useSearchParams();
@@ -14,32 +14,40 @@ export default function VerificationPageClient() {
 
   useEffect(() => {
     if (!token) {
-      setMessage('Токен не знайдений.');
-      setSuccess(false);
+      queueMicrotask(() => {
+        setMessage('Токен не знайдений.');
+        setSuccess(false);
+      });
       return;
     }
 
-    async function verify() {
-      const res = await fetch('/api/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
-      });
+    const verify = async () => {
+      try {
+        const res = await fetch('/api/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+        });
 
-      const result = await res.json();
-      setMessage(result.message);
-      setSuccess(result.success);
+        const result: { message: string; success: boolean } = await res.json();
 
-      if (result.success) {
-        setTimeout(() => router.push(routes.publicRoutes.auth.signIn), 3000);
+        setMessage(result.message);
+        setSuccess(result.success);
+
+        if (result.success) {
+          setTimeout(() => router.push(routes.public.auth.signIn), 3000);
+        }
+      } catch {
+        setMessage('Помилка перевірки токена.');
+        setSuccess(false);
       }
-    }
+    };
 
     verify();
   }, [token, router]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-4">
+    <div className="flex min-h-[60vh] flex-col items-center justify-center p-4 text-center">
       <h2
         className={`mt-4 text-xl ${success ? 'text-green-600' : 'text-red-600'}`}
       >

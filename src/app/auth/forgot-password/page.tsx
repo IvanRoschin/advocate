@@ -1,8 +1,6 @@
 import ForgotPasswordClient from './ForgotPasswordClient';
 
-type Props = {};
-
-const forgotPasswordPage = (props: Props) => {
+const forgotPasswordPage = () => {
   return <ForgotPasswordClient />;
 };
 

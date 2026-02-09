@@ -5,20 +5,11 @@ import { toast } from 'sonner';
 
 import { ArticleForm } from '@/app/components/forms';
 import { ArticleFormValues } from '@/app/components/forms/ArticleForm';
-
-type User = {
-  id: string;
-  name: string;
-};
-
-type Category = {
-  id: string;
-  name: string;
-};
+import { CategoryResponseDTO, UserResponseDTO } from '@/app/types';
 
 const AddArticlePage = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [users, setUsers] = useState<UserResponseDTO[]>([]);
+  const [categories, setCategories] = useState<CategoryResponseDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +25,7 @@ const AddArticlePage = () => {
         const categoriesJson = await categoriesRes.json();
         setCategories(categoriesJson || []);
       } catch (err) {
-        toast.error('Ошибка при загрузке пользователей или категорий');
+        toast.error(err instanceof Error ? err.message : 'Помилка створення');
       } finally {
         setLoading(false);
       }
@@ -50,6 +41,7 @@ const AddArticlePage = () => {
   const initialValues: ArticleFormValues = {
     title: '',
     slug: '',
+    category: '',
     slugTouchedManually: false,
     status: 'draft',
     visibility: 'public',
@@ -58,9 +50,9 @@ const AddArticlePage = () => {
     content: '',
     readingTime: 5,
     language: 'uk',
-    author: users[0]?.id || '',
+    author: users[0]?._id || '',
     coAuthors: [],
-    tags: categories.map(c => c.id),
+    tags: categories.map(c => c._id),
     coverImage: [],
     seo: {
       title: '',
@@ -78,8 +70,14 @@ const AddArticlePage = () => {
 
       <ArticleForm
         initialValues={initialValues}
-        users={users}
-        categories={categories}
+        users={users.map(u => ({
+          id: u._id.toString(),
+          name: u.name,
+        }))}
+        categories={categories.map(c => ({
+          id: c._id.toString(),
+          name: c.title,
+        }))}
       />
     </div>
   );

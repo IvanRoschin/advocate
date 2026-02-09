@@ -2,10 +2,10 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { CiSearch } from 'react-icons/ci';
+import { CiCircleRemove, CiSearch } from 'react-icons/ci';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { Button, Icon } from '@/components/index';
+import { Btn } from '@/components/index';
 
 const Search = ({ placeholder }: { placeholder: string }) => {
   const searchParams = useSearchParams();
@@ -32,18 +32,18 @@ const Search = ({ placeholder }: { placeholder: string }) => {
   );
 
   return (
-    <form className="w-full mx-7">
-      <label className="mb-2 text-sm font-medium text-gray-900 sr-only">
+    <form className="mx-7 w-full">
+      <label className="sr-only mb-2 text-sm font-medium text-gray-900">
         Пошук
       </label>
-      <div className="relative w-full flex justify-center items-center">
-        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none z-10">
+      <div className="relative flex w-full items-center justify-center">
+        <div className="pointer-events-none absolute inset-y-0 start-0 z-10 flex items-center ps-3">
           <CiSearch />
         </div>
         <input
           type="text"
           name="search"
-          className=" relative py-1 block w-full ps-10 mr-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primaryAccentColor focus:border-primaryAccentColor "
+          className="focus:ring-primaryAccentColor focus:border-primaryAccentColor relative mr-4 block w-full rounded-lg border border-gray-300 bg-gray-50 py-1 ps-10 text-sm text-gray-900"
           placeholder={placeholder}
           required
           value={inputValue || ''}
@@ -51,22 +51,22 @@ const Search = ({ placeholder }: { placeholder: string }) => {
         />
         <button
           type="button"
-          className={`absolute top-[15%] right-[120px] ${inputValue ? 'block' : 'hidden'}`}
+          className={`absolute top-[15%] right-30 ${inputValue ? 'block' : 'hidden'}`}
           style={{ display: inputValue ? 'block' : 'none' }}
           onClick={() => {
             setInputValue('');
             replace(`${pathname}`, { scroll: false });
           }}
         >
-          <Icon
-            name={'icon_close'}
-            className={`w-5 h-5 border border-primaryAccentColor  text-primaryAccentColor p-1 rounded-full 
-                hover:bg-primaryAccentColor focus:bg-[primaryAccentColor] ${
-                  inputValue ? 'block' : 'hidden'
-                }`}
-          />
+          <span
+            className={`border-primaryAccentColor text-primaryAccentColor hover:bg-primaryAccentColor h-5 w-5 rounded-full border p-1 focus:bg-[primaryAccentColor] ${
+              inputValue ? 'block' : 'hidden'
+            }`}
+          >
+            <CiCircleRemove />
+          </span>
         </button>
-        <Button type="submit" label="Знайти" small />
+        <Btn type="submit" label="Знайти" />
       </div>
     </form>
   );
