@@ -79,7 +79,7 @@ const Menu = () => {
       </div>
 
       {/* Desktop menu */}
-      <ul className="mx-auto hidden w-full max-w-5xl grid-cols-3 gap-2 text-sm font-medium text-gray-700 sm:mb-4 sm:grid sm:gap-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-4 xl:pt-8">
+      <ul className="h2 mx-auto hidden w-full max-w-5xl grid-cols-3 gap-2 text-sm font-medium text-gray-700 sm:mb-4 sm:grid sm:gap-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-4 xl:pt-8">
         {mainMenu.map(({ title, route }) => (
           <li key={route} className="text-center">
             <Link

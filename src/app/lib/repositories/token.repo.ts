@@ -1,15 +1,15 @@
-import { connectDB } from '@/app/lib/server/mongoose';
+import { dbConnect } from '@/app/lib/server/mongoose';
 import { TokenType } from '@/app/types';
 import Token, { TokenDB, TokenDocument } from '@/models/Token';
 
 export const tokenRepo = {
   async create(data: Partial<TokenDocument>) {
-    await connectDB();
+    await dbConnect();
     return Token.create(data);
   },
 
   async findValid(token: string, type?: TokenType) {
-    await connectDB();
+    await dbConnect();
     const query: Partial<TokenDB> & { token: string; used: boolean } = {
       token,
       used: false,

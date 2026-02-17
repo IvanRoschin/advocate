@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { routes } from '@/app/config';
 import { sendEmail } from '@/app/lib';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { connectDB } from '@/app/lib/server/mongoose';
+import { dbConnect } from '@/app/lib/server/mongoose';
 import { EmailTemplateType } from '@/app/templates/email';
 import { CreateUserRequestDTO, createUserSchema } from '@/app/types';
 import { userService } from '@/lib/services/user.service';
@@ -12,7 +12,7 @@ const ADMIN_EMAIL = 'advocate.roschin@gmail.com';
 
 export async function GET() {
   try {
-    await connectDB();
+    await dbConnect();
     const users = await userService.getAll();
 
     return NextResponse.json({ ok: true, data: users });
@@ -23,7 +23,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const body = await req.json();
 

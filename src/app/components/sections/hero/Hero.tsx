@@ -1,8 +1,18 @@
 'use client';
 
 import { getRouteUrl } from '@/app/config/routes';
-import { Btn, NextImage } from '@/components';
+import { Btn } from '@/components';
+import {
+  CarouselItem,
+  HeroCarousel,
+} from '@/components/sections/hero/HeroCarousel';
 import { heroSection, person, social } from '@/resources';
+
+const slides: CarouselItem[] = [
+  { src: '/images/bg/hero_bg.webp', alt: 'Hero background 1' },
+  { src: '/images/bg/hero_bg_2.webp', alt: 'Hero background 2' },
+  { src: '/images/bg/hero_bg_3.webp', alt: 'Hero background 3' },
+];
 
 const Hero = () => {
   const phoneLink =
@@ -11,20 +21,20 @@ const Hero = () => {
 
   return (
     <section className="relative flex h-screen w-full items-center overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <NextImage
-          src={heroSection.background.src}
-          alt={heroSection.background.alt}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-      </div>
+      {/* Слайдер */}
+      <HeroCarousel
+        items={slides}
+        className="z-0"
+        showBars
+        showArrows
+        // временно для проверки:
+        debugBarsTopRight
+      />
 
-      <div className="absolute inset-0 z-10 bg-black/50" />
-
-      <div className="relative z-20 container px-4 text-white">
+      {/* Затемнение */}
+      <div className="pointer-events-none absolute inset-0 z-10 bg-black/50" />
+      {/* Контент */}
+      <div className="relative z-30 container px-4 text-white">
         <p className="mb-6 text-xs tracking-widest text-gray-300 uppercase md:text-sm">
           {heroSection.header.uptitle}
         </p>

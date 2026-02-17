@@ -6,7 +6,7 @@ import { sendEmail } from '@/app/lib';
 import type { ApiResponse } from '@/app/lib/server/ApiError';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
-import { connectDB } from '@/app/lib/server/mongoose';
+import { dbConnect } from '@/app/lib/server/mongoose';
 import { sendTelegramMessage } from '@/app/lib/server/sendTelegram';
 import { Subscriber } from '@/app/models/index';
 import { EmailTemplateType } from '@/app/templates/email';
@@ -25,7 +25,7 @@ async function verifyRecaptcha(token: string) {
 
 export async function POST(req: Request) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const body = (await req.json()) as {
       email: string;

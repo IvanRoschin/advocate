@@ -4,9 +4,8 @@ import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
 import User from '@/models/User';
-import { connectDB } from '../lib/server/mongoose';
+import { dbConnect } from '../lib/server/mongoose';
 import { routes } from './routes';
-
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -85,7 +84,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.phone || !credentials?.password) return null;
 
-        await connectDB();
+        await dbConnect();
 
         const user = await User.findOne({ phone: credentials.phone });
         if (!user) return null;
@@ -105,7 +104,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
 
       async profile(profile) {
-        await connectDB();
+        await dbConnect();
 
         let user = await User.findOne({ googleId: profile.sub });
 
@@ -144,7 +143,7 @@ export const authOptions: NextAuthOptions = {
   // -------------------------------
   callbacks: {
     async jwt({ token, user, trigger, session }) {
-      await connectDB();
+      await dbConnect();
 
       // 1) Login → записываем только id
       if (user) {

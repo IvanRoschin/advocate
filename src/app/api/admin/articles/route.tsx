@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server';
 
 import { articleSchema } from '@/app/helpers/validationSchemas';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { connectDB } from '@/app/lib/server/mongoose';
+import { dbConnect } from '@/app/lib/server/mongoose';
 import { Article, ArticleInput } from '@/models';
 
 export async function POST(req: Request) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const body = (await req.json()) as ArticleInput;
 

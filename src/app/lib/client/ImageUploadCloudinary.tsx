@@ -134,22 +134,7 @@ const ImageUploadCloudinary: React.FC<ImageUploadCloudinaryProps> = ({
                     e.stopPropagation();
                     handleRemove(img);
                   }}
-                  sx={{
-                    minWidth: 24,
-                    width: 24,
-                    height: 24,
-                    padding: 0,
-                    position: 'absolute',
-                    top: 6,
-                    right: 6,
-                    zIndex: 20,
-                    backgroundColor: 'rgba(255,255,255,0.85)',
-                    color: '#444',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255,255,255,1)',
-                      color: '#d32f2f',
-                    },
-                  }}
+                  className="absolute top-1.5 right-1.5 z-20 flex h-6 w-6 min-w-0 items-center justify-center bg-white/85 p-0 text-neutral-700 hover:bg-white hover:text-red-600"
                 />
               </div>
             ))}
