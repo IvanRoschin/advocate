@@ -11,11 +11,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'Token missing' });
 
     const tokenDoc = await tokenService.verify(token);
-    if (!tokenDoc)
-      return NextResponse.json({
-        success: false,
-        message: 'Invalid or expired token',
-      });
 
     if (tokenDoc.type === TokenType.EMAIL_CHANGE) {
       const user = await tokenService.changeEmail(tokenDoc);

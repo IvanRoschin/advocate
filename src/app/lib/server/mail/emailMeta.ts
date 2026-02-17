@@ -15,6 +15,7 @@ export const emailMetaMap: Record<EmailTemplateType, EmailMeta> = {
   [EmailTemplateType.LEAD_ADMIN]: {
     subject: 'Новий лід',
   },
+
   [EmailTemplateType.SUBSCRIBER_CLIENT]: {
     subject: 'Дякуємо за підписку',
   },
@@ -22,19 +23,23 @@ export const emailMetaMap: Record<EmailTemplateType, EmailMeta> = {
     subject: 'Новий підписник',
   },
 
+  // Пользователь после регистрации
   [EmailTemplateType.VERIFICATION]: {
     subject: 'Підтвердження реєстрації',
   },
 
+  // Пользователь при смене email
   [EmailTemplateType.EMAIL_CHANGE]: {
     subject: 'Підтвердження зміни e-mail',
   },
 
-  [EmailTemplateType.USER_CREDENTIALS]: {
-    subject: 'Ваші дані для входу',
+  // Админ: создан новый пользователь (без кредов)
+  [EmailTemplateType.USER_CREATED]: {
+    subject: 'Новий користувач створений',
   },
 
+  // Пользователь после активации (включает login/password + reset link)
   [EmailTemplateType.ACCOUNT_ACTIVATED]: {
-    subject: 'Активація аккаунта',
+    subject: 'Ваш обліковий запис активовано',
   },
 };

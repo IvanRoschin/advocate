@@ -1,102 +1,103 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
-const whyChooseMe = [
-  {
-    title: 'Працюю на результат',
-    content: 'Кожна справа доводиться до реального результату для клієнта.',
-  },
-  {
-    title: 'Кваліфікований підхід',
-    content:
-      'Поглиблений аналіз справи та індивідуальні рішення для кожного клієнта.',
-  },
-  {
-    title: 'Оперативність',
-    content: 'Швидке реагування на запити та ефективне вирішення завдань.',
-  },
-  {
-    title: 'Уважність до деталей',
-    content:
-      'Нічого не проходить повз увагу, жодна деталь не залишиться без контролю.',
-  },
-];
+import { whyChooseMeSection } from '@/app/resources';
 
 const WhyChooseMe = () => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const uid = useId();
 
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+  const toggle = useCallback((id: string) => {
+    setOpenId(prev => (prev === id ? null : id));
+  }, []);
+
+  const { header, image, items, lead, id, schemaType } = whyChooseMeSection;
 
   return (
     <section
-      id="why-choose-me"
+      id={id}
       className="bg-[#1b1e27] py-20 sm:py-28 md:py-36"
       itemScope
-      itemType="https://schema.org/ProfessionalService"
+      itemType={schemaType}
     >
       <div className="container mx-auto px-4">
-        {/* Заголовок */}
         <header className="mb-12 text-center sm:mb-16 md:mb-20">
           <span className="bg-accent mb-4 inline-block h-8 w-px" />
           <p className="text-accent text-xs tracking-widest uppercase">
-            Чому обирають мене
+            {header.uptitle}
           </p>
           <h2 className="font-eukrainehead mt-3 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
-            Професіоналізм, надійність, результат <br />
-            та індивідуальний підхід
+            {header.title}
           </h2>
           <span className="bg-accent mt-4 inline-block h-8 w-px" />
         </header>
 
-        {/* Контент: изображение + аккордеон */}
         <div className="flex flex-col items-center gap-12 md:flex-row md:items-start md:gap-16">
           {/* Фото */}
           <div className="relative h-75 w-full max-w-125 overflow-hidden rounded-2xl shadow-lg sm:h-87.5 md:h-100 md:max-w-150 lg:h-112.5 lg:max-w-175">
             <Image
-              src="/ivan_roschin_wcm_section.webp"
-              alt="Адвокат Рощин Іван Геннадійович"
+              src={image.src}
+              alt={image.alt}
               fill
               className="object-cover"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               itemProp="image"
+              priority={false}
             />
-            <meta itemProp="name" content="Іван Рощин" />
-            <meta itemProp="jobTitle" content="Адвокат" />
+            <meta itemProp="name" content={image.personName} />
+            <meta itemProp="jobTitle" content={image.jobTitle} />
           </div>
 
           {/* Accordion */}
           <div className="w-full flex-1 space-y-4">
-            {/* Большой текст про победу/опыт */}
             <h3 className="font-eukrainehead text-lg font-semibold text-white sm:text-xl md:text-2xl">
-              Я ніколи <span className="text-accent">не програю</span>
+              {lead.line1.split(lead.accentWords[0]).map((chunk, idx) =>
+                idx === 0 ? (
+                  <span key={idx}>
+                    {chunk}
+                    <span className="text-accent">{lead.accentWords[0]}</span>
+                  </span>
+                ) : (
+                  chunk
+                )
+              )}
               <br />
-              <span className="text-accent">Або я переміг,</span> або чомусь
-              навчився
+              <span className="text-accent">{lead.accentWords[1]}</span>
+              {lead.line2.replace(lead.accentWords[1], '')}
             </h3>
 
-            {whyChooseMe.map((item, i) => {
-              const isOpen = openIndex === i;
+            {items.map(item => {
+              const isOpen = openId === item.id;
+              const panelId = `${uid}-panel-${item.id}`;
+              const buttonId = `${uid}-btn-${item.id}`;
+
               return (
                 <div
-                  key={i}
-                  className="rounded-2xl border border-white/10 bg-black/20 transition-all duration-1200"
+                  key={item.id}
+                  className="rounded-2xl border border-white/10 bg-black/20 transition-all duration-300"
                 >
                   <button
+                    id={buttonId}
+                    type="button"
                     className="hover:text-accent flex w-full items-center justify-between px-5 py-4 text-left text-base font-semibold text-white transition-colors md:text-lg"
-                    onClick={() => toggle(i)}
+                    aria-expanded={isOpen}
+                    aria-controls={panelId}
+                    onClick={() => toggle(item.id)}
                   >
                     {item.title}
-                    <span className="ml-3">
+                    <span className="ml-3" aria-hidden>
                       {isOpen ? <FaChevronUp /> : <FaChevronDown />}
                     </span>
                   </button>
+
                   <div
-                    className={`overflow-hidden px-5 transition-all duration-1200 ${
+                    id={panelId}
+                    role="region"
+                    aria-labelledby={buttonId}
+                    className={`overflow-hidden px-5 transition-all duration-300 ${
                       isOpen ? 'max-h-96 py-2 opacity-100' : 'max-h-0 opacity-0'
                     }`}
                   >

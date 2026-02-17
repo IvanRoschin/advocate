@@ -19,16 +19,20 @@
       }
     ],
 "paths": {
-      "@/*": ["./src/*"],
-
+    "@/*": [
+        "./src/*"
+      ],
       "@/config": ["./src/app/config/index.ts"],
 
       "@/components/*": ["./src/app/components/*"],
       "@/components": ["./src/app/components/index.ts"],
 
-      "@/sections/*": ["./src/app/components/sections/*"],
-      "@/sections": ["./src/app/components/sections/index.ts"],
+      "@/resources/*": ["./src/app/resources/*"],
+      "@/resources": ["./src/app/resources/index.ts"],
 
+
+ "@/sections/*": ["./src/app/components/sections/*"],
+      "@/sections": ["./src/app/components/sections/index.ts"],
 
       "@/lib/*": ["./src/app/lib/*"],
       "@/lib": ["./src/app/lib/index.ts"],

@@ -4,17 +4,14 @@ import Image from 'next/image';
 
 import Btn from '@/app/components/ui/button/Btn';
 import { getRouteUrl } from '@/app/config/routes';
-
-const data = {
-  uptitle: 'Адвокатська допомога • Захист інтересів • Результат',
-  title: 'Адвокат у складних правових ситуаціях',
-  name: 'Рощин Іван Геннадійович',
-  subtitle:
-    'Захищаю ваші права, мінімізую ризики та доводжу справи до результату. Конфіденційно. Професійно. Законно.',
-};
+import { hero, person, social } from '@/resources/content';
 
 const Hero = () => {
-  const phone = process.env.NEXT_PUBLIC_ADVOCATE_PN_1 ?? null;
+  const phoneItem = social.find(
+    item => item.icon === 'phone' && item.essential
+  );
+
+  const phoneLink = phoneItem?.link ?? null;
 
   return (
     <section
@@ -24,7 +21,7 @@ const Hero = () => {
     >
       {/* Фоновое изображение */}
       <Image
-        src="/hero_bg.webp"
+        src={hero.heroBg}
         alt="Hero background"
         fill
         priority
@@ -37,22 +34,22 @@ const Hero = () => {
       {/* Контент Hero */}
       <div className="relative z-10 container px-4 text-white">
         <p className="mb-6 text-xs tracking-widest text-gray-300 uppercase md:text-sm">
-          {data.uptitle}
+          {hero.uptitle}
         </p>
 
         <div className="after:bg-accent relative mb-6 after:block after:h-px after:w-40 after:content-['']" />
 
         <h1 className="mb-4 text-3xl leading-tight font-bold md:text-5xl">
-          {data.title}
+          {hero.title}
           <br />
           <span className="font-eukrainehead group text-accent relative mt-2 inline-block text-2xl font-bold md:text-4xl">
-            {data.name}
+            {person.name}
             <span className="bg-accent absolute -bottom-1 left-0 h-0.75 w-0 transition-all duration-500 group-hover:w-full"></span>
           </span>
         </h1>
 
         <p className="mt-6 mb-8 max-w-xl text-base text-gray-200 md:text-lg">
-          {data.subtitle}
+          {hero.subtitle}
         </p>
 
         <div className="flex flex-col gap-4 sm:flex-row">
@@ -62,19 +59,16 @@ const Hero = () => {
             href={getRouteUrl('order')}
           />
 
-          {phone && (
+          {phoneLink && (
             <Btn
-              label={`Зателефонувати зараз ${phone}`}
+              label="Зателефонувати зараз"
               component="a"
-              href={`tel:${phone}`}
+              href={phoneLink}
               uiVariant="outline"
             />
           )}
         </div>
-
-        <p className="app-text mt-6 text-xs">
-          Первинна консультація • Адвокатська таємниця гарантована
-        </p>
+        <p className="app-text mt-6 text-xs">{hero.p1}</p>
       </div>
     </section>
   );

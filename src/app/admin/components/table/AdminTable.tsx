@@ -1,5 +1,4 @@
 /** @react-compiler-disable */
-
 'use client';
 
 import { useState } from 'react';
@@ -15,28 +14,18 @@ import {
 
 import { AdminTableProps } from './types';
 
-export function AdminTable<TData>({
-  data,
-  columns,
-  isLoading = false,
-  emptyMessage = 'Дані відсутні',
-}: AdminTableProps<TData>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+type AdminTableViewProps<TData> = {
+  table: ReturnType<typeof useReactTable<TData>>;
+  emptyMessage: string;
+};
 
-  const table = useReactTable({
-    data,
-    columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  });
+function AdminTableView<TData>({
+  table,
+  emptyMessage,
+}: AdminTableViewProps<TData>) {
+  const rows = table.getRowModel().rows;
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (!data.length) {
+  if (!rows.length) {
     return (
       <div className="py-10 text-center text-sm text-gray-500">
         {emptyMessage}
@@ -57,7 +46,7 @@ export function AdminTable<TData>({
                 return (
                   <th
                     key={header.id}
-                    className="p-2 text-left font-medium"
+                    className="p-2 text-center font-medium"
                     onClick={
                       isSortable
                         ? header.column.getToggleSortingHandler()
@@ -84,7 +73,7 @@ export function AdminTable<TData>({
         </thead>
 
         <tbody>
-          {table.getRowModel().rows.map(row => (
+          {rows.map(row => (
             <tr key={row.id} className="border-t">
               {row.getVisibleCells().map(cell => (
                 <td key={cell.id} className="p-2">
@@ -97,4 +86,27 @@ export function AdminTable<TData>({
       </table>
     </div>
   );
+}
+
+export function AdminTable<TData>({
+  data,
+  columns,
+  isLoading = false,
+  emptyMessage = 'Дані відсутні',
+}: AdminTableProps<TData>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const table = useReactTable({
+    data,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+
+  if (isLoading) return <Loader />;
+
+  return <AdminTableView table={table} emptyMessage={emptyMessage} />;
 }

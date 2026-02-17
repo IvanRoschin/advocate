@@ -1,13 +1,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { logo } from '@/resources/content';
+
 interface LogoProps {
   variant?: 'light' | 'dark';
 }
 
 const Logo: React.FC<LogoProps> = ({ variant = 'dark' }) => {
-  const src =
-    variant === 'dark' ? '/logo_black_bg.webp' : '/logo_white_bg.webp';
+  const src = variant === 'dark' ? `${logo.logoBlack}` : `${logo.logoWhite}`;
 
   return (
     <Link

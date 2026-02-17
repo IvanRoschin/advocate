@@ -13,6 +13,7 @@ interface EmptyStateProps {
   showReset?: boolean;
   actionLabel?: string;
   actionHref?: string;
+  actionOnClick?: () => void;
   goHomeAfterReset?: boolean;
   onReset?: () => void;
 }
@@ -25,6 +26,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   actionHref,
   goHomeAfterReset = false,
   onReset,
+  actionOnClick,
 }) => {
   const router = useRouter();
   const { filters } = useAppStore();
@@ -58,6 +60,9 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
             onClick={() => router.push(actionHref)}
             uiVariant="outline"
           />
+        )}
+        {actionLabel && actionOnClick && (
+          <Btn label={actionLabel} onClick={actionOnClick} />
         )}
       </div>
     </div>

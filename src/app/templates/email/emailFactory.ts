@@ -1,5 +1,5 @@
 import { accountActivatedTemplate } from './accountActivated/accountActivatedTemplate';
-import { userCredentialsTemplate } from './credentials/userCredentialsTemplate';
+import { createUserNotificationTemplate } from './createUserNotification/createUserNotificationTemplate';
 import { emailChangeTemplate } from './emailChange/emailChangeTemplate';
 import { leadAdminTemplate } from './lead/leadAdminTemplate';
 import { leadClientTemplate } from './lead/leadClientTemplate';
@@ -22,9 +22,10 @@ const templateMap: {
   [EmailTemplateType.SUBSCRIBER_ADMIN]: subscriberAdminTemplate,
 
   [EmailTemplateType.VERIFICATION]: verificationTemplate,
-  [EmailTemplateType.EMAIL_CHANGE]: emailChangeTemplate,
-  [EmailTemplateType.USER_CREDENTIALS]: userCredentialsTemplate,
+  [EmailTemplateType.USER_CREATED]: createUserNotificationTemplate,
+
   [EmailTemplateType.ACCOUNT_ACTIVATED]: accountActivatedTemplate,
+  [EmailTemplateType.EMAIL_CHANGE]: emailChangeTemplate,
 };
 
 export function renderEmailTemplate<T extends EmailTemplateType>(

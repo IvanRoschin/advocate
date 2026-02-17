@@ -2,6 +2,8 @@
 
 import Image from 'next/image';
 
+import { order } from '@/app/resources/content';
+
 import { LeadForm } from '../../forms';
 
 const Order = () => {
@@ -12,7 +14,7 @@ const Order = () => {
     >
       {/* Background */}
       <Image
-        src="/order_bg_v1.webp"
+        src={order.orderBg}
         alt="Фонове зображення для замовлення послуги"
         fill
         priority

@@ -9,6 +9,7 @@ export interface TokenDB {
   type: TokenType;
   used: boolean;
   expiresAt?: Date;
+  meta?: Record<string, unknown>;
 }
 
 const TokenSchema = new Schema<TokenDB>(
@@ -28,6 +29,10 @@ const TokenSchema = new Schema<TokenDB>(
     },
     used: { type: Boolean, default: false },
     expiresAt: { type: Date },
+    meta: {
+      type: Schema.Types.Mixed,
+      default: undefined,
+    },
   },
   { timestamps: true, autoIndex: false }
 );

@@ -5,3 +5,4 @@ export { default as LeadForm } from '@/app/components/forms/LeadForm';
 export { default as LoginForm } from '@/app/components/forms/LoginForm';
 export { default as RestorePasswordForm } from '@/app/components/forms/RestorePasswordForm';
 export { default as SubscribeForm } from '@/app/components/forms/SubscribeForm';
+export { default as UserForm } from '@/app/components/forms/UserForm';

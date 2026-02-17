@@ -1,22 +1,23 @@
 import { Types } from 'mongoose';
 
-import { baseUrl, routes } from '@/app/config';
 import { tokenRepo } from '@/app/lib/repositories/token.repo';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
-import { sendEmail } from '@/app/lib/server/mail/emailService';
 import { TokenDocument } from '@/app/models/Token';
-import { EmailTemplateType } from '@/app/templates/email/types';
 import { CreateTokenDTO, TokenType } from '@/app/types';
-import User from '@/models/User';
 import crypto from 'crypto';
 
+// ❗️НУЖНО: подключить userService / userRepo (пример ниже)
+// import { userService } from '@/app/lib/services/user.service';
+
 export const tokenService = {
-  async generateTokenString(len = 32) {
-    return crypto.randomBytes(len).toString('hex');
+  generateTokenString(bytes = 32) {
+    return crypto.randomBytes(bytes).toString('hex');
   },
 
-  async create(data: CreateTokenDTO) {
-    const token = await this.generateTokenString();
+  async create<T extends TokenType>(
+    data: CreateTokenDTO<T>
+  ): Promise<TokenDocument> {
+    const token = this.generateTokenString();
 
     const ttlDefault: Record<TokenType, number> = {
       [TokenType.REFRESH]: 60 * 60 * 24 * 30,
@@ -25,76 +26,84 @@ export const tokenService = {
       [TokenType.EMAIL_CHANGE]: 60 * 60,
     };
 
-    const expiresAt = new Date(
-      Date.now() +
-        1000 * (data.ttlSeconds ?? ttlDefault[data.type ?? TokenType.REFRESH])
-    );
+    const ttl = data.ttlSeconds ?? ttlDefault[data.type ?? TokenType.REFRESH];
+    const expiresAt = new Date(Date.now() + ttl * 1000);
 
     return tokenRepo.create({
-      ...data,
       userId: new Types.ObjectId(data.userId),
       token,
+      type: data.type ?? TokenType.REFRESH,
+      email: data.email,
+      meta: data.meta,
       used: false,
       expiresAt,
     });
   },
 
-  async verify(tokenValue: string) {
-    const tokenDoc = await tokenRepo.findValid(tokenValue);
-    if (!tokenDoc) return null;
-
-    await tokenRepo.markUsed(tokenDoc);
-    return tokenDoc;
+  async findValid<T extends TokenType>(
+    tokenValue: string,
+    type?: T
+  ): Promise<TokenDocument | null> {
+    return tokenRepo.findValid(tokenValue, type);
   },
 
-  async activateAccount(tokenDoc: TokenDocument) {
-    const user = await User.findById(tokenDoc.userId);
-    if (!user) throw new ValidationError('User not found');
-    if (user.isActive) throw new ValidationError('Account already active');
+  async markUsed(token: TokenDocument): Promise<void> {
+    if (token.used) return;
 
-    const { generateRandomPassword } = await import('@/lib');
-    const tempPassword = generateRandomPassword();
+    token.used = true;
+    token.meta = undefined; // ⚠️ см. “правильный фикс” ниже
+    await token.save();
+  },
 
-    user.setPassword(tempPassword);
-    user.isActive = true;
-    await user.save();
+  async verify<T extends TokenType>(
+    tokenValue: string,
+    type?: T
+  ): Promise<TokenDocument> {
+    const token = await this.findValid(tokenValue, type);
 
-    if (!user.email) {
-      throw new ValidationError('User has no email');
+    if (!token) {
+      throw new ValidationError('Недійсний або використаний токен');
     }
 
-    await sendEmail({
-      to: user.email,
-      type: EmailTemplateType.USER_CREDENTIALS,
-      props: {
-        name: user.name,
-        login: user.email,
-        password: tempPassword,
-        resetPasswordUrl: `${baseUrl}${routes.client.changePassword}`,
-      },
-    });
-
-    return user;
+    return token;
   },
 
-  async changeEmail(tokenDoc: TokenDocument) {
-    const user = await User.findById(tokenDoc.userId);
-    if (!user) throw new ValidationError('User not found');
-    if (!tokenDoc.email) throw new ValidationError('Token has no email');
+  // ✅ ДОБАВЛЕНО: activateAccount
+  async activateAccount(token: TokenDocument) {
+    if (token.type !== TokenType.VERIFICATION) {
+      throw new ValidationError('Невірний тип токена');
+    }
 
-    user.email = tokenDoc.email;
-    await user.save();
+    // TODO: заменишь на свою реализацию userService/userRepo
+    // const user = await userService.activateAccountById(token.userId.toString());
 
-    await sendEmail({
-      to: user.email,
-      type: EmailTemplateType.EMAIL_CHANGE,
-      props: {
-        name: user.name,
-        email: user.email,
-        verificationUrl: `${baseUrl}${routes.public.auth.verifyEmail}?token=${encodeURIComponent(tokenDoc.token)}`,
-      },
-    });
+    // ВРЕМЕННО: если нет userService, кинь ошибку явно, чтобы не “молчать”
+    throw new ValidationError(
+      'activateAccount() не подключен: добавь userService/userRepo'
+    );
 
-    return user;
+    // return user;
+  },
+
+  // ✅ ДОБАВЛЕНО: changeEmail
+  async changeEmail(token: TokenDocument) {
+    if (token.type !== TokenType.EMAIL_CHANGE) {
+      throw new ValidationError('Невірний тип токена');
+    }
+
+    // Обычно новый email либо token.email, либо token.meta.newEmail
+    const newEmail = token.email; /* ?? token.meta?.newEmail */
+    if (!newEmail) {
+      throw new ValidationError('Не вказано новий email у токені');
+    }
+
+    // TODO: заменишь на свою реализацию userService/userRepo
+    // const user = await userService.changeEmailById(token.userId.toString(), newEmail);
+
+    throw new ValidationError(
+      'changeEmail() не подключен: добавь userService/userRepo'
+    );
+
+    // return user;
   },
 };

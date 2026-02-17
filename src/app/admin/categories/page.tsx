@@ -1,14 +1,12 @@
-import { apiUrl } from '@/app/config/routes';
-import { apiFetch } from '@/app/lib/client/apiFetch';
+import { categoryService } from '@/app/lib/services/category.service';
 import { CategoryResponseDTO } from '@/app/types';
+
 import CategoriesClient from './CategoriesClient';
 
-export const dynamic = 'force-dynamic'; // важно для админки
+export const dynamic = 'force-dynamic';
 
 const CategoriesPage = async () => {
-  const categories = await apiFetch<CategoryResponseDTO[]>(
-    apiUrl('/api/v1/categories')
-  );
+  const categories: CategoryResponseDTO[] = await categoryService.getAll();
 
   return <CategoriesClient initialCategories={categories} />;
 };

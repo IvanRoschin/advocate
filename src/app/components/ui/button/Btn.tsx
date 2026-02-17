@@ -1,11 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { IconType } from 'react-icons/lib';
 
 import Button, { ButtonProps } from '@mui/material/Button';
 
 type BtnVariant = 'accent' | 'outline' | 'ghost';
-
 type BtnType = 'submit' | 'reset' | 'button';
 
 interface BtnProps extends Omit<ButtonProps, 'variant'> {
@@ -25,7 +25,11 @@ const Btn = ({
   sx,
   ...rest
 }: BtnProps) => {
-  const stylesByVariant = {
+  // 🔹 lazy init без эффекта
+  const [mounted] = useState(() => typeof window !== 'undefined');
+  if (!mounted) return null;
+
+  const stylesByVariant: Record<BtnVariant, object> = {
     accent: {
       backgroundColor: 'var(--accentcolor)',
       color: '#fff',
@@ -33,7 +37,6 @@ const Btn = ({
         backgroundColor: 'color-mix(in srgb, var(--accentcolor) 85%, black)',
       },
     },
-
     outline: {
       backgroundColor: 'transparent',
       color: 'var(--accentcolor)',
@@ -43,7 +46,6 @@ const Btn = ({
           'color-mix(in srgb, var(--accentcolor) 10%, transparent)',
       },
     },
-
     ghost: {
       backgroundColor: 'transparent',
       color: 'var(--accentcolor)',
@@ -52,7 +54,7 @@ const Btn = ({
           'color-mix(in srgb, var(--accentcolor) 8%, transparent)',
       },
     },
-  } satisfies Record<BtnVariant, object>;
+  };
 
   return (
     <Button
@@ -70,7 +72,7 @@ const Btn = ({
       }}
       {...rest}
     >
-      {Icon && <Icon size={14} className={'mx-auto'} />}
+      {Icon && <Icon size={14} className="mx-auto" />}
       {label}
     </Button>
   );

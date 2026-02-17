@@ -13,13 +13,13 @@ import Services from './components/sections/services/Services';
 import Socials from './components/socials/Socials';
 import ScrollToTopButton from './components/ui/button/ScrollToTopButton';
 import { generateMetadata } from './helpers/generateMetadata';
+import { home } from './resources/content';
 
 export const metadata = generateMetadata({
-  title: 'Головна | Адвокат Іван Рощин',
-  description:
-    'Головна сторінка Адвокат Іван Рощин – професійна правнича допомога у цивільних, господарських та адміністративних справах.',
-  url: process.env.PUBLIC_URL,
-  imageUrl: '/ivan_roschin.webp',
+  title: home.title,
+  description: home.description,
+  url: home.path,
+  imageUrl: home.image,
 });
 
 export default function Home() {

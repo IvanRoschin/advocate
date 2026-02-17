@@ -19,7 +19,7 @@ const menu = [
 const AdminSidebar = memo(() => {
   return (
     <aside className="bg-surface-input sticky top-0 h-screen w-64 border-r border-gray-200 p-6">
-      <h2 className="mb-6 text-lg font-semibold text-zinc-500">Админка</h2>
+      <h2 className="text-accent mb-6 text-xl font-semibold">Админка</h2>
       <nav className="flex flex-col gap-2">
         {menu.map(item => (
           <Link
