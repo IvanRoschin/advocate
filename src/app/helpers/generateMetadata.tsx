@@ -1,10 +1,12 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+
+import { baseUrl } from '@/app/config/routes';
 
 interface MetadataProps {
   title?: string;
   description?: string;
   keywords?: string[];
-  url?: string;
+  path?: string;
   siteName?: string;
   imageUrl?: string;
   imageWidth?: number;
@@ -36,19 +38,20 @@ export function generateMetadata({
     'адміністративні справи',
     'консультація адвоката Київ',
   ],
-  url = process.env.NEXT_PUBLIC_SITE_URL || 'https://roschin.com.ua',
+  path = '/',
   siteName = 'Адвокат Іван Рощин',
-  imageUrl = '/ivan_roschin.webp',
+  imageUrl = '/images/ivan_roschin.webp',
   imageWidth = 680,
   imageHeight = 1024,
   imageAlt = 'Адвокат Іван Рощин — юридична допомога',
   extra = {},
 }: MetadataProps): Metadata {
-  const siteUrl = url.startsWith('http') ? url : 'https://roschin.com.ua';
+  const siteUrl = baseUrl; // <-- единый источник
+  const pageUrl = new URL(path, siteUrl).toString();
 
   const fullImageUrl = imageUrl.startsWith('http')
     ? imageUrl
-    : `${siteUrl}${imageUrl}`;
+    : new URL(imageUrl, siteUrl).toString();
 
   return {
     metadataBase: new URL(siteUrl),
@@ -61,7 +64,7 @@ export function generateMetadata({
       locale: 'uk_UA',
       title,
       description,
-      url: siteUrl,
+      url: pageUrl, // <-- важно
       siteName,
       images: [
         {

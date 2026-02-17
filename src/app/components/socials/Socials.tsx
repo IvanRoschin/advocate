@@ -1,90 +1,54 @@
 'use client';
 
 import Link from 'next/link';
-import { FaEnvelope, FaFacebookSquare } from 'react-icons/fa';
-import { FaSquareInstagram, FaSquarePhone } from 'react-icons/fa6';
+
+import { iconLibrary } from '@/app/resources/icons';
+import { social } from '@/resources/content';
+
+import type { IconName } from '@/app/resources/icons';
 
 const Socials = () => {
-  const phone1 = process.env.NEXT_PUBLIC_ADVOCATE_PN_1 ?? null;
-  const phone2 = process.env.NEXT_PUBLIC_ADVOCATE_PN_2 ?? null;
-  const email = process.env.NEXT_PUBLIC_ADVOCATE_EMAIL ?? null;
-  const facebook = process.env.NEXT_PUBLIC_FACEBOOK_URL ?? null;
-  const instagram = process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? null;
+  const essential = social.filter(s => s.essential && s.link);
+  const secondary = social.filter(s => !s.essential && s.link);
+
+  const renderIcon = (name: IconName) => {
+    const Icon = iconLibrary[name];
+    return <Icon className="h-5 w-5" aria-hidden />;
+  };
 
   return (
     <div className="hidden bg-black pb-3 text-white sm:block">
       <div className="container flex flex-col gap-6 py-6 sm:flex-row sm:items-center sm:justify-between">
         <ul className="flex flex-col gap-2">
-          {email && (
-            <li>
+          {essential.map(item => (
+            <li key={`${item.icon}-${item.link}`}>
               <Link
-                href={`mailto:${email}`}
+                href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center"
+                className="flex items-center gap-2"
               >
-                <FaEnvelope className="mr-3 h-5 w-5" />
-                <span className="nav">{email}</span>
+                {renderIcon(item.icon as IconName)}
+                <span className="nav">{item.name}</span>
               </Link>
             </li>
-          )}
-          {(phone1 || phone2) && (
-            <li>
-              <div className="flex gap-4">
-                {phone1 && (
-                  <Link
-                    href={`tel:${phone1}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center"
-                  >
-                    <FaSquarePhone className="mr-3 h-5 w-5" />
-                    <span className="nav">{phone1}</span>
-                  </Link>
-                )}
-                {phone2 && (
-                  <Link
-                    href={`tel:${phone2}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center"
-                  >
-                    <FaSquarePhone className="mr-3 h-5 w-5" />
-                    <span className="nav">{phone2}</span>
-                  </Link>
-                )}
-              </div>
-            </li>
-          )}
+          ))}
         </ul>
 
         <ul className="flex flex-col gap-2 sm:items-end">
-          {facebook && (
-            <li>
+          {secondary.map(item => (
+            <li key={`${item.icon}-${item.link}`}>
               <Link
-                href={facebook}
+                href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center"
+                className="flex items-center gap-2"
               >
-                <span className="nav mr-3">Facebook</span>
-                <FaFacebookSquare className="h-5 w-5" />
+                <span className="nav">{item.name}</span>
+                {renderIcon(item.icon as IconName)}
               </Link>
             </li>
-          )}
-          {instagram && (
-            <li>
-              <Link
-                href={instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center"
-              >
-                <span className="nav mr-3">Instagram</span>
-                <FaSquareInstagram className="h-5 w-5" />
-              </Link>
-            </li>
-          )}
+          ))}
         </ul>
       </div>
     </div>

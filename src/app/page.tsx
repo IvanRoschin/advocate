@@ -1,61 +1,42 @@
-import Footer from './components/footer/Footer';
-import Header from './components/header/Header';
-import {
-  About,
-  Advantages,
-  Hero,
-  Order,
-  Practices,
-  Reviews,
-  WhyChooseMe,
-} from './components/sections';
-import Services from './components/services/Services';
-import Socials from './components/socials/Socials';
-import { generateMetadata } from './helpers/generateMetadata';
-import ScrollToTopButton from './ui/button/ScrollToTopButton';
+import { homeLayout } from '@/app/resources/content/pages/home.layout';
+import { buildOgImageUrl, generateMetadata } from './helpers';
+import { HOME_SECTIONS } from './home.sections';
+import { home, person } from './resources/content';
 
 export const metadata = generateMetadata({
-  title: 'Головна | Адвокат Іван Рощин',
-  description:
-    'Головна сторінка Адвокат Іван Рощин – професійна правнича допомога у цивільних, господарських та адміністративних справах.',
-  url: process.env.PUBLIC_URL,
-  imageUrl: '/ivan_roschin.webp',
+  title: home.title,
+  description: home.description,
+  path: home.path,
+  imageUrl: buildOgImageUrl({
+    title: home.title,
+    subtitle: `${person.role} • ${person.location}`,
+    tag: 'Головна',
+  }),
 });
 
 export default function Home() {
   return (
     <main className="relative">
-      {/* <h1>Заголовок H1</h1>
-      <h2>Заголовок H2</h2>
-      <p className="lead">Это lead текст</p>
-      <p>Обычный текст</p>
-      <small>Маленький текст</small>
-      <p className="muted">Вспомогательный / muted текст</p>
-      <code>const a = 1;</code> */}
-      <Socials />
-      <Header />
-      {/* Секция Hero */}
-      <div className="relative">
-        <Hero />
-        {/* Services поверх Hero и About */}
-        <Services />
-      </div>
-      {/* Секция About */}
-      <About />
-      {/* Секция Practices */}
-      <Practices />
-      {/* Секция Advantages */}
-      <Advantages />
-      {/* Секция Reviews */}
-      <Reviews />
-      {/* Секция WhyChooseMe */}
-      <WhyChooseMe />
-      {/* Секция Order */}
-      <Order />
+      {homeLayout
+        .filter(node => node.display)
+        .map(node => {
+          if (node.type === 'section') {
+            const Section = HOME_SECTIONS[node.key];
+            return <Section key={node.key} />;
+          }
 
-      <Footer />
-
-      <ScrollToTopButton />
+          // group
+          return (
+            <div key={node.key} className={node.wrapperClassName}>
+              {node.items
+                .filter(it => it.display)
+                .map(it => {
+                  const Section = HOME_SECTIONS[it.key];
+                  return <Section key={it.key} />;
+                })}
+            </div>
+          );
+        })}
     </main>
   );
 }

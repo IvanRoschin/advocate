@@ -64,6 +64,7 @@ export const routes = {
 
   client: {
     dashboard: '/client',
+    changePassword: '/client/change-password',
   },
 } as const;
 

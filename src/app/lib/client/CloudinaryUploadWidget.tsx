@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import Btn from '@/app/ui/button/Btn';
+import Btn from '@/app/components/ui/button/Btn';
 import { NextImage } from '@/components/common';
 
 interface Props {

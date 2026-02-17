@@ -1,8 +1,7 @@
-import mongoose, { InferSchemaType, Types } from 'mongoose';
+import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-// Схема категории
 const categorySchema = new Schema(
   {
     title: {
@@ -15,6 +14,7 @@ const categorySchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      index: true,
     },
     src: {
       type: [String],
@@ -24,20 +24,7 @@ const categorySchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-// Полнотекстовый индекс
 categorySchema.index({ '$**': 'text' });
 
-// Тип для входных данных
-export type CategoryInput = InferSchemaType<typeof categorySchema> & {
-  _id: Types.ObjectId;
-};
-// Тип документа Mongo
-export type CategoryDocument = CategoryInput & {
-  _id: Types.ObjectId;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
-
-// Экспорт модели
 export default mongoose.models.Category ||
-  mongoose.model<CategoryDocument>('Category', categorySchema);
+  mongoose.model('Category', categorySchema);

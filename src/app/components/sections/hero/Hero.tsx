@@ -1,80 +1,75 @@
 'use client';
 
-import Image from 'next/image';
-
 import { getRouteUrl } from '@/app/config/routes';
-import Btn from '@/app/ui/button/Btn';
+import { Btn } from '@/components';
+import {
+  CarouselItem,
+  HeroCarousel,
+} from '@/components/sections/hero/HeroCarousel';
+import { heroSection, person, social } from '@/resources';
 
-const data = {
-  uptitle: 'Адвокатська допомога • Захист інтересів • Результат',
-  title: 'Адвокат у складних правових ситуаціях',
-  name: 'Рощин Іван Геннадійович',
-  subtitle:
-    'Захищаю ваші права, мінімізую ризики та доводжу справи до результату. Конфіденційно. Професійно. Законно.',
-};
+const slides: CarouselItem[] = [
+  { src: '/images/bg/hero_bg.webp', alt: 'Hero background 1' },
+  { src: '/images/bg/hero_bg_2.webp', alt: 'Hero background 2' },
+  { src: '/images/bg/hero_bg_3.webp', alt: 'Hero background 3' },
+];
 
 const Hero = () => {
-  const phone = process.env.NEXT_PUBLIC_ADVOCATE_PN_1 ?? null;
+  const phoneLink =
+    social.find(item => item.icon === 'phone' && item.essential && item.link)
+      ?.link ?? null;
 
   return (
-    <section
-      className="relative flex min-h-screen w-full items-center overflow-hidden"
-      itemScope
-      itemType="https://schema.org/LegalService"
-    >
-      {/* Фоновое изображение */}
-      <Image
-        src="/hero_bg.webp"
-        alt="Hero background"
-        fill
-        priority
-        className="-z-20 object-cover"
+    <section className="relative flex h-screen w-full items-center overflow-hidden">
+      {/* Слайдер */}
+      <HeroCarousel
+        items={slides}
+        className="z-0"
+        showBars
+        showArrows
+        // временно для проверки:
+        debugBarsTopRight
       />
 
-      {/* Градиентный оверлей */}
-      <div className="absolute inset-0 -z-10 bg-linear-to-b from-black/60 via-black/30 to-black/60" />
-
-      {/* Контент Hero */}
-      <div className="relative z-10 container px-4 text-white">
+      {/* Затемнение */}
+      <div className="pointer-events-none absolute inset-0 z-10 bg-black/50" />
+      {/* Контент */}
+      <div className="relative z-30 container px-4 text-white">
         <p className="mb-6 text-xs tracking-widest text-gray-300 uppercase md:text-sm">
-          {data.uptitle}
+          {heroSection.header.uptitle}
         </p>
 
         <div className="after:bg-accent relative mb-6 after:block after:h-px after:w-40 after:content-['']" />
 
         <h1 className="mb-4 text-3xl leading-tight font-bold md:text-5xl">
-          {data.title}
+          {heroSection.header.title}
           <br />
           <span className="font-eukrainehead group text-accent relative mt-2 inline-block text-2xl font-bold md:text-4xl">
-            {data.name}
-            <span className="bg-accent absolute -bottom-1 left-0 h-0.75 w-0 transition-all duration-500 group-hover:w-full"></span>
+            {person.name}
+            <span className="bg-accent absolute -bottom-1 left-0 h-0.75 w-0 transition-all duration-500 group-hover:w-full" />
           </span>
         </h1>
 
         <p className="mt-6 mb-8 max-w-xl text-base text-gray-200 md:text-lg">
-          {data.subtitle}
+          {heroSection.subtitle}
         </p>
 
         <div className="flex flex-col gap-4 sm:flex-row">
           <Btn
-            title="Отримати консультацію"
-            component="a"
-            href={getRouteUrl('order')}
+            label={heroSection.cta.primary.label}
+            href={getRouteUrl(heroSection.cta.primary.route)}
           />
 
-          {phone && (
+          {phoneLink && (
             <Btn
-              title={`Зателефонувати зараз ${phone}`}
-              component="a"
-              href={`tel:${phone}`}
-              uiVariant="outline"
+              label={heroSection.cta.secondary.label}
+              href={phoneLink}
+              uiVariant={heroSection.cta.secondary.uiVariant}
             />
           )}
         </div>
 
-        <p className="app-text mt-6 text-xs">
-          Первинна консультація • Адвокатська таємниця гарантована
-        </p>
+        <p className="app-text mt-6 text-xs">{heroSection.note}</p>
       </div>
     </section>
   );

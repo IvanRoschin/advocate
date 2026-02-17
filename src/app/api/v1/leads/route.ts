@@ -1,15 +1,14 @@
 import { NextResponse } from 'next/server';
 
+import { Lead } from '@/models';
 import { validate } from '@/app/helpers/validate';
-import leadSchema from '@/app/helpers/validationSchemas/leadSchema';
-import { leadAdminTemplate, leadClientTemplate } from '@/app/lib/mailTemplates';
-import { sendMail } from '@/app/lib/sendMail';
-import { sendTelegramMessage } from '@/app/lib/sendTelegram';
+import leadSchema from '@/app/helpers/validationSchemas/lead.schema';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
-import { connectDB } from '@/app/lib/server/mongoose';
-import { Lead } from '@/models';
-
+import { sendEmail } from '@/app/lib/server/mail/emailService';
+import { dbConnect } from '@/app/lib/server/mongoose';
+import { sendTelegramMessage } from '@/app/lib/server/sendTelegram';
+import { EmailTemplateType } from '@/app/templates/email/types';
 import type { ApiResponse } from '@/app/lib/server/ApiError';
 const ADMIN_EMAIL = 'advocate.roschin@gmail.com';
 
@@ -26,7 +25,7 @@ async function verifyRecaptcha(token: string) {
 
 export async function POST(req: Request) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const body = (await req.json()) as {
       name: string;
@@ -49,21 +48,24 @@ export async function POST(req: Request) {
 
     const lead = await Lead.create(data);
 
-    // ✉️ письма клиенту и админу
-    sendMail({
+    // ✉️ Отправка email клиенту через email-factory
+    await sendEmail({
       to: data.email,
-      subject: 'Ми отримали вашу заявку',
-      body: leadClientTemplate({ name: data.name }),
+      type: EmailTemplateType.LEAD_CLIENT,
+      props: {
+        name: data.name,
+      },
     }).catch(console.error);
 
-    sendMail({
+    // ✉️ Отправка email админу через email-factory
+    await sendEmail({
       to: ADMIN_EMAIL,
-      subject: '🚨 Новий лід з сайту',
-      body: leadAdminTemplate({
+      type: EmailTemplateType.LEAD_ADMIN,
+      props: {
         name: data.name,
         email: data.email,
         phone: data.phone,
-      }),
+      },
     }).catch(console.error);
 
     // ✉️ Telegram

@@ -20,11 +20,13 @@ globalWithMongoose.mongooseGlobal = globalWithMongoose.mongooseGlobal || {
   promise: null,
 };
 
-export const connectDB = async () => {
+export const dbConnect = async () => {
   mongoose.set('strictQuery', true);
 
-  const mongodbUri = process.env.MONGODB_URI;
-  if (!mongodbUri) throw new Error('MONGODB_URI is not defined');
+  const MONGODB_URI = process.env.MONGODB_URI;
+
+  if (!MONGODB_URI)
+    throw new Error('Missing MONGODB_URI in environment variables');
 
   if (globalWithMongoose.mongooseGlobal.conn) {
     console.warn('MongoDB is already connected');
@@ -38,7 +40,7 @@ export const connectDB = async () => {
       dbName: 'advocate',
     };
     globalWithMongoose.mongooseGlobal.promise = mongoose.connect(
-      mongodbUri,
+      MONGODB_URI,
       options
     );
   }

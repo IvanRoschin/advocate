@@ -1,6 +1,7 @@
-import { memo } from 'react';
+'use client';
 
 import { useField } from 'formik';
+import { memo } from 'react';
 
 interface CheckboxProps {
   name: string;

@@ -2,16 +2,16 @@ export { default as Footer } from '@/app/components/footer/Footer';
 
 export { default as Header } from '@/app/components/header/Header';
 
+export { default as Header2 } from '@/app/components/header/Header';
+
 export { default as Logo } from '@/app/components/logo/Logo';
 
-export { default as Services } from '@/app/components/services/Services';
+export { default as Menu } from '@/app/components/menu/Menu';
 
 export { default as Socials } from '@/app/components/socials/Socials';
 
-export {
-  AutoSlugField,
-  Checkbox,
-  Input,
-  Select,
-  Textarea,
-} from '@/app/components/inputs';
+export * from './common';
+export * from './forms';
+export * from './inputs';
+export * from './sections';
+export * from './ui';

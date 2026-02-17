@@ -1,4 +1,4 @@
-import Btn from '@/app/ui/button/Btn';
+import Btn from '@/app/components/ui/button/Btn';
 
 type Props = {
   title: string;
@@ -12,10 +12,9 @@ const PracticesCard = ({ title, text, link }: Props) => {
       {/* Верхний контент */}
       <div className="flex-1">
         <a href={link}>
-          <h3 className="font-eukrainehead title-app group relative mb-4 inline-block text-xl font-semibold uppercase">
+          <h3 className="font-eukrainehead group relative mb-4 inline-block text-xl font-semibold text-black uppercase">
             {/* Mobile / Tablet */}
             <span className="block lg:hidden">{title}</span>
-
             {/* Desktop */}
             <span className="hidden lg:block">
               {title.split(' ').map((word, i) => (
@@ -33,7 +32,7 @@ const PracticesCard = ({ title, text, link }: Props) => {
 
       {/* Низ карточки */}
       <div className="mt-6 flex justify-center">
-        <Btn title="Далі" uiVariant="outline" />
+        <Btn label="Далі" uiVariant="outline" />
       </div>
     </div>
   );

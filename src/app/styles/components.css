@@ -125,4 +125,24 @@
   .nav:focus::after {
     width: 100%;
   }
+
+  .bg-surface-input {
+  background-color: var(--surface-input);
+}
+
+.text-foreground {
+  color: var(--foreground);
+}
+
+.shadow {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.shadow-lg {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.hover\:shadow-lg:hover {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
 }

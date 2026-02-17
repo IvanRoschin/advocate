@@ -1,27 +1,16 @@
 import { NextResponse } from 'next/server';
 
-import { articleSchema } from '@/app/helpers/validationSchemas';
+import { Article } from '@/models';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { connectDB } from '@/app/lib/server/mongoose';
-import { Article, ArticleInput } from '@/models';
+import { dbConnect } from '@/app/lib/server/mongoose';
 
-export async function POST(req: Request) {
+export async function GET() {
   try {
-    await connectDB();
+    await dbConnect();
 
-    const body = (await req.json()) as ArticleInput;
+    const articles = await Article.find().sort({ createdAt: -1 }).lean();
 
-    // Валидация через Yup
-    const data = await articleSchema.validate(body, {
-      abortEarly: false,
-    });
-
-    const article = await Article.create(data);
-
-    return NextResponse.json(
-      { ok: true, data: article.toObject() },
-      { status: 201 }
-    );
+    return NextResponse.json({ ok: true, data: articles });
   } catch (err) {
     return errorToResponse(err);
   }

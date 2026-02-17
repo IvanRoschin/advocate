@@ -3,9 +3,9 @@
 import { Form, Formik } from 'formik';
 import { toast } from 'sonner';
 
+import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
-import subscriberSchema from '@/app/helpers/validationSchemas/subscriberSchema';
-import Btn from '@/app/ui/button/Btn';
+import subscriberSchema from '@/app/helpers/validationSchemas/subscriber.schema';
 import { Input } from '@/components/index';
 
 declare global {
@@ -58,14 +58,11 @@ const SubscribeForm = () => {
           <input type="text" name="website" style={{ display: 'none' }} />
           <div className="flex items-end">
             <Btn
-              radius="12"
+              radius={12}
               type="submit"
-              title="Підписатися"
+              label="Підписатися"
               disabled={!isValid || isSubmitting}
-              sx={{
-                paddingY: '0.75rem',
-                minHeight: '3.7rem',
-              }}
+              className="min-h-[3.7rem] px-6 py-3"
             />
           </div>
         </Form>

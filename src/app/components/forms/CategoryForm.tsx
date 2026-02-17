@@ -2,100 +2,89 @@
 
 import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
-import slugify from 'slugify';
-import { toast } from 'sonner';
 
-import { apiUrl } from '@/app/config/routes';
-import categorySchema, {
-  CategoryFormValues,
-} from '@/app/helpers/validationSchemas/categorySchema';
+import Btn from '@/app/components/ui/button/Btn';
 import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
-import Btn from '@/app/ui/button/Btn';
-import { AutoSlugField, Input } from '@/components/index';
+import { CreateCategoryRequestDTO, createCategorySchema } from '@/app/types';
+import { Input } from '@/components/index';
 
-const CategoryForm = () => {
+interface Props {
+  onSubmit: (values: CreateCategoryRequestDTO) => void;
+  onClose: () => void;
+  initialValues?: CreateCategoryRequestDTO;
+  submitLabel?: string;
+}
+
+const CategoryForm = ({
+  onSubmit,
+  onClose,
+  initialValues,
+  submitLabel = 'Додати категорію',
+}: Props) => {
+  const isEditMode = Boolean(initialValues);
+
   return (
-    <Formik<CategoryFormValues>
-      initialValues={{
-        title: '',
-        src: [],
-      }}
-      validationSchema={categorySchema}
-      onSubmit={async (values, { resetForm }) => {
-        const payload = {
-          title: values.title,
-          slug: slugify(values.title, {
-            lower: true,
-            strict: true,
-            locale: 'uk',
-            trim: true,
-          }),
-          src: values.src,
-        };
+    <>
+      {isEditMode ? 'Редагувати категорію' : 'Додати нову категорію'}
+      <Formik<CreateCategoryRequestDTO>
+        enableReinitialize
+        initialValues={{
+          title: initialValues?.title ?? '',
+          src: initialValues?.src ?? [],
+        }}
+        validationSchema={createCategorySchema}
+        onSubmit={onSubmit}
+      >
+        {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
+          <Form className="flex w-full max-w-lg flex-col gap-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Input name="title" label="Назва категорії" required />{' '}
+              {/* <AutoSlugField
+                sourceField="title"
+                targetField="slug"
+                touchedFlagField="slugTouchedManually"
+                options={{ locale: 'uk' }}
+              /> */}
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <ImageUploadCloudinary
+                setFieldValue={setFieldValue}
+                values={values.src}
+                error={typeof errors.src === 'string' ? errors.src : undefined}
+                uploadPreset="Categories"
+                multiple
+              />
+            </motion.div>
+            <div className="flex justify-end gap-2">
+              {onClose && (
+                <Btn
+                  type="button"
+                  label="Скасувати"
+                  uiVariant="ghost"
+                  onClick={onClose}
+                />
+              )}
 
-        try {
-          const res = await fetch(apiUrl('api/v1/categories'), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-
-          const json = await res.json();
-
-          if (!res.ok) {
-            toast.error(`Помилка: ${json?.error?.message || res.statusText}`);
-            return;
-          }
-
-          toast.success('Категорія успішно додана!');
-        } catch (e: unknown) {
-          const message =
-            e instanceof Error ? e.message : 'Сталася невідома помилка';
-          toast.error(message);
-        } finally {
-          resetForm();
-        }
-      }}
-    >
-      {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
-        <Form className="flex w-full max-w-lg flex-col gap-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Input name="title" label="Назва категорії" required />{' '}
-            <AutoSlugField
-              sourceField="title"
-              targetField="slug"
-              touchedFlagField="slugTouchedManually"
-              options={{ locale: 'uk' }}
-            />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            <ImageUploadCloudinary
-              setFieldValue={setFieldValue}
-              values={values.src}
-              error={typeof errors.src === 'string' ? errors.src : undefined}
-              uploadPreset="Categories"
-              multiple
-            />
-          </motion.div>
-          <div className="flex justify-end">
-            <Btn
-              radius={12}
-              type="submit"
-              title="Додати категорію"
-              disabled={!isValid || isSubmitting}
-            />
-          </div>
-        </Form>
-      )}
-    </Formik>
+              <Btn
+                uiVariant="accent"
+                radius={12}
+                type="submit"
+                label={submitLabel}
+                disabled={!isValid || isSubmitting}
+              />
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </>
   );
 };
 

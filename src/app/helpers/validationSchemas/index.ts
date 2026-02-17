@@ -1,3 +1,4 @@
-export { articleSchema } from './articleSchema';
-export { default as leadSchema } from './leadSchema';
-export { default as subscriberSchema } from './subscriberSchema';
+export { articleSchema } from './article/createArticle.schema';
+export { default as changePasswordSchema } from './changePassword.schema';
+export { default as leadSchema } from './lead.schema';
+export { default as subscriberSchema } from './subscriber.schema';

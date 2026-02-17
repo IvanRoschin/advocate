@@ -11,7 +11,7 @@ import {
   sacramento,
 } from '@/app/ui/fonts';
 
-import ToastProvider from './providers/ToastProvider';
+import { Providers } from './providers/providers';
 
 export default function RootLayout({
   children,
@@ -24,8 +24,7 @@ export default function RootLayout({
       className={` ${geistSans.variable} ${geistMono.variable} ${eUkrainehead.variable} ${eUkraine.variable} ${manrope.variable} ${sacramento.variable} `}
     >
       <body>
-        {children} <ToastProvider />
-        {/* Google reCAPTCHA */}
+        <Providers>{children}</Providers> {/* Google reCAPTCHA */}
         <Script
           src="https://www.google.com/recaptcha/api.js?render=explicit"
           strategy="afterInteractive"
