@@ -33,7 +33,7 @@ export default function NextImage({
   className,
   wrapperClassName,
   classNames,
-  onLoadingComplete,
+  onLoad,
   ...rest
 }: NextImageProps) {
   const [isLoading, setIsLoading] = React.useState(useSkeleton);
@@ -47,7 +47,8 @@ export default function NextImage({
     <figure
       style={style}
       className={cn(
-        'relative overflow-hidden',
+        fill ? 'absolute inset-0' : 'relative',
+        'overflow-hidden',
         classNames?.wrapper,
         wrapperClassName
       )}
@@ -63,13 +64,12 @@ export default function NextImage({
         className={cn(
           'transition-opacity duration-500',
           isLoading ? 'opacity-0' : 'opacity-100',
-          // default object-fit можно оставлять тут или задавать снаружи
           classNames?.image,
           className
         )}
-        onLoadingComplete={img => {
-          setIsLoading(false);
-          onLoadingComplete?.(img);
+        onLoad={event => {
+          if (useSkeleton) setIsLoading(false);
+          onLoad?.(event);
         }}
         {...rest}
       />

@@ -10,23 +10,21 @@ const Hero = () => {
       ?.link ?? null;
 
   return (
-    <section
-      className="relative flex min-h-screen w-full items-center overflow-hidden"
-      itemScope
-      itemType={heroSection.schemaType}
-    >
-      <NextImage
-        useSkeleton
-        src={heroSection.background.src}
-        alt={heroSection.background.alt}
-        fill
-        priority
-        className="-z-20 object-cover"
-      />
+    <section className="relative flex h-screen w-full items-center overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <NextImage
+          src={heroSection.background.src}
+          alt={heroSection.background.alt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
 
-      <div className="absolute inset-0 -z-10 bg-linear-to-b from-black/60 via-black/30 to-black/60" />
+      <div className="absolute inset-0 z-10 bg-black/50" />
 
-      <div className="relative z-10 container px-4 text-white">
+      <div className="relative z-20 container px-4 text-white">
         <p className="mb-6 text-xs tracking-widest text-gray-300 uppercase md:text-sm">
           {heroSection.header.uptitle}
         </p>
@@ -49,14 +47,12 @@ const Hero = () => {
         <div className="flex flex-col gap-4 sm:flex-row">
           <Btn
             label={heroSection.cta.primary.label}
-            component="a"
             href={getRouteUrl(heroSection.cta.primary.route)}
           />
 
           {phoneLink && (
             <Btn
               label={heroSection.cta.secondary.label}
-              component="a"
               href={phoneLink}
               uiVariant={heroSection.cta.secondary.uiVariant}
             />

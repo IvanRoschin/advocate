@@ -9,7 +9,7 @@ export const advantagesSection = {
   id: 'advantages',
   schemaType: 'https://schema.org/LegalService',
   background: {
-    src: '/advantages_bg_v1.webp',
+    src: '/images/bg/advantages_bg_v1.webp',
     alt: 'Юридичні послуги адвоката',
   },
   header: {

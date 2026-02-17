@@ -9,7 +9,7 @@ const Advantages = () => {
   const phoneLink =
     social.find(s => s.icon === 'phone' && s.essential && s.link)?.link ?? null;
 
-  const phoneLabel = phoneLink ? phoneLink.replace(/^tel:/, '') : null;
+  const phoneLabel = phoneLink ? phoneLink.replace(/^tel:/, '+38') : null;
 
   return (
     <section
@@ -68,7 +68,6 @@ const Advantages = () => {
           {phoneLink && (
             <Btn
               label={`${advantagesSection.cta.buttonPrefix}${phoneLabel ? ` ${phoneLabel}` : ''}`}
-              component="a"
               href={phoneLink}
               uiVariant="accent"
             />

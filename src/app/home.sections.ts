@@ -1,3 +1,4 @@
+import type { HomeSectionKey } from '@/app/resources/content/pages/home.layout';
 import {
   About,
   Advantages,
@@ -12,8 +13,6 @@ import {
   Socials,
   WhyChooseMe,
 } from '@/components';
-
-import type { HomeSectionKey } from '@/app/resources/content/pages/home.layout';
 
 export const HOME_SECTIONS: Record<HomeSectionKey, React.ComponentType> = {
   socials: Socials,

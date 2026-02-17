@@ -42,7 +42,7 @@ export const aboutSection: AboutSection = {
   },
 
   image: {
-    src: '/ivan_roschin.webp',
+    src: '/images/ivan_roschin.webp',
     alt: 'Адвокат Рощин Іван Геннадійович',
     sizes: '(max-width: 640px) 280px, 360px',
   },

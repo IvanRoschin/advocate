@@ -1,14 +1,17 @@
 import { homeLayout } from '@/app/resources/content/pages/home.layout';
-
-import { generateMetadata } from './helpers/generateMetadata';
+import { buildOgImageUrl, generateMetadata } from './helpers';
 import { HOME_SECTIONS } from './home.sections';
-import { home } from './resources/content';
+import { home, person } from './resources/content';
 
 export const metadata = generateMetadata({
   title: home.title,
   description: home.description,
-  url: home.path,
-  imageUrl: home.image,
+  path: home.path,
+  imageUrl: buildOgImageUrl({
+    title: home.title,
+    subtitle: `${person.role} • ${person.location}`,
+    tag: 'Головна',
+  }),
 });
 
 export default function Home() {
