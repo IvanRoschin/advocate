@@ -12,7 +12,7 @@ const DeleteConfirmation = ({
   return (
     <div>
       <div className="w-full rounded-lg bg-white p-6">
-        <h3 className="mb-4 text-lg font-semibold">Ви впевнені?</h3>
+        <h3 className="text-accent mb-4 text-lg font-semibold">Ви впевнені?</h3>
         <p className="mb-4">Ви хочете видалити цей {title}?</p>
         <div className="grid grid-cols-2 gap-4">
           <Btn type="button" label="Скасувати" onClick={onCancel} />

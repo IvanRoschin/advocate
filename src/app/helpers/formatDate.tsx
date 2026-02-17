@@ -1,4 +1,4 @@
-const formatDate = (dateStr?: string | Date) => {
+export const formatDate = (dateStr?: string | Date) => {
   if (!dateStr) return 'Невідома дата';
   return new Date(dateStr).toLocaleDateString('uk-UA', {
     day: '2-digit',
@@ -8,5 +8,3 @@ const formatDate = (dateStr?: string | Date) => {
     minute: '2-digit',
   });
 };
-
-export default formatDate;

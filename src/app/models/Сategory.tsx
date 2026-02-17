@@ -14,6 +14,7 @@ const categorySchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      index: true,
     },
     src: {
       type: [String],

@@ -1,16 +1,15 @@
 import { NextResponse } from 'next/server';
 
+import { Lead } from '@/models';
 import { validate } from '@/app/helpers/validate';
 import leadSchema from '@/app/helpers/validationSchemas/lead.schema';
-import type { ApiResponse } from '@/app/lib/server/ApiError';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import { sendEmail } from '@/app/lib/server/mail/emailService';
-import { connectDB } from '@/app/lib/server/mongoose';
+import { dbConnect } from '@/app/lib/server/mongoose';
 import { sendTelegramMessage } from '@/app/lib/server/sendTelegram';
 import { EmailTemplateType } from '@/app/templates/email/types';
-import { Lead } from '@/models';
-
+import type { ApiResponse } from '@/app/lib/server/ApiError';
 const ADMIN_EMAIL = 'advocate.roschin@gmail.com';
 
 async function verifyRecaptcha(token: string) {
@@ -26,7 +25,7 @@ async function verifyRecaptcha(token: string) {
 
 export async function POST(req: Request) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const body = (await req.json()) as {
       name: string;

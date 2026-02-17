@@ -4,8 +4,8 @@ export enum EmailTemplateType {
   SUBSCRIBER_CLIENT = ' SUBSCRIBER_CLIENT',
   SUBSCRIBER_ADMIN = 'SUBSCRIBER_ADMIN',
   VERIFICATION = 'VERIFICATION',
+  USER_CREATED = 'USER_CREATED',
   EMAIL_CHANGE = 'EMAIL_CHANGE',
-  USER_CREDENTIALS = 'USER_CREDENTIALS',
   ACCOUNT_ACTIVATED = 'ACCOUNT_ACTIVATED',
 }
 
@@ -33,22 +33,23 @@ export type EmailTemplatePropsMap = {
     verificationUrl: string;
   };
 
+  [EmailTemplateType.USER_CREATED]: {
+    name: string;
+    email: string;
+    role: string;
+    phone: string;
+  };
+
   [EmailTemplateType.EMAIL_CHANGE]: {
     name: string;
     email: string;
     verificationUrl: string;
   };
 
-  [EmailTemplateType.USER_CREDENTIALS]: {
-    name: string;
-    login: string;
-    password: string;
-    resetPasswordUrl: string;
-  };
-
   [EmailTemplateType.ACCOUNT_ACTIVATED]: {
     name: string;
     login: string;
     password: string;
+    resetPasswordUrl: string;
   };
 };

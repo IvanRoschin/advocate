@@ -42,6 +42,7 @@
     "slugify": "^1.6.6",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
+    "tzdata": "^1.0.47",
     "use-debounce": "^10.1.0",
     "yup": "^1.7.1",
     "zustand": "^5.0.11"

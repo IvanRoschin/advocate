@@ -1,83 +1,74 @@
 'use client';
 
-import Btn from '@/app/components/ui/button/Btn';
+import { Btn, NextImage } from '@/components';
+import { advantagesSection, social } from '@/resources';
 
-import { NextImage } from '../../common';
 import AdvantageItem from './AdvantageItem';
 
 const Advantages = () => {
-  const phone = process.env.NEXT_PUBLIC_ADVOCATE_PN_1 ?? null;
+  const phoneLink =
+    social.find(s => s.icon === 'phone' && s.essential && s.link)?.link ?? null;
+
+  const phoneLabel = phoneLink ? phoneLink.replace(/^tel:/, '+38') : null;
 
   return (
     <section
+      id={advantagesSection.id}
       className="relative flex min-h-screen items-center py-20 text-white"
       itemScope
-      itemType="https://schema.org/LegalService"
+      itemType={advantagesSection.schemaType}
     >
-      {/* Background */}
       <NextImage
-        src="/advantages_bg_v1.webp"
-        alt="Юридичні послуги адвоката"
+        src={advantagesSection.background.src}
+        alt={advantagesSection.background.alt}
         fill
         priority
         className="-z-20 object-cover"
         useSkeleton
       />
 
-      {/* Overlay */}
       <div className="absolute inset-0 -z-10 bg-linear-to-b from-black/70 via-black/40 to-black/80" />
 
       <div className="relative z-10 container grid gap-16 px-4 lg:grid-cols-2">
-        {/* LEFT — Advantages */}
         <div>
           <p className="text-accent mb-4 text-sm tracking-widest uppercase">
-            Чому обирають мене
+            {advantagesSection.header.uptitle}
           </p>
 
           <h2 className="font-eukrainehead mb-10 text-3xl leading-tight font-bold md:text-4xl">
-            Результат, відповідальність <br />
-            <span className="text-accent">та повна конфіденційність</span>
+            {advantagesSection.header.titleTop} <br />
+            <span className="text-accent">
+              {advantagesSection.header.titleAccent}
+            </span>
           </h2>
 
           <div className="grid grid-cols-2 gap-4 md:gap-6">
-            <AdvantageItem
-              value={100}
-              suffix="%"
-              text="Гарантія адвокатської конфіденційності"
-            />
-            <AdvantageItem
-              value={10}
-              suffix="+"
-              text="Років практичного юридичного досвіду"
-            />
-            <AdvantageItem
-              value={24}
-              suffix="/7"
-              text="Постійний звʼязок з клієнтом"
-            />
-            <AdvantageItem
-              value={5}
-              suffix="+"
-              text="Ключових юридичних практик"
-            />
+            {advantagesSection.metrics.map(m => (
+              <AdvantageItem
+                key={m.id}
+                value={m.value}
+                suffix={m.suffix}
+                text={m.text}
+              />
+            ))}
           </div>
         </div>
 
-        {/* RIGHT — Call to Action */}
         <div className="flex flex-col justify-center rounded-3xl bg-black/50 p-8 backdrop-blur-md">
           <h3 className="font-eukrainehead mb-4 text-2xl font-bold">
-            Потрібна юридична допомога?
+            {advantagesSection.cta.title}
           </h3>
+
           <p className="mb-6 text-gray-200">
+            {/* чтобы сохранить <strong>, делаем так: */}
             Отримайте <strong>первинну консультацію</strong> та зрозумійте
             реальні перспективи вашої справи вже сьогодні.
           </p>
-          {/* Кнопка рендерится только на клиенте */}
-          {phone && (
+
+          {phoneLink && (
             <Btn
-              label={`Зателефонувати адвокату ${phone}`}
-              component="a"
-              href={`tel:${phone}`}
+              label={`${advantagesSection.cta.buttonPrefix}${phoneLabel ? ` ${phoneLabel}` : ''}`}
+              href={phoneLink}
               uiVariant="accent"
             />
           )}

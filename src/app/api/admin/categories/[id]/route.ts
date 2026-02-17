@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { connectDB } from '@/app/lib/server/mongoose';
+import { dbConnect } from '@/app/lib/server/mongoose';
 import { categoryService } from '@/app/lib/services/category.service';
 import { UpdateCategoryDTO } from '@/app/types';
 
@@ -12,7 +12,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const { id } = await params;
 
@@ -31,7 +31,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const { id } = await params;
     const payload: UpdateCategoryDTO = await request.json();
@@ -51,7 +51,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const { id } = await params;
 

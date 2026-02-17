@@ -58,14 +58,11 @@ const SubscribeForm = () => {
           <input type="text" name="website" style={{ display: 'none' }} />
           <div className="flex items-end">
             <Btn
-              radius="12"
+              radius={12}
               type="submit"
-              title="Підписатися"
+              label="Підписатися"
               disabled={!isValid || isSubmitting}
-              sx={{
-                paddingY: '0.75rem',
-                minHeight: '3.7rem',
-              }}
+              className="min-h-[3.7rem] px-6 py-3"
             />
           </div>
         </Form>

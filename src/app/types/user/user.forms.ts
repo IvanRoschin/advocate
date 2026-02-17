@@ -28,7 +28,8 @@ export const createUserSchema = Yup.object({
   name: baseUserSchema.name.required("Обов'язкове поле"),
 
   email: baseUserSchema.email.required("Обов'язкове поле"),
-  password: baseUserSchema.password.required("Обов'язкове поле"),
+
+  password: baseUserSchema.password.optional(),
 
   phone: baseUserSchema.phone,
   role: baseUserSchema.role.default(UserRole.CLIENT),

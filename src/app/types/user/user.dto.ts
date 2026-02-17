@@ -4,7 +4,7 @@ export type CreateUserRequestDTO = {
   name: string;
 
   email: string;
-  password: string;
+  password?: string;
 
   phone?: string;
   role?: UserRole;

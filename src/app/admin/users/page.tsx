@@ -1,11 +1,12 @@
-import { apiFetch } from '@/app/lib/client/apiFetch';
+import { userService } from '@/app/lib/services/user.service';
 import { UserResponseDTO } from '@/app/types';
-
 import UsersClient from './UsersClient';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const runtime = 'nodejs';
+
 const UsersPage = async () => {
-  const users = await apiFetch<UserResponseDTO[]>('/api/admin/users');
+  const users: UserResponseDTO[] = await userService.getAll();
 
   return <UsersClient initialUsers={users} />;
 };
