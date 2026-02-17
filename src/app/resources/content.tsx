@@ -78,19 +78,6 @@ const logo = {
   logoWhite: '/images/logo/logo_white_bg.webp',
 };
 
-const hero = {
-  heroBg: '/images/bg/hero_bg.webp',
-  uptitle: 'Адвокатська допомога • Захист інтересів • Результат',
-  title: 'Адвокат у складних правових ситуаціях',
-  subtitle:
-    'Захищаю ваші права, мінімізую ризики та доводжу справи до результату. Конфіденційно. Професійно. Законно.',
-  p1: 'Первинна консультація • Адвокатська таємниця гарантована',
-};
-
-const order = {
-  orderBg: '/images/bg/order_bg_v1.webp',
-};
-
 const home = {
   path: '/',
   image: '/images/ivan_roschin.webp',
@@ -99,33 +86,6 @@ const home = {
   description:
     'Головна сторінка Адвокат Іван Рощин – професійна правнича допомога у цивільних, господарських та адміністративних справах.',
 };
-
-// const home: Home = {
-//   path: '/',
-//   image: '/images/og/home.jpg',
-//   label: 'Головна',
-//   title: `${person.name} — простір традиції`,
-//   description: `Сайт про практики, традиції та роботу з ресурсом — ${person.role}`,
-//   headline: <>Персональний веб-сайт Марічки Молярчук</>,
-//   featured: {
-//     display: true,
-//     title: (
-//       <Row gap="12" vertical="center">
-//         <strong className="ml-4">Послуги</strong>{' '}
-//         <Line background="brand-alpha-strong" vert height="20" />
-//         <Text marginRight="4" onBackground="brand-medium">
-//           Запис / деталі
-//         </Text>
-//       </Row>
-//     ),
-//     href: '/about',
-//   },
-//   subline: (
-//     <>
-//       Дослідниця українських традицій <br /> • ладувальниця • майстриня оберегів
-//     </>
-//   ),
-// };
 
 // const about: About = {
 //   path: '/about',
@@ -402,4 +362,4 @@ const home = {
 //   ],
 // };
 
-export { hero, home, logo, newsletter, order, person, social };
+export { home, logo, newsletter, person, social };

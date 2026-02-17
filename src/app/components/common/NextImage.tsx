@@ -1,19 +1,27 @@
-import * as React from 'react';
+'use client';
 
 import Image, { ImageProps } from 'next/image';
+import * as React from 'react';
 
-import { Skeleton } from '@/components/common/index';
-import { cn } from '@/lib/index';
+import { Skeleton } from '@/components/common';
+import { cn } from '@/lib';
 
-type NextImageProps = {
+type NextImageProps = Omit<ImageProps, 'alt'> & {
+  alt: string;
   useSkeleton?: boolean;
+
+  /** className для wrapper */
+  wrapperClassName?: string;
+
+  /** className для самого <Image/> */
+  className?: string;
+
+  /** legacy */
   classNames?: {
     image?: string;
     wrapper?: string;
   };
-  alt: string;
-  fill?: boolean;
-} & ImageProps;
+};
 
 export default function NextImage({
   useSkeleton = false,
@@ -23,39 +31,46 @@ export default function NextImage({
   alt,
   fill,
   className,
+  wrapperClassName,
   classNames,
+  onLoadingComplete,
   ...rest
 }: NextImageProps) {
   const [isLoading, setIsLoading] = React.useState(useSkeleton);
-  const widthIsSet = className?.includes('w-') ?? false;
+
+  const style =
+    !fill && typeof width === 'number' && typeof height === 'number'
+      ? { width, height }
+      : undefined;
 
   return (
     <figure
-      style={
-        !fill && !widthIsSet
-          ? { width: `${width}px`, height: `${height}px` }
-          : undefined
-      }
-      className={cn('relative overflow-hidden', classNames?.wrapper, className)}
+      style={style}
+      className={cn(
+        'relative overflow-hidden',
+        classNames?.wrapper,
+        wrapperClassName
+      )}
     >
       {useSkeleton && isLoading && (
-        <Skeleton
-          className={cn(
-            'absolute inset-0 z-0 h-full w-full animate-pulse rounded-md'
-          )}
-        />
+        <Skeleton className="absolute inset-0 z-0 h-full w-full animate-pulse rounded-md" />
       )}
 
       <Image
         src={src}
         alt={alt}
-        {...(fill ? { fill: true } : width && height ? { width, height } : {})}
+        {...(fill ? { fill: true } : { width, height })}
         className={cn(
-          'object-contain transition-opacity duration-500',
+          'transition-opacity duration-500',
           isLoading ? 'opacity-0' : 'opacity-100',
-          classNames?.image
+          // default object-fit можно оставлять тут или задавать снаружи
+          classNames?.image,
+          className
         )}
-        onLoad={() => setIsLoading(false)}
+        onLoadingComplete={img => {
+          setIsLoading(false);
+          onLoadingComplete?.(img);
+        }}
         {...rest}
       />
     </figure>

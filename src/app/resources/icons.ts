@@ -1,5 +1,12 @@
 import type { IconType } from 'react-icons';
-import { FaEnvelope } from 'react-icons/fa';
+import {
+  FaChevronDown,
+  FaChevronUp,
+  FaEnvelope,
+  FaQuoteLeft,
+  FaQuoteRight,
+  FaRegRegistered,
+} from 'react-icons/fa';
 import {
   FaDiscord,
   FaFacebook,
@@ -29,6 +36,8 @@ import {
   HiOutlineLink,
   HiOutlineRocketLaunch,
 } from 'react-icons/hi2';
+import { IoIosPeople } from 'react-icons/io';
+import { LuBriefcaseBusiness } from 'react-icons/lu';
 import {
   PiBookBookmarkDuotone,
   PiGridFourDuotone,
@@ -36,7 +45,13 @@ import {
   PiImageDuotone,
   PiUserCircleDuotone,
 } from 'react-icons/pi';
-import { SiFigma, SiJavascript, SiNextdotjs, SiSupabase } from 'react-icons/si';
+import {
+  SiFigma,
+  SiJavascript,
+  SiNextdotjs,
+  SiSupabase,
+  SiTheboringcompany,
+} from 'react-icons/si';
 
 export const iconLibrary: Record<string, IconType> = {
   arrowUpRight: HiArrowUpRight,
@@ -74,6 +89,14 @@ export const iconLibrary: Record<string, IconType> = {
   phone: FaPhone,
   viber: FaViber,
   envelope: FaEnvelope,
+  registered: FaRegRegistered,
+  briefcaseBusiness: LuBriefcaseBusiness,
+  boringCompany: SiTheboringcompany,
+  people: IoIosPeople,
+  quoteLeft: FaQuoteLeft,
+  quoteRight: FaQuoteRight,
+  chevronDown: FaChevronDown,
+  chevronUp: FaChevronUp,
 };
 
 export type IconLibrary = typeof iconLibrary;

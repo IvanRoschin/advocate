@@ -1,10 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import { useCallback, useId, useState } from 'react';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
-import { whyChooseMeSection } from '@/app/resources';
+import { iconLibrary, whyChooseMeSection } from '@/app/resources';
+import { NextImage } from '@/components';
 
 const WhyChooseMe = () => {
   const [openId, setOpenId] = useState<string | null>(null);
@@ -15,6 +14,9 @@ const WhyChooseMe = () => {
   }, []);
 
   const { header, image, items, lead, id, schemaType } = whyChooseMeSection;
+
+  const ChevronUp = iconLibrary.chevronUp;
+  const ChevronDown = iconLibrary.chevronDown;
 
   return (
     <section
@@ -36,9 +38,9 @@ const WhyChooseMe = () => {
         </header>
 
         <div className="flex flex-col items-center gap-12 md:flex-row md:items-start md:gap-16">
-          {/* Фото */}
           <div className="relative h-75 w-full max-w-125 overflow-hidden rounded-2xl shadow-lg sm:h-87.5 md:h-100 md:max-w-150 lg:h-112.5 lg:max-w-175">
-            <Image
+            <NextImage
+              useSkeleton
               src={image.src}
               alt={image.alt}
               fill
@@ -51,7 +53,6 @@ const WhyChooseMe = () => {
             <meta itemProp="jobTitle" content={image.jobTitle} />
           </div>
 
-          {/* Accordion */}
           <div className="w-full flex-1 space-y-4">
             <h3 className="font-eukrainehead text-lg font-semibold text-white sm:text-xl md:text-2xl">
               {lead.line1.split(lead.accentWords[0]).map((chunk, idx) =>
@@ -89,7 +90,7 @@ const WhyChooseMe = () => {
                   >
                     {item.title}
                     <span className="ml-3" aria-hidden>
-                      {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+                      {isOpen ? <ChevronUp /> : <ChevronDown />}
                     </span>
                   </button>
 

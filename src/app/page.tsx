@@ -1,18 +1,7 @@
-import Footer from './components/footer/Footer';
-import Header from './components/header/Header';
-import {
-  About,
-  Advantages,
-  Hero,
-  Order,
-  Practices,
-  Reviews,
-  WhyChooseMe,
-} from './components/sections';
-import Services from './components/sections/services/Services';
-import Socials from './components/socials/Socials';
-import ScrollToTopButton from './components/ui/button/ScrollToTopButton';
+import { homeLayout } from '@/app/resources/content/pages/home.layout';
+
 import { generateMetadata } from './helpers/generateMetadata';
+import { HOME_SECTIONS } from './home.sections';
 import { home } from './resources/content';
 
 export const metadata = generateMetadata({
@@ -25,37 +14,26 @@ export const metadata = generateMetadata({
 export default function Home() {
   return (
     <main className="relative">
-      {/* <h1>Заголовок H1</h1>
-      <h2>Заголовок H2</h2>
-      <p className="lead">Это lead текст</p>
-      <p>Обычный текст</p>
-      <small>Маленький текст</small>
-      <p className="muted">Вспомогательный / muted текст</p>
-      <code>const a = 1;</code> */}
-      <Socials />
-      <Header />
-      {/* Секция Hero */}
-      <div className="relative">
-        <Hero />
-        {/* Services поверх Hero и About */}
-        <Services />
-      </div>
-      {/* Секция About */}
-      <About />
-      {/* Секция Practices */}
-      <Practices />
-      {/* Секция Advantages */}
-      <Advantages />
-      {/* Секция Reviews */}
-      <Reviews />
-      {/* Секция WhyChooseMe */}
-      <WhyChooseMe />
-      {/* Секция Order */}
-      <Order />
+      {homeLayout
+        .filter(node => node.display)
+        .map(node => {
+          if (node.type === 'section') {
+            const Section = HOME_SECTIONS[node.key];
+            return <Section key={node.key} />;
+          }
 
-      <Footer />
-
-      <ScrollToTopButton />
+          // group
+          return (
+            <div key={node.key} className={node.wrapperClassName}>
+              {node.items
+                .filter(it => it.display)
+                .map(it => {
+                  const Section = HOME_SECTIONS[it.key];
+                  return <Section key={it.key} />;
+                })}
+            </div>
+          );
+        })}
     </main>
   );
 }

@@ -1,10 +1,7 @@
 'use client';
 
-import Btn from '@/app/components/ui/button/Btn';
 import { routes } from '@/app/config/routes';
-
-import Logo from '../logo/Logo';
-import Menu from '../menu/Menu';
+import { Btn, Logo, Menu } from '@/components';
 
 const Header = () => {
   return (
