@@ -4,7 +4,10 @@ import { SessionProvider } from 'next-auth/react';
 import { Suspense } from 'react';
 import { Toaster } from 'sonner';
 
-import { Loader } from '@/components';
+import { PremiumLoader } from '../components/ui/loader/PremiumLoader';
+import { TopProgressBar } from '../components/ui/top-progress/TopProgressBar';
+import { LoadingProvider } from './LoadingProvider';
+import { PageTransition } from './PageTransition';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -13,10 +16,16 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return (
     <SessionProvider>
-      <Suspense fallback={<Loader />}>
-        {children}
+      <LoadingProvider>
+        <TopProgressBar />
+        <PremiumLoader />
+
+        <Suspense fallback={null}>
+          <PageTransition>{children}</PageTransition>
+        </Suspense>
+
         <Toaster position="top-right" richColors />
-      </Suspense>
+      </LoadingProvider>
     </SessionProvider>
   );
 }

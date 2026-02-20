@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 
-import { useModalStore } from '@/app/store/modalStore';
+import { useModalStore } from '@/app/store/modal.store';
 
 export function useModal(name: string) {
   const { modals, openModal, closeModal, toggleModal } = useModalStore();

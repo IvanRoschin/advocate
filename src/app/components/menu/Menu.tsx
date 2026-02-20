@@ -1,11 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HiOutlineMenu, HiX } from 'react-icons/hi';
 
 import { getRouteUrl } from '@/app/config/routes';
 import { mainMenu, menuText } from '@/app/resources';
+import { AppLink } from '@/components';
 
 const Menu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -82,13 +82,13 @@ const Menu = () => {
       <ul className="h2 mx-auto hidden w-full max-w-5xl grid-cols-3 gap-2 text-sm font-medium text-gray-700 sm:mb-4 sm:grid sm:gap-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-4 xl:pt-8">
         {mainMenu.map(({ title, route }) => (
           <li key={route} className="text-center">
-            <Link
+            <AppLink
               href={getRouteUrl(route)}
               className="group hover:text-accent focus:text-accent relative block py-2 transition-colors duration-500 ease-out"
             >
               {title}
               <span className="bg-accent absolute -bottom-0.5 left-0 h-0.5 w-0 transition-all duration-500 ease-out group-hover:w-full group-focus:w-full" />
-            </Link>
+            </AppLink>
           </li>
         ))}
       </ul>
@@ -126,24 +126,24 @@ const Menu = () => {
           <ul className="flex h-full flex-col divide-y divide-gray-200">
             {mainMenu.map(({ title, route }) => (
               <li key={route}>
-                <Link
+                <AppLink
                   href={getRouteUrl(route)}
                   onClick={close}
                   className="hover:text-accent block px-6 py-4 text-gray-800 hover:bg-gray-100"
                 >
                   {title}
-                </Link>
+                </AppLink>
               </li>
             ))}
 
             <li className="mt-auto px-6 py-6">
-              <Link
+              <AppLink
                 href={getRouteUrl(menuText.ctaRoute)}
                 onClick={close}
                 className="bg-accent hover:bg-accent block w-full rounded-md py-3 text-center font-semibold text-white"
               >
                 {menuText.cta}
-              </Link>
+              </AppLink>
             </li>
           </ul>
         </div>

@@ -1,5 +1,4 @@
-import Link from 'next/link';
-
+import { AppLink } from '@/components';
 import { logo } from '@/resources/content';
 import { NextImage } from '../common';
 
@@ -11,7 +10,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'dark' }) => {
   const src = variant === 'dark' ? `${logo.logoBlack}` : `${logo.logoWhite}`;
 
   return (
-    <Link href="/" className="block shrink-0" aria-label="Go to homepage">
+    <AppLink href="/" className="block shrink-0" aria-label="Go to homepage">
       <NextImage
         useSkeleton
         src={src}
@@ -21,7 +20,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'dark' }) => {
         priority
         className="h-17 w-auto object-contain"
       />
-    </Link>
+    </AppLink>
   );
 };
 

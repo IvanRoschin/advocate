@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import { DataTable } from '@/app/components/data-table/DataTable';
 import { CategoryForm } from '@/app/components/forms/index';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
+import { useLoadingStore } from '@/app/store/loading.store.ts';
 import {
   CategoryResponseDTO,
   CreateCategoryRequestDTO,
@@ -21,7 +23,7 @@ import {
   Modal,
 } from '@/components/index';
 
-import { AdminTable } from '../components/table';
+// import { AdminTable } from '../components/table';
 import { categoryColumns } from './category.columns';
 
 interface Props {
@@ -29,6 +31,9 @@ interface Props {
 }
 
 export default function CategoriesClient({ initialCategories }: Props) {
+  const start = useLoadingStore.getState().start;
+  const done = useLoadingStore.getState().done;
+
   const [categories, setCategories] =
     useState<CategoryResponseDTO[]>(initialCategories);
 
@@ -51,7 +56,7 @@ export default function CategoriesClient({ initialCategories }: Props) {
 
   const handleDeleteConfirm = async () => {
     if (!categoryToDelete) return;
-
+    start();
     try {
       await apiFetch<void>(
         apiUrl(`/api/admin/categories/${categoryToDelete._id}`),
@@ -67,6 +72,8 @@ export default function CategoriesClient({ initialCategories }: Props) {
       setCategoryToDelete(null);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Помилка видалення');
+    } finally {
+      done();
     }
   };
 
@@ -76,6 +83,7 @@ export default function CategoriesClient({ initialCategories }: Props) {
   };
 
   const handleCreateCategory = async (payload: CreateCategoryRequestDTO) => {
+    start();
     try {
       const newCategory = await apiFetch<CategoryResponseDTO>(
         apiUrl('/api/admin/categories'),
@@ -90,12 +98,14 @@ export default function CategoriesClient({ initialCategories }: Props) {
       createModal.close();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Помилка створення');
+    } finally {
+      done();
     }
   };
 
   const handleUpdateCategory = async (payload: UpdateCategoryDTO) => {
     if (!categoryToUpdate) return;
-
+    start();
     try {
       const updatedCategory = await apiFetch<CategoryResponseDTO>(
         apiUrl(`/api/admin/categories/${categoryToUpdate?._id}`),
@@ -114,6 +124,8 @@ export default function CategoriesClient({ initialCategories }: Props) {
       setCategoryToUpdate(null);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Помилка оновлення');
+    } finally {
+      done();
     }
   };
 
@@ -156,7 +168,7 @@ export default function CategoriesClient({ initialCategories }: Props) {
         <Btn label="Додати категорію" onClick={createModal.open} />
       </div>
 
-      <AdminTable
+      <DataTable
         data={categories}
         columns={categoryColumns({
           onEdit: handleEdit,

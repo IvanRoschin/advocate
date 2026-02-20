@@ -1,8 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-
 import { iconLibrary } from '@/app/resources/icons';
+import { AppLink } from '@/components';
 import { social } from '@/resources/content';
 
 import type { IconName } from '@/app/resources/icons';
@@ -22,7 +21,7 @@ const Socials = () => {
         <ul className="flex flex-col gap-2">
           {essential.map(item => (
             <li key={`${item.icon}-${item.link}`}>
-              <Link
+              <AppLink
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -30,7 +29,7 @@ const Socials = () => {
               >
                 {renderIcon(item.icon as IconName)}
                 <span className="nav">{item.name}</span>
-              </Link>
+              </AppLink>
             </li>
           ))}
         </ul>
@@ -38,7 +37,7 @@ const Socials = () => {
         <ul className="flex flex-col gap-2 sm:items-end">
           {secondary.map(item => (
             <li key={`${item.icon}-${item.link}`}>
-              <Link
+              <AppLink
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -46,7 +45,7 @@ const Socials = () => {
               >
                 <span className="nav">{item.name}</span>
                 {renderIcon(item.icon as IconName)}
-              </Link>
+              </AppLink>
             </li>
           ))}
         </ul>

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import { DataTable } from '@/app/components/data-table/data-table';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -21,7 +22,6 @@ import {
   UserForm,
 } from '@/components';
 
-import { AdminTable } from '../components/table';
 import { userColumns } from './user.columns';
 
 interface Props {
@@ -151,7 +151,7 @@ export default function UsersClient({ initialUsers }: Props) {
         <Btn label="Додати користувача" onClick={createModal.open} />
       </div>
 
-      <AdminTable
+      <DataTable
         data={users}
         columns={userColumns({
           onEdit: handleEdit,

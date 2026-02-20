@@ -78,6 +78,11 @@ const logo = {
   logoWhite: '/images/logo/logo_white_bg.webp',
 };
 
+const brand = {
+  logoSrc: '/images/brand/logo.svg',
+  label: 'Завантаження…',
+};
+
 const home = {
   path: '/',
   image: '/images/ivan_roschin.webp',
@@ -362,4 +367,4 @@ const home = {
 //   ],
 // };
 
-export { home, logo, newsletter, person, social };
+export { brand, home, logo, newsletter, person, social };
