@@ -31,18 +31,19 @@
       "@/resources": ["./src/app/resources/index.ts"],
 
 
- "@/sections/*": ["./src/app/components/sections/*"],
+      "@/sections/*": ["./src/app/components/sections/*"],
       "@/sections": ["./src/app/components/sections/index.ts"],
 
       "@/lib/*": ["./src/app/lib/*"],
       "@/lib": ["./src/app/lib/index.ts"],
 
+      "@/store/*": ["./src/app/store/*"],
 
-      "@/models": ["./src/app/models/index.ts"],
       "@/models/*": ["./src/app/models/*"],
+      "@/models": ["./src/app/models/index.ts"],
 
+      "@/types/*": ["./src/app/types/*"],
       "@/types": ["./src/app/types/index.ts"],
-      "@/types/*": ["./src/app/types/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

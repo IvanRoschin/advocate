@@ -8,12 +8,17 @@ import {
 } from '@/app/types';
 import { categoryRepo } from '@/lib/repositories/category.repo';
 
+import { dbConnect } from '../server/mongoose';
+
 export const categoryService = {
   async getAll() {
+    await dbConnect();
     return categoryRepo.findAll();
   },
 
   async getById(id: string) {
+    await dbConnect();
+
     const category = await categoryRepo.findById(id);
     if (!category) throw new ValidationError('Категорію не знайдено');
     const dto = mapCategoryToResponse(category);
@@ -21,6 +26,8 @@ export const categoryService = {
   },
 
   async create(data: CreateCategoryRequestDTO) {
+    await dbConnect();
+
     const slug = slugify(data.title, {
       lower: true,
       strict: true,
@@ -42,6 +49,8 @@ export const categoryService = {
   },
 
   async update(id: string, data: UpdateCategoryDTO) {
+    await dbConnect();
+
     const category = await categoryRepo.findById(id);
     if (!category) {
       throw new ValidationError('Категорію не знайдено');
@@ -84,6 +93,8 @@ export const categoryService = {
   },
 
   async delete(id: string) {
+    await dbConnect();
+
     const deleted = await categoryRepo.delete(id);
     if (!deleted) throw new ValidationError('Категорію не знайдено');
     return deleted;

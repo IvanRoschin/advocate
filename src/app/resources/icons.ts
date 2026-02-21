@@ -24,6 +24,15 @@ import {
   FaXTwitter,
 } from 'react-icons/fa6';
 import {
+  FiBookOpen,
+  FiGrid,
+  FiHome,
+  FiMoon,
+  FiPhone,
+  FiSun,
+  FiUser,
+} from 'react-icons/fi';
+import {
   HiArrowRight,
   HiArrowTopRightOnSquare,
   HiArrowUpRight,
@@ -41,7 +50,6 @@ import { LuBriefcaseBusiness } from 'react-icons/lu';
 import {
   PiBookBookmarkDuotone,
   PiGridFourDuotone,
-  PiHouseDuotone,
   PiImageDuotone,
   PiUserCircleDuotone,
 } from 'react-icons/pi';
@@ -63,7 +71,6 @@ export const iconLibrary: Record<string, IconType> = {
   book: PiBookBookmarkDuotone,
   openLink: HiOutlineLink,
   calendar: HiCalendarDays,
-  home: PiHouseDuotone,
   gallery: PiImageDuotone,
   discord: FaDiscord,
   eye: HiOutlineEye,
@@ -97,6 +104,15 @@ export const iconLibrary: Record<string, IconType> = {
   quoteRight: FaQuoteRight,
   chevronDown: FaChevronDown,
   chevronUp: FaChevronUp,
+  sun: FiSun,
+  moon: FiMoon,
+  home: FiHome,
+  about: FiUser,
+  practices: FiGrid,
+  blog: FiBookOpen,
+  payments: FiGrid, // подбери иконку
+  contact: FiPhone, // подбери иконку
+  order: FiPhone,
 };
 
 export type IconLibrary = typeof iconLibrary;

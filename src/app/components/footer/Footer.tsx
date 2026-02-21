@@ -1,9 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-
 import { getRouteUrl } from '@/app/config/routes';
-import { Logo } from '@/components';
+import { AppLink, Logo } from '@/components';
 import { footerSection, iconLibrary, person, social } from '@/resources';
 
 const Footer = () => {
@@ -62,9 +60,12 @@ const Footer = () => {
             <ul className="space-y-2 text-sm text-white/80">
               {footerSection.columns.quickLinks.items.map(item => (
                 <li key={item.id}>
-                  <Link className="footer-link" href={getRouteUrl(item.route)}>
+                  <AppLink
+                    className="footer-link"
+                    href={getRouteUrl(item.route)}
+                  >
                     {item.title}
-                  </Link>
+                  </AppLink>
                 </li>
               ))}
             </ul>
@@ -80,7 +81,7 @@ const Footer = () => {
               <li>
                 <div className="flex flex-col gap-2">
                   {phoneLinks.map(href => (
-                    <Link
+                    <AppLink
                       key={href}
                       href={href}
                       target="_blank"
@@ -89,14 +90,14 @@ const Footer = () => {
                     >
                       <PhoneIcon className="mr-3 h-5 w-5" />
                       <span className="nav">{href.replace(/^tel:/, '')}</span>
-                    </Link>
+                    </AppLink>
                   ))}
                 </div>
               </li>
 
               {emailLink && (
                 <li>
-                  <Link
+                  <AppLink
                     href={emailLink}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -104,7 +105,7 @@ const Footer = () => {
                   >
                     <EmailIcon className="mr-3 h-5 w-5" />
                     <span className="nav">{person.email}</span>
-                  </Link>
+                  </AppLink>
                 </li>
               )}
 

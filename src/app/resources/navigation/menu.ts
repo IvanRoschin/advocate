@@ -1,8 +1,8 @@
-import type { PublicRouteKey } from '@/app/config/routes';
+import type { PublicStringRouteKey } from '@/app/config/routes';
 
 export type MenuItem = {
   title: string;
-  route: PublicRouteKey;
+  route: PublicStringRouteKey;
 };
 
 export const mainMenu = [

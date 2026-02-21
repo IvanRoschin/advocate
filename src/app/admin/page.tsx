@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import {
   FaBullhorn,
   FaFileAlt,
@@ -9,6 +8,8 @@ import {
   FaUsers,
   FaUserTie,
 } from 'react-icons/fa';
+
+import { AppLink } from '@/components';
 
 const stats = [
   {
@@ -65,7 +66,7 @@ const AdminPage = () => {
   return (
     <div className="grid grid-cols-1 gap-6 p-6 lg:grid-cols-3">
       {stats.map(stat => (
-        <Link
+        <AppLink
           key={stat.title}
           href={stat.link}
           className="relative overflow-hidden rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl"
@@ -94,7 +95,7 @@ const AdminPage = () => {
               </div>
             </div>
           </div>
-        </Link>
+        </AppLink>
       ))}
     </div>
   );
