@@ -1,7 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+
+import { AppLink } from '@/components';
 
 type Props = {
   count: number;
@@ -27,32 +28,32 @@ const Pagination = ({ count, pageNumbers }: Props) => {
   };
 
   return (
-    <div className="flex p-2 justify-between">
+    <div className="flex justify-between p-2">
       <button
-        className="cursor-pointer py-2 disabled:cursor-not-allowed nav bg-slate-300 rounded-2xl px-8"
+        className="nav cursor-pointer rounded-2xl bg-slate-300 px-8 py-2 disabled:cursor-not-allowed"
         disabled={!hasPrev}
         onClick={() => handleChangePage('назад')}
       >
         Назад
       </button>
-      <div className="flex gap-4 justify-center items-center">
+      <div className="flex items-center justify-center gap-4">
         {pageNumbers.map((pageNumber, index) => (
           <div key={index}>
-            <Link
+            <AppLink
               href={`?page=${pageNumber}`}
               className={
                 page === pageNumber
-                  ? '  bg-transparent text-primaryAccentColor p-3  '
-                  : '  bg-transparent text-primaryTextColor hover:text-primaryAccentColor p-2 '
+                  ? 'text-primaryAccentColor bg-transparent p-3'
+                  : 'text-primaryTextColor hover:text-primaryAccentColor bg-transparent p-2'
               }
             >
               {pageNumber}
-            </Link>
+            </AppLink>
           </div>
         ))}
       </div>
       <button
-        className="cursor-pointer py-2 disabled:cursor-not-allowed nav bg-slate-300 rounded-2xl px-8"
+        className="nav cursor-pointer rounded-2xl bg-slate-300 px-8 py-2 disabled:cursor-not-allowed"
         disabled={!hasNext}
         onClick={() => handleChangePage('вперед')}
       >

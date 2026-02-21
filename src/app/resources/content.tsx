@@ -32,6 +32,7 @@ const social: Social = [
     icon: 'email',
     link: `mailto:${person.email}`,
     essential: false,
+    visible: false,
   },
   {
     name: `${phone1Pretty}`,
@@ -76,6 +77,11 @@ const social: Social = [
 const logo = {
   logoBlack: '/images/logo/logo_black_bg.webp',
   logoWhite: '/images/logo/logo_white_bg.webp',
+};
+
+const brand = {
+  logoSrc: '/images/brand/logo.svg',
+  label: 'Завантаження…',
 };
 
 const home = {
@@ -362,4 +368,4 @@ const home = {
 //   ],
 // };
 
-export { home, logo, newsletter, person, social };
+export { brand, home, logo, newsletter, person, social };

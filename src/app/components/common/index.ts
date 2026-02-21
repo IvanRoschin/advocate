@@ -1,3 +1,4 @@
+export { AppLink } from '@/components/common/AppLink';
 export { default as Breadcrumbs } from '@/components/common/Breadcrumbs';
 export { default as DeleteConfirmation } from '@/components/common/DeleteConfirmation';
 export { default as EmptyState } from '@/components/common/EmptyState';

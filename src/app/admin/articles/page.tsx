@@ -1,7 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import { FaFileAlt, FaPlus } from 'react-icons/fa';
+
+import { AppLink } from '@/components';
 
 type Article = {
   id: string;
@@ -36,12 +37,12 @@ const ArticlesPage = () => {
         <h1 className="flex items-center gap-2 text-2xl font-bold">
           <FaFileAlt /> Статьи
         </h1>
-        <Link
+        <AppLink
           href="/admin/articles/add"
           className="bg-accentcolor flex items-center gap-2 rounded px-4 py-2 text-white shadow transition"
         >
           <FaPlus /> Добавить статью
-        </Link>
+        </AppLink>
       </div>
 
       {/* Таблица статей */}
@@ -74,12 +75,12 @@ const ArticlesPage = () => {
                 <td className="px-6 py-4">{article.author}</td>
                 <td className="px-6 py-4">{article.createdAt}</td>
                 <td className="px-6 py-4 text-right">
-                  <Link
+                  <AppLink
                     href={`/admin/articles/${article.id}`}
                     className="text-accent hover:underline"
                   >
                     Просмотр / Редактировать
-                  </Link>
+                  </AppLink>
                 </td>
               </tr>
             ))}

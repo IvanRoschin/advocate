@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import { useAppStore } from '@/app/store/appStore';
+import { useAppStore } from '@/app/store/app.store';
 
 import { Btn } from '../ui';
 import Heading from './Heading';

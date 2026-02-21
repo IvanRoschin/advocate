@@ -1,9 +1,9 @@
-import { FlatCompat } from '@eslint/eslintrc';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
 import prettier from 'eslint-config-prettier';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import { FlatCompat } from '@eslint/eslintrc';
 
-import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,6 +23,12 @@ const config = [
       'dist/**/*',
       'next-env.d.ts',
     ],
+  },
+  {
+    files: ['**/route.tsx'],
+    rules: {
+      '@next/next/no-img-element': 'off',
+    },
   },
 
   // TypeScript rules

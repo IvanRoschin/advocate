@@ -1,7 +1,5 @@
-import Link from 'next/link';
-
 import { aboutSection } from '@/app/resources';
-import { NextImage } from '@/components';
+import { AppLink, NextImage } from '@/components';
 import { person, social } from '@/resources/content';
 
 const About = () => {
@@ -96,13 +94,13 @@ const About = () => {
                     const display = href.replace(/^tel:/, '');
                     return (
                       <li key={href}>
-                        <Link
+                        <AppLink
                           href={href}
                           className="text-accent"
                           itemProp="telephone"
                         >
                           {display}
-                        </Link>
+                        </AppLink>
                       </li>
                     );
                   })}

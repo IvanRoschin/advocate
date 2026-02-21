@@ -1,11 +1,11 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { FaChevronRight } from 'react-icons/fa';
 
 import { routes } from '@/app/config/routes';
+import { AppLink } from '@/components';
 
 type DynamicSegmentData = {
   name: string;
@@ -100,23 +100,23 @@ const Breadcrumbs = ({ fetchDynamicSegment }: BreadcrumbsProps) => {
     <nav aria-label="breadcrumbs" className="mb-4 text-sm text-gray-600">
       <ol className="flex flex-wrap items-center space-x-2">
         <li>
-          <Link
+          <AppLink
             href={routes.public.home}
             className="nav text-gray-600 hover:text-gray-600"
           >
             Головна
-          </Link>
+          </AppLink>
         </li>
 
         {crumbs.map((crumb, idx) => (
           <li key={crumb.href + idx} className="flex items-center space-x-2">
             <FaChevronRight className="mx-1 text-xs text-gray-400" />
-            <Link
+            <AppLink
               href={crumb.href}
               className="nav text-gray-600 hover:text-gray-600"
             >
               {crumb.name}
-            </Link>
+            </AppLink>
           </li>
         ))}
       </ol>
