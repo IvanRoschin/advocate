@@ -18,7 +18,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'dark' }) => {
         width={200}
         height={60}
         priority
-        className="h-17 w-auto object-contain"
+        className="h-14 w-auto object-contain"
       />
     </AppLink>
   );

@@ -7,6 +7,7 @@ export const routes = {
     practices: '#practices',
     order: '#order',
     payments: '/payments',
+    blog: '/blog',
     contact: '/contact',
     notFound: '/not-found',
 
@@ -16,13 +17,14 @@ export const routes = {
       forgotPassword: '/auth/forgot-password',
       restorePassword: '/auth/restore-password',
     },
+  },
 
-    blog: {
-      index: '/blog',
-      article: (slug: string) => `/blog/${slug}`,
-      tag: (tag: string) => `/blog/tag/${tag}`,
-      category: (slug: string) => `/blog/category/${slug}`,
-    },
+  // блог-роуты отдельно
+  blog: {
+    index: '/blog',
+    article: (slug: string) => `/blog/${slug}`,
+    tag: (tag: string) => `/blog/tag/${tag}`,
+    category: (slug: string) => `/blog/category/${slug}`,
   },
 
   api: {
@@ -68,12 +70,23 @@ export const routes = {
   },
 } as const;
 
+// ---------- Types ----------
 export type PublicRoutes = typeof routes.public;
-export type ApiRoutes = typeof routes.api.v1;
-export type AdminRoutes = typeof routes.admin;
+export type AuthRoutes = typeof routes.public.auth;
 
+export type BlogRoutes = typeof routes.blog;
+
+export type ApiRoutes = typeof routes.api.v1;
 export type ApiRouteKey = keyof typeof routes.api.v1;
 
+export type AdminRoutes = typeof routes.admin;
+
+// ✅ ключи ТОЛЬКО тех полей public, где значение string
+export type PublicStringRouteKey = {
+  [K in keyof PublicRoutes]: PublicRoutes[K] extends string ? K : never;
+}[keyof PublicRoutes];
+
+// ---------- Helpers ----------
 export const baseUrl =
   process.env.NEXT_PUBLIC_PUBLIC_URL?.replace(/\/$/, '') ??
   'http://localhost:3000';
@@ -89,12 +102,7 @@ export const protectedRoutes = [
   routes.client.dashboard,
 ];
 
-export type PublicRouteKey = keyof typeof routes.public;
-
-export const getRouteUrl = (route: PublicRouteKey): string => {
-  if (route === 'blog') return routes.public.blog.index;
-  const r = routes.public[route];
-  // r может быть строкой или объектом (только для blog уже обработано выше)
-  if (typeof r === 'string') return r;
-  throw new Error(`Route "${route}" is not a valid public string route`);
+// ✅ теперь типобезопасно: route не может быть 'auth'
+export const getRouteUrl = (route: PublicStringRouteKey): string => {
+  return routes.public[route];
 };

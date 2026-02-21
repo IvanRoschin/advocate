@@ -32,6 +32,7 @@ const social: Social = [
     icon: 'email',
     link: `mailto:${person.email}`,
     essential: false,
+    visible: false,
   },
   {
     name: `${phone1Pretty}`,

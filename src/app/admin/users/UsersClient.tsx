@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { DataTable } from '@/app/components/data-table/data-table';
+import { DataTable } from '@/app/components/data-table/DataTable';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';

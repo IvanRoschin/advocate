@@ -4,6 +4,7 @@ import { SessionProvider } from 'next-auth/react';
 import { Suspense } from 'react';
 import { Toaster } from 'sonner';
 
+import { RouteLoadingReset } from '../components/common/RouteLoadingReset';
 import { PremiumLoader } from '../components/ui/loader/PremiumLoader';
 import { TopProgressBar } from '../components/ui/top-progress/TopProgressBar';
 import { LoadingProvider } from './LoadingProvider';
@@ -21,6 +22,8 @@ export function Providers({ children }: ProvidersProps) {
         <PremiumLoader />
 
         <Suspense fallback={null}>
+          <RouteLoadingReset />
+
           <PageTransition>{children}</PageTransition>
         </Suspense>
 

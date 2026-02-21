@@ -1,9 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { FiMoon, FiSun } from 'react-icons/fi';
+import { useEffect, useMemo, useState } from 'react';
 
-import { IconButton, Tooltip } from '@mui/material';
+import { iconLibrary } from '@/app/resources/icons';
+import { Button } from '@/components/ui/button';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -14,7 +21,6 @@ function applyTheme(theme: ThemeMode) {
 }
 
 function readInitialTheme(): ThemeMode {
-  // Component is "use client", but this guard keeps it safe and predictable.
   if (typeof window === 'undefined') return 'light';
 
   const saved = localStorage.getItem(STORAGE_KEY);
@@ -27,24 +33,38 @@ function readInitialTheme(): ThemeMode {
 }
 
 export const ThemeToggle = () => {
-  // ✅ Lazy init: no setState in an effect needed
   const [theme, setTheme] = useState<ThemeMode>(() => readInitialTheme());
 
-  // ✅ Effect only syncs external system (DOM + storage) with React state
   useEffect(() => {
     applyTheme(theme);
     localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 
-  const toggle = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
+  const toggle = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+
+  const Icon = useMemo(() => {
+    return theme === 'dark' ? iconLibrary.sun : iconLibrary.moon;
+  }, [theme]);
+
+  const label = theme === 'dark' ? 'Світла тема' : 'Темна тема';
 
   return (
-    <Tooltip title={theme === 'dark' ? 'Світла тема' : 'Темна тема'}>
-      <IconButton onClick={toggle} aria-label="toggle theme" size="small">
-        {theme === 'dark' ? <FiSun /> : <FiMoon />}
-      </IconButton>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={toggle}
+            aria-label={label}
+            className="h-10 w-10 rounded-xl leading-none"
+          >
+            <Icon className="h-5 w-5" aria-hidden />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{label}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };

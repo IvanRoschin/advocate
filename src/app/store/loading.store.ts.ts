@@ -6,6 +6,7 @@ type LoadingState = {
 
   start: () => void;
   done: () => void;
+  stop: () => void;
   setProgress: (value: number) => void;
 };
 
@@ -23,6 +24,12 @@ export const useLoadingStore = create<LoadingState>(set => ({
     set(() => ({
       isLoading: false,
       progress: 100,
+    })),
+
+  stop: () =>
+    set(() => ({
+      isLoading: false,
+      progress: 0,
     })),
 
   setProgress: value =>

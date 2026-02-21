@@ -7,8 +7,12 @@ import { social } from '@/resources/content';
 import type { IconName } from '@/app/resources/icons';
 
 const Socials = () => {
-  const essential = social.filter(s => s.essential && s.link);
-  const secondary = social.filter(s => !s.essential && s.link);
+  const essential = social.filter(
+    s => s.essential && s.link && s.visible !== false
+  );
+  const secondary = social.filter(
+    s => !s.essential && s.link && s.visible !== false
+  );
 
   const renderIcon = (name: IconName) => {
     const Icon = iconLibrary[name];
