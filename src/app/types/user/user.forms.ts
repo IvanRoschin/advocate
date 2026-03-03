@@ -8,20 +8,39 @@ const emailRegex =
 const phoneRegex = /^\+380\d{9}$/;
 const passwordRegex = /^\S+$/;
 
+const emptyToUndefined = (v: unknown) =>
+  typeof v === 'string' && v.trim() === '' ? undefined : v;
+
 export const baseUserSchema = {
-  name: Yup.string().min(2).max(20).matches(nameRegex),
+  name: Yup.string()
+    .transform(emptyToUndefined)
+    .min(2)
+    .max(20)
+    .matches(nameRegex),
 
-  email: Yup.string().min(3).max(63).email().matches(emailRegex),
+  email: Yup.string()
+    .transform(emptyToUndefined)
+    .min(3)
+    .max(63)
+    .email()
+    .matches(emailRegex),
 
-  phone: Yup.string().matches(phoneRegex).optional(),
+  phone: Yup.string()
+    .transform(emptyToUndefined)
+    .matches(phoneRegex)
+    .optional(),
 
-  password: Yup.string().matches(passwordRegex).min(6).optional(),
+  password: Yup.string()
+    .transform(emptyToUndefined)
+    .matches(passwordRegex)
+    .min(6)
+    .optional(),
 
   role: Yup.mixed<UserRole>().oneOf(Object.values(UserRole)),
 
   isActive: Yup.boolean(),
 
-  googleId: Yup.string().optional(),
+  googleId: Yup.string().transform(emptyToUndefined).optional(),
 };
 
 export const createUserSchema = Yup.object({

@@ -1,11 +1,12 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import { routes } from '@/app/config/routes';
 import { Btn, Logo } from '@/components';
 import { cn } from '@/lib/utils';
 
 import { DesktopControlRail } from './DesktopControlRail';
-import { useHeaderScrolled } from './hooks';
 import { TimeDisplay } from './TimeDisplay';
 
 type DesktopHeaderProps = {
@@ -19,15 +20,26 @@ export const DesktopHeader = ({
   timeZone = 'Europe/Kyiv',
   showThemeToggle = true,
 }: DesktopHeaderProps) => {
-  const scrolled = useHeaderScrolled(8);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const threshold = 8;
+
+    const update = () => {
+      setScrolled(window.scrollY > threshold);
+    };
+
+    update(); // выставим корректное значение уже после mount
+
+    window.addEventListener('scroll', update, { passive: true });
+    return () => window.removeEventListener('scroll', update);
+  }, []);
 
   return (
     <header
       className={cn(
         'sticky top-0 z-50 hidden w-full border-b border-neutral-200/70 bg-white/80 backdrop-blur supports-backdrop-filter:bg-white/60 xl:block',
-        // ✅ добавляем только “эффект скролла”, базу не меняем
         scrolled && 'border-neutral-200/90 shadow-sm',
-        // ✅ плавно, но без изменения размеров
         'transition-[box-shadow,border-color] duration-200 ease-out'
       )}
     >

@@ -23,7 +23,6 @@ import {
   Modal,
 } from '@/components/index';
 
-// import { AdminTable } from '../components/table';
 import { categoryColumns } from './category.columns';
 
 interface Props {

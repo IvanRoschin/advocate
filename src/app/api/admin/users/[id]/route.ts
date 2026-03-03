@@ -38,6 +38,7 @@ export async function PATCH(
     const body = await req.json();
     const data: UpdateUserDTO = await updateUserSchema.validate(body, {
       abortEarly: false,
+      stripUnknown: true,
     });
 
     const updated = await userService.update(id, data);

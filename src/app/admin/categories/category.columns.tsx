@@ -1,5 +1,4 @@
-import { FaPen, FaTrash } from 'react-icons/fa';
-
+import { iconLibrary } from '@/app/resources';
 import { CategoryResponseDTO } from '@/app/types';
 import { Btn, NextImage } from '@/components';
 import { ColumnDef } from '@tanstack/react-table';
@@ -55,7 +54,7 @@ export const categoryColumns = ({
     header: () => <Center>Редагувати</Center>,
     cell: ({ row }) => (
       <Center>
-        <Btn icon={FaPen} onClick={() => onEdit(row.original)} />
+        <Btn icon={iconLibrary.pen} onClick={() => onEdit(row.original)} />
       </Center>
     ),
   },
@@ -64,7 +63,7 @@ export const categoryColumns = ({
     header: () => <Center>Видалити</Center>,
     cell: ({ row }) => (
       <Center>
-        <Btn icon={FaTrash} onClick={() => onDelete(row.original)} />
+        <Btn icon={iconLibrary.trash} onClick={() => onDelete(row.original)} />
       </Center>
     ),
   },
