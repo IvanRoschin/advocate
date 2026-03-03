@@ -66,7 +66,7 @@ export type CreateArticleRequestDTO = {
   tags: string[];
 
   subtitle?: string;
-  src: CoverImageDto;
+  src?: CoverImageDto;
   slug?: string;
 };
 

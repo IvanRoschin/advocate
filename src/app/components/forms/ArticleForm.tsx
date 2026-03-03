@@ -288,7 +288,6 @@ const ArticleForm = (props: Props) => {
         validationSchema={schema}
         onSubmit={async values => {
           const normalized = normalize(values);
-
           try {
             if (props.mode === 'create') {
               const payload: CreateArticleRequestDTO = {

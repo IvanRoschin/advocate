@@ -27,10 +27,9 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
     const { id } = await params;
     const body = await req.json();
 
-    console.log('body', body);
-
     const data: UpdateArticleDTO = await updateArticleSchema.validate(body, {
       abortEarly: false,
+      stripUnknown: true,
     });
 
     const updated = await articleService.update(id, data);

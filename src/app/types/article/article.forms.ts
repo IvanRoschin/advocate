@@ -7,10 +7,33 @@ import type { ArticleStatus, CoverImageDto } from './article.dto';
 const emptyToUndefined = (v: unknown) =>
   typeof v === 'string' && v.trim() === '' ? undefined : v;
 
+const srcCreateSchema = Yup.array()
+  .of(Yup.string().trim().required())
+  .min(1, 'Додайте хоча б одне фото')
+  .max(3, 'Максимум 3 фото');
+
 /**
  * Для PATCH удобно игнорить пустые строки, чтобы optional поля не валились на min/regex.
  * Мы делаем transform на уровне схемы.
  */
+
+const srcPatchSchema = Yup.array()
+  .of(Yup.string().trim().required()) // 🔥 ключ: никакого undefined внутри массива
+  .max(3, 'Максимум 3 фото')
+  .nullable()
+  .optional()
+  .transform((value, originalValue) => {
+    // разрешаем null как "удалить картинки"
+    if (originalValue === null) return null;
+
+    if (!Array.isArray(originalValue)) return value;
+
+    // чистим мусор, чтобы не было ['', undefined]
+    return originalValue
+      .filter((x): x is string => typeof x === 'string')
+      .map(x => x.trim())
+      .filter(Boolean);
+  });
 
 /* -------------------------------- Base rules -------------------------------- */
 
@@ -102,7 +125,7 @@ export const createArticleSchema = Yup.object({
 
   tags: baseArticleSchema.tags.default([]).required(),
 
-  src: baseArticleSchema.src.optional(),
+  src: srcCreateSchema.required("Обов'язкове поле"),
 
   language: baseArticleSchema.language
     .default('uk')
@@ -127,7 +150,7 @@ export const updateArticleSchema = Yup.object({
 
   tags: baseArticleSchema.tags.optional(),
 
-  src: baseArticleSchema.src.optional(),
+  src: srcPatchSchema,
 
   language: baseArticleSchema.language.optional(),
   authorId: baseArticleSchema.authorId.optional(),
