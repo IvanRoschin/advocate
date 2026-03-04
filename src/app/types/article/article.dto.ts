@@ -79,20 +79,6 @@ export type UpdateArticleDTO = Partial<Omit<CreateArticleRequestDTO, 'src'>> & {
   src?: CoverImageDto | null;
 };
 
-/* -------------------------- Optional frontend/public DTO -------------------------- */
-/**
- * Если хочешь удобный фронтовый тип с id (а не _id),
- * чтобы не переписывать таблицы/формы:
- */
-export type ArticlePublicDto = Omit<
-  ArticleResponseDTO,
-  '_id' | 'author' | 'category'
-> & {
-  id: string;
-  author?: { id: string; name: string; avatar?: string };
-  category?: { id: string; title: string; slug: string };
-};
-
 export type ArticleListItemDto = {
   id: string;
   slug: string;
@@ -100,6 +86,55 @@ export type ArticleListItemDto = {
   summary: string;
   src?: string;
   publishedAt?: string;
+  updatedAt?: string;
   tags: string[];
   category?: { id: string; title: string; slug: string };
+};
+
+export type ArticlePublicPageDto = {
+  id: string;
+  slug: string;
+
+  title: string;
+  subtitle?: string;
+
+  summary: string;
+  content: string;
+
+  tags: string[];
+
+  src: string[];
+
+  status: ArticleStatus;
+  language: ArticleLanguage;
+
+  publishedAt?: string;
+
+  updatedAt?: string;
+
+  author?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+
+  category?: {
+    id: string;
+    title: string;
+    slug: string;
+  };
+};
+
+export type BlogCategoryItemDto = {
+  id: string;
+  title: string;
+  slug: string;
+  count: number; // сколько published статей
+};
+
+export type BlogRecentPostItemDto = {
+  id: string;
+  slug: string;
+  title: string;
+  publishedAt?: string;
 };

@@ -2,7 +2,6 @@ import { articleService } from '@/app/lib/services/article.service';
 import { categoryService } from '@/app/lib/services/category.service';
 import { userService } from '@/app/lib/services/user.service';
 import { ArticleResponseDTO, mapArticleToResponse } from '@/app/types';
-
 import ArticlesClient from './ArticlesClient';
 
 export const dynamic = 'force-dynamic';

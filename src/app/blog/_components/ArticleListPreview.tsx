@@ -39,30 +39,39 @@ export function ArticleListPreview({
 }) {
   return (
     <div className={cn('grid gap-4', className)}>
-      {items.map(a => {
+      {items.map((a, index) => {
         const href = `${baseHref}/${a.slug || a.id}`;
+
         return (
-          <Link key={a.id} href={href} className="group block" prefetch={false}>
+          <Link
+            key={`${a.id}-${index}`}
+            href={href}
+            className="group block"
+            prefetch={false}
+          >
             <Card className="overflow-hidden transition-all hover:-translate-y-px hover:shadow-lg">
               <CardContent className="p-0">
                 <div className="flex flex-col gap-0 sm:flex-row">
                   {/* Cover */}
-                  <div className="bg-muted relative h-44 w-full sm:h-36 sm:w-56">
-                    {a.src ? (
-                      <Image
-                        src={a.src}
-                        alt={a.title}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                        sizes="(max-width: 640px) 100vw, 224px"
-                        priority={false}
-                      />
-                    ) : (
-                      <div className="text-muted-foreground flex h-full w-full items-center justify-center text-sm">
-                        No cover
-                      </div>
-                    )}
-                    <div className="from-background/35 bg-linear-to-top pointer-events-none absolute inset-0 to-transparent" />
+                  <div className="mt-4 flex h-44 w-full items-center justify-center sm:h-36 sm:w-56">
+                    <div className="bg-muted relative ml-4 h-full w-full overflow-hidden rounded-md">
+                      {a.src ? (
+                        <Image
+                          src={a.src}
+                          alt={a.title}
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                          sizes="(max-width: 640px) 100vw, 224px"
+                          priority={false}
+                        />
+                      ) : (
+                        <div className="text-muted-foreground flex h-full w-full items-center justify-center text-sm">
+                          No cover
+                        </div>
+                      )}
+
+                      <div className="from-background/35 bg-linear-to-top pointer-events-none absolute inset-0 to-transparent" />
+                    </div>
                   </div>
 
                   {/* Text */}
@@ -86,7 +95,7 @@ export function ArticleListPreview({
                       )}
                     </div>
 
-                    <h3 className="line-clamp-2 text-base leading-snug font-semibold tracking-tight sm:text-lg">
+                    <h3 className="text-accent line-clamp-2 text-base leading-snug font-semibold tracking-tight sm:text-lg">
                       {a.title}
                     </h3>
 

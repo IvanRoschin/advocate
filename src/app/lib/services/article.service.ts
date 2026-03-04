@@ -3,37 +3,20 @@ import slugify from 'slugify';
 
 import { articleRepo } from '@/app/lib/repositories/article.repo';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
-import type {
+import {
   ArticleListItemDto,
+  ArticlePublicPageDto,
+  BlogCategoryItemDto,
+  BlogRecentPostItemDto,
   CreateArticleRequestDTO,
+  mapPublicFullRowToPage,
+  mapPublicRowToListItem,
   UpdateArticleDTO,
 } from '@/app/types';
 import { dbConnect } from '../server/mongoose';
 
-type CategoryLean = {
-  _id: Types.ObjectId;
-  title: string;
-  slug: string;
-};
-
-type ArticlePublicRow = {
-  _id: Types.ObjectId;
-  slug: string;
-  title: string;
-  summary: string;
-  tags?: string[];
-  src?: string[];
-  publishedAt?: Date;
-  categoryId?: CategoryLean | null;
-};
-
 const makeSlug = (input: string) =>
-  slugify(input, {
-    lower: true,
-    strict: true,
-    locale: 'uk',
-    trim: true,
-  });
+  slugify(input, { lower: true, strict: true, locale: 'uk', trim: true });
 
 const assertObjectId = (id: string) => {
   if (!id || id === 'undefined' || !Types.ObjectId.isValid(id)) {
@@ -41,65 +24,87 @@ const assertObjectId = (id: string) => {
   }
 };
 
+const assertSlug = (slug: string) => {
+  const clean = String(slug ?? '')
+    .trim()
+    .toLowerCase();
+  if (!clean || clean === 'undefined')
+    throw new ValidationError('Невірний slug статті');
+  return clean;
+};
+
 export const articleService = {
-  async getPublicList(): Promise<ArticleListItemDto[]> {
+  /* ------------------------------- Public -------------------------------- */
+
+  async getPublicBySlug(slug: string): Promise<ArticlePublicPageDto> {
     await dbConnect();
+    const clean = assertSlug(slug);
 
-    const rows = (await articleRepo.findPublicList(30)) as ArticlePublicRow[];
+    const row = await articleRepo.findPublishedBySlug(clean);
+    if (!row) throw new ValidationError('Статтю не знайдено');
 
-    return rows.map(
-      (a): ArticleListItemDto => ({
-        id: a._id.toString(),
-        slug: a.slug,
-        title: a.title,
-        summary: a.summary,
-        tags: Array.isArray(a.tags) ? a.tags : [],
-        src: Array.isArray(a.src) && a.src.length ? a.src[0] : undefined,
-        publishedAt: a.publishedAt?.toISOString(),
-        category: a.categoryId
-          ? {
-              id: a.categoryId._id.toString(),
-              title: a.categoryId.title,
-              slug: a.categoryId.slug,
-            }
-          : undefined,
-      })
-    );
+    return mapPublicFullRowToPage(row);
   },
+
+  async getPublicList(opts?: {
+    categorySlug?: string;
+    limit?: number;
+  }): Promise<ArticleListItemDto[]> {
+    await dbConnect();
+    const limit = opts?.limit ?? 30;
+
+    const rows = opts?.categorySlug
+      ? await articleRepo.findPublicListByCategorySlug(opts.categorySlug, limit)
+      : await articleRepo.findPublicList(limit);
+
+    return rows.map(mapPublicRowToListItem);
+  },
+
+  async getRelatedPublicByCategory(args: {
+    categoryId: string;
+    excludeSlug?: string;
+    limit?: number;
+  }): Promise<ArticleListItemDto[]> {
+    await dbConnect();
+    if (!args.categoryId) return [];
+    const rows = await articleRepo.findRelatedByCategoryId(args);
+    return rows.map(mapPublicRowToListItem);
+  },
+
+  async getRecentPublic(limit = 5): Promise<BlogRecentPostItemDto[]> {
+    await dbConnect();
+    const rows = await articleRepo.findRecentPublic(limit);
+    return rows.map(r => ({
+      id: r._id.toString(),
+      slug: r.slug,
+      title: r.title,
+      publishedAt: r.publishedAt?.toISOString(),
+    }));
+  },
+
+  async getPublicCategoriesWithCounts(): Promise<BlogCategoryItemDto[]> {
+    await dbConnect();
+    const rows = await articleRepo.findPublicCategoriesWithCounts();
+    return rows.map(r => ({
+      id: r.categoryId.toString(),
+      title: r.title,
+      slug: r.slug,
+      count: r.count,
+    }));
+  },
+
+  /* -------------------------------- Admin -------------------------------- */
 
   async getAll() {
     await dbConnect();
     return articleRepo.findAll();
   },
 
-  async getAllWithPopulate() {
-    await dbConnect();
-    return articleRepo.findAllWithPopulate();
-  },
-
   async getById(id: string) {
     await dbConnect();
     assertObjectId(id);
-
     const article = await articleRepo.findById(id);
-
-    if (!article) {
-      throw new ValidationError('Статтю не знайдено');
-    }
-
-    return article;
-  },
-
-  async getByIdWithPopulate(id: string) {
-    await dbConnect();
-    assertObjectId(id);
-
-    const article = await articleRepo.findByIdWithPopulate(id);
-
-    if (!article) {
-      throw new ValidationError('Статтю не знайдено');
-    }
-
+    if (!article) throw new ValidationError('Статтю не знайдено');
     return article;
   },
 
@@ -110,20 +115,10 @@ export const articleService = {
     const slug = makeSlug(base);
 
     const existing = await articleRepo.findBySlug(slug);
-
-    if (existing) {
-      throw new ValidationError('Стаття з таким slug вже існує');
-    }
+    if (existing) throw new ValidationError('Стаття з таким slug вже існує');
 
     const src = Array.isArray(data.src) ? data.src : [];
-
-    const article = await articleRepo.create({
-      ...data,
-      slug,
-      src,
-    });
-
-    return article;
+    return articleRepo.create({ ...data, slug, src });
   },
 
   async update(id: string, data: UpdateArticleDTO) {
@@ -131,21 +126,15 @@ export const articleService = {
     assertObjectId(id);
 
     const article = await articleRepo.findById(id);
-
-    if (!article) {
-      throw new ValidationError('Статтю не знайдено');
-    }
+    if (!article) throw new ValidationError('Статтю не знайдено');
 
     const nextTitle =
       typeof data.title === 'string' ? data.title : String(article.title);
-
     const nextSlugBase =
       typeof data.slug === 'string' && data.slug.trim() ? data.slug : nextTitle;
-
     const nextSlug = makeSlug(nextSlugBase);
 
     const exists = await articleRepo.findBySlug(nextSlug);
-
     if (exists && exists._id.toString() !== article._id.toString()) {
       throw new ValidationError('Стаття з таким slug вже існує');
     }
@@ -159,16 +148,11 @@ export const articleService = {
       slug: nextSlug,
     });
 
-    if (data.status === 'published' && !article.publishedAt) {
+    if (data.status === 'published' && !article.publishedAt)
       article.publishedAt = new Date();
-    }
-
-    if (data.status === 'draft') {
-      article.publishedAt = undefined;
-    }
+    if (data.status === 'draft') article.publishedAt = undefined;
 
     await article.save();
-
     return article;
   },
 
@@ -176,12 +160,9 @@ export const articleService = {
     await dbConnect();
     assertObjectId(id);
 
-    const deleted = await articleRepo.delete(id);
+    const deleted = await articleRepo.deleteById(id);
+    if (!deleted) throw new ValidationError('Статтю не знайдено');
 
-    if (!deleted) {
-      throw new ValidationError('Статтю не знайдено');
-    }
-
-    return deleted;
+    return { ok: true };
   },
 };

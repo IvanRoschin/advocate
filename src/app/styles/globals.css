@@ -5,16 +5,17 @@
 @import './theme-dark.css';
 @import './components.css';
 
-@import'./base/typography.css';
+@import './base/typography.css';
 
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
-@import "shadcn/tailwind.css";
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:is(.dark *));
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 96px; /* высота хедера */
 }
 
 @keyframes fade-in {
