@@ -1,7 +1,7 @@
 'use client';
 
 import { Field, useField } from 'formik';
-import { memo, ReactNode } from 'react';
+import { ChangeEvent, memo, ReactNode } from 'react';
 
 interface InputProps {
   name: string;
@@ -12,6 +12,9 @@ interface InputProps {
   className?: string;
   type?: string;
   autoComplete?: string;
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Input = memo(function Input({
@@ -23,6 +26,9 @@ const Input = memo(function Input({
   className = '',
   type,
   autoComplete,
+  value,
+  onChange,
+  onBlur,
 }: InputProps) {
   const [, meta] = useField(name);
   const hasError = Boolean(meta.touched && meta.error);
@@ -40,6 +46,9 @@ const Input = memo(function Input({
         autoComplete={autoComplete}
         disabled={disabled}
         placeholder=" "
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
         className={`peer input-field w-full rounded-xl px-4 pt-6 pb-2 transition-all ${prefixIcon ? 'pl-10' : 'pl-4'} ${hasError ? 'border-red-500' : ''} ${disabled ? 'cursor-not-allowed opacity-60' : ''} `}
       />
 

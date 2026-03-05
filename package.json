@@ -24,6 +24,7 @@
     "@emotion/styled": "^11.14.1",
     "@tanstack/react-table": "^8.21.3",
     "bcryptjs": "^3.0.3",
+    "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",

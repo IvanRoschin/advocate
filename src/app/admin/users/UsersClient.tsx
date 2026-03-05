@@ -7,6 +7,7 @@ import { DataTable } from '@/app/components/data-table/DataTable';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
+import { useLoadingStore } from '@/app/store/loading.store.ts';
 import {
   CreateUserRequestDTO,
   UpdateUserDTO,
@@ -29,6 +30,8 @@ interface Props {
 }
 
 export default function UsersClient({ initialUsers }: Props) {
+  const start = useLoadingStore.getState().start;
+  const done = useLoadingStore.getState().done;
   const [users, setUsers] = useState<UserResponseDTO[]>(initialUsers);
 
   const [userToDelete, setUserToDelete] = useState<UserResponseDTO | null>(
@@ -94,24 +97,39 @@ export default function UsersClient({ initialUsers }: Props) {
   const handleUpdateUser = async (payload: UpdateUserDTO) => {
     if (!userToUpdate) return;
 
+    start();
     try {
+      const { password, ...rest } = payload;
+
+      // 1) убираем пустые строки ('' -> undefined -> ключ не попадёт)
+      const cleanedRest = Object.fromEntries(
+        Object.entries(rest).filter(([, v]) => v !== '' && v !== undefined)
+      ) as Omit<UpdateUserDTO, 'password'>;
+
+      // 2) пароль — только если непустой после trim
+      const cleanPayload: UpdateUserDTO = {
+        ...cleanedRest,
+        ...(password?.trim() ? { password: password.trim() } : {}),
+      };
+
       const updatedUser = await apiFetch<UserResponseDTO>(
         apiUrl(`/api/admin/users/${userToUpdate._id}`),
         {
           method: 'PATCH',
-          body: JSON.stringify(payload),
+          body: JSON.stringify(cleanPayload),
         }
       );
 
       setUsers(prev =>
-        prev.map(user => (user._id === updatedUser._id ? updatedUser : user))
+        prev.map(u => (u._id === updatedUser._id ? updatedUser : u))
       );
 
       toast.success('Користувача оновлено');
       updateModal.close();
-      setUserToUpdate(null);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Помилка оновлення');
+    } finally {
+      done();
     }
   };
 

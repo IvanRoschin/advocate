@@ -1,29 +1,28 @@
 export type ArticleStatus = 'draft' | 'published';
+export type ArticleLanguage = 'uk' | 'ru' | 'en';
 
-export type CoverImageDto = {
-  url: string;
-  publicId: string;
-  alt?: string;
-  width?: number;
-  height?: number;
-};
+export type CoverImageDto = string[];
 
 export type ArticleAuthorDto = {
-  id: string;
+  _id: string;
   name: string;
   avatar?: string;
 };
 
 export type ArticleCategoryDto = {
-  id: string;
+  _id: string;
   title: string;
   slug: string;
 };
 
-export type ArticlePublicDto = {
-  id: string;
-  slug: string;
+/**
+ * ✅ API response (admin) — как у CategoryResponseDTO: с _id
+ * Это соответствует тому, что реально возвращает Mongo/Mongoose при .lean()
+ */
+export type ArticleResponseDTO = {
+  _id: string;
 
+  slug: string;
   status: ArticleStatus;
 
   title: string;
@@ -33,21 +32,51 @@ export type ArticlePublicDto = {
   content: string;
 
   tags: string[];
+  src: CoverImageDto;
 
-  coverImage?: CoverImageDto;
-
-  language: 'uk' | 'ru' | 'en';
+  language: ArticleLanguage;
 
   authorId: string;
   categoryId: string;
 
-  // optional populate outputs (если репо/сервис запопулят)
+  // optional populate
   author?: ArticleAuthorDto;
   category?: ArticleCategoryDto;
 
   publishedAt?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+/**
+ * ✅ CREATE — как у Category: четкий набор полей
+ * slug/src/subtitle опциональные
+ */
+export type CreateArticleRequestDTO = {
+  title: string;
+  summary: string;
+  content: string;
+
+  status: ArticleStatus;
+  language: ArticleLanguage;
+
+  authorId: string;
+  categoryId: string;
+
+  tags: string[];
+
+  subtitle?: string;
+  src?: CoverImageDto;
+  slug?: string;
+};
+
+/**
+ * ✅ UPDATE (PATCH) — как у Category: Partial<Create>
+ * НО: src поддерживает null (удалить картинки) — это нужно UI и твоему normalizePatch.
+ */
+
+export type UpdateArticleDTO = Partial<Omit<CreateArticleRequestDTO, 'src'>> & {
+  src?: CoverImageDto | null;
 };
 
 export type ArticleListItemDto = {
@@ -55,8 +84,57 @@ export type ArticleListItemDto = {
   slug: string;
   title: string;
   summary: string;
-  coverUrl?: string;
+  src?: string;
   publishedAt?: string;
+  updatedAt?: string;
   tags: string[];
-  category?: Pick<ArticleCategoryDto, 'id' | 'title' | 'slug'>;
+  category?: { id: string; title: string; slug: string };
+};
+
+export type ArticlePublicPageDto = {
+  id: string;
+  slug: string;
+
+  title: string;
+  subtitle?: string;
+
+  summary: string;
+  content: string;
+
+  tags: string[];
+
+  src: string[];
+
+  status: ArticleStatus;
+  language: ArticleLanguage;
+
+  publishedAt?: string;
+
+  updatedAt?: string;
+
+  author?: {
+    id: string;
+    name: string;
+    avatar?: string;
+  };
+
+  category?: {
+    id: string;
+    title: string;
+    slug: string;
+  };
+};
+
+export type BlogCategoryItemDto = {
+  id: string;
+  title: string;
+  slug: string;
+  count: number; // сколько published статей
+};
+
+export type BlogRecentPostItemDto = {
+  id: string;
+  slug: string;
+  title: string;
+  publishedAt?: string;
 };

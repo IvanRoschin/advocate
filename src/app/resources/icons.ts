@@ -1,11 +1,20 @@
 import type { IconType } from 'react-icons';
 import {
+  FaBullhorn,
   FaChevronDown,
   FaChevronUp,
   FaEnvelope,
+  FaFileAlt,
+  FaMoneyBillWave,
+  FaPen,
   FaQuoteLeft,
   FaQuoteRight,
   FaRegRegistered,
+  FaShoppingCart,
+  FaTags,
+  FaTrash,
+  FaUsers,
+  FaUserTie,
 } from 'react-icons/fa';
 import {
   FaDiscord,
@@ -28,7 +37,6 @@ import {
   FiGrid,
   FiHome,
   FiMoon,
-  FiPhone,
   FiSun,
   FiUser,
 } from 'react-icons/fi';
@@ -61,7 +69,7 @@ import {
   SiTheboringcompany,
 } from 'react-icons/si';
 
-export const iconLibrary: Record<string, IconType> = {
+export const iconLibrary = {
   arrowUpRight: HiArrowUpRight,
   arrowRight: HiArrowRight,
   email: HiEnvelope,
@@ -110,10 +118,24 @@ export const iconLibrary: Record<string, IconType> = {
   about: FiUser,
   practices: FiGrid,
   blog: FiBookOpen,
-  payments: FiGrid, // подбери иконку
-  contact: FiPhone, // подбери иконку
-  order: FiPhone,
-};
+
+  // ✅ допиливаем “админские”
+  clients: FaUserTie,
+  users: FaUsers,
+  articles: FaFileAlt,
+  categories: FaTags,
+  orders: FaShoppingCart,
+  leads: FaBullhorn,
+
+  // ✅ действия таблицы
+  pen: FaPen,
+  trash: FaTrash,
+
+  // ✅ подбираем норм иконки для меню
+  payments: FaMoneyBillWave,
+  contact: FaEnvelope,
+  order: FaShoppingCart,
+} as const satisfies Record<string, IconType>;
 
 export type IconLibrary = typeof iconLibrary;
 export type IconName = keyof IconLibrary;
