@@ -107,96 +107,94 @@ export default async function BlogArticlePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_280px]">
-          <main className="min-w-0">
-            <article className="min-w-0">
-              <header className="space-y-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  {article.category?.title ? (
-                    <Badge variant="secondary">{article.category.title}</Badge>
-                  ) : null}
-
-                  {article.publishedAt ? (
-                    <time
-                      className="text-muted-foreground text-sm"
-                      dateTime={article.publishedAt}
-                    >
-                      {formatDate(article.publishedAt)}
-                    </time>
-                  ) : (
-                    <Badge variant="outline">draft</Badge>
-                  )}
-
-                  <span className="text-muted-foreground">•</span>
-
-                  <span className="text-accent text-sm">
-                    ≈ {minutes} хв читання
-                  </span>
-                </div>
-
-                <h1 className="text-accent text-3xl font-semibold tracking-tight">
-                  {article.title}
-                </h1>
-
-                {article.subtitle ? (
-                  <p className="text-muted-foreground italic">
-                    {article.subtitle}
-                  </p>
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_280px]">
+        <main className="min-w-0">
+          <article className="min-w-0">
+            <header className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                {article.category?.title ? (
+                  <Badge variant="secondary">{article.category.title}</Badge>
                 ) : null}
 
-                {/* ✅ Mobile TOC */}
-                {toc.length ? (
-                  <div className="mt-4 lg:hidden">
-                    <details className="border-accent rounded-xl border p-4">
-                      <summary className="text-accent cursor-pointer font-semibold">
-                        Зміст
-                      </summary>
-                      <div className="mt-3">
-                        <ArticleToc items={toc} />
-                      </div>
-                    </details>
-                  </div>
-                ) : null}
+                {article.publishedAt ? (
+                  <time
+                    className="text-muted-foreground text-sm"
+                    dateTime={article.publishedAt}
+                  >
+                    {formatDate(article.publishedAt)}
+                  </time>
+                ) : (
+                  <Badge variant="outline">draft</Badge>
+                )}
 
-                {cover ? (
-                  <div className="bg-muted relative mt-4 aspect-16/7 w-full overflow-hidden rounded-xl">
-                    <NextImage
-                      useSkeleton
-                      src={cover}
-                      alt={article.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 1024px) 100vw, 900px"
-                    />
-                  </div>
-                ) : null}
-              </header>
+                <span className="text-muted-foreground">•</span>
 
-              <section className="mt-8">
-                <ArticleContent html={html} />
-              </section>
+                <span className="text-accent text-sm">
+                  ≈ {minutes} хв читання
+                </span>
+              </div>
 
-              <ShareSection title={article.title} url={url} />
+              <h1 className="text-accent text-3xl font-semibold tracking-tight">
+                {article.title}
+              </h1>
 
-              {related.length ? (
-                <section className="mt-12">
-                  <h2 className="text-accent mb-4 text-lg font-semibold">
-                    Ще з цієї категорії
-                  </h2>
-                  <ArticleListPreview items={related} baseHref="/blog" />
-                </section>
+              {article.subtitle ? (
+                <p className="text-muted-foreground italic">
+                  {article.subtitle}
+                </p>
               ) : null}
-            </article>
-          </main>
 
-          {/* Desktop TOC */}
-          <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-6">
-              <ArticleToc items={toc} />
-            </div>
-          </aside>
-        </div>
+              {/* ✅ Mobile TOC */}
+              {toc.length ? (
+                <div className="mt-4 lg:hidden">
+                  <details className="border-accent rounded-xl border p-4">
+                    <summary className="text-accent cursor-pointer font-semibold">
+                      Зміст
+                    </summary>
+                    <div className="mt-3">
+                      <ArticleToc items={toc} />
+                    </div>
+                  </details>
+                </div>
+              ) : null}
+
+              {cover ? (
+                <div className="bg-muted relative mt-4 aspect-16/7 w-full overflow-hidden rounded-xl">
+                  <NextImage
+                    useSkeleton
+                    src={cover}
+                    alt={article.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 900px"
+                  />
+                </div>
+              ) : null}
+            </header>
+
+            <section className="mt-8">
+              <ArticleContent html={html} />
+            </section>
+
+            <ShareSection title={article.title} url={url} />
+
+            {related.length ? (
+              <section className="mt-12">
+                <h2 className="text-accent mb-4 text-lg font-semibold">
+                  Ще з цієї категорії
+                </h2>
+                <ArticleListPreview items={related} baseHref="/blog" />
+              </section>
+            ) : null}
+          </article>
+        </main>
+
+        {/* Desktop TOC */}
+        <aside className="hidden lg:block">
+          <div className="sticky top-24 space-y-6">
+            <ArticleToc items={toc} />
+          </div>
+        </aside>
       </div>
     </>
   );

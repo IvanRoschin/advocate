@@ -7,15 +7,8 @@ import { FaChevronRight } from 'react-icons/fa';
 import { routes } from '@/app/config/routes';
 import { AppLink } from '@/components';
 
-type DynamicSegmentData = {
-  name: string;
-  href?: string;
-};
-
-/**
- * Пользовательские названия для сегментов
- */
 const customNames: Record<string, string> = {
+  blog: 'Блог',
   category: 'Категорія',
   services: 'Послуги',
   contact: 'Контакти',
@@ -27,24 +20,14 @@ const customNames: Record<string, string> = {
   search: 'Пошук',
 };
 
-/**
- * Простой capitalize
- */
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-interface BreadcrumbsProps {
-  /**
-   * Callback для получения динамических данных по последнему сегменту (например, товар)
-   */
-  fetchDynamicSegment?: (id: string) => Promise<DynamicSegmentData | null>;
-}
-
-const Breadcrumbs = ({ fetchDynamicSegment }: BreadcrumbsProps) => {
+export default function Breadcrumbs() {
   const pathname = usePathname();
-  const [dynamicSegment, setDynamicSegment] =
-    useState<DynamicSegmentData | null>(null);
 
-  // Сегменты пути
+  // ✅ кэш: slug -> title
+  const [titleBySlug, setTitleBySlug] = useState<Record<string, string>>({});
+
   const segments = useMemo(
     () =>
       pathname
@@ -54,47 +37,61 @@ const Breadcrumbs = ({ fetchDynamicSegment }: BreadcrumbsProps) => {
     [pathname]
   );
 
-  // Если последний сегмент может быть динамическим (например, ObjectId)
+  const last = segments[segments.length - 1] ?? '';
+  const isBlogSlug = segments[0] === 'blog' && segments.length >= 2;
+
   useEffect(() => {
-    const last = segments[segments.length - 1];
-    let mounted = true;
+    if (!isBlogSlug || !last) return;
 
-    // Асинхронная функция для обновления состояния
-    const fetchSegment = async () => {
-      // Если не нужно динамического сегмента — просто обнуляем
-      if (!last || !fetchDynamicSegment || !/^[0-9a-fA-F]{24}$/.test(last)) {
-        if (mounted) setDynamicSegment(null);
-        return;
-      }
+    // если уже есть в кэше — не дергаем сеть
+    if (titleBySlug[last]) return;
 
+    const controller = new AbortController();
+
+    (async () => {
       try {
-        const data = await fetchDynamicSegment(last);
-        if (mounted) setDynamicSegment(data);
-      } catch (error) {
-        console.error('❌ Breadcrumbs dynamic fetch error', error);
-        if (mounted) setDynamicSegment(null);
+        const res = await fetch(
+          `/api/v1/articles/title/${encodeURIComponent(last)}`,
+          {
+            cache: 'force-cache',
+            signal: controller.signal,
+          }
+        );
+
+        if (!res.ok) return;
+
+        const data: { title: string } = await res.json();
+
+        // ✅ setState только после async (это не вызывает warning)
+        setTitleBySlug(prev => {
+          if (prev[last] === data.title) return prev;
+          return { ...prev, [last]: data.title };
+        });
+      } catch (e: unknown) {
+        if (e instanceof DOMException && e.name === 'AbortError') return;
+
+        console.error('Breadcrumbs fetch error', e);
       }
-    };
+    })();
 
-    fetchSegment();
+    return () => controller.abort();
+  }, [isBlogSlug, last, titleBySlug]);
 
-    return () => {
-      mounted = false;
-    };
-  }, [segments, fetchDynamicSegment]);
-
-  // Формируем хлебные крошки
   const crumbs = useMemo(() => {
     return segments.map((segment, idx) => {
       const isLast = idx === segments.length - 1;
       const href = '/' + segments.slice(0, idx + 1).join('/');
+
       let name = customNames[segment] || capitalize(segment.replace(/-/g, ' '));
 
-      if (isLast && dynamicSegment?.name) name = dynamicSegment.name;
+      // ✅ если это последняя крошка в /blog/[slug] и есть title — подменяем
+      if (isLast && isBlogSlug) {
+        name = titleBySlug[segment] ?? name;
+      }
 
       return { name, href };
     });
-  }, [segments, dynamicSegment]);
+  }, [segments, isBlogSlug, titleBySlug]);
 
   return (
     <nav aria-label="breadcrumbs" className="mb-4 text-sm text-gray-600">
@@ -108,20 +105,28 @@ const Breadcrumbs = ({ fetchDynamicSegment }: BreadcrumbsProps) => {
           </AppLink>
         </li>
 
-        {crumbs.map((crumb, idx) => (
-          <li key={crumb.href + idx} className="flex items-center space-x-2">
-            <FaChevronRight className="mx-1 text-xs text-gray-400" />
-            <AppLink
-              href={crumb.href}
-              className="nav text-gray-600 hover:text-gray-600"
-            >
-              {crumb.name}
-            </AppLink>
-          </li>
-        ))}
+        {crumbs.map((crumb, idx) => {
+          const isLastCrumb = idx === crumbs.length - 1;
+
+          return (
+            <li key={crumb.href + idx} className="flex items-center space-x-2">
+              <FaChevronRight className="mx-1 text-xs text-gray-400" />
+              {isLastCrumb ? (
+                <span className="text-gray-900" aria-current="page">
+                  {crumb.name}
+                </span>
+              ) : (
+                <AppLink
+                  href={crumb.href}
+                  className="nav text-gray-600 hover:text-gray-600"
+                >
+                  {crumb.name}
+                </AppLink>
+              )}
+            </li>
+          );
+        })}
       </ol>
     </nav>
   );
-};
-
-export default Breadcrumbs;
+}
