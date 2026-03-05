@@ -1,109 +1,121 @@
-import type { ArticleDocument } from '@/app/models/Article';
-import type { ArticleListItemDto, ArticlePublicDto } from './article.dto';
+import type { Types } from 'mongoose';
 
-type PopulatedAuthor = {
-  _id: unknown;
-  name: string;
-  avatar?: string;
-};
+import {
+  firstImage,
+  stringArray,
+  toIdString,
+  toIsoString,
+} from '@/app/lib/mappers/_utils';
+import type {
+  ArticlePublicFullRow,
+  ArticlePublicRow,
+} from '@/app/lib/repositories/article.repo';
+import type {
+  ArticleListItemDto,
+  ArticlePublicPageDto,
+  ArticleResponseDTO,
+} from '@/app/types';
 
-type PopulatedCategory = {
-  _id: unknown;
-  title: string;
+/** Admin: model/lean -> ArticleResponseDTO */
+type ArticleLike = {
+  _id: Types.ObjectId | string;
   slug: string;
+  status: ArticleResponseDTO['status'];
+  title: string;
+  subtitle?: string | null;
+  summary: string;
+  content: string;
+  tags?: unknown;
+  src?: unknown;
+  language: ArticleResponseDTO['language'];
+  authorId: Types.ObjectId | string;
+  categoryId: Types.ObjectId | string;
+  publishedAt?: Date | string | null;
+  createdAt?: Date | string | null;
+  updatedAt?: Date | string | null;
 };
 
-type ArticleWithPopulate = ArticleDocument & {
-  authorId: ArticleDocument['authorId'] | PopulatedAuthor;
-  categoryId: ArticleDocument['categoryId'] | PopulatedCategory;
-};
+export const mapArticleToResponse = (
+  article: ArticleLike
+): ArticleResponseDTO => ({
+  _id: toIdString(article._id),
+  slug: article.slug,
+  status: article.status,
+  title: article.title,
+  subtitle: article.subtitle ?? undefined,
+  summary: article.summary,
+  content: article.content,
+  tags: stringArray(article.tags),
+  src: stringArray(article.src),
+  language: article.language,
+  authorId: toIdString(article.authorId),
+  categoryId: toIdString(article.categoryId),
+  publishedAt: toIsoString(article.publishedAt),
+  createdAt: toIsoString(article.createdAt),
+  updatedAt: toIsoString(article.updatedAt),
+});
 
-const toIso = (d?: Date | null) => (d ? d.toISOString() : undefined);
+export const mapArticleResponseToPublic = (
+  a: ArticleResponseDTO
+): ArticlePublicPageDto => ({
+  ...a,
+  id: a._id,
+  author: a.author
+    ? { id: a.author._id, name: a.author.name, avatar: a.author.avatar }
+    : undefined,
+  category: a.category
+    ? { id: a.category._id, title: a.category.title, slug: a.category.slug }
+    : undefined,
+});
 
-function isPopulatedAuthor(value: unknown): value is PopulatedAuthor {
-  return typeof value === 'object' && value !== null && 'name' in value;
-}
+/** Public list row -> ArticleListItemDto */
+export const mapPublicRowToListItem = (
+  a: ArticlePublicRow
+): ArticleListItemDto => ({
+  id: a._id.toString(),
+  slug: a.slug,
+  title: a.title,
+  summary: a.summary,
+  tags: Array.isArray(a.tags) ? a.tags : [],
+  src: firstImage(a.src),
+  publishedAt: a.publishedAt?.toISOString(),
+  updatedAt: a.updatedAt?.toISOString(),
+  category: a.categoryId
+    ? {
+        id: a.categoryId._id.toString(),
+        title: a.categoryId.title,
+        slug: a.categoryId.slug,
+      }
+    : undefined,
+});
 
-function isPopulatedCategory(value: unknown): value is PopulatedCategory {
-  return typeof value === 'object' && value !== null && 'title' in value;
-}
-
-export function mapArticleToPublicDto(
-  doc: ArticleWithPopulate
-): ArticlePublicDto {
-  return {
-    id: String(doc._id),
-    slug: doc.slug,
-
-    status: doc.status,
-
-    title: doc.title,
-    subtitle: doc.subtitle ?? undefined,
-
-    summary: doc.summary,
-    content: doc.content,
-
-    tags: Array.isArray(doc.tags) ? doc.tags : [],
-
-    coverImage: doc.coverImage
-      ? {
-          url: doc.coverImage.url,
-          publicId: doc.coverImage.publicId,
-          alt: doc.coverImage.alt ?? undefined,
-          width: doc.coverImage.width ?? undefined,
-          height: doc.coverImage.height ?? undefined,
-        }
-      : undefined,
-
-    language: doc.language,
-
-    authorId: String(
-      isPopulatedAuthor(doc.authorId) ? doc.authorId._id : doc.authorId
-    ),
-
-    categoryId: String(
-      isPopulatedCategory(doc.categoryId) ? doc.categoryId._id : doc.categoryId
-    ),
-
-    author: isPopulatedAuthor(doc.authorId)
-      ? {
-          id: String(doc.authorId._id),
-          name: doc.authorId.name,
-          avatar: doc.authorId.avatar ?? undefined,
-        }
-      : undefined,
-
-    category: isPopulatedCategory(doc.categoryId)
-      ? {
-          id: String(doc.categoryId._id),
-          title: doc.categoryId.title,
-          slug: doc.categoryId.slug,
-        }
-      : undefined,
-
-    publishedAt: toIso(doc.publishedAt),
-    createdAt: doc.createdAt.toISOString(),
-    updatedAt: doc.updatedAt.toISOString(),
-  };
-}
-
-export function mapArticleToListItem(
-  doc: ArticleWithPopulate
-): ArticleListItemDto {
-  return {
-    id: String(doc._id),
-    slug: doc.slug,
-    title: doc.title,
-    summary: doc.summary,
-    coverUrl: doc.coverImage?.url,
-    publishedAt: toIso(doc.publishedAt),
-    tags: Array.isArray(doc.tags) ? doc.tags : [],
-    category: isPopulatedCategory(doc.categoryId)
-      ? {
-          id: String(doc.categoryId._id),
-          title: doc.categoryId.title,
-          slug: doc.categoryId.slug,
-        }
-      : undefined,
-  };
-}
+/** Full public row -> ArticlePublicPageDto */
+export const mapPublicFullRowToPage = (
+  row: ArticlePublicFullRow
+): ArticlePublicPageDto => ({
+  id: row._id.toString(),
+  slug: row.slug,
+  status: row.status,
+  title: row.title,
+  subtitle: row.subtitle,
+  summary: row.summary,
+  content: row.content,
+  tags: Array.isArray(row.tags) ? row.tags : [],
+  src: Array.isArray(row.src) ? row.src : [],
+  language: row.language,
+  publishedAt: row.publishedAt?.toISOString(),
+  category: row.categoryId
+    ? {
+        id: row.categoryId._id.toString(),
+        title: row.categoryId.title,
+        slug: row.categoryId.slug,
+      }
+    : undefined,
+  author: row.authorId
+    ? {
+        id: row.authorId._id.toString(),
+        name: row.authorId.name,
+        avatar: row.authorId.avatar,
+      }
+    : undefined,
+});

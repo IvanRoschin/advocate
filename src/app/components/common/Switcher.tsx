@@ -25,14 +25,14 @@ const Switcher: React.FC<SwitcherProps> = ({
   const switchBody = (
     <div
       onClick={toggle}
-      className={`relative w-12 h-6 flex items-center rounded-full cursor-pointer transition-colors ${
+      className={`relative flex h-6 w-12 cursor-pointer items-center rounded-full transition-colors ${
         checked ? 'bg-green-500' : 'bg-gray-300'
       }`}
     >
       <motion.div
         layout
         transition={{ type: 'spring', stiffness: 600, damping: 30 }}
-        className={`absolute w-5 h-5 bg-white rounded-full shadow-md ${
+        className={`absolute h-5 w-5 rounded-full bg-white shadow-md ${
           checked ? 'left-[calc(100%-1.25rem)]' : 'left-0.5'
         }`}
       />
@@ -40,7 +40,7 @@ const Switcher: React.FC<SwitcherProps> = ({
   );
 
   const stateLabel = (
-    <span className="text-sm text-gray-600 select-none min-w-[2ch] text-center">
+    <span className="min-w-[2ch] text-center text-sm text-gray-600 select-none">
       {checked ? labels[1] : labels[0]}
     </span>
   );

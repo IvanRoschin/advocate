@@ -2,17 +2,6 @@ import mongoose, { InferSchemaType, Types } from 'mongoose';
 
 const { Schema } = mongoose;
 
-const CoverImageSchema = new Schema(
-  {
-    url: { type: String, required: true },
-    publicId: { type: String, required: true },
-    alt: { type: String, default: '' },
-    width: { type: Number },
-    height: { type: Number },
-  },
-  { _id: false }
-);
-
 const ArticleSchema = new Schema(
   {
     slug: {
@@ -34,12 +23,10 @@ const ArticleSchema = new Schema(
     title: { type: String, required: true, trim: true },
     subtitle: { type: String, trim: true },
 
-    // summary/excerpt — синхронизируемся с DTO (у тебя было summary)
     summary: { type: String, required: true, maxlength: 500 },
 
     content: { type: String, required: true },
 
-    // Автор из БД (обязательный)
     authorId: {
       type: Types.ObjectId,
       ref: 'User',
@@ -47,7 +34,6 @@ const ArticleSchema = new Schema(
       index: true,
     },
 
-    // Категория из БД (1 категория на статью, легче для UI/фильтра)
     categoryId: {
       type: Types.ObjectId,
       ref: 'Category',
@@ -57,11 +43,13 @@ const ArticleSchema = new Schema(
 
     tags: { type: [String], default: [], index: true },
 
-    coverImage: { type: CoverImageSchema },
+    src: {
+      type: [String],
+      required: true,
+    },
 
     publishedAt: { type: Date, index: true },
 
-    // если надо — оставь язык, иначе можно убрать
     language: {
       type: String,
       enum: ['uk', 'ru', 'en'],
@@ -87,9 +75,12 @@ ArticleSchema.index({ authorId: 1, createdAt: -1 });
 // Простой full-text
 ArticleSchema.index(
   { title: 'text', summary: 'text', content: 'text' },
-  { name: 'ArticleTextIndex' }
+  {
+    name: 'ArticleTextIndex',
+    default_language: 'none',
+    language_override: '__lang',
+  }
 );
-
 ArticleSchema.virtual('isPublished').get(function () {
   return this.status === 'published' && !!this.publishedAt;
 });

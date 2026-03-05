@@ -16,7 +16,8 @@ jobs:
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/dev'
     timeout-minutes: 10
     env:
-      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
+      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
+        ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,7 +36,8 @@ jobs:
     # if: github.event_name == 'pull_request' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
     timeout-minutes: 10
     env:
-      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
+      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
+        ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,10 +50,13 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
+    if:
+      github.event_name == 'pull_request' || github.ref == 'refs/heads/dev' ||
+      github.ref == 'refs/heads/main'
     timeout-minutes: 15
     env:
-      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
+      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
+        ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

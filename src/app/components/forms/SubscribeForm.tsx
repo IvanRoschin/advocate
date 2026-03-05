@@ -8,21 +8,16 @@ import { apiUrl } from '@/app/config/routes';
 import subscriberSchema from '@/app/helpers/validationSchemas/subscriber.schema';
 import { Input } from '@/components/index';
 
-declare global {
-  interface Window {
-    onCaptchaSuccess: (token: string) => void;
-    grecaptcha: { reset: () => void };
-  }
-}
+type Props = {
+  variant?: 'default' | 'aside';
+};
 
-const SubscribeForm = () => {
+const SubscribeForm = ({ variant = 'default' }: Props) => {
+  const isAside = variant === 'aside';
+
   return (
     <Formik
-      initialValues={{
-        email: '',
-        consent: false,
-        website: '', // honeypot
-      }}
+      initialValues={{ email: '', consent: false, website: '' }}
       validationSchema={subscriberSchema}
       onSubmit={async (values, { resetForm }) => {
         try {
@@ -50,19 +45,38 @@ const SubscribeForm = () => {
       }}
     >
       {({ isValid, isSubmitting }) => (
-        <Form className="mt-4 flex w-full max-w-md items-start justify-center gap-4">
-          <div className="flex-1">
-            <Input name="email" label="Email" type="email" required />
+        <Form
+          className={
+            isAside
+              ? 'mt-3 grid w-full gap-2 text-xs'
+              : 'mt-4 flex w-full max-w-md items-start justify-center gap-4 text-xs'
+          }
+        >
+          <div className={isAside ? 'w-full' : 'flex-1'}>
+            <Input
+              name="email"
+              label="Email"
+              type="email"
+              required
+              // если Input поддерживает className — уменьшим размеры
+              className={isAside ? 'text-sm' : undefined}
+            />
           </div>
-          {/* Honeypot поле */}
+
+          {/* Honeypot */}
           <input type="text" name="website" style={{ display: 'none' }} />
-          <div className="flex items-end">
+
+          <div className={isAside ? 'w-full' : 'flex items-end'}>
             <Btn
               radius={12}
               type="submit"
               label="Підписатися"
               disabled={!isValid || isSubmitting}
-              className="min-h-[3.7rem] px-6 py-3"
+              className={
+                isAside
+                  ? 'min-h-11 w-full px-4 py-2 text-sm'
+                  : 'min-h-[3.7rem] px-6 py-3'
+              }
             />
           </div>
         </Form>

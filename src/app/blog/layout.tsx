@@ -1,28 +1,18 @@
 'use client';
 
+import type React from 'react';
 import { Header, Socials } from '../components';
-import { SubscribeForm } from '../components/forms';
 
 export default function BlogLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <div className="blog-wrapper">
+    <div className="blog-wrapper min-h-screen">
       <Socials />
       <Header />
-      <div className="flex w-3/4 justify-around">
-        {children}
-        <aside className="">
-          <p>Category</p>
-          <p className="nav mb-4 text-lg font-semibold">
-            Інформаційна розсилка
-          </p>
-          <SubscribeForm />
-          <p>Недавні записи</p>
-        </aside>
-      </div>
+      <div className="mx-auto w-full max-w-6xl px-4 py-6">{children}</div>
     </div>
   );
 }

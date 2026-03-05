@@ -13,8 +13,8 @@
   --surface-input-muted: #f6f7f9;
 
   /* borders */
-  --border-input: rgba(0,0,0,0.08);
-  --border-input-hover: rgba(0,0,0,0.14);
+  --border-input: rgba(0, 0, 0, 0.08);
+  --border-input-hover: rgba(0, 0, 0, 0.14);
   --border-input-focus: var(--accentcolor);
 
   /* input text */
@@ -22,7 +22,7 @@
   --text-input-focus: #2a2a2a;
   --text-input-muted: #93969d;
 
-    /* label */
+  /* label */
   --text-label: #93969d;
   --text-label-focus: #6b7280; /* neutral, не accent */
   --text-label-filled: #6b7280;
