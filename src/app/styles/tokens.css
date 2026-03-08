@@ -1,37 +1,18 @@
 :root {
-  /* base */
-  --background: ;
-  --foreground: ;
-  --backgroundaccent: ;
-  --accentcolor: ;
-  --titlecolor: ;
-  --textcolor: ;
+  /* radius */
+  --radius: 0.625rem;
 
-  /* input surfaces */
-  --surface-input: ;
-  --surface-input-focus: ;
-  --surface-input-muted: ;
+  /* brand */
+  --accentcolor: #b89b5e;
 
-  /* borders */
-  --border-input: ;
-  --border-input-hover: ;
-  --border-input-focus: ;
-
-  /* input text */
-  --text-input: ;
-  --text-input-focus: ;
-  --text-input-muted: ;
-
-  /* semantic aliases (НЕ трогаем, если используются) */
-  --color-background: ;
-  --color-foreground: ;
-  --color-accentbackground: ;
+  /* semantic aliases (оставляем, если уже используются в проекте) */
+  --color-accentbackground: var(--accentcolor);
 
   /* fonts */
-  --font-sans: ;
-  --font-mono: ;
-  --font-eukrainehead: ;
-  --font-eukraine: ;
-  --font-manrope: ;
-  --font-sacramento: ;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-eukrainehead: var(--font-eukrainehead);
+  --font-eukraine: var(--font-eukraine);
+  --font-manrope: var(--font-manrope);
+  --font-sacramento: var(--font-sacramento);
 }

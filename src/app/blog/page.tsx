@@ -1,4 +1,5 @@
 import { articleService } from '@/app/lib/services/article.service';
+
 import { ArticleListPreview } from './_components/ArticleListPreview';
 import BlogAside from './_components/BlogAside';
 
@@ -16,20 +17,22 @@ export default async function BlogPage({
   ]);
 
   return (
-    <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-      <main className="w-full lg:max-w-[80%] lg:flex-[0_0_80%]">
-        <ArticleListPreview items={items} baseHref="/blog" />
-      </main>
+    <main className="bg-background text-foreground min-h-screen">
+      <div className="container py-10 lg:py-14">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+          <section className="min-w-0">
+            <ArticleListPreview items={items} baseHref="/blog" />
+          </section>
 
-      <aside className="border-accent w-full lg:max-w-[20%] lg:flex-[0_0_20%] lg:border-l-2 lg:pl-6">
-        <div className="space-y-6 lg:sticky lg:top-6">
-          <BlogAside
-            recent={recent}
-            categories={categories}
-            activeCategory={category ?? ''}
-          />
+          <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+            <BlogAside
+              recent={recent}
+              categories={categories}
+              activeCategory={category ?? ''}
+            />
+          </aside>
         </div>
-      </aside>
-    </div>
+      </div>
+    </main>
   );
 }

@@ -1,22 +1,23 @@
 import Btn from '@/app/components/ui/button/Btn';
 import { practicesSection } from '@/app/resources';
+
 import PracticesCard from './PracticesCard';
 
 const Practices = () => {
   return (
     <section
       id={practicesSection.id}
-      className="bg-[#191c23] py-40"
+      className="bg-practices-section py-40"
       itemScope
       itemType={practicesSection.schemaType}
     >
       <div className="container">
         <header className="mb-10 flex flex-col items-center text-center sm:mb-14">
           <span className="bg-accent mb-4 h-8 w-px" />
-          <p className="text-xs tracking-widest text-white uppercase">
+          <p className="text-practices-uptitle text-xs tracking-widest uppercase">
             {practicesSection.header.uptitle}
           </p>
-          <h2 className="font-eukrainehead mt-2 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+          <h2 className="text-practices-title font-eukrainehead mt-2 text-2xl font-bold sm:text-3xl md:text-4xl">
             {practicesSection.header.title}
           </h2>
           <span className="bg-accent mt-4 h-8 w-px" />
