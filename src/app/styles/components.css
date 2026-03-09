@@ -147,11 +147,7 @@
   }
 
   .mobile-header-fade-bottom {
-    background: linear-gradient(
-      to top,
-      var(--mobile-header-fade),
-      transparent
-    );
+    background: linear-gradient(to top, var(--mobile-header-fade), transparent);
   }
 
   .mobile-header-shell {
@@ -330,33 +326,33 @@
   .text-footer-bottom {
     color: var(--footer-bottom);
   }
-.footer-title {
-  position: relative;
-  display: inline-block;
-  color: var(--footer-title);
-  font-family: var(--font-eukrainehead);
-  font-size: 1.125rem;
-}
+  .footer-title {
+    position: relative;
+    display: inline-block;
+    color: var(--footer-title);
+    font-family: var(--font-eukrainehead);
+    font-size: 1.125rem;
+  }
 
-.footer-title::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -0.25rem;
-  height: 2px;
-  width: 2rem;
-  background-color: var(--accentcolor);
-}
+  .footer-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.25rem;
+    height: 2px;
+    width: 2rem;
+    background-color: var(--accentcolor);
+  }
 
-.footer-link {
-  cursor: pointer;
-  color: var(--footer-link);
-  transition: color 0.3s ease;
-}
+  .footer-link {
+    cursor: pointer;
+    color: var(--footer-link);
+    transition: color 0.3s ease;
+  }
 
-.footer-link:hover {
-  color: var(--accentcolor);
-}
+  .footer-link:hover {
+    color: var(--accentcolor);
+  }
   /* ===== article ===== */
   .article-content {
     line-height: 1.75;

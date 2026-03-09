@@ -111,18 +111,18 @@
   --advantages-panel-bg: rgba(0, 0, 0, 0.46);
 
   /* ===== reviews ===== */
---reviews-section-bg: #f3f4f6;
---reviews-title: #171717;
---reviews-subtitle: #5f6773;
+  --reviews-section-bg: #f3f4f6;
+  --reviews-title: #171717;
+  --reviews-subtitle: #5f6773;
 
---reviews-card-bg: #ffffff;
---reviews-card-bg-hover: #f8f9fb;
---reviews-card-name: #171717;
---reviews-card-role: #5f6773;
---reviews-card-text: #2f3540;
---reviews-card-accent: #c6a77b;
---reviews-card-shadow: 0 10px 30px rgba(23, 23, 23, 0.08);
---reviews-card-shadow-hover: 0 18px 40px rgba(23, 23, 23, 0.12);
+  --reviews-card-bg: #ffffff;
+  --reviews-card-bg-hover: #f8f9fb;
+  --reviews-card-name: #171717;
+  --reviews-card-role: #5f6773;
+  --reviews-card-text: #2f3540;
+  --reviews-card-accent: #c6a77b;
+  --reviews-card-shadow: 0 10px 30px rgba(23, 23, 23, 0.08);
+  --reviews-card-shadow-hover: 0 18px 40px rgba(23, 23, 23, 0.12);
 
   /* ===== why ===== */
   --why-section-bg: #f3f4f6;
