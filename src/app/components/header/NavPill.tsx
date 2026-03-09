@@ -35,8 +35,12 @@ export const NavPill = ({ showLabelsFrom = 'md' }: NavPillProps) => {
         aria-label="Навігація"
       >
         {items.map(({ href, label, Icon, startsWith }) => {
-          const selected = isSelected(pathname, href, startsWith);
-
+          const selected = isSelected({
+            pathname,
+            hash: typeof window !== 'undefined' ? window.location.hash : '',
+            href,
+            startsWith,
+          });
           return (
             <Tooltip key={href}>
               <TooltipTrigger asChild>

@@ -21,7 +21,7 @@ const WhyChooseMe = () => {
   return (
     <section
       id={id}
-      className="bg-[#1b1e27] py-20 sm:py-28 md:py-36"
+      className="bg-why-section py-20 sm:py-28 md:py-36"
       itemScope
       itemType={schemaType}
     >
@@ -31,7 +31,7 @@ const WhyChooseMe = () => {
           <p className="text-accent text-xs tracking-widest uppercase">
             {header.uptitle}
           </p>
-          <h2 className="font-eukrainehead mt-3 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+          <h2 className="text-why-title font-eukrainehead mt-3 text-2xl font-bold sm:text-3xl md:text-4xl">
             {header.title}
           </h2>
           <span className="bg-accent mt-4 inline-block h-8 w-px" />
@@ -54,7 +54,7 @@ const WhyChooseMe = () => {
           </div>
 
           <div className="w-full flex-1 space-y-4">
-            <h3 className="font-eukrainehead text-lg font-semibold text-white sm:text-xl md:text-2xl">
+            <h3 className="text-why-lead font-eukrainehead text-lg font-semibold sm:text-xl md:text-2xl">
               {lead.line1.split(lead.accentWords[0]).map((chunk, idx) =>
                 idx === 0 ? (
                   <span key={idx}>
@@ -78,12 +78,12 @@ const WhyChooseMe = () => {
               return (
                 <div
                   key={item.id}
-                  className="rounded-2xl border border-white/10 bg-black/20 transition-all duration-300"
+                  className="bg-why-card border-why-card rounded-2xl border transition-all duration-300"
                 >
                   <button
                     id={buttonId}
                     type="button"
-                    className="hover:text-accent flex w-full items-center justify-between px-5 py-4 text-left text-base font-semibold text-white transition-colors md:text-lg"
+                    className="text-why-card-title hover:text-accent flex w-full items-center justify-between px-5 py-4 text-left text-base font-semibold transition-colors md:text-lg"
                     aria-expanded={isOpen}
                     aria-controls={panelId}
                     onClick={() => toggle(item.id)}

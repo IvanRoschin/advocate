@@ -21,7 +21,6 @@ const Menu = () => {
 
   const items = useNavItems();
 
-  // Escape -> close
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
@@ -30,7 +29,6 @@ const Menu = () => {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [close]);
 
-  // Lock body scroll
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => {
@@ -38,7 +36,6 @@ const Menu = () => {
     };
   }, [isOpen]);
 
-  // Swipe left to close (mobile sidebar)
   useEffect(() => {
     const sidebar = sidebarRef.current;
     if (!isOpen || !sidebar) return;
@@ -69,12 +66,11 @@ const Menu = () => {
 
   return (
     <nav className="font-eukrainehead" aria-label={menuText.navAria}>
-      {/* Mobile burger */}
       <div className="flex items-center sm:hidden">
         <button
           type="button"
           onClick={toggle}
-          className="z-1001 rounded-full bg-white/80 p-2 shadow-md focus:outline-none"
+          className="bg-menu-trigger text-menu-trigger z-1001 rounded-full p-2 shadow-md focus:outline-none"
           aria-label={isOpen ? menuText.closeAria : menuText.burgerAria}
           aria-expanded={isOpen}
           aria-controls="mobile-menu"
@@ -83,8 +79,7 @@ const Menu = () => {
         </button>
       </div>
 
-      {/* Desktop menu */}
-      <ul className="h2 mx-auto hidden w-full max-w-5xl grid-cols-3 gap-2 text-sm font-medium text-gray-700 sm:mb-4 sm:grid sm:gap-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-4 xl:pt-8">
+      <ul className="text-menu-desktop h2 mx-auto hidden w-full max-w-5xl grid-cols-3 gap-2 text-sm font-medium sm:mb-4 sm:grid sm:gap-3 md:grid-cols-4 lg:grid-cols-6 lg:gap-4 xl:pt-8">
         {items.map(({ route, href, label }) => (
           <li key={route} className="text-center">
             <AppLink
@@ -98,7 +93,6 @@ const Menu = () => {
         ))}
       </ul>
 
-      {/* Mobile menu overlay */}
       <div
         id="mobile-menu"
         className={cn(
@@ -109,34 +103,32 @@ const Menu = () => {
         )}
         aria-hidden={!isOpen}
       >
-        {/* Backdrop */}
         <button
           type="button"
           aria-label={menuText.closeAria}
           onClick={close}
-          className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+          className="bg-menu-overlay absolute inset-0 backdrop-blur-sm"
         >
           <span className="sr-only">{menuText.closeOverlay}</span>
         </button>
 
-        {/* Sidebar */}
         <div
           ref={sidebarRef}
           className={cn(
-            'absolute top-0 left-0 h-full w-72 transform bg-white shadow-md transition-transform duration-300',
+            'bg-menu-sidebar absolute top-0 left-0 h-full w-72 transform shadow-md transition-transform duration-300',
             isOpen ? 'translate-x-0' : '-translate-x-full'
           )}
           role="dialog"
           aria-modal="true"
           aria-label={menuText.mobileMenuAria}
         >
-          <ul className="flex h-full flex-col divide-y divide-gray-200">
+          <ul className="divide-menu-sidebar flex h-full flex-col divide-y">
             {items.map(({ route, href, label }) => (
               <li key={route}>
                 <AppLink
                   href={href}
                   onClick={close}
-                  className="hover:text-accent block px-6 py-4 text-gray-800 hover:bg-gray-100"
+                  className="text-menu-sidebar-link hover:text-accent hover:bg-menu-sidebar-hover block px-6 py-4 transition-colors"
                 >
                   {label}
                 </AppLink>
@@ -147,7 +139,7 @@ const Menu = () => {
               <AppLink
                 href={navCta.href}
                 onClick={close}
-                className="bg-accent hover:bg-accent block w-full rounded-md py-3 text-center font-semibold text-white"
+                className="bg-accent text-menu-cta block w-full rounded-md py-3 text-center font-semibold transition-opacity hover:opacity-90"
               >
                 {navCta.label}
               </AppLink>

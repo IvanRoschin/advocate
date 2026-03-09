@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import Btn from '@/app/components/ui/button/Btn';
 
 type Props = {
@@ -8,14 +10,12 @@ type Props = {
 
 const PracticesCard = ({ title, text, link }: Props) => {
   return (
-    <div className="bg-app flex h-full flex-col p-6 text-start shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
-      {/* Верхний контент */}
+    <div className="bg-practices-card flex h-full flex-col p-6 text-start shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
       <div className="flex-1">
-        <a href={link}>
-          <h3 className="font-eukrainehead group relative mb-4 inline-block text-xl font-semibold text-black uppercase">
-            {/* Mobile / Tablet */}
+        <Link href={link}>
+          <h3 className="text-practices-card-title font-eukrainehead group relative mb-4 inline-block text-xl font-semibold uppercase">
             <span className="block lg:hidden">{title}</span>
-            {/* Desktop */}
+
             <span className="hidden lg:block">
               {title.split(' ').map((word, i) => (
                 <span key={i} className="block">
@@ -23,14 +23,14 @@ const PracticesCard = ({ title, text, link }: Props) => {
                 </span>
               ))}
             </span>
-            {/* underline */}
+
             <span className="bg-accent absolute -bottom-2 left-0 h-0.75 w-8 transition-all duration-500 ease-out group-hover:w-full" />
           </h3>
-        </a>
+        </Link>
+
         <p className="text-app text-sm md:text-base">{text}</p>
       </div>
 
-      {/* Низ карточки */}
       <div className="mt-6 flex justify-center">
         <Btn label="Далі" uiVariant="outline" />
       </div>

@@ -21,36 +21,33 @@ const Hero = () => {
 
   return (
     <section className="relative flex h-screen w-full items-center overflow-hidden">
-      {/* Слайдер */}
       <HeroCarousel
         items={slides}
         className="z-0"
         showBars
         showArrows
-        // временно для проверки:
         debugBarsTopRight
       />
 
-      {/* Затемнение */}
-      <div className="pointer-events-none absolute inset-0 z-10 bg-black/50" />
-      {/* Контент */}
-      <div className="relative z-30 container px-4 text-white">
-        <p className="mb-6 text-xs tracking-widest text-gray-300 uppercase md:text-sm">
+      <div className="bg-hero-overlay pointer-events-none absolute inset-0 z-10" />
+
+      <div className="font-eukrainehead text-hero relative z-30 container px-4">
+        <p className="text-hero-uptitle mb-6 text-xs tracking-widest uppercase md:text-sm">
           {heroSection.header.uptitle}
         </p>
 
         <div className="after:bg-accent relative mb-6 after:block after:h-px after:w-40 after:content-['']" />
 
-        <h1 className="mb-4 text-3xl leading-tight font-bold md:text-5xl">
+        <h1 className="text-hero-title mb-4 text-3xl leading-tight font-bold md:text-5xl">
           {heroSection.header.title}
           <br />
-          <span className="font-eukrainehead group text-accent relative mt-2 inline-block text-2xl font-bold md:text-4xl">
+          <span className="group text-accent relative mt-2 inline-block text-2xl font-bold md:text-4xl">
             {person.name}
             <span className="bg-accent absolute -bottom-1 left-0 h-0.75 w-0 transition-all duration-500 group-hover:w-full" />
           </span>
         </h1>
 
-        <p className="mt-6 mb-8 max-w-xl text-base text-gray-200 md:text-lg">
+        <p className="text-hero-subtitle mt-6 mb-8 max-w-xl text-base md:text-lg">
           {heroSection.subtitle}
         </p>
 
@@ -69,7 +66,7 @@ const Hero = () => {
           )}
         </div>
 
-        <p className="app-text mt-6 text-xs">{heroSection.note}</p>
+        <p className="text-hero-note mt-6 text-xs">{heroSection.note}</p>
       </div>
     </section>
   );

@@ -1,43 +1,201 @@
 :root {
-  /* base */
+  /* ===== app base ===== */
   --background: #ffffff;
   --foreground: #171717;
-  --backgroundaccent: #21242b;
-  --accentcolor: #b89b5e;
-  --titlecolor: #f6f7f9;
-  --textcolor: #93969d;
 
-  /* input surfaces — LIGHT */
+  /* ===== brand / app text ===== */
+  --hero-title: #ffffff;
+  --backgroundaccent: #f6f7f9;
+  --titlecolor: #171717;
+  --textcolor: #5f6773;
+
+  /* ===== socials ===== */
+  --socials-bg: #ffffff;
+  --socials-fg: #171717;
+
+  /* ===== menu ===== */
+  --menu-trigger-bg: rgba(255, 255, 255, 0.88);
+  --menu-trigger-fg: #171717;
+
+  --menu-desktop-fg: #374151;
+
+  --menu-overlay: rgba(0, 0, 0, 0.2);
+
+  --menu-sidebar-bg: #ffffff;
+  --menu-sidebar-divider: rgba(0, 0, 0, 0.08);
+  --menu-sidebar-link: #1f2937;
+  --menu-sidebar-link-hover-bg: #f3f4f6;
+
+  --menu-cta-fg: #ffffff;
+
+  /* ===== desktop header ===== */
+  --desktop-header-bg: rgba(255, 255, 255, 0.8);
+  --desktop-header-bg-supported: rgba(255, 255, 255, 0.6);
+  --desktop-header-border: rgba(0, 0, 0, 0.08);
+  --desktop-header-border-scrolled: rgba(0, 0, 0, 0.12);
+  --desktop-header-time: #374151;
+
+  /* ===== mobile header ===== */
+  --mobile-header-fade: rgba(0, 0, 0, 0.06);
+
+  --mobile-header-bg: rgba(255, 255, 255, 0.8);
+  --mobile-header-bg-supported: rgba(255, 255, 255, 0.6);
+  --mobile-header-border: rgba(0, 0, 0, 0.08);
+  --mobile-header-divider: rgba(0, 0, 0, 0.1);
+
+  --mobile-header-action: #374151;
+  --mobile-header-action-hover: #f3f4f6;
+  --mobile-header-ring: rgba(156, 163, 175, 0.7);
+
+  --mobile-header-time: #4b5563;
+
+  /* ===== hero ===== */
+  --hero-overlay: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.48) 0%,
+    rgba(0, 0, 0, 0.38) 40%,
+    rgba(0, 0, 0, 0.58) 100%
+  );
+
+  --hero-foreground: #ffffff;
+  --hero-uptitle: rgba(255, 255, 255, 0.82);
+  --hero-subtitle: rgba(255, 255, 255, 0.9);
+  --hero-note: rgba(255, 255, 255, 0.75);
+
+  --hero-control-bg: rgba(0, 0, 0, 0.35);
+  --hero-control-bg-hover: rgba(0, 0, 0, 0.5);
+  --hero-control-fg: #ffffff;
+  --hero-control-ring: rgba(255, 255, 255, 0.75);
+
+  --hero-bar-bg: rgba(255, 255, 255, 0.9);
+  --hero-bar-bg-hover: rgba(255, 255, 255, 0.7);
+  --hero-bar-ring: rgba(255, 255, 255, 0.8);
+
+  /* ===== services ===== */
+  --services-card-bg: #ffffff;
+  --services-title: #171717;
+  --services-text: #5f6773;
+
+  /* ===== about ===== */
+  --about-section-bg: #f3f4f6;
+  --about-uptitle: #171717;
+  --about-title: #171717;
+
+  --about-card-bg: #ffffff;
+  --about-card-title: #171717;
+
+  /* ===== practices ===== */
+  --practices-section-bg: #f1f3f6;
+  --practices-uptitle: #171717;
+  --practices-title: #171717;
+
+  --practices-card-bg: #ffffff;
+  --practices-card-title: #171717;
+
+  /* ===== advantages ===== */
+  --advantages-title: #ffffff;
+
+  --advantages-overlay: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.5) 45%,
+    rgba(0, 0, 0, 0.78) 100%
+  );
+
+  --advantages-foreground: #ffffff;
+  --advantages-muted: rgba(255, 255, 255, 0.84);
+
+  --advantages-card-bg: rgba(0, 0, 0, 0.38);
+  --advantages-card-border: rgba(255, 255, 255, 0.12);
+
+  --advantages-panel-bg: rgba(0, 0, 0, 0.46);
+
+  /* ===== reviews ===== */
+  --reviews-section-bg: #f3f4f6;
+  --reviews-title: #171717;
+  --reviews-subtitle: #5f6773;
+
+  --reviews-card-bg: #ffffff;
+  --reviews-card-bg-hover: #f8f9fb;
+  --reviews-card-name: #171717;
+  --reviews-card-role: #5f6773;
+  --reviews-card-text: #2f3540;
+  --reviews-card-accent: #c6a77b;
+  --reviews-card-shadow: 0 10px 30px rgba(23, 23, 23, 0.08);
+  --reviews-card-shadow-hover: 0 18px 40px rgba(23, 23, 23, 0.12);
+
+  /* ===== why ===== */
+  --why-section-bg: #f3f4f6;
+  --why-title: #171717;
+  --why-lead: #171717;
+
+  --why-card-bg: rgba(255, 255, 255, 0.88);
+  --why-card-border: rgba(0, 0, 0, 0.08);
+  --why-card-title: #171717;
+
+  /* ===== footer ===== */
+  --footer-bg: #ffffff;
+  --footer-fg: #171717;
+  --footer-title: #171717;
+  --footer-link: #171717;
+  --footer-muted: #5f6773;
+  --footer-border: rgba(0, 0, 0, 0.08);
+  --footer-bottom: #6b7280;
+
+  /* ===== shadcn / semantic ===== */
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+
+  --primary: var(--accentcolor);
+  --primary-foreground: #ffffff;
+
+  --secondary: #f6f7f9;
+  --secondary-foreground: #171717;
+
+  --muted: #f6f7f9;
+  --muted-foreground: #6b7280;
+
+  --accent: #f6f7f9;
+  --accent-foreground: #171717;
+
+  --destructive: #ef4444;
+
+  --border: rgba(0, 0, 0, 0.08);
+  --input: rgba(0, 0, 0, 0.08);
+  --ring: var(--accentcolor);
+
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #171717;
+  --sidebar-primary: var(--accentcolor);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f6f7f9;
+  --sidebar-accent-foreground: #171717;
+  --sidebar-border: rgba(0, 0, 0, 0.08);
+  --sidebar-ring: var(--accentcolor);
+
+  /* ===== inputs ===== */
   --surface-input: #ffffff;
   --surface-input-focus: #fafafa;
   --surface-input-muted: #f6f7f9;
 
-  /* borders */
   --border-input: rgba(0, 0, 0, 0.08);
   --border-input-hover: rgba(0, 0, 0, 0.14);
   --border-input-focus: var(--accentcolor);
 
-  /* input text */
   --text-input: #2a2a2a;
   --text-input-focus: #2a2a2a;
   --text-input-muted: #93969d;
 
-  /* label */
   --text-label: #93969d;
-  --text-label-focus: #6b7280; /* neutral, не accent */
+  --text-label-focus: #6b7280;
   --text-label-filled: #6b7280;
   --text-label-error: #ef4444;
-
-  /* semantic aliases */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-accentbackground: var(--accentcolor);
-
-  /* fonts */
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-eukrainehead: var(--font-eukrainehead);
-  --font-eukraine: var(--font-eukraine);
-  --font-manrope: var(--font-manrope);
-  --font-sacramento: var(--font-sacramento);
 }

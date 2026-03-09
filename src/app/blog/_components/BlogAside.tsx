@@ -2,8 +2,9 @@ import Link from 'next/link';
 
 import { SubscribeForm } from '@/app/components/forms';
 import { cn } from '@/app/lib';
+import { blog } from '@/app/resources/content';
+import { BlogCategoryItemDto, BlogRecentPostItemDto } from '@/app/types';
 
-import type { BlogCategoryItemDto, BlogRecentPostItemDto } from '@/app/types';
 function formatDate(iso?: string) {
   if (!iso) return '';
   const d = new Date(iso);
@@ -26,9 +27,10 @@ export default function BlogAside({
 }) {
   return (
     <>
-      {/* Categories */}
       <section className="p-4">
-        <p className="text-accent mb-2 text-lg font-semibold">Категорії</p>
+        <p className="text-accent mb-2 text-lg font-semibold">
+          {blog.aside.categoriesTitle}
+        </p>
 
         <nav className="space-y-2">
           {categories.length ? (
@@ -46,25 +48,27 @@ export default function BlogAside({
               </Link>
             ))
           ) : (
-            <p className="text-muted-foreground text-sm">Немає категорій</p>
+            <p className="text-muted-foreground text-sm">
+              {blog.aside.emptyCategories}
+            </p>
           )}
         </nav>
       </section>
 
-      {/* Subscribe */}
       <section className="p-4">
         <p className="text-accent mb-2 text-lg font-semibold">
-          Інформаційна розсилка
+          {blog.aside.newsletterTitle}
         </p>
-        <p className="text-muted-foreground mb-4 text-sm">
-          Отримуйте нові статті та практичні нотатки.
+        <p className="text-muted-foreground mb-4 text-sm leading-6">
+          {blog.aside.newsletterDescription}
         </p>
         <SubscribeForm variant="aside" />
       </section>
 
-      {/* Recent posts */}
       <section className="p-4">
-        <p className="text-accent mb-2 text-lg font-semibold">Недавні записи</p>
+        <p className="text-accent mb-2 text-lg font-semibold">
+          {blog.aside.recentTitle}
+        </p>
 
         <ul className="space-y-3">
           {recent.length ? (
@@ -76,6 +80,7 @@ export default function BlogAside({
                 >
                   {p.title}
                 </Link>
+
                 {p.publishedAt ? (
                   <p className="text-muted-foreground text-xs">
                     {formatDate(p.publishedAt)}
@@ -84,7 +89,9 @@ export default function BlogAside({
               </li>
             ))
           ) : (
-            <li className="text-muted-foreground text-sm">Немає записів</li>
+            <li className="text-muted-foreground text-sm">
+              {blog.aside.emptyRecent}
+            </li>
           )}
         </ul>
       </section>

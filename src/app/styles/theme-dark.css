@@ -1,10 +1,201 @@
-:root[data-theme='dark'] {
+.dark {
+  /* ===== app base ===== */
   --background: #171717;
-  --foreground: #f5f5f5;
-  --textcolor: #e0e0e0;
-  --titlecolor: #ffffff;
-  --text-muted: #a0a0a0;
-  --text-lead: #ffffff;
-  --surface-input: #21242b;
-  --surface-input-muted: #2a2a2a;
+  --foreground: #f6f7f9;
+
+  /* ===== brand / app text ===== */
+  --hero-title: #ffffff;
+  --backgroundaccent: #21242b;
+  --titlecolor: #f6f7f9;
+  --textcolor: #93969d;
+
+  /* ===== socials ===== */
+  --socials-bg: #171717;
+  --socials-fg: #f6f7f9;
+
+  /* ===== menu ===== */
+  --menu-trigger-bg: rgba(23, 23, 23, 0.82);
+  --menu-trigger-fg: #f6f7f9;
+
+  --menu-desktop-fg: rgba(255, 255, 255, 0.82);
+
+  --menu-overlay: rgba(0, 0, 0, 0.35);
+
+  --menu-sidebar-bg: #171717;
+  --menu-sidebar-divider: rgba(255, 255, 255, 0.08);
+  --menu-sidebar-link: #f6f7f9;
+  --menu-sidebar-link-hover-bg: rgba(255, 255, 255, 0.06);
+
+  --menu-cta-fg: #171717;
+
+  /* ===== desktop header ===== */
+  --desktop-header-bg: rgba(23, 23, 23, 0.82);
+  --desktop-header-bg-supported: rgba(23, 23, 23, 0.66);
+  --desktop-header-border: rgba(255, 255, 255, 0.08);
+  --desktop-header-border-scrolled: rgba(255, 255, 255, 0.12);
+  --desktop-header-time: rgba(255, 255, 255, 0.82);
+
+  /* ===== mobile header ===== */
+  --mobile-header-fade: rgba(0, 0, 0, 0.18);
+
+  --mobile-header-bg: rgba(23, 23, 23, 0.82);
+  --mobile-header-bg-supported: rgba(23, 23, 23, 0.66);
+  --mobile-header-border: rgba(255, 255, 255, 0.08);
+  --mobile-header-divider: rgba(255, 255, 255, 0.1);
+
+  --mobile-header-action: #f6f7f9;
+  --mobile-header-action-hover: rgba(255, 255, 255, 0.06);
+  --mobile-header-ring: rgba(255, 255, 255, 0.2);
+
+  --mobile-header-time: rgba(255, 255, 255, 0.78);
+
+  /* ===== hero ===== */
+  --hero-overlay: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.3) 40%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+
+  --hero-foreground: #ffffff;
+  --hero-uptitle: rgba(255, 255, 255, 0.78);
+  --hero-subtitle: rgba(255, 255, 255, 0.86);
+  --hero-note: rgba(255, 255, 255, 0.7);
+
+  --hero-control-bg: rgba(0, 0, 0, 0.35);
+  --hero-control-bg-hover: rgba(0, 0, 0, 0.5);
+  --hero-control-fg: #ffffff;
+  --hero-control-ring: rgba(255, 255, 255, 0.7);
+
+  --hero-bar-bg: rgba(255, 255, 255, 0.95);
+  --hero-bar-bg-hover: rgba(255, 255, 255, 0.72);
+  --hero-bar-ring: rgba(255, 255, 255, 0.8);
+
+  /* ===== services ===== */
+  --services-card-bg: #171717;
+  --services-title: #ffffff;
+  --services-text: rgba(255, 255, 255, 0.8);
+
+  /* ===== about ===== */
+  --about-section-bg: #21242b;
+  --about-uptitle: #ffffff;
+  --about-title: #ffffff;
+
+  --about-card-bg: #171717;
+  --about-card-title: #f6f7f9;
+
+  /* ===== practices ===== */
+  --practices-section-bg: #191c23;
+  --practices-uptitle: #ffffff;
+  --practices-title: #ffffff;
+
+  --practices-card-bg: #171717;
+  --practices-card-title: #f6f7f9;
+
+  /* ===== advantages ===== */
+  --advantages-title: #ffffff;
+
+  --advantages-overlay: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.4) 45%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+
+  --advantages-foreground: #ffffff;
+  --advantages-muted: rgba(255, 255, 255, 0.82);
+
+  --advantages-card-bg: rgba(0, 0, 0, 0.4);
+  --advantages-card-border: rgba(255, 255, 255, 0.1);
+
+  --advantages-panel-bg: rgba(0, 0, 0, 0.5);
+
+  /* ===== reviews ===== */
+  --reviews-section-bg: #171717;
+  --reviews-title: #ffffff;
+  --reviews-subtitle: rgba(255, 255, 255, 0.82);
+
+  --reviews-card-bg: #191c23;
+  --reviews-card-bg-hover: #1d2129;
+  --reviews-card-name: #ffffff;
+  --reviews-card-role: rgba(255, 255, 255, 0.72);
+  --reviews-card-text: rgba(255, 255, 255, 0.88);
+  --reviews-card-accent: #c6a77b;
+  --reviews-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  --reviews-card-shadow-hover: 0 18px 40px rgba(0, 0, 0, 0.36);
+
+  /* ===== why ===== */
+  --why-section-bg: #1b1e27;
+  --why-title: #ffffff;
+  --why-lead: #ffffff;
+
+  --why-card-bg: rgba(0, 0, 0, 0.2);
+  --why-card-border: rgba(255, 255, 255, 0.1);
+  --why-card-title: #ffffff;
+
+  /* ===== footer ===== */
+  --footer-bg: #171717;
+  --footer-fg: #f6f7f9;
+  --footer-title: #f6f7f9;
+  --footer-link: #f6f7f9;
+  --footer-muted: rgba(255, 255, 255, 0.8);
+  --footer-border: rgba(255, 255, 255, 0.1);
+  --footer-bottom: rgba(255, 255, 255, 0.5);
+
+  /* ===== shadcn / semantic ===== */
+  --card: #21242b;
+  --card-foreground: #f6f7f9;
+  --popover: #21242b;
+  --popover-foreground: #f6f7f9;
+
+  --primary: var(--accentcolor);
+  --primary-foreground: #171717;
+
+  --secondary: #2a2e38;
+  --secondary-foreground: #f6f7f9;
+
+  --muted: #2a2e38;
+  --muted-foreground: #b0b6bf;
+
+  --accent: #2a2e38;
+  --accent-foreground: #f6f7f9;
+
+  --destructive: #f87171;
+
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: var(--accentcolor);
+
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+
+  --sidebar: #1c1f26;
+  --sidebar-foreground: #f6f7f9;
+  --sidebar-primary: var(--accentcolor);
+  --sidebar-primary-foreground: #171717;
+  --sidebar-accent: #2a2e38;
+  --sidebar-accent-foreground: #f6f7f9;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: var(--accentcolor);
+
+  /* ===== inputs ===== */
+  --surface-input: #1c1f26;
+  --surface-input-focus: #20242c;
+  --surface-input-muted: #2a2e38;
+
+  --border-input: rgba(255, 255, 255, 0.14);
+  --border-input-hover: rgba(255, 255, 255, 0.22);
+  --border-input-focus: var(--accentcolor);
+
+  --text-input: #f6f7f9;
+  --text-input-focus: #ffffff;
+  --text-input-muted: #9aa0aa;
+
+  --text-label: #9aa0aa;
+  --text-label-focus: #cbd0d8;
+  --text-label-filled: #cbd0d8;
+  --text-label-error: #f87171;
 }

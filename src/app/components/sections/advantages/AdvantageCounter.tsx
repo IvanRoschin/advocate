@@ -29,7 +29,7 @@ export default function AdvantageCounter({ value, suffix }: Props) {
   return (
     <div
       ref={ref}
-      className="flex items-end text-4xl font-bold md:text-5xl lg:text-6xl"
+      className="text-advantages flex items-end text-4xl font-bold md:text-5xl lg:text-6xl"
     >
       {active && <SlotCounter value={value} duration={1.6} />}
       {suffix && (

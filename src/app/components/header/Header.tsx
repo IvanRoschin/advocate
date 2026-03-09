@@ -10,7 +10,6 @@ const Header = () => {
           <MobileHeader />
         </div>
       </div>
-
       <DesktopHeader />
     </>
   );

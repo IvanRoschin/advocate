@@ -1,4 +1,6 @@
 import { articleService } from '@/app/lib/services/article.service';
+import { blog } from '@/app/resources/content';
+
 import { ArticleListPreview } from './_components/ArticleListPreview';
 import BlogAside from './_components/BlogAside';
 
@@ -16,20 +18,34 @@ export default async function BlogPage({
   ]);
 
   return (
-    <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-      <main className="w-full lg:max-w-[80%] lg:flex-[0_0_80%]">
-        <ArticleListPreview items={items} baseHref="/blog" />
-      </main>
+    <main className="bg-background text-foreground min-h-screen">
+      <div className="container py-10 lg:py-14">
+        <div className="mb-8 max-w-3xl">
+          <p className="text-accent mb-2 text-sm font-semibold tracking-[0.18em] uppercase">
+            {blog.eyebrow}
+          </p>
 
-      <aside className="border-accent w-full lg:max-w-[20%] lg:flex-[0_0_20%] lg:border-l-2 lg:pl-6">
-        <div className="space-y-6 lg:sticky lg:top-6">
-          <BlogAside
-            recent={recent}
-            categories={categories}
-            activeCategory={category ?? ''}
-          />
+          <h1 className="title-app text-accent text-3xl font-semibold tracking-tight lg:text-4xl">
+            {blog.heading}
+          </h1>
+
+          <p className="text-app mt-4 text-base leading-7">{blog.lead}</p>
         </div>
-      </aside>
-    </div>
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+          <section className="min-w-0">
+            <ArticleListPreview items={items} baseHref={blog.path} />
+          </section>
+
+          <aside className="border-accent min-w-0 space-y-4 pl-4 lg:sticky lg:top-24 lg:self-start lg:border-l">
+            <BlogAside
+              recent={recent}
+              categories={categories}
+              activeCategory={category ?? ''}
+            />
+          </aside>
+        </div>
+      </div>
+    </main>
   );
 }
