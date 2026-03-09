@@ -1,7 +1,7 @@
+import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { sendTelegramMessage } from '@/app/lib';
-import crypto from 'crypto';
 
 type WayForPayCallbackBody = {
   merchantAccount?: string;
@@ -72,16 +72,16 @@ async function handleApprovedPayment(payload: WayForPayCallbackBody) {
     ].join('\n')
   );
 
-  console.info('WayForPay approved payment:', {
-    orderReference: payload.orderReference,
-    amount: payload.amount,
-    currency: payload.currency,
-    email: payload.email,
-    phone: payload.phone,
-    transactionStatus: payload.transactionStatus,
-    reasonCode: payload.reasonCode,
-    paymentSystem: payload.paymentSystem,
-  });
+  // console.info('WayForPay approved payment:', {
+  //   orderReference: payload.orderReference,
+  //   amount: payload.amount,
+  //   currency: payload.currency,
+  //   email: payload.email,
+  //   phone: payload.phone,
+  //   transactionStatus: payload.transactionStatus,
+  //   reasonCode: payload.reasonCode,
+  //   paymentSystem: payload.paymentSystem,
+  // });
 }
 
 async function handleDeclinedPayment(payload: WayForPayCallbackBody) {
