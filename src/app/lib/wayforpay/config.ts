@@ -16,18 +16,25 @@ function normalizeDomain(input: string): string {
   }
 }
 
-export const wayForPayConfig = {
-  merchantAccount: required(
-    'WAYFORPAY_MERCHANT_ACCOUNT',
-    process.env.WAYFORPAY_MERCHANT_ACCOUNT
-  ),
-  secretKey: required('WAYFORPAY_SECRET_KEY', process.env.WAYFORPAY_SECRET_KEY),
-  apiUrl: process.env.WAYFORPAY_API_URL || 'https://api.wayforpay.com/api',
-  publicUrl: required('PUBLIC_URL', process.env.NEXT_PUBLIC_URL),
-  merchantDomainName: normalizeDomain(
-    process.env.WAYFORPAY_MERCHANT_DOMAIN || process.env.NEXT_PUBLIC_URL || ''
-  ),
-  serviceUrl:
-    process.env.WAYFORPAY_SERVICE_URL ||
-    `${required('PUBLIC_URL', process.env.NEXT_PUBLIC_URL)}/api/wayforpay/callback`,
-} as const;
+export function getWayForPayConfig() {
+  const publicUrl = required('NEXT_PUBLIC_URL', process.env.NEXT_PUBLIC_URL);
+
+  return {
+    merchantAccount: required(
+      'WAYFORPAY_MERCHANT_ACCOUNT',
+      process.env.WAYFORPAY_MERCHANT_ACCOUNT
+    ),
+    secretKey: required(
+      'WAYFORPAY_SECRET_KEY',
+      process.env.WAYFORPAY_SECRET_KEY
+    ),
+    apiUrl: process.env.WAYFORPAY_API_URL || 'https://api.wayforpay.com/api',
+    publicUrl,
+    merchantDomainName: normalizeDomain(
+      process.env.WAYFORPAY_MERCHANT_DOMAIN || publicUrl
+    ),
+    serviceUrl:
+      process.env.WAYFORPAY_SERVICE_URL ||
+      `${publicUrl}/api/wayforpay/callback`,
+  } as const;
+}

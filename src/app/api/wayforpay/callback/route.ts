@@ -1,7 +1,9 @@
-import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { sendTelegramMessage } from '@/app/lib';
+import crypto from 'crypto';
+
+export const dynamic = 'force-dynamic';
 
 type WayForPayCallbackBody = {
   merchantAccount?: string;
@@ -36,21 +38,32 @@ function getRequiredEnv(name: string): string {
   return value;
 }
 
-const SECRET_KEY = getRequiredEnv('WAYFORPAY_SECRET_KEY');
-const MERCHANT_ACCOUNT = getRequiredEnv('WAYFORPAY_MERCHANT_ACCOUNT');
+function getWayForPayConfig() {
+  return {
+    secretKey: getRequiredEnv('WAYFORPAY_SECRET_KEY'),
+    merchantAccount: getRequiredEnv('WAYFORPAY_MERCHANT_ACCOUNT'),
+  };
+}
 
-function createHmacMd5(values: Array<string | number>): string {
+function createHmacMd5(
+  values: Array<string | number>,
+  secretKey: string
+): string {
   const payload = values.map(value => String(value)).join(';');
 
   return crypto
-    .createHmac('md5', SECRET_KEY)
+    .createHmac('md5', secretKey)
     .update(payload, 'utf8')
     .digest('hex');
 }
 
-function getAcceptResponse(orderReference: string, time: number) {
+function getAcceptResponse(
+  orderReference: string,
+  time: number,
+  secretKey: string
+) {
   const status = 'accept';
-  const signature = createHmacMd5([orderReference, status, time]);
+  const signature = createHmacMd5([orderReference, status, time], secretKey);
 
   return {
     orderReference,
@@ -71,17 +84,6 @@ async function handleApprovedPayment(payload: WayForPayCallbackBody) {
       `💳 Status: ${payload.transactionStatus ?? '-'}`,
     ].join('\n')
   );
-
-  // console.info('WayForPay approved payment:', {
-  //   orderReference: payload.orderReference,
-  //   amount: payload.amount,
-  //   currency: payload.currency,
-  //   email: payload.email,
-  //   phone: payload.phone,
-  //   transactionStatus: payload.transactionStatus,
-  //   reasonCode: payload.reasonCode,
-  //   paymentSystem: payload.paymentSystem,
-  // });
 }
 
 async function handleDeclinedPayment(payload: WayForPayCallbackBody) {
@@ -97,6 +99,8 @@ async function handleDeclinedPayment(payload: WayForPayCallbackBody) {
 
 export async function POST(req: NextRequest) {
   try {
+    const { secretKey, merchantAccount } = getWayForPayConfig();
+
     const body = (await req.json()) as WayForPayCallbackBody;
 
     const orderReference = String(body.orderReference ?? '').trim();
@@ -115,16 +119,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const expectedSignature = createHmacMd5([
-      MERCHANT_ACCOUNT,
-      orderReference,
-      amount,
-      currency,
-      authCode,
-      cardPan,
-      transactionStatus,
-      reasonCode,
-    ]);
+    const expectedSignature = createHmacMd5(
+      [
+        merchantAccount,
+        orderReference,
+        amount,
+        currency,
+        authCode,
+        cardPan,
+        transactionStatus,
+        reasonCode,
+      ],
+      secretKey
+    );
 
     if (expectedSignature !== merchantSignature) {
       console.error('WayForPay callback signature mismatch', {
@@ -147,13 +154,15 @@ export async function POST(req: NextRequest) {
 
     const time = Math.floor(Date.now() / 1000);
 
-    return NextResponse.json(getAcceptResponse(orderReference, time));
+    return NextResponse.json(
+      getAcceptResponse(orderReference, time, secretKey)
+    );
   } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Internal Server Error';
+
     console.error('WayForPay callback error:', error);
 
-    return NextResponse.json(
-      { status: 'error', message: 'Internal Server Error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ status: 'error', message }, { status: 500 });
   }
 }

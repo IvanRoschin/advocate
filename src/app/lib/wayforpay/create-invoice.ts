@@ -1,13 +1,12 @@
 import 'server-only';
-
-import { wayForPayConfig } from './config';
+import { getWayForPayConfig } from './config';
 import { createWayForPaySignature } from './signature';
-
 import type {
   CreateWayForPayInvoiceInput,
   WayForPayCreateInvoiceRequest,
   WayForPayCreateInvoiceResponse,
 } from './types';
+
 function assertValidInput(input: CreateWayForPayInvoiceInput): void {
   if (!input.orderReference.trim()) {
     throw new Error('orderReference is required');
@@ -20,29 +19,14 @@ function assertValidInput(input: CreateWayForPayInvoiceInput): void {
   if (!input.products.length) {
     throw new Error('At least one product is required');
   }
-
-  for (const product of input.products) {
-    if (!product.name.trim()) {
-      throw new Error('Each product must have a name');
-    }
-
-    if (!Number.isFinite(product.price) || product.price <= 0) {
-      throw new Error('Each product price must be a positive number');
-    }
-
-    if (
-      product.quantity !== undefined &&
-      (!Number.isInteger(product.quantity) || product.quantity <= 0)
-    ) {
-      throw new Error('Each product quantity must be a positive integer');
-    }
-  }
 }
 
 function buildRequest(
   input: CreateWayForPayInvoiceInput
 ): WayForPayCreateInvoiceRequest {
   assertValidInput(input);
+
+  const wayForPayConfig = getWayForPayConfig();
 
   const orderDate = Math.floor(Date.now() / 1000);
   const currency = input.currency ?? 'UAH';
@@ -52,7 +36,7 @@ function buildRequest(
   const productPrice = input.products.map(product => product.price);
   const productCount = input.products.map(product => product.quantity ?? 1);
 
-  const signature = createWayForPaySignature(
+  const merchantSignature = createWayForPaySignature(
     [
       wayForPayConfig.merchantAccount,
       wayForPayConfig.merchantDomainName,
@@ -72,20 +56,17 @@ function buildRequest(
     merchantAccount: wayForPayConfig.merchantAccount,
     merchantAuthType: 'SimpleSignature',
     merchantDomainName: wayForPayConfig.merchantDomainName,
-    merchantSignature: signature,
+    merchantSignature,
     apiVersion: 1,
     language,
     serviceUrl: wayForPayConfig.serviceUrl,
-
     orderReference: input.orderReference,
     orderDate,
     amount: input.amount,
     currency,
-
     productName,
     productPrice,
     productCount,
-
     ...(input.client?.firstName
       ? { clientFirstName: input.client.firstName }
       : {}),
@@ -101,6 +82,7 @@ function buildRequest(
 export async function createWayForPayInvoice(
   input: CreateWayForPayInvoiceInput
 ): Promise<WayForPayCreateInvoiceResponse> {
+  const wayForPayConfig = getWayForPayConfig();
   const request = buildRequest(input);
 
   const response = await fetch(wayForPayConfig.apiUrl, {
