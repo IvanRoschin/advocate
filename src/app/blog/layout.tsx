@@ -1,18 +1,13 @@
-'use client';
+import type { ReactNode } from 'react';
 
-import type React from 'react';
-import { Header, Socials } from '../components';
+type Props = {
+  children: ReactNode;
+};
 
-export default function BlogLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function BlogLayout({ children }: Props) {
   return (
-    <div className="blog-wrapper min-h-screen">
-      <Socials />
-      <Header />
-      <div className="mx-auto w-full max-w-6xl px-4 py-6">{children}</div>
+    <div className="blog-wrapper bg-background text-foreground min-h-screen">
+      {children}
     </div>
   );
 }

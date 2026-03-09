@@ -1,14 +1,18 @@
 import { articleService } from '@/app/lib/services/article.service';
-import { blog } from '@/app/resources/content';
+import {
+  blogLayout,
+  BlogLayoutNode,
+} from '@/app/resources/content/pages/blog.layout';
 
-import { ArticleListPreview } from './_components/ArticleListPreview';
-import BlogAside from './_components/BlogAside';
+import { BLOG_SECTIONS, BlogSectionProps } from './_components/blog.sections';
 
-export default async function BlogPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string }>;
-}) {
+type BlogPageProps = {
+  searchParams: Promise<{
+    category?: string;
+  }>;
+};
+
+export default async function BlogPage({ searchParams }: BlogPageProps) {
   const { category } = await searchParams;
 
   const [items, recent, categories] = await Promise.all([
@@ -17,35 +21,45 @@ export default async function BlogPage({
     articleService.getPublicCategoriesWithCounts(),
   ]);
 
-  return (
-    <main className="bg-background text-foreground min-h-screen">
-      <div className="container py-10 lg:py-14">
-        <div className="mb-8 max-w-3xl">
-          <p className="text-accent mb-2 text-sm font-semibold tracking-[0.18em] uppercase">
-            {blog.eyebrow}
-          </p>
+  const sectionProps: BlogSectionProps = {
+    category,
+    items,
+    recent,
+    categories,
+  };
 
-          <h1 className="title-app text-accent text-3xl font-semibold tracking-tight lg:text-4xl">
-            {blog.heading}
-          </h1>
+  const renderSection = (
+    key: keyof typeof BLOG_SECTIONS,
+    uniqueKey: string
+  ) => {
+    const Section = BLOG_SECTIONS[key];
 
-          <p className="text-app mt-4 text-base leading-7">{blog.lead}</p>
-        </div>
+    return <Section key={uniqueKey} {...sectionProps} />;
+  };
 
+  const renderNode = (node: BlogLayoutNode, index: number) => {
+    if (!node.display) return null;
+
+    if (node.type === 'section') {
+      return renderSection(node.key, `${node.key}-${index}`);
+    }
+
+    return (
+      <div key={`${node.key}-${index}`} className={node.wrapperClassName}>
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-          <section className="min-w-0">
-            <ArticleListPreview items={items} baseHref={blog.path} />
-          </section>
-
-          <aside className="border-accent min-w-0 space-y-4 pl-4 lg:sticky lg:top-24 lg:self-start lg:border-l">
-            <BlogAside
-              recent={recent}
-              categories={categories}
-              activeCategory={category ?? ''}
-            />
-          </aside>
+          {node.items.map((item, itemIndex) =>
+            item.display
+              ? renderSection(item.key, `${node.key}-${item.key}-${itemIndex}`)
+              : null
+          )}
         </div>
       </div>
+    );
+  };
+
+  return (
+    <main className="bg-background text-foreground min-h-screen">
+      {blogLayout.map(renderNode)}
     </main>
   );
 }
