@@ -2,6 +2,7 @@ export { default as Article } from './Article';
 export type { ArticleDocument, ArticleInput } from './Article';
 export { default as Lead } from './Lead';
 export type { LeadDocument, LeadInput } from './Lead';
+export { default as Service } from './Service';
 export { default as Subscriber } from './Subscriber';
 export type { SubscriberDocument, SubscriberInput } from './Subscriber';
 export { default as User } from './User';

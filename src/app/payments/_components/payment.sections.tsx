@@ -1,13 +1,14 @@
-import type { ComponentType } from 'react';
+import type { ReactNode } from 'react';
 
 import { PaymentSectionKey } from '@/app/resources/content/pages/payment.layout';
 import { Footer, Header } from '@/components';
+
 import PaymentsAside from './paymentsAside';
 import PaymentsContent from './paymentsContent';
 
 export type PaymentSectionProps = Record<string, never>;
 
-export type PaymentSectionComponent = ComponentType<PaymentSectionProps>;
+export type PaymentSectionComponent = (props: PaymentSectionProps) => ReactNode;
 
 const PaymentHeaderSection: PaymentSectionComponent = () => <Header />;
 

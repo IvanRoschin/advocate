@@ -40,6 +40,7 @@ import {
   FiSun,
   FiUser,
 } from 'react-icons/fi';
+import { GrBusinessService } from 'react-icons/gr';
 import {
   HiArrowRight,
   HiArrowTopRightOnSquare,
@@ -74,6 +75,7 @@ export const iconLibrary = {
   arrowRight: HiArrowRight,
   email: HiEnvelope,
   globe: HiOutlineGlobeAsiaAustralia,
+  services: GrBusinessService,
   person: PiUserCircleDuotone,
   grid: PiGridFourDuotone,
   book: PiBookBookmarkDuotone,
