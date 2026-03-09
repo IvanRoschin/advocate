@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { AppLink } from '@/components';
 import { cn } from '@/lib/utils';
@@ -11,12 +12,31 @@ import { isSelected, useNavItems } from './nav.shared';
 export const NavDesktopList = () => {
   const items = useNavItems();
   const pathname = usePathname() ?? '';
+  const [hash, setHash] = useState('');
+
+  useEffect(() => {
+    const syncHash = () => {
+      setHash(window.location.hash || '');
+    };
+
+    syncHash();
+    window.addEventListener('hashchange', syncHash);
+
+    return () => {
+      window.removeEventListener('hashchange', syncHash);
+    };
+  }, []);
 
   return (
     <nav className="font-eukrainehead" aria-label={menuText.navAria}>
       <ul className="flex h-10 items-center gap-1">
         {items.map(({ route, href, label, startsWith }) => {
-          const active = isSelected(pathname, href, startsWith);
+          const active = isSelected({
+            pathname,
+            hash,
+            href,
+            startsWith,
+          });
 
           return (
             <li key={route}>

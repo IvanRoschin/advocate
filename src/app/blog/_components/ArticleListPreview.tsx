@@ -49,12 +49,14 @@ export function ArticleListPreview({
             className="group block"
             prefetch={false}
           >
-            <Card className="overflow-hidden transition-all hover:-translate-y-px hover:shadow-lg">
+            <Card className="border-border bg-card text-card-foreground overflow-hidden transition-all hover:-translate-y-px hover:shadow-lg">
+              {' '}
               <CardContent className="p-0">
                 <div className="flex flex-col gap-0 sm:flex-row">
                   {/* Cover */}
                   <div className="mt-4 flex h-44 w-full items-center justify-center sm:h-36 sm:w-56">
-                    <div className="bg-muted relative ml-4 h-full w-full overflow-hidden rounded-md">
+                    <div className="bg-muted border-border relative ml-4 h-full w-full overflow-hidden rounded-md border">
+                      {' '}
                       {a.src ? (
                         <Image
                           src={a.src}
@@ -69,7 +71,6 @@ export function ArticleListPreview({
                           No cover
                         </div>
                       )}
-
                       <div className="from-background/35 bg-linear-to-top pointer-events-none absolute inset-0 to-transparent" />
                     </div>
                   </div>
@@ -133,7 +134,7 @@ export function ArticleListPreview({
                       )}
                     </div>
 
-                    <div className="text-primary mt-2 text-sm font-medium underline-offset-4 group-hover:underline">
+                    <div className="text-accent mt-2 text-sm font-medium underline-offset-4 group-hover:underline">
                       Читати →
                     </div>
                   </div>

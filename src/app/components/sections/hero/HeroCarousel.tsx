@@ -14,22 +14,13 @@ export type CarouselItem = {
 
 type HeroCarouselProps = {
   items: CarouselItem[];
-
   autoplay?: boolean;
   intervalMs?: number;
   initialIndex?: number;
-
-  /** поднять/опустить весь слой карусели */
   className?: string;
-
-  /** UI */
   showArrows?: boolean;
   showBars?: boolean;
-
-  /** пауза на hover/focus */
   pauseOnHover?: boolean;
-
-  /** DEBUG: если true — полоски в правом верхнем углу */
   debugBarsTopRight?: boolean;
 };
 
@@ -51,7 +42,6 @@ export function HeroCarousel({
     return Math.max(0, Math.min(initialIndex, count - 1));
   });
 
-  // если items поменялись (например, пришли позже) — аккуратно нормализуем индекс
   React.useEffect(() => {
     if (!count) return;
     setIndex(i => Math.max(0, Math.min(i, count - 1)));
@@ -73,7 +63,6 @@ export function HeroCarousel({
   const next = React.useCallback(() => go(index + 1, 1), [go, index]);
   const prev = React.useCallback(() => go(index - 1, -1), [go, index]);
 
-  // keyboard
   React.useEffect(() => {
     if (count <= 1) return;
 
@@ -86,11 +75,8 @@ export function HeroCarousel({
     return () => window.removeEventListener('keydown', onKey);
   }, [count, next, prev]);
 
-  // autoplay
   React.useEffect(() => {
-    if (!autoplay) return;
-    if (count <= 1) return;
-    if (paused) return;
+    if (!autoplay || count <= 1 || paused) return;
 
     const id = window.setInterval(() => {
       setDirection(1);
@@ -100,7 +86,6 @@ export function HeroCarousel({
     return () => window.clearInterval(id);
   }, [autoplay, count, intervalMs, paused]);
 
-  // UI hover/focus pause handlers
   const pauseHandlers = pauseOnHover
     ? {
         onMouseEnter: () => setPaused(true),
@@ -114,7 +99,6 @@ export function HeroCarousel({
 
   return (
     <div className={cn('absolute inset-0', className)} {...pauseHandlers}>
-      {/* Слайды */}
       <AnimatePresence initial={false} custom={direction}>
         {current ? (
           <motion.div
@@ -138,7 +122,6 @@ export function HeroCarousel({
         ) : null}
       </AnimatePresence>
 
-      {/* Стрелки */}
       {showArrows && count > 1 ? (
         <>
           <button
@@ -146,11 +129,12 @@ export function HeroCarousel({
             aria-label="Previous slide"
             onClick={prev}
             className={cn(
-              'absolute top-1/2 left-3 z-9998 -translate-y-1/2',
-              'rounded-full bg-black/35 p-2 text-white backdrop-blur',
-              'transition hover:bg-black/50',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70'
+              'hero-control absolute top-1/2 left-3 z-9998 -translate-y-1/2 rounded-full p-2 backdrop-blur transition',
+              'focus:outline-none focus-visible:ring-2'
             )}
+            style={{
+              ['--tw-ring-color' as string]: 'var(--hero-control-ring)',
+            }}
           >
             <FiChevronLeft size={20} />
           </button>
@@ -160,18 +144,18 @@ export function HeroCarousel({
             aria-label="Next slide"
             onClick={next}
             className={cn(
-              'absolute top-1/2 right-3 z-9998 -translate-y-1/2',
-              'rounded-full bg-black/35 p-2 text-white backdrop-blur',
-              'transition hover:bg-black/50',
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70'
+              'hero-control absolute top-1/2 right-3 z-9998 -translate-y-1/2 rounded-full p-2 backdrop-blur transition',
+              'focus:outline-none focus-visible:ring-2'
             )}
+            style={{
+              ['--tw-ring-color' as string]: 'var(--hero-control-ring)',
+            }}
           >
             <FiChevronRight size={20} />
           </button>
         </>
       ) : null}
 
-      {/* Accent Bars — Top Right */}
       {showBars && count > 1 ? (
         <div className="pointer-events-auto absolute top-6 right-6 z-9999">
           <div className="flex items-center gap-2">
@@ -186,14 +170,13 @@ export function HeroCarousel({
                   aria-current={active ? 'true' : 'false'}
                   onClick={() => go(i, i > index ? 1 : -1)}
                   className={cn(
-                    'relative h-2 w-12 overflow-hidden rounded-full',
-                    'bg-white hover:bg-white/70',
-                    'transition-colors duration-200',
-                    'cursor-pointer',
-                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80'
+                    'hero-bar relative h-2 w-12 cursor-pointer overflow-hidden rounded-full transition-colors duration-200',
+                    'focus:outline-none focus-visible:ring-2'
                   )}
+                  style={{
+                    ['--tw-ring-color' as string]: 'var(--hero-bar-ring)',
+                  }}
                 >
-                  {/* Активная заливка (ярче) */}
                   <span
                     className={cn(
                       'absolute inset-y-0 left-0 rounded-full transition-all duration-300 ease-out',
@@ -208,7 +191,6 @@ export function HeroCarousel({
                     }}
                   />
 
-                  {/* Hover glow поверх (чуть-чуть) */}
                   <span
                     className="absolute inset-0 opacity-0 transition-opacity duration-200 hover:opacity-100"
                     style={{

@@ -14,7 +14,7 @@ const Advantages = () => {
   return (
     <section
       id={advantagesSection.id}
-      className="relative flex min-h-screen items-center py-20 text-white"
+      className="text-advantages relative flex min-h-screen items-center py-20"
       itemScope
       itemType={advantagesSection.schemaType}
     >
@@ -27,7 +27,7 @@ const Advantages = () => {
         useSkeleton
       />
 
-      <div className="absolute inset-0 -z-10 bg-linear-to-b from-black/70 via-black/40 to-black/80" />
+      <div className="bg-advantages-overlay absolute inset-0 -z-10" />
 
       <div className="relative z-10 container grid gap-16 px-4 lg:grid-cols-2">
         <div>
@@ -35,7 +35,7 @@ const Advantages = () => {
             {advantagesSection.header.uptitle}
           </p>
 
-          <h2 className="font-eukrainehead mb-10 text-3xl leading-tight font-bold md:text-4xl">
+          <h2 className="text-advantages-title font-eukrainehead mb-10 text-3xl leading-tight font-bold md:text-4xl">
             {advantagesSection.header.titleTop} <br />
             <span className="text-accent">
               {advantagesSection.header.titleAccent}
@@ -54,13 +54,12 @@ const Advantages = () => {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center rounded-3xl bg-black/50 p-8 backdrop-blur-md">
-          <h3 className="font-eukrainehead mb-4 text-2xl font-bold">
+        <div className="bg-advantages-panel flex flex-col justify-center rounded-3xl p-8 backdrop-blur-md">
+          <h3 className="font-eukrainehead text-advantages-title mb-4 text-2xl font-bold">
             {advantagesSection.cta.title}
           </h3>
 
-          <p className="mb-6 text-gray-200">
-            {/* чтобы сохранить <strong>, делаем так: */}
+          <p className="text-advantages-muted mb-6">
             Отримайте <strong>первинну консультацію</strong> та зрозумійте
             реальні перспективи вашої справи вже сьогодні.
           </p>

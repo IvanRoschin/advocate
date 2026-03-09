@@ -9,6 +9,7 @@ import { PremiumLoader } from '../components/ui/loader/PremiumLoader';
 import { TopProgressBar } from '../components/ui/top-progress/TopProgressBar';
 import { LoadingProvider } from './LoadingProvider';
 import { PageTransition } from './PageTransition';
+import { ThemeStoreProvider } from './ThemeStoreProvider';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -17,18 +18,20 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return (
     <SessionProvider>
-      <LoadingProvider>
-        <TopProgressBar />
-        <PremiumLoader />
+      <ThemeStoreProvider>
+        <LoadingProvider>
+          <TopProgressBar />
+          <PremiumLoader />
 
-        <Suspense fallback={null}>
-          <RouteLoadingReset />
+          <Suspense fallback={null}>
+            <RouteLoadingReset />
 
-          <PageTransition>{children}</PageTransition>
-        </Suspense>
+            <PageTransition>{children}</PageTransition>
+          </Suspense>
 
-        <Toaster position="top-right" richColors />
-      </LoadingProvider>
+          <Toaster position="top-right" richColors />
+        </LoadingProvider>
+      </ThemeStoreProvider>
     </SessionProvider>
   );
 }

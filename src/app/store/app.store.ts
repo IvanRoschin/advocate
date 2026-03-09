@@ -1,6 +1,7 @@
 import { useFiltersStore } from './filters.store';
 import { useModalStore } from './modal.store';
 import { useRefreshStore } from './refresh.store';
+import { useThemeStore } from './theme.store';
 import { useUserStore } from './user.store';
 
 export const useAppStore = () => ({
@@ -8,4 +9,5 @@ export const useAppStore = () => ({
   filters: useFiltersStore(),
   refresh: useRefreshStore(),
   modals: useModalStore(),
+  theme: useThemeStore(),
 });
