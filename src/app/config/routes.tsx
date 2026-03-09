@@ -3,9 +3,9 @@
 export const routes = {
   public: {
     home: '/',
-    about: '#about',
-    practices: '#practices',
-    order: '#order',
+    about: '/#about',
+    practices: '/#practices',
+    order: '/#order',
     payments: '/payments',
     blog: '/blog',
     contact: '/contact',

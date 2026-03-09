@@ -111,9 +111,18 @@
   --advantages-panel-bg: rgba(0, 0, 0, 0.5);
 
   /* ===== reviews ===== */
-  --reviews-section-bg: #171717;
-  --reviews-title: #ffffff;
-  --reviews-subtitle: rgba(255, 255, 255, 0.82);
+--reviews-section-bg: #171717;
+--reviews-title: #ffffff;
+--reviews-subtitle: rgba(255, 255, 255, 0.82);
+
+--reviews-card-bg: #191c23;
+--reviews-card-bg-hover: #1d2129;
+--reviews-card-name: #ffffff;
+--reviews-card-role: rgba(255, 255, 255, 0.72);
+--reviews-card-text: rgba(255, 255, 255, 0.88);
+--reviews-card-accent: #c6a77b;
+--reviews-card-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+--reviews-card-shadow-hover: 0 18px 40px rgba(0, 0, 0, 0.36);
 
   /* ===== why ===== */
   --why-section-bg: #1b1e27;
@@ -125,13 +134,13 @@
   --why-card-title: #ffffff;
 
   /* ===== footer ===== */
-  --footer-bg: #ffffff;
-  --footer-fg: #171717;
-  --footer-title: #171717;
-  --footer-link: #171717;
-  --footer-muted: #5f6773;
-  --footer-border: rgba(0, 0, 0, 0.08);
-  --footer-bottom: #6b7280;
+  --footer-bg: #171717;
+  --footer-fg: #f6f7f9;
+  --footer-title: #f6f7f9;
+  --footer-link: #f6f7f9;
+  --footer-muted: rgba(255, 255, 255, 0.8);
+  --footer-border: rgba(255, 255, 255, 0.1);
+  --footer-bottom: rgba(255, 255, 255, 0.5);
 
   /* ===== shadcn / semantic ===== */
   --card: #21242b;

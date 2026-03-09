@@ -1,12 +1,14 @@
 'use client';
 
 import { getRouteUrl } from '@/app/config/routes';
-import { useThemeMode } from '@/app/hooks/useThemeMode';
+import { useThemeStore } from '@/app/store/theme.store';
 import { AppLink, Logo } from '@/components';
 import { footerSection, iconLibrary, person, social } from '@/resources';
 
 const Footer = () => {
-  const theme = useThemeMode();
+  const theme = useThemeStore(state => state.theme);
+
+  const logoVariant = theme === 'dark' ? 'dark' : 'light';
 
   const PhoneIcon = iconLibrary.phone;
   const EmailIcon = iconLibrary.envelope;
@@ -22,8 +24,6 @@ const Footer = () => {
   const emailLink =
     social.find(s => s.icon === 'email' && Boolean(s.link))?.link ??
     (person.email ? `mailto:${person.email}` : null);
-
-  const logoVariant = theme === 'dark' ? 'light' : 'dark';
 
   return (
     <footer className="bg-footer text-footer">

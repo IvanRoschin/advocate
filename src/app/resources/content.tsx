@@ -1,6 +1,47 @@
-// import { Column, Line, Row, Text } from "@once-ui-system/core";
+import type { Blog, Newsletter, Person, Social } from '@/types';
 
-import type { Newsletter, Person, Social } from '@/types';
+type PaymentDetail = {
+  label: string;
+  value: string;
+  mono?: boolean;
+};
+
+type BlogContent = Blog & {
+  eyebrow: string;
+  heading: string;
+  lead: string;
+  aside: {
+    categoriesTitle: string;
+    emptyCategories: string;
+    newsletterTitle: string;
+    newsletterDescription: string;
+    recentTitle: string;
+    emptyRecent: string;
+  };
+};
+
+type PaymentContent = {
+  path: string;
+  image: string;
+  label: string;
+  title: string;
+  description: string;
+  eyebrow: string;
+  heading: string;
+  lead: string;
+  details: PaymentDetail[];
+  notesTitle: string;
+  notes: string[];
+  aside: {
+    title: string;
+    description: string;
+    contactHref: string;
+    contactLabel: string;
+    phoneHref: string;
+    phoneLabel: string;
+    footnote: string;
+  };
+};
 
 const person: Person = {
   firstName: 'Іван',
@@ -17,7 +58,7 @@ const person: Person = {
 const newsletter: Newsletter = {
   display: true,
   title: <>Підписатися на розсилку</>,
-  description: <>Листи про юридичні кейси</>,
+  description: <>Нові статті, практичні роз’яснення та юридичні нотатки.</>,
 };
 
 const phone1 = '0951983729';
@@ -35,13 +76,13 @@ const social: Social = [
     visible: false,
   },
   {
-    name: `${phone1Pretty}`,
+    name: phone1Pretty,
     icon: 'phone',
     link: `tel:${phone1}`,
     essential: true,
   },
   {
-    name: `${phone2Pretty}`,
+    name: phone2Pretty,
     icon: 'phone',
     link: `tel:${phone2}`,
     essential: true,
@@ -49,11 +90,9 @@ const social: Social = [
   {
     name: 'Telegram',
     icon: 'telegram',
-    link: `https://t.me/ivanroschin`,
+    link: 'https://t.me/ivanroschin',
     essential: false,
   },
-  // За потреби можна додати Telegram/Viber, але лише якщо іконки точно є у вашому /once-ui/icons.ts
-  // { name: 'Telegram', icon: 'telegram', link: 'https://t.me/<username>', essential: true },
   {
     name: 'Viber',
     icon: 'viber',
@@ -88,9 +127,83 @@ const home = {
   path: '/',
   image: '/images/ivan_roschin.webp',
   label: 'Головна',
-  title: `${person.role} ${person.name} — простір традиції`,
+  title: `${person.role} ${person.name} — правнича допомога та представництво інтересів`,
   description:
-    'Головна сторінка Адвокат Іван Рощин – професійна правнича допомога у цивільних, господарських та адміністративних справах.',
+    'Адвокат Іван Рощин — юридична допомога, консультації, підготовка процесуальних документів і представництво у цивільних, господарських та адміністративних справах.',
+};
+
+const blog: BlogContent = {
+  path: '/blog',
+  label: 'Блог',
+  title: `Блог — ${person.role} ${person.name}`,
+  description: `Статті, роз’яснення законодавства, практичні кейси та юридичні коментарі від ${person.name}.`,
+  eyebrow: 'Блог',
+  heading: 'Юридичні статті, роз’яснення та практика',
+  lead: 'У блозі публікуються матеріали про застосування законодавства, практичні правові ситуації, процесуальні питання та інші теми, які можуть бути корисними для клієнтів і колег.',
+  aside: {
+    categoriesTitle: 'Категорії',
+    emptyCategories: 'Категорії відсутні',
+    newsletterTitle: 'Підписка на нові матеріали',
+    newsletterDescription:
+      'Отримуйте нові статті, практичні роз’яснення та короткі юридичні нотатки.',
+    recentTitle: 'Останні публікації',
+    emptyRecent: 'Публікації відсутні',
+  },
+};
+
+const payment: PaymentContent = {
+  path: '/payment',
+  image: '/images/ivan_roschin.webp',
+  label: 'Оплата',
+  title: `Оплата послуг — ${person.role} ${person.name}`,
+  description:
+    'Реквізити для оплати юридичних консультацій та правничої допомоги. Перед оплатою узгодьте суму, формат послуги та призначення платежу.',
+  eyebrow: 'Оплата послуг',
+  heading: 'Реквізити для оплати юридичної допомоги',
+  lead: 'На цій сторінці розміщено реквізити для оплати консультацій, підготовки документів та інших юридичних послуг. Перед здійсненням платежу рекомендовано попередньо узгодити суму, формат послуги та призначення платежу.',
+  details: [
+    {
+      label: 'Отримувач',
+      value: 'Іван Рощин',
+    },
+    {
+      label: 'IBAN',
+      value: 'UA55 305 2990 0000 2600 1010 1213 24',
+      mono: true,
+    },
+
+    {
+      label: 'РНОКПП',
+      value: '3146909540',
+      mono: true,
+    },
+    {
+      label: 'Банк',
+      value: 'АТ КБ "ПриватБанк"',
+    },
+    {
+      label: 'Призначення платежу',
+      value: 'Оплата юридичних послуг згідно з домовленістю сторін',
+    },
+  ],
+  notesTitle: 'Важливо перед оплатою',
+  notes: [
+    'Перед переказом коштів перевірте коректність реквізитів і суму платежу.',
+    'У призначенні платежу бажано зазначати назву послуги або інше погоджене формулювання.',
+    'Якщо вам потрібні рахунок, підтвердження або інші супровідні документи, це варто узгодити до моменту оплати.',
+    'Після оплати збережіть квитанцію або скриншот до підтвердження зарахування коштів.',
+  ],
+  aside: {
+    title: 'Потрібне уточнення щодо оплати?',
+    description:
+      'Якщо у вас виникли питання щодо реквізитів, суми платежу, формату послуги або підтвердження оплати, зв’яжіться перед здійсненням переказу.',
+    contactHref: '/contact',
+    contactLabel: 'Зв’язатися для уточнення',
+    phoneHref: `tel:${phone1}`,
+    phoneLabel: 'Зателефонувати',
+    footnote:
+      'Рекомендується зберегти підтвердження платежу до моменту остаточного підтвердження зарахування коштів.',
+  },
 };
 
 // const about: About = {
@@ -368,4 +481,5 @@ const home = {
 //   ],
 // };
 
-export { brand, home, logo, newsletter, person, social };
+export { blog, brand, home, logo, newsletter, payment, person, social };
+export type { BlogContent, PaymentContent, PaymentDetail };
