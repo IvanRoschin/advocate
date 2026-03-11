@@ -9,6 +9,8 @@ import {
   ServiceSectionProps,
 } from './_components/service.sections';
 
+export const dynamic = 'force-dynamic';
+
 type ServicePageProps = {
   params: Promise<{ slug: string }>;
 };

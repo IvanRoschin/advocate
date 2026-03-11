@@ -9,6 +9,8 @@ import {
   ServicesSectionProps,
 } from './_components/services.sections';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = buildMetadata({
   title: 'Послуги адвоката | Іван Рощин',
   description:
