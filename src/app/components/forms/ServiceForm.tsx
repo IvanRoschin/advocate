@@ -2,19 +2,16 @@
 
 import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
-import { useMemo } from 'react';
 
 import Btn from '@/app/components/ui/button/Btn';
 import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
 import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
 import {
   CreateServiceRequestDTO,
-  createServiceSchema,
   ServiceLayoutNodeInput,
   ServiceSectionsDto,
   ServiceStatus,
   UpdateServiceDTO,
-  updateServiceSchema,
 } from '@/app/types';
 import { Input, Select, Textarea } from '@/components/index';
 
@@ -264,60 +261,49 @@ const ServiceForm = (props: Props) => {
   const isEditMode = props.mode === 'edit';
   const initialValues = isEditMode ? props.initialValues : undefined;
 
-  const baseValues: ServiceFormValues = useMemo(
-    () => ({
-      slug: initialValues?.slug ?? '',
-      status: initialValues?.status ?? 'draft',
-      title: initialValues?.title ?? '',
-      summary: initialValues?.summary ?? '',
-      src: initialValues?.src ?? [],
-      layout: initialValues?.layout ?? defaultServiceLayout,
-      seoTitle: initialValues?.seoTitle ?? '',
-      seoDescription: initialValues?.seoDescription ?? '',
+  const baseValues: ServiceFormValues = {
+    slug: initialValues?.slug ?? '',
+    status: initialValues?.status ?? 'draft',
+    title: initialValues?.title ?? '',
+    summary: initialValues?.summary ?? '',
+    src: Array.isArray(initialValues?.src) ? initialValues.src : [],
+    layout: Array.isArray(initialValues?.layout)
+      ? initialValues.layout
+      : defaultServiceLayout,
+    seoTitle: initialValues?.seoTitle ?? '',
+    seoDescription: initialValues?.seoDescription ?? '',
 
-      heroTitle: initialValues?.sections?.hero?.title ?? '',
-      heroDescription: initialValues?.sections?.hero?.description ?? '',
-      heroSrc: initialValues?.sections?.hero?.src ?? [],
+    heroTitle: initialValues?.sections?.hero?.title ?? '',
+    heroDescription: initialValues?.sections?.hero?.description ?? '',
+    heroSrc: Array.isArray(initialValues?.sections?.hero?.src)
+      ? initialValues.sections.hero.src
+      : [],
 
-      benefitsTitle: initialValues?.sections?.benefits?.title ?? '',
-      benefitsItemsText: stringifyKeyValueLines(
-        initialValues?.sections?.benefits?.items
-      ),
+    benefitsTitle: initialValues?.sections?.benefits?.title ?? '',
+    benefitsItemsText: stringifyKeyValueLines(
+      initialValues?.sections?.benefits?.items
+    ),
 
-      processTitle: initialValues?.sections?.process?.title ?? '',
-      processStepsText: stringifyKeyValueLines(
-        initialValues?.sections?.process?.steps
-      ),
+    processTitle: initialValues?.sections?.process?.title ?? '',
+    processStepsText: stringifyKeyValueLines(
+      initialValues?.sections?.process?.steps
+    ),
 
-      faqTitle: initialValues?.sections?.faq?.title ?? '',
-      faqItemsText: stringifyFaqLines(initialValues?.sections?.faq?.items),
+    faqTitle: initialValues?.sections?.faq?.title ?? '',
+    faqItemsText: stringifyFaqLines(initialValues?.sections?.faq?.items),
 
-      reviewsTitle: initialValues?.sections?.reviews?.title ?? '',
-      reviewIdsText: stringifyLines(
-        initialValues?.sections?.reviews?.reviewIds
-      ),
+    reviewsTitle: initialValues?.sections?.reviews?.title ?? '',
+    reviewIdsText: stringifyLines(initialValues?.sections?.reviews?.reviewIds),
 
-      ctaTitle: initialValues?.sections?.cta?.title ?? '',
-      ctaDescription: initialValues?.sections?.cta?.description ?? '',
-      ctaButtonLabel: initialValues?.sections?.cta?.buttonLabel ?? '',
-    }),
-    [
-      initialValues?.slug,
-      initialValues?.status,
-      initialValues?.title,
-      initialValues?.summary,
-      initialValues?.src,
-      initialValues?.layout,
-      initialValues?.seoTitle,
-      initialValues?.seoDescription,
-      initialValues?.sections,
-    ]
-  );
+    ctaTitle: initialValues?.sections?.cta?.title ?? '',
+    ctaDescription: initialValues?.sections?.cta?.description ?? '',
+    ctaButtonLabel: initialValues?.sections?.cta?.buttonLabel ?? '',
+  };
 
-  const schema = useMemo(
-    () => (isEditMode ? updateServiceSchema : createServiceSchema),
-    [isEditMode]
-  );
+  // const schema = useMemo(
+  //   () => (isEditMode ? updateServiceSchema : createServiceSchema),
+  //   [isEditMode]
+  // );
 
   return (
     <>
@@ -326,7 +312,7 @@ const ServiceForm = (props: Props) => {
       <Formik<ServiceFormValues>
         enableReinitialize
         initialValues={baseValues}
-        validationSchema={schema}
+        // validationSchema={schema}
         onSubmit={async values => {
           if (props.mode === 'create') {
             await props.onSubmit(buildCreatePayload(values));
@@ -344,12 +330,7 @@ const ServiceForm = (props: Props) => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.04 }}
             >
-              <Input
-                name="title"
-                label="Назва послуги"
-                placeholder="Введіть назву послуги"
-                required
-              />
+              <Input name="title" label="Назва послуги" required />
             </motion.div>
 
             <motion.div
@@ -375,23 +356,13 @@ const ServiceForm = (props: Props) => {
                 ]}
               />
 
-              <Input name="slug" label="Slug" placeholder="slug-poslugy" />
+              <Input name="slug" label="Slug" />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-              <Input
-                name="seoTitle"
-                label="SEO title"
-                placeholder="SEO title"
-                required
-              />
+              <Input name="seoTitle" label="SEO title" required />
 
-              <Input
-                name="seoDescription"
-                label="SEO description"
-                placeholder="SEO description"
-                required
-              />
+              <Input name="seoDescription" label="SEO description" required />
             </div>
 
             <motion.div
@@ -412,11 +383,7 @@ const ServiceForm = (props: Props) => {
               <h3 className="text-accent mb-4 text-lg font-semibold">Hero</h3>
 
               <div className="grid gap-4">
-                <Input
-                  name="heroTitle"
-                  label="Hero title"
-                  placeholder="Заголовок hero"
-                />
+                <Input name="heroTitle" label="Hero title" />
 
                 <Textarea
                   name="heroDescription"
@@ -439,11 +406,7 @@ const ServiceForm = (props: Props) => {
               </h3>
 
               <div className="grid gap-4">
-                <Input
-                  name="benefitsTitle"
-                  label="Benefits title"
-                  placeholder="Переваги / коли потрібна допомога"
-                />
+                <Input name="benefitsTitle" label="Benefits title" />
 
                 <Textarea
                   name="benefitsItemsText"
@@ -459,11 +422,7 @@ const ServiceForm = (props: Props) => {
               </h3>
 
               <div className="grid gap-4">
-                <Input
-                  name="processTitle"
-                  label="Process title"
-                  placeholder="Як проходить робота"
-                />
+                <Input name="processTitle" label="Process title" />
 
                 <Textarea
                   name="processStepsText"
@@ -477,11 +436,7 @@ const ServiceForm = (props: Props) => {
               <h3 className="text-accent mb-4 text-lg font-semibold">FAQ</h3>
 
               <div className="grid gap-4">
-                <Input
-                  name="faqTitle"
-                  label="FAQ title"
-                  placeholder="Часті запитання"
-                />
+                <Input name="faqTitle" label="FAQ title" />
 
                 <Textarea name="faqItemsText" label="FAQ items" rows={6} />
               </div>
@@ -493,11 +448,7 @@ const ServiceForm = (props: Props) => {
               </h3>
 
               <div className="grid gap-4">
-                <Input
-                  name="reviewsTitle"
-                  label="Reviews title"
-                  placeholder="Відгуки"
-                />
+                <Input name="reviewsTitle" label="Reviews title" />
 
                 <Textarea name="reviewIdsText" label="Review IDs" rows={4} />
               </div>
@@ -507,11 +458,7 @@ const ServiceForm = (props: Props) => {
               <h3 className="text-accent mb-4 text-lg font-semibold">CTA</h3>
 
               <div className="grid gap-4">
-                <Input
-                  name="ctaTitle"
-                  label="CTA title"
-                  placeholder="Готові обговорити вашу ситуацію?"
-                />
+                <Input name="ctaTitle" label="CTA title" />
 
                 <Textarea
                   name="ctaDescription"
@@ -519,11 +466,7 @@ const ServiceForm = (props: Props) => {
                   rows={4}
                 />
 
-                <Input
-                  name="ctaButtonLabel"
-                  label="CTA button label"
-                  placeholder="Отримати консультацію"
-                />
+                <Input name="ctaButtonLabel" label="CTA button label" />
               </div>
             </div>
 

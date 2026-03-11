@@ -1,6 +1,4 @@
 import { serviceService } from '@/app/lib/services/service.service';
-import { mapServiceToResponse } from '@/app/types';
-
 import ServiceEditorClient from '../../_components/ServiceEditorClient';
 
 export const dynamic = 'force-dynamic';
@@ -14,8 +12,7 @@ export default async function EditServicePage({
 }: EditServicePageProps) {
   const { id } = await params;
 
-  const serviceRaw = await serviceService.getById(id);
-  const service = mapServiceToResponse(serviceRaw);
+  const service = await serviceService.getById(id);
 
   return (
     <ServiceEditorClient

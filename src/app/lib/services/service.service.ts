@@ -7,6 +7,7 @@ import {
   CreateServiceRequestDTO,
   mapPublicServiceRowToPage,
   mapServiceRowToListItem,
+  mapServiceToResponse,
   ServiceListItemDto,
   ServicePublicPageDto,
   UpdateServiceDTO,
@@ -44,7 +45,9 @@ export const serviceService = {
 
     if (!row) throw new ValidationError('Послугу не знайдено');
 
-    return mapPublicServiceRowToPage(row);
+    const dto = mapPublicServiceRowToPage(row);
+
+    return dto;
   },
 
   async getPublicList(limit = 30): Promise<ServiceListItemDto[]> {
@@ -56,17 +59,17 @@ export const serviceService = {
 
   async getAll() {
     await dbConnect();
-    return serviceRepo.findAll();
+    return serviceRepo.findAll().lean();
   },
 
   async getById(id: string) {
     await dbConnect();
     assertObjectId(id);
 
-    const service = await serviceRepo.findById(id);
+    const service = await serviceRepo.findById(id).lean();
     if (!service) throw new ValidationError('Послугу не знайдено');
 
-    return service;
+    return mapServiceToResponse(service);
   },
 
   async create(data: CreateServiceRequestDTO) {
@@ -103,14 +106,39 @@ export const serviceService = {
       throw new ValidationError('Послуга з таким slug вже існує');
     }
 
-    const nextSrc =
-      data.src === null ? [] : Array.isArray(data.src) ? data.src : undefined;
+    if (data.title !== undefined) {
+      service.title = data.title;
+    }
 
-    Object.assign(service, {
-      ...data,
-      ...(nextSrc !== undefined ? { src: nextSrc } : {}),
-      slug: nextSlug,
-    });
+    if (data.summary !== undefined) {
+      service.summary = data.summary;
+    }
+
+    if (data.status !== undefined) {
+      service.status = data.status;
+    }
+
+    if (data.src !== undefined) {
+      service.src = data.src === null ? [] : data.src;
+    }
+
+    if (data.layout !== undefined) {
+      service.layout = data.layout;
+    }
+
+    if (data.sections !== undefined) {
+      service.sections = data.sections;
+    }
+
+    if (data.seoTitle !== undefined) {
+      service.seoTitle = data.seoTitle;
+    }
+
+    if (data.seoDescription !== undefined) {
+      service.seoDescription = data.seoDescription;
+    }
+
+    service.slug = nextSlug;
 
     if (data.status === 'published' && !service.publishedAt) {
       service.publishedAt = new Date();
@@ -121,7 +149,7 @@ export const serviceService = {
     }
 
     await service.save();
-    return service;
+    return mapServiceToResponse(service.toObject());
   },
 
   async delete(id: string) {

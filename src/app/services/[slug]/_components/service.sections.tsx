@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 
 import { NextImage } from '@/app/components';
-
 import type { ServicePublicPageDto, ServiceSectionKey } from '@/app/types';
 
 export type ServiceSectionProps = {
@@ -14,6 +13,8 @@ const ServiceHeroSection: ServiceSectionComponent = ({ service }) => {
   const hero = service.sections.hero;
 
   if (!hero) return null;
+
+  const imageSrc = hero.src?.[0] || service.src?.[0];
 
   return (
     <section className="container py-10 lg:py-14">
@@ -28,12 +29,14 @@ const ServiceHeroSection: ServiceSectionComponent = ({ service }) => {
           </p>
         </div>
 
-        {hero.src?.[0] ? (
-          <div className="min-w-0 overflow-hidden rounded-2xl">
+        {imageSrc ? (
+          <div className="relative min-h-70 min-w-0 overflow-hidden rounded-2xl lg:min-h-90">
             <NextImage
-              src={hero.src[0]}
+              src={imageSrc}
               alt={hero.title || service.title}
-              className="h-full w-full object-cover"
+              fill
+              sizes="(max-width: 1024px) 100vw, 420px"
+              className="object-cover"
             />
           </div>
         ) : null}

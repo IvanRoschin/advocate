@@ -136,6 +136,77 @@ export const baseServiceSchema = {
     .max(160, 'Максимальна кількість символів 160'),
 };
 
+const serviceSectionsPatchSchema = Yup.object({
+  hero: Yup.object({
+    title: Yup.string().trim().optional(),
+    description: Yup.string().trim().optional(),
+    src: Yup.array().of(Yup.string().trim().required()).optional(),
+  })
+    .optional()
+    .default(undefined),
+
+  benefits: Yup.object({
+    title: Yup.string().trim().optional(),
+    items: Yup.array()
+      .of(
+        Yup.object({
+          title: Yup.string().trim().required("Обов'язкове поле"),
+          description: Yup.string().trim().required("Обов'язкове поле"),
+        })
+      )
+      .optional(),
+  })
+    .optional()
+    .default(undefined),
+
+  process: Yup.object({
+    title: Yup.string().trim().optional(),
+    steps: Yup.array()
+      .of(
+        Yup.object({
+          title: Yup.string().trim().required("Обов'язкове поле"),
+          description: Yup.string().trim().required("Обов'язкове поле"),
+        })
+      )
+      .optional(),
+  })
+    .optional()
+    .default(undefined),
+
+  faq: Yup.object({
+    title: Yup.string().trim().optional(),
+    items: Yup.array()
+      .of(
+        Yup.object({
+          question: Yup.string().trim().required("Обов'язкове поле"),
+          answer: Yup.string().trim().required("Обов'язкове поле"),
+        })
+      )
+      .optional(),
+  })
+    .optional()
+    .default(undefined),
+
+  reviews: Yup.object({
+    title: Yup.string().trim().optional(),
+    reviewIds: Yup.array()
+      .of(Yup.string().trim().required("Обов'язкове поле"))
+      .optional(),
+  })
+    .optional()
+    .default(undefined),
+
+  cta: Yup.object({
+    title: Yup.string().trim().optional(),
+    description: Yup.string().trim().optional(),
+    buttonLabel: Yup.string().trim().optional(),
+  })
+    .optional()
+    .default(undefined),
+})
+  .optional()
+  .default(undefined);
+
 export const createServiceSchema = Yup.object({
   status: baseServiceSchema.status
     .default('draft')
@@ -163,8 +234,8 @@ export const updateServiceSchema = Yup.object({
 
   src: srcPatchSchema,
 
-  layout: baseServiceSchema.layout.optional(),
-  sections: baseServiceSchema.sections.optional(),
+  layout: baseServiceSchema.layout.optional().default(undefined),
+  sections: serviceSectionsPatchSchema,
 
   seoTitle: baseServiceSchema.seoTitle.optional(),
   seoDescription: baseServiceSchema.seoDescription.optional(),

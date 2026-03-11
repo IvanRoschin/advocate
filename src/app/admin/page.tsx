@@ -37,6 +37,14 @@ const stats: Array<{
     link: 'admin/articles',
   },
   {
+    title: 'Послуги',
+    value: '24',
+    icon: 'services',
+    color: 'bg-indigo-500',
+    trend: 70,
+    link: 'admin/services',
+  },
+  {
     title: 'Категории',
     value: '12',
     icon: 'categories',

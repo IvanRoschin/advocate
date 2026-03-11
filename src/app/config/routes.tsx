@@ -47,6 +47,7 @@ export const routes = {
     content: {
       articles: '/admin/articles',
       categories: '/admin/categories',
+      services: '/admin/services',
       tags: '/admin/tags',
     },
 

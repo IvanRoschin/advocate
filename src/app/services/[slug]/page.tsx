@@ -4,11 +4,10 @@ import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import { serviceService } from '@/app/lib/services/service.service';
 import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
 import { ServiceLayoutNode } from '@/app/types';
-
 import {
   SERVICE_SECTIONS,
   ServiceSectionProps,
-} from '../_components/service.sections';
+} from './_components/service.sections';
 
 type ServicePageProps = {
   params: Promise<{ slug: string }>;

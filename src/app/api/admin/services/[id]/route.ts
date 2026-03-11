@@ -26,9 +26,14 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 
     const validated = await updateServiceSchema.validate(body, {
       abortEarly: false,
+      stripUnknown: true,
     });
 
-    const data = validated as UpdateServiceDTO;
+    const data = Object.fromEntries(
+      Object.entries(validated as Record<string, unknown>).filter(
+        ([, value]) => value !== undefined
+      )
+    ) as UpdateServiceDTO;
 
     const service = await serviceService.update(id, data);
 
