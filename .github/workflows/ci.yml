@@ -55,6 +55,7 @@ jobs:
       github.ref == 'refs/heads/main'
     timeout-minutes: 15
     env:
+      MONGODB_URI: ${{ secrets.MONGODB_URI }}
       NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
         ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
     steps:
