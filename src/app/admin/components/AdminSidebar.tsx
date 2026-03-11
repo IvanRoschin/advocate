@@ -12,6 +12,7 @@ const menu = [
   { name: 'Главная', href: '/admin', icon: IoMdHome },
   { name: 'Пользователи', href: '/admin/users', icon: FaUserCircle },
   { name: 'Статьи', href: '/admin/articles', icon: IoDocumentTextOutline },
+  { name: 'Услуги', href: '/admin/services', icon: IoDocumentTextOutline },
   { name: 'Категории', href: '/admin/categories', icon: IoMdFolderOpen },
   { name: 'Заказы', href: '/admin/orders', icon: FaOpencart },
   { name: 'Лиды', href: '/admin/leads', icon: CiInboxIn },

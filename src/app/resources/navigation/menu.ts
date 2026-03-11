@@ -9,6 +9,7 @@ export const mainMenu = [
   { title: 'Головна', route: 'home' },
   { title: 'Про мене', route: 'about' },
   { title: 'Практики', route: 'practices' },
+  { title: 'Послуги', route: 'services' },
   { title: 'Блог', route: 'blog' },
   { title: 'Оплата послуг', route: 'payments' },
   { title: 'Контакти', route: 'contact' },

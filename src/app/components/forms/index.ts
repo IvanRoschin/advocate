@@ -4,5 +4,6 @@ export { default as ForgotPasswordForm } from '@/app/components/forms/ForgotPass
 export { default as LeadForm } from '@/app/components/forms/LeadForm';
 export { default as LoginForm } from '@/app/components/forms/LoginForm';
 export { default as RestorePasswordForm } from '@/app/components/forms/RestorePasswordForm';
+export { default as ServiceForm } from '@/app/components/forms/ServiceForm';
 export { default as SubscribeForm } from '@/app/components/forms/SubscribeForm';
 export { default as UserForm } from '@/app/components/forms/UserForm';

@@ -5,6 +5,7 @@ export const routes = {
     home: '/',
     about: '/#about',
     practices: '/#practices',
+    services: '/services',
     order: '/#order',
     payments: '/payments',
     blog: '/blog',
@@ -46,6 +47,7 @@ export const routes = {
     content: {
       articles: '/admin/articles',
       categories: '/admin/categories',
+      services: '/admin/services',
       tags: '/admin/tags',
     },
 

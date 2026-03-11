@@ -20,13 +20,16 @@ globalWithMongoose.mongooseGlobal = globalWithMongoose.mongooseGlobal || {
   promise: null,
 };
 
+const MONGODB_URI = process.env.MONGODB_URI;
+
 export const dbConnect = async () => {
-  mongoose.set('strictQuery', true);
-
-  const MONGODB_URI = process.env.MONGODB_URI;
-
-  if (!MONGODB_URI)
+  if (!MONGODB_URI) {
     throw new Error('Missing MONGODB_URI in environment variables');
+  }
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
+  mongoose.set('strictQuery', true);
 
   if (globalWithMongoose.mongooseGlobal.conn) {
     console.warn('MongoDB is already connected');

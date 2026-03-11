@@ -1,8 +1,13 @@
-import type { Metadata } from 'next';
+import { Metadata } from 'next/types';
 
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
-import PaymentsAside from './_components/paymentsAside';
-import PaymentsContent from './_components/paymentsContent';
+import { paymentLayout } from '@/app/resources/content/pages/payment.layout';
+
+import { renderLayout } from '../lib/layouts/renderLayout';
+import {
+  PAYMENT_SECTIONS,
+  PaymentSectionProps,
+} from './_components/payment.sections';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Оплата послуг адвоката | Іван Рощин',
@@ -13,16 +18,22 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function PaymentPage() {
+  const sectionProps: PaymentSectionProps = {};
+
   return (
     <main className="bg-background text-foreground min-h-screen">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-        <section className="min-w-0">
-          <PaymentsContent />
-        </section>
-        <aside className="border-accent min-w-0 space-y-4 pl-4 lg:sticky lg:top-24 lg:self-start lg:border-l">
-          <PaymentsAside />
-        </aside>
-      </div>
+      {renderLayout({
+        layout: paymentLayout,
+        sections: PAYMENT_SECTIONS,
+        sectionProps,
+        renderGroup: ({ node, children, index }) => (
+          <div key={`${node.key}-${index}`} className={node.wrapperClassName}>
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+              {children}
+            </div>
+          </div>
+        ),
+      })}
     </main>
   );
 }
