@@ -6,48 +6,55 @@ import * as React from 'react';
 import { Skeleton } from '@/components/common';
 import { cn } from '@/lib';
 
-type NextImageProps = Omit<ImageProps, 'alt'> & {
+type BaseProps = Omit<ImageProps, 'alt' | 'fill' | 'width' | 'height'> & {
   alt: string;
   useSkeleton?: boolean;
-
-  /** className для wrapper */
   wrapperClassName?: string;
-
-  /** className для самого <Image/> */
   className?: string;
-
-  /** legacy */
   classNames?: {
     image?: string;
     wrapper?: string;
   };
 };
 
+type FillProps = BaseProps & {
+  fill: true;
+  width?: never;
+  height?: never;
+};
+
+type FixedSizeProps = BaseProps & {
+  fill?: false | undefined;
+  width: number;
+  height: number;
+};
+
+type NextImageProps = FillProps | FixedSizeProps;
+
 export default function NextImage({
   useSkeleton = false,
   src,
-  width,
-  height,
   alt,
-  fill,
   className,
   wrapperClassName,
   classNames,
   onLoad,
-  ...rest
+  ...props
 }: NextImageProps) {
   const [isLoading, setIsLoading] = React.useState(useSkeleton);
 
+  const isFill = 'fill' in props && props.fill === true;
+
   const style =
-    !fill && typeof width === 'number' && typeof height === 'number'
-      ? { width, height }
+    !isFill && 'width' in props && 'height' in props
+      ? { width: props.width, height: props.height }
       : undefined;
 
   return (
     <figure
       style={style}
       className={cn(
-        fill ? 'absolute inset-0' : 'relative',
+        isFill ? 'absolute inset-0' : 'relative',
         'overflow-hidden',
         classNames?.wrapper,
         wrapperClassName
@@ -60,7 +67,7 @@ export default function NextImage({
       <Image
         src={src}
         alt={alt}
-        {...(fill ? { fill: true } : { width, height })}
+        {...props}
         className={cn(
           'transition-opacity duration-500',
           isLoading ? 'opacity-0' : 'opacity-100',
@@ -71,7 +78,6 @@ export default function NextImage({
           if (useSkeleton) setIsLoading(false);
           onLoad?.(event);
         }}
-        {...rest}
       />
     </figure>
   );

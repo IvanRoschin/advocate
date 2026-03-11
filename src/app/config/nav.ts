@@ -18,6 +18,7 @@ const ICON_BY_ROUTE: Record<MenuRouteKey, IconType> = {
   home: iconLibrary.home,
   about: iconLibrary.about,
   practices: iconLibrary.practices,
+  services: iconLibrary.services,
   blog: iconLibrary.blog,
   payments: iconLibrary.payments,
   contact: iconLibrary.contact,
