@@ -43,6 +43,7 @@ export const routes = {
 
   admin: {
     dashboard: '/admin',
+    users: '/admin/users',
 
     content: {
       articles: '/admin/articles',
@@ -83,7 +84,10 @@ export type ApiRouteKey = keyof typeof routes.api.v1;
 
 export type AdminRoutes = typeof routes.admin;
 
-// ✅ ключи ТОЛЬКО тех полей public, где значение string
+export type AdminStringRouteKey = {
+  [K in keyof AdminRoutes]: AdminRoutes[K] extends string ? K : never;
+}[keyof AdminRoutes];
+
 export type PublicStringRouteKey = {
   [K in keyof PublicRoutes]: PublicRoutes[K] extends string ? K : never;
 }[keyof PublicRoutes];

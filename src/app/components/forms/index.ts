@@ -1,9 +1,11 @@
 export { default as ArticleForm } from '@/app/components/forms/ArticleForm';
+export { default as ArticleReviewForm } from '@/app/components/forms/ArticleReviewForm';
 export { default as CategoryForm } from '@/app/components/forms/CategoryForm';
 export { default as ForgotPasswordForm } from '@/app/components/forms/ForgotPasswordForm';
 export { default as LeadForm } from '@/app/components/forms/LeadForm';
 export { default as LoginForm } from '@/app/components/forms/LoginForm';
 export { default as RestorePasswordForm } from '@/app/components/forms/RestorePasswordForm';
 export { default as ServiceForm } from '@/app/components/forms/ServiceForm';
+export { default as ServiceReviewForm } from '@/app/components/forms/ServiceReviewForm';
 export { default as SubscribeForm } from '@/app/components/forms/SubscribeForm';
 export { default as UserForm } from '@/app/components/forms/UserForm';

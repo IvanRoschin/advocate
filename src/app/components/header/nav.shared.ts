@@ -3,7 +3,9 @@
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
-import { NAV_ITEMS } from '@/app/config/nav';
+import { NAV_ITEMS_BY_SCOPE, NavScope } from '@/app/config/nav';
+
+export type { NavScope };
 
 type IsSelectedArgs = {
   pathname: string;
@@ -20,8 +22,11 @@ const getHrefHash = (href?: string) => {
 
 const isHashLink = (href?: string) => href?.startsWith('/#') ?? false;
 
-export function useNavItems() {
-  return useMemo(() => NAV_ITEMS.filter(i => i.enabled !== false), []);
+export function useNavItems(scope: NavScope) {
+  return useMemo(
+    () => NAV_ITEMS_BY_SCOPE[scope].filter(item => item.enabled !== false),
+    [scope]
+  );
 }
 
 export function useSelectedPathname() {
@@ -45,7 +50,7 @@ export const isSelected = ({
   }
 
   if (startsWith) {
-    return pathname.startsWith(href);
+    return pathname === href || pathname.startsWith(`${href}/`);
   }
 
   return pathname === href;

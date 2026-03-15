@@ -1,21 +1,30 @@
 'use client';
 
-import { Header, Socials } from '../components';
-import AdminSidebar from './components/AdminSidebar';
+import type { ReactNode } from 'react';
+
+import { renderLayout } from '../lib/layouts/renderLayout';
+import { adminLayout } from '../resources/content/pages/admin.layout';
+import {
+  ADMIN_SECTIONS,
+  AdminSectionProps,
+} from './_components/admin.sections';
 
 export default function AdminLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
+  const sectionProps: AdminSectionProps = {
+    children,
+  };
+
   return (
-    <div className="blog-wrapper">
-      <Socials />
-      <Header />
-      <div className="flex">
-        <AdminSidebar />
-        {children}
-      </div>
-    </div>
+    <main className="bg-app relative min-h-screen">
+      {renderLayout({
+        layout: adminLayout,
+        sections: ADMIN_SECTIONS,
+        sectionProps,
+      })}
+    </main>
   );
 }

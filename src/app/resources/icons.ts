@@ -37,6 +37,7 @@ import {
   FiGrid,
   FiHome,
   FiMoon,
+  FiSettings,
   FiSun,
   FiUser,
 } from 'react-icons/fi';
@@ -121,7 +122,13 @@ export const iconLibrary = {
   practices: FiGrid,
   blog: FiBookOpen,
 
-  // ✅ допиливаем “админские”
+  // admin / dashboard
+  user: FiUser,
+  folder: FaTags,
+  inbox: FaBullhorn,
+  settings: FiSettings,
+
+  // существующие admin keys
   clients: FaUserTie,
   users: FaUsers,
   articles: FaFileAlt,
@@ -129,11 +136,11 @@ export const iconLibrary = {
   orders: FaShoppingCart,
   leads: FaBullhorn,
 
-  // ✅ действия таблицы
+  // actions
   pen: FaPen,
   trash: FaTrash,
 
-  // ✅ подбираем норм иконки для меню
+  // misc nav
   payments: FaMoneyBillWave,
   contact: FaEnvelope,
   order: FaShoppingCart,

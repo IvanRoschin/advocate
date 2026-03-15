@@ -1,10 +1,17 @@
 import type { ReactNode } from 'react';
 
-import { NextImage } from '@/app/components';
-import type { ServicePublicPageDto, ServiceSectionKey } from '@/app/types';
+import { NextImage, ReviewsSection } from '@/app/components';
+
+import type {
+  ReviewResponseDTO,
+  ServicePublicPageDto,
+  ServiceSectionKey,
+} from '@/app/types';
 
 export type ServiceSectionProps = {
   service: ServicePublicPageDto;
+  reviews?: ReviewResponseDTO[];
+  reviewForm?: ReactNode;
 };
 
 export type ServiceSectionComponent = (props: ServiceSectionProps) => ReactNode;
@@ -144,25 +151,12 @@ const ServiceFaqSection: ServiceSectionComponent = ({ service }) => {
   );
 };
 
-const ServiceReviewsSection: ServiceSectionComponent = ({ service }) => {
-  const reviews = service.sections.reviews;
-
-  if (!reviews || reviews.reviewIds.length === 0) return null;
-
+const ServiceReviewsSection: ServiceSectionComponent = ({
+  reviews = [],
+  reviewForm,
+}) => {
   return (
-    <section className="container py-10">
-      <div className="mb-6 max-w-2xl">
-        <h2 className="title-app text-accent text-2xl font-semibold lg:text-3xl">
-          {reviews.title}
-        </h2>
-      </div>
-
-      <div className="border-border bg-card rounded-2xl border p-5">
-        <p className="text-app text-sm leading-6">
-          Блок відгуків буде підключено окремо.
-        </p>
-      </div>
-    </section>
+    <ReviewsSection title="Відгуки" reviews={reviews} reviewForm={reviewForm} />
   );
 };
 

@@ -1,36 +1,26 @@
 'use client';
 
 import { memo } from 'react';
-import { CiInboxIn } from 'react-icons/ci';
-import { FaOpencart, FaUserCircle } from 'react-icons/fa';
-import { IoMdFolderOpen, IoMdHome } from 'react-icons/io';
-import { IoDocumentTextOutline } from 'react-icons/io5';
 
+import { useNavItems } from '@/app/components/header/nav.shared';
 import { AppLink } from '@/components';
 
-const menu = [
-  { name: 'Главная', href: '/admin', icon: IoMdHome },
-  { name: 'Пользователи', href: '/admin/users', icon: FaUserCircle },
-  { name: 'Статьи', href: '/admin/articles', icon: IoDocumentTextOutline },
-  { name: 'Услуги', href: '/admin/services', icon: IoDocumentTextOutline },
-  { name: 'Категории', href: '/admin/categories', icon: IoMdFolderOpen },
-  { name: 'Заказы', href: '/admin/orders', icon: FaOpencart },
-  { name: 'Лиды', href: '/admin/leads', icon: CiInboxIn },
-];
-
 const AdminSidebar = memo(() => {
+  const items = useNavItems('admin');
+
   return (
     <aside className="bg-surface-input sticky top-0 h-screen w-64 border-r border-gray-200 p-6">
       <h2 className="text-accent mb-6 text-xl font-semibold">Админка</h2>
+
       <nav className="flex flex-col gap-2">
-        {menu.map(item => (
+        {items.map(({ key, href, label, Icon }) => (
           <AppLink
-            key={item.name}
-            href={item.href}
-            className="flex items-center gap-3 rounded px-3 py-2 transition-colors hover:bg-gray-100"
+            key={key}
+            href={href}
+            className="flex items-center gap-3 rounded-xl px-3 py-2 transition hover:bg-neutral-100 dark:hover:bg-white/10"
           >
-            <item.icon className="h-5 w-5 text-gray-600" />
-            <span className="nav font-medium text-gray-800">{item.name}</span>
+            <Icon className="h-5 w-5" />
+            <span className="font-medium">{label}</span>
           </AppLink>
         ))}
       </nav>

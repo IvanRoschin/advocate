@@ -1,15 +1,14 @@
-import { notFound } from 'next/navigation';
-
+import { ServiceReviewForm } from '@/app/components';
 import { renderLayout } from '@/app/lib/layouts/renderLayout';
+import { reviewService } from '@/app/lib/services/review.service';
 import { serviceService } from '@/app/lib/services/service.service';
 import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
 import { ServiceLayoutNode } from '@/app/types';
+
 import {
   SERVICE_SECTIONS,
   ServiceSectionProps,
 } from './_components/service.sections';
-
-export const dynamic = 'force-dynamic';
 
 type ServicePageProps = {
   params: Promise<{ slug: string }>;
@@ -18,15 +17,18 @@ type ServicePageProps = {
 export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params;
 
-  let service;
+  const service = await serviceService.getPublicBySlug(slug);
 
-  try {
-    service = await serviceService.getPublicBySlug(slug);
-  } catch {
-    notFound();
-  }
+  const reviews = await reviewService.getApprovedByTarget({
+    targetType: 'service',
+    targetId: service.id,
+  });
 
-  const sectionProps: ServiceSectionProps = { service };
+  const sectionProps: ServiceSectionProps = {
+    service,
+    reviews,
+    reviewForm: <ServiceReviewForm serviceId={service.id} />,
+  };
 
   const layout: ServiceLayoutNode[] =
     Array.isArray(service.layout) && service.layout.length > 0
