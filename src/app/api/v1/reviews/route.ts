@@ -1,18 +1,40 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { ValidationError as YupValidationError } from 'yup';
 
+import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
+import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import { reviewService } from '@/app/lib/services/review.service';
+import { CreateReviewRequestDTO, createReviewSchema } from '@/app/types';
 
-export async function POST(request: NextRequest) {
+export async function GET() {
   try {
-    const body = await request.json();
+    const reviews = await reviewService.getAll();
+    return NextResponse.json({ ok: true, data: reviews });
+  } catch (err) {
+    return errorToResponse(err);
+  }
+}
 
-    const created = await reviewService.create(body);
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
 
-    return NextResponse.json(created, { status: 201 });
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : 'Failed to create review';
+    const validated = await createReviewSchema.validate(body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
 
-    return NextResponse.json({ message }, { status: 400 });
+    const data = validated as CreateReviewRequestDTO;
+    const review = await reviewService.create(data);
+
+    return NextResponse.json({ ok: true, data: review }, { status: 201 });
+  } catch (err) {
+    if (err instanceof YupValidationError) {
+      return errorToResponse(
+        new ValidationError(err.errors[0] ?? 'Validation failed', err.errors)
+      );
+    }
+
+    return errorToResponse(err);
   }
 }

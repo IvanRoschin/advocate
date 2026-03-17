@@ -18,6 +18,7 @@ const customNames: Record<string, string> = {
   testimonials: 'Відгуки',
   slider: 'Слайди',
   search: 'Пошук',
+  'suprovid-pry-rozluchenni': 'Супровід при розлученні',
 };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -25,7 +26,6 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 export default function Breadcrumbs() {
   const pathname = usePathname();
 
-  // ✅ кэш: slug -> title
   const [titleBySlug, setTitleBySlug] = useState<Record<string, string>>({});
 
   const segments = useMemo(

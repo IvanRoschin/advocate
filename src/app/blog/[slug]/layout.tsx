@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import { Breadcrumbs } from '@/app/components';
+import { Footer, Header } from '@/app/components';
 
 export default function ArticleLayout({
   children,
@@ -9,10 +9,9 @@ export default function ArticleLayout({
 }) {
   return (
     <div className="blog-wrapper min-h-screen">
-      <div className="max-w-6xl py-10">
-        <Breadcrumbs />
-      </div>
-      <>{children}</>
+      <Header />
+      {children}
+      <Footer />
     </div>
   );
 }

@@ -1,63 +1,40 @@
 'use client';
 
-import { FieldArray, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
+import { useMemo, useState } from 'react';
 
+import FormDraftPersist from '@/app/components/forms/FormDraftPersist';
 import Btn from '@/app/components/ui/button/Btn';
+import storageKeys from '@/app/config/storageKeys';
+import { clearFormDraft, loadFormDraft } from '@/app/lib/client/form-draft';
 import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
 import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
 import {
+  createServiceFormSchema,
   CreateServiceRequestDTO,
-  ServiceLayoutNodeInput,
+  ServiceFormValues,
   ServiceSectionsDto,
-  ServiceStatus,
   UpdateServiceDTO,
+  updateServiceFormSchema,
 } from '@/app/types';
-import { Input, Select, Textarea } from '@/components/index';
+import {
+  Input,
+  RepeatableFieldsSection,
+  Select,
+  Textarea,
+} from '@/components/index';
 
 /* ------------------------------------------------------------------ */
 /* Types ------------------------------------------------------------- */
 
-export type ServiceFormValues = {
-  slug: string;
-  status: ServiceStatus;
-  title: string;
-  summary: string;
-  src: string[];
-  layout: ServiceLayoutNodeInput[];
-  seoTitle: string;
-  seoDescription: string;
-
-  heroTitle: string;
-  heroDescription: string;
-  heroSrc: string[];
-
-  benefitsTitle: string;
-  benefitsItems: Array<{
-    title: string;
-    description: string;
-  }>;
-
-  processTitle: string;
-  processSteps: Array<{
-    title: string;
-    description: string;
-  }>;
-
-  faqTitle: string;
-  faqItems: Array<{
-    question: string;
-    answer: string;
-  }>;
-
-  ctaTitle: string;
-  ctaDescription: string;
-  ctaButtonLabel: string;
-};
+type DraftShape = Partial<ServiceFormValues>;
 
 type BaseProps = {
   onClose: () => void;
   submitLabel?: string;
+  persistToLocalStorage?: boolean;
+  clearDraftOnClose?: boolean;
 };
 
 type CreateModeProps = BaseProps & {
@@ -86,71 +63,93 @@ const stripUndefined = <T extends Record<string, unknown>>(obj: T) =>
     Object.entries(obj).filter(([, value]) => value !== undefined)
   ) as Partial<T>;
 
+const normalize = (values: ServiceFormValues): ServiceFormValues => ({
+  ...values,
+  slug: values.slug.trim(),
+  title: values.title.trim(),
+  summary: values.summary.trim(),
+  seoTitle: values.seoTitle.trim(),
+  seoDescription: values.seoDescription.trim(),
+  heroTitle: values.heroTitle.trim(),
+  heroDescription: values.heroDescription.trim(),
+  benefitsTitle: values.benefitsTitle.trim(),
+  processTitle: values.processTitle.trim(),
+  faqTitle: values.faqTitle.trim(),
+  ctaTitle: values.ctaTitle.trim(),
+  ctaDescription: values.ctaDescription.trim(),
+  ctaButtonLabel: values.ctaButtonLabel.trim(),
+  benefitsItems: values.benefitsItems.map(item => ({
+    title: item.title.trim(),
+    description: item.description.trim(),
+  })),
+  processSteps: values.processSteps.map(item => ({
+    title: item.title.trim(),
+    description: item.description.trim(),
+  })),
+  faqItems: values.faqItems.map(item => ({
+    question: item.question.trim(),
+    answer: item.answer.trim(),
+  })),
+});
+
 const buildSections = (values: ServiceFormValues): ServiceSectionsDto => {
+  const normalized = normalize(values);
+
   const hero =
-    values.heroTitle.trim() ||
-    values.heroDescription.trim() ||
-    values.heroSrc.length
+    normalized.heroTitle ||
+    normalized.heroDescription ||
+    normalized.heroSrc.length
       ? {
-          title: values.heroTitle.trim(),
-          description: values.heroDescription.trim(),
-          src: values.heroSrc,
+          title: normalized.heroTitle,
+          description: normalized.heroDescription,
+          src: normalized.heroSrc,
         }
       : undefined;
 
-  const benefitsItems = values.benefitsItems
-    .map(item => ({
-      title: item.title.trim(),
-      description: item.description.trim(),
-    }))
-    .filter(item => item.title && item.description);
+  const benefitsItems = normalized.benefitsItems.filter(
+    item => item.title && item.description
+  );
 
   const benefits =
-    values.benefitsTitle.trim() || benefitsItems.length
+    normalized.benefitsTitle || benefitsItems.length
       ? {
-          title: values.benefitsTitle.trim(),
+          title: normalized.benefitsTitle,
           items: benefitsItems,
         }
       : undefined;
 
-  const processSteps = values.processSteps
-    .map(item => ({
-      title: item.title.trim(),
-      description: item.description.trim(),
-    }))
-    .filter(item => item.title && item.description);
+  const processSteps = normalized.processSteps.filter(
+    item => item.title && item.description
+  );
 
   const process =
-    values.processTitle.trim() || processSteps.length
+    normalized.processTitle || processSteps.length
       ? {
-          title: values.processTitle.trim(),
+          title: normalized.processTitle,
           steps: processSteps,
         }
       : undefined;
 
-  const faqItems = values.faqItems
-    .map(item => ({
-      question: item.question.trim(),
-      answer: item.answer.trim(),
-    }))
-    .filter(item => item.question && item.answer);
+  const faqItems = normalized.faqItems.filter(
+    item => item.question && item.answer
+  );
 
   const faq =
-    values.faqTitle.trim() || faqItems.length
+    normalized.faqTitle || faqItems.length
       ? {
-          title: values.faqTitle.trim(),
+          title: normalized.faqTitle,
           items: faqItems,
         }
       : undefined;
 
   const cta =
-    values.ctaTitle.trim() ||
-    values.ctaDescription.trim() ||
-    values.ctaButtonLabel.trim()
+    normalized.ctaTitle ||
+    normalized.ctaDescription ||
+    normalized.ctaButtonLabel
       ? {
-          title: values.ctaTitle.trim(),
-          description: values.ctaDescription.trim(),
-          buttonLabel: values.ctaButtonLabel.trim(),
+          title: normalized.ctaTitle,
+          description: normalized.ctaDescription,
+          buttonLabel: normalized.ctaButtonLabel,
         }
       : undefined;
 
@@ -165,45 +164,42 @@ const buildSections = (values: ServiceFormValues): ServiceSectionsDto => {
 
 const buildCreatePayload = (
   values: ServiceFormValues
-): CreateServiceRequestDTO => ({
-  slug: values.slug.trim(),
-  status: values.status,
-  title: values.title.trim(),
-  summary: values.summary.trim(),
-  src: values.src,
-  layout: values.layout,
-  sections: buildSections(values),
-  seoTitle: values.seoTitle.trim(),
-  seoDescription: values.seoDescription.trim(),
-});
+): CreateServiceRequestDTO => {
+  const normalized = normalize(values);
+
+  return {
+    slug: normalized.slug,
+    status: normalized.status,
+    title: normalized.title,
+    summary: normalized.summary,
+    src: normalized.src,
+    layout: normalized.layout,
+    sections: buildSections(normalized),
+    seoTitle: normalized.seoTitle,
+    seoDescription: normalized.seoDescription,
+  };
+};
 
 const buildPatch = (
   initial: ServiceFormValues,
   current: ServiceFormValues
 ): UpdateServiceDTO => {
-  const initialSections = buildSections(initial);
-  const currentSections = buildSections(current);
+  const i = normalize(initial);
+  const c = normalize(current);
+
+  const initialSections = buildSections(i);
+  const currentSections = buildSections(c);
 
   const patch: UpdateServiceDTO = {
-    ...(current.slug.trim() !== initial.slug.trim()
-      ? { slug: current.slug.trim() }
-      : {}),
-    ...(current.status !== initial.status ? { status: current.status } : {}),
-    ...(current.title.trim() !== initial.title.trim()
-      ? { title: current.title.trim() }
-      : {}),
-    ...(current.summary.trim() !== initial.summary.trim()
-      ? { summary: current.summary.trim() }
-      : {}),
-    ...(!sameArray(current.src, initial.src) ? { src: current.src } : {}),
-    ...(!sameValue(current.layout, initial.layout)
-      ? { layout: current.layout }
-      : {}),
-    ...(current.seoTitle.trim() !== initial.seoTitle.trim()
-      ? { seoTitle: current.seoTitle.trim() }
-      : {}),
-    ...(current.seoDescription.trim() !== initial.seoDescription.trim()
-      ? { seoDescription: current.seoDescription.trim() }
+    ...(c.slug !== i.slug ? { slug: c.slug } : {}),
+    ...(c.status !== i.status ? { status: c.status } : {}),
+    ...(c.title !== i.title ? { title: c.title } : {}),
+    ...(c.summary !== i.summary ? { summary: c.summary } : {}),
+    ...(!sameArray(c.src, i.src) ? { src: c.src } : {}),
+    ...(!sameValue(c.layout, i.layout) ? { layout: c.layout } : {}),
+    ...(c.seoTitle !== i.seoTitle ? { seoTitle: c.seoTitle } : {}),
+    ...(c.seoDescription !== i.seoDescription
+      ? { seoDescription: c.seoDescription }
       : {}),
     ...(!sameValue(currentSections, initialSections)
       ? { sections: currentSections }
@@ -220,63 +216,114 @@ const ServiceForm = (props: Props) => {
   const isEditMode = props.mode === 'edit';
   const initialValues = isEditMode ? props.initialValues : undefined;
 
-  const baseValues: ServiceFormValues = {
-    slug: initialValues?.slug ?? '',
-    status: initialValues?.status ?? 'draft',
-    title: initialValues?.title ?? '',
-    summary: initialValues?.summary ?? '',
-    src: Array.isArray(initialValues?.src) ? initialValues.src : [],
-    layout: Array.isArray(initialValues?.layout)
-      ? initialValues.layout
-      : defaultServiceLayout,
-    seoTitle: initialValues?.seoTitle ?? '',
-    seoDescription: initialValues?.seoDescription ?? '',
+  const persist =
+    props.persistToLocalStorage ?? (props.mode === 'create' ? true : false);
 
-    heroTitle: initialValues?.sections?.hero?.title ?? '',
-    heroDescription: initialValues?.sections?.hero?.description ?? '',
-    heroSrc: Array.isArray(initialValues?.sections?.hero?.src)
-      ? initialValues.sections.hero.src
-      : [],
+  const clearOnClose = props.clearDraftOnClose ?? true;
 
-    benefitsTitle: initialValues?.sections?.benefits?.title ?? '',
-    benefitsItems: initialValues?.sections?.benefits?.items ?? [],
+  const [draft] = useState<DraftShape | null>(() => {
+    if (!persist || props.mode !== 'create') return null;
+    return loadFormDraft<ServiceFormValues>(storageKeys.service);
+  });
 
-    processTitle: initialValues?.sections?.process?.title ?? '',
-    processSteps: initialValues?.sections?.process?.steps ?? [],
+  const schema = useMemo(
+    () => (isEditMode ? updateServiceFormSchema : createServiceFormSchema),
+    [isEditMode]
+  );
 
-    faqTitle: initialValues?.sections?.faq?.title ?? '',
-    faqItems: initialValues?.sections?.faq?.items ?? [],
+  const baseValues: ServiceFormValues = useMemo(
+    () => ({
+      slug: initialValues?.slug ?? '',
+      status: initialValues?.status ?? 'draft',
+      title: initialValues?.title ?? '',
+      summary: initialValues?.summary ?? '',
+      src: initialValues?.src ?? [],
+      layout: Array.isArray(initialValues?.layout)
+        ? initialValues.layout
+        : defaultServiceLayout,
+      seoTitle: initialValues?.seoTitle ?? '',
+      seoDescription: initialValues?.seoDescription ?? '',
 
-    ctaTitle: initialValues?.sections?.cta?.title ?? '',
-    ctaDescription: initialValues?.sections?.cta?.description ?? '',
-    ctaButtonLabel: initialValues?.sections?.cta?.buttonLabel ?? '',
+      heroTitle: initialValues?.sections?.hero?.title ?? '',
+      heroDescription: initialValues?.sections?.hero?.description ?? '',
+      heroSrc: Array.isArray(initialValues?.sections?.hero?.src)
+        ? initialValues.sections.hero.src
+        : [],
+
+      benefitsTitle: initialValues?.sections?.benefits?.title ?? '',
+      benefitsItems: initialValues?.sections?.benefits?.items ?? [],
+
+      processTitle: initialValues?.sections?.process?.title ?? '',
+      processSteps: initialValues?.sections?.process?.steps ?? [],
+
+      faqTitle: initialValues?.sections?.faq?.title ?? '',
+      faqItems: initialValues?.sections?.faq?.items ?? [],
+
+      ctaTitle: initialValues?.sections?.cta?.title ?? '',
+      ctaDescription: initialValues?.sections?.cta?.description ?? '',
+      ctaButtonLabel: initialValues?.sections?.cta?.buttonLabel ?? '',
+    }),
+    [initialValues]
+  );
+
+  const defaultValues: ServiceFormValues = useMemo(() => {
+    if (!persist || props.mode !== 'create' || !draft) return baseValues;
+
+    return {
+      ...baseValues,
+      ...draft,
+      src: Array.isArray(draft.src) ? draft.src : baseValues.src,
+      layout: Array.isArray(draft.layout) ? draft.layout : baseValues.layout,
+      heroSrc: Array.isArray(draft.heroSrc)
+        ? draft.heroSrc
+        : baseValues.heroSrc,
+      benefitsItems: Array.isArray(draft.benefitsItems)
+        ? draft.benefitsItems
+        : baseValues.benefitsItems,
+      processSteps: Array.isArray(draft.processSteps)
+        ? draft.processSteps
+        : baseValues.processSteps,
+      faqItems: Array.isArray(draft.faqItems)
+        ? draft.faqItems
+        : baseValues.faqItems,
+    };
+  }, [baseValues, draft, persist, props.mode]);
+
+  const handleClose = () => {
+    if (clearOnClose) {
+      clearFormDraft(storageKeys.service);
+    }
+    props.onClose();
   };
-
-  // const schema = useMemo(
-  //   () => (isEditMode ? updateServiceSchema : createServiceSchema),
-  //   [isEditMode]
-  // );
 
   return (
     <>
       {isEditMode ? 'Редагувати послугу' : 'Додати нову послугу'}
 
       <Formik<ServiceFormValues>
-        enableReinitialize
-        initialValues={baseValues}
-        // validationSchema={schema}
+        enableReinitialize={isEditMode || (props.mode === 'create' && persist)}
+        initialValues={defaultValues}
+        validationSchema={schema}
         onSubmit={async values => {
           if (props.mode === 'create') {
             await props.onSubmit(buildCreatePayload(values));
+            clearFormDraft(storageKeys.service);
             return;
           }
 
           const patch = buildPatch(baseValues, values);
           await props.onSubmit(patch);
+          clearFormDraft(storageKeys.service);
         }}
       >
         {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
           <Form className="flex w-full max-w-5xl flex-col gap-6">
+            <FormDraftPersist<ServiceFormValues>
+              storageKey={storageKeys.service}
+              enabled={persist && props.mode === 'create'}
+              values={values}
+            />
+
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -313,7 +360,6 @@ const ServiceForm = (props: Props) => {
 
             <div className="grid gap-4 md:grid-cols-2">
               <Input name="seoTitle" label="SEO title" required />
-
               <Input name="seoDescription" label="SEO description" required />
             </div>
 
@@ -323,6 +369,7 @@ const ServiceForm = (props: Props) => {
               transition={{ delay: 0.08 }}
             >
               <ImageUploadCloudinary
+                key={JSON.stringify(values.src ?? [])}
                 setFieldValue={setFieldValue}
                 values={values.src}
                 error={typeof errors.src === 'string' ? errors.src : undefined}
@@ -344,6 +391,7 @@ const ServiceForm = (props: Props) => {
                 />
 
                 <ImageUploadCloudinary
+                  key={JSON.stringify(values.heroSrc ?? [])}
                   setFieldValue={setFieldValue}
                   values={values.heroSrc}
                   uploadPreset="Services"
@@ -352,114 +400,38 @@ const ServiceForm = (props: Props) => {
               </div>
             </div>
 
-            <div className="border-border rounded-2xl border p-4">
-              <h3 className="text-accent mb-4 text-lg font-semibold">
-                Benefits
-              </h3>
-              <div className="grid gap-4">
-                <Input name="benefitsTitle" label="Benefits title" />
-                <FieldArray name="benefitsItems">
-                  {({ push, remove }) => (
-                    <div className="grid gap-4">
-                      {values.benefitsItems.map((_, index) => (
-                        <div
-                          key={`benefit-${index}`}
-                          className="border-border rounded-xl border p-4"
-                        >
-                          <div className="grid gap-4">
-                            <Input
-                              name={`benefitsItems.${index}.title`}
-                              label={`Benefit #${index + 1} title`}
-                            />
-                            <Textarea
-                              name={`benefitsItems.${index}.description`}
-                              label={`Benefit #${index + 1} description`}
-                              rows={3}
-                            />
+            <RepeatableFieldsSection
+              sectionTitle="Benefits"
+              sectionFieldName="benefitsTitle"
+              sectionLabel="Benefits title"
+              itemsFieldName="benefitsItems"
+              items={values.benefitsItems}
+              mode="title-description"
+              addButtonLabel="Додати benefit"
+              itemLabelPrefix="Benefit"
+            />
 
-                            <div className="flex justify-end">
-                              <Btn
-                                type="button"
-                                label="Удалить"
-                                uiVariant="ghost"
-                                onClick={() => remove(index)}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+            <RepeatableFieldsSection
+              sectionTitle="Process"
+              sectionFieldName="processTitle"
+              sectionLabel="Process title"
+              itemsFieldName="processSteps"
+              items={values.processSteps}
+              mode="title-description"
+              addButtonLabel="Додати step"
+              itemLabelPrefix="Step"
+            />
 
-                      <div>
-                        <Btn
-                          type="button"
-                          label="Добавить benefit"
-                          uiVariant="ghost"
-                          onClick={() => push({ title: '', description: '' })}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </FieldArray>
-              </div>
-            </div>
-
-            <div className="border-border rounded-2xl border p-4">
-              <h3 className="text-accent mb-4 text-lg font-semibold">
-                Process
-              </h3>
-              <div className="grid gap-4">
-                <Input name="processTitle" label="Process title" />
-                <FieldArray name="processSteps">
-                  {({ push, remove }) => (
-                    <div className="grid gap-4">
-                      {values.processSteps.map((_, index) => (
-                        <div
-                          key={`step-${index}`}
-                          className="border-border rounded-xl border p-4"
-                        >
-                          <div className="grid gap-4">
-                            <Input
-                              name={`processSteps.${index}.title`}
-                              label={`Step #${index + 1} title`}
-                            />
-                            <Textarea
-                              name={`processSteps.${index}.description`}
-                              label={`Step #${index + 1} description`}
-                              rows={3}
-                            />
-                            <div className="flex justify-end">
-                              <Btn
-                                type="button"
-                                label="Удалить"
-                                uiVariant="ghost"
-                                onClick={() => remove(index)}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-
-                      <Btn
-                        type="button"
-                        label="Добавить step"
-                        uiVariant="ghost"
-                        onClick={() => push({ title: '', description: '' })}
-                      />
-                    </div>
-                  )}
-                </FieldArray>
-              </div>
-            </div>
-
-            <div className="border-border rounded-2xl border p-4">
-              <h3 className="text-accent mb-4 text-lg font-semibold">FAQ</h3>
-
-              <div className="grid gap-4">
-                <Input name="faqTitle" label="FAQ title" />
-
-                <Textarea name="faqItemsText" label="FAQ items" rows={6} />
-              </div>
-            </div>
+            <RepeatableFieldsSection
+              sectionTitle="FAQ"
+              sectionFieldName="faqTitle"
+              sectionLabel="FAQ title"
+              itemsFieldName="faqItems"
+              items={values.faqItems}
+              mode="question-answer"
+              addButtonLabel="Додати FAQ"
+              itemLabelPrefix="FAQ"
+            />
 
             <div className="border-border rounded-2xl border p-4">
               <h3 className="text-accent mb-4 text-lg font-semibold">CTA</h3>
@@ -482,7 +454,7 @@ const ServiceForm = (props: Props) => {
                 type="button"
                 label="Скасувати"
                 uiVariant="ghost"
-                onClick={props.onClose}
+                onClick={handleClose}
               />
 
               <Btn

@@ -1,34 +1,30 @@
-import mongoose from 'mongoose';
+import type { Types } from 'mongoose';
 
-import { Review } from '@/models';
+import { toIdString, toIsoString } from '@/app/lib/mappers/_utils';
+import type { ReviewResponseDTO } from './review.dto';
 
-import { CreateReviewRequestDTO, ReviewResponseDTO } from './review.dto';
+type ReviewLike = {
+  _id: Types.ObjectId | string;
+  authorName: string;
+  text: string;
+  rating?: number | null;
+  status: ReviewResponseDTO['status'];
+  targetType: ReviewResponseDTO['targetType'];
+  targetId?: Types.ObjectId | string | null;
+  pageKey?: string | null;
+  createdAt?: Date | string | null;
+  updatedAt?: Date | string | null;
+};
 
-export function mapReviewToResponse(
-  review: typeof Review extends infer T
-    ? T extends mongoose.Model<infer U>
-      ? U
-      : never
-    : never
-): ReviewResponseDTO {
-  return {
-    _id: review._id.toString(),
-    authorName: review.authorName,
-    text: review.text,
-    rating: review.rating,
-    status: review.status,
-    targetType: review.targetType,
-    targetId: review.targetId?.toString(),
-    pageKey: review.pageKey,
-    createdAt: review.createdAt?.toISOString(),
-    updatedAt: review.updatedAt?.toISOString(),
-  };
-}
-
-export function mapCreateRequestToReview(dto: CreateReviewRequestDTO) {
-  return {
-    authorName: dto.authorName,
-    text: dto.text,
-    rating: dto.rating,
-  };
-}
+export const mapReviewToResponse = (review: ReviewLike): ReviewResponseDTO => ({
+  _id: toIdString(review._id),
+  authorName: review.authorName,
+  text: review.text,
+  rating: typeof review.rating === 'number' ? review.rating : undefined,
+  status: review.status,
+  targetType: review.targetType,
+  targetId: review.targetId ? toIdString(review.targetId) : undefined,
+  pageKey: review.pageKey ?? undefined,
+  createdAt: toIsoString(review.createdAt),
+  updatedAt: toIsoString(review.updatedAt),
+});

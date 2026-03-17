@@ -1,10 +1,9 @@
-import { ServiceReviewForm } from '@/app/components';
+import { Footer, Header, ServiceReviewForm } from '@/app/components';
 import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import { reviewService } from '@/app/lib/services/review.service';
 import { serviceService } from '@/app/lib/services/service.service';
 import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
 import { ServiceLayoutNode } from '@/app/types';
-
 import {
   SERVICE_SECTIONS,
   ServiceSectionProps,
@@ -37,11 +36,14 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   return (
     <main className="bg-background text-foreground min-h-screen">
+      <Header />
       {renderLayout({
         layout,
         sections: SERVICE_SECTIONS,
         sectionProps,
       })}
+
+      <Footer />
     </main>
   );
 }

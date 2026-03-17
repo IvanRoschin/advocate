@@ -31,5 +31,6 @@ export const defaultServiceLayout: ServiceLayoutNode[] = [
   { type: 'section', key: 'benefits', display: true },
   { type: 'section', key: 'process', display: true },
   { type: 'section', key: 'faq', display: true },
+  { type: 'section', key: 'reviews', display: true },
   { type: 'section', key: 'cta', display: true },
 ];

@@ -1,18 +1,11 @@
 import { NextResponse } from 'next/server';
+import { ValidationError as YupValidationError } from 'yup';
 
+import type { ApiResponse } from '@/app/lib/server/ApiError';
 import { ApiError } from './ApiError';
 import { isMongoDuplicateKeyError } from './isMongoDuplicateKeyError';
 
-import type { ApiResponse } from '@/app/lib/server/ApiError';
-/**
- * Преобразует любую ошибку в стандартизированный HTTP response
- * Используется во всех route.ts и server actions
- */
 export function errorToResponse(err: unknown) {
-  /**
-   * 1️⃣ MongoDB duplicate key (409 Conflict)
-   * Обрабатываем ПЕРВЫМ, т.к. это не ApiError
-   */
   if (isMongoDuplicateKeyError(err)) {
     return NextResponse.json<ApiResponse<null>>(
       {
@@ -26,9 +19,19 @@ export function errorToResponse(err: unknown) {
     );
   }
 
-  /**
-   * 2️⃣ Явные API ошибки (400 / 401 / 404 / 501 / etc.)
-   */
+  if (err instanceof YupValidationError) {
+    return NextResponse.json<ApiResponse<null>>(
+      {
+        ok: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: err.errors[0] ?? 'Validation failed',
+        },
+      },
+      { status: 422 }
+    );
+  }
+
   if (err instanceof ApiError) {
     return NextResponse.json<ApiResponse<null>>(
       {
@@ -42,10 +45,6 @@ export function errorToResponse(err: unknown) {
     );
   }
 
-  /**
-   * 3️⃣ Всё остальное — Internal Server Error
-   * Логируем ОБЯЗАТЕЛЬНО
-   */
   console.error('[UNHANDLED_API_ERROR]', err);
 
   return NextResponse.json<ApiResponse<null>>(

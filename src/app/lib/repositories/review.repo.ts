@@ -1,45 +1,50 @@
-import mongoose from 'mongoose';
+import Review from '@/app/models/Review';
+import type { CreateReviewRequestDTO, ReviewTargetType } from '@/app/types';
 
-import Review from '@/models/Review';
+type FindApprovedByTargetParams =
+  | {
+      targetType: Exclude<ReviewTargetType, 'page'>;
+      targetId: string;
+      pageKey?: never;
+    }
+  | {
+      targetType: 'page';
+      pageKey: string;
+      targetId?: never;
+    };
 
-import { dbConnect } from '../server/mongoose';
-
-type CreateReviewRepoInput = {
-  authorName: string;
-  text: string;
-  rating?: number;
-  status: 'pending' | 'approved' | 'rejected';
-  targetType: 'service' | 'article' | 'page';
-  targetId?: string;
-  pageKey?: 'home';
-};
-
-export const reviewRepository = {
-  async create(input: CreateReviewRepoInput) {
-    await dbConnect();
-
-    return Review.create({
-      ...input,
-      targetId: input.targetId
-        ? new mongoose.Types.ObjectId(input.targetId)
-        : undefined,
-    });
+export const reviewRepo = {
+  findAll() {
+    return Review.find().sort({ createdAt: -1 }).lean();
   },
 
-  async findApprovedByTarget(input: {
-    targetType: 'service' | 'article' | 'page';
-    targetId?: string;
-    pageKey?: 'home';
-  }) {
-    await dbConnect();
+  findById(id: string) {
+    return Review.findById(id);
+  },
+
+  create(data: CreateReviewRequestDTO) {
+    return Review.create(data);
+  },
+
+  deleteById(id: string) {
+    return Review.findByIdAndDelete(id);
+  },
+
+  findApprovedByTarget(params: FindApprovedByTargetParams) {
+    if (params.targetType === 'page') {
+      return Review.find({
+        targetType: 'page',
+        pageKey: params.pageKey,
+        status: 'approved',
+      })
+        .sort({ createdAt: -1 })
+        .lean();
+    }
 
     return Review.find({
+      targetType: params.targetType,
+      targetId: params.targetId,
       status: 'approved',
-      targetType: input.targetType,
-      ...(input.targetId
-        ? { targetId: new mongoose.Types.ObjectId(input.targetId) }
-        : {}),
-      ...(input.pageKey ? { pageKey: input.pageKey } : {}),
     })
       .sort({ createdAt: -1 })
       .lean();

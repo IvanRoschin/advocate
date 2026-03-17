@@ -1,5 +1,6 @@
 const storageKeys = {
   article: 'article',
+  service: 'service',
   compare: 'compare',
   filters: 'filters',
 };

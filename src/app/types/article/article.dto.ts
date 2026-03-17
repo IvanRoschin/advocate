@@ -1,4 +1,53 @@
 export type ArticleStatus = 'draft' | 'published';
+
+export type ArticleSectionKey =
+  | 'hero'
+  | 'content'
+  | 'share'
+  | 'related'
+  | 'toc'
+  | 'reviews';
+
+export type ArticleLayoutItemInput = {
+  key: ArticleSectionKey;
+  display: boolean;
+};
+
+export type ArticleSectionLayoutInput = {
+  type: 'section';
+  key: ArticleSectionKey;
+  display: boolean;
+};
+
+export type ArticleGroupLayoutInput = {
+  type: 'group';
+  key: string;
+  display: boolean;
+  wrapperClassName?: string;
+  items: ArticleLayoutItemInput[];
+};
+
+export type ArticleLayoutNodeInput =
+  | ArticleSectionLayoutInput
+  | ArticleGroupLayoutInput;
+
+export type ArticleLayoutNode =
+  | {
+      type: 'section';
+      key: ArticleSectionKey;
+      display: boolean;
+    }
+  | {
+      type: 'group';
+      key: string;
+      display: boolean;
+      wrapperClassName?: string;
+      items: Array<{
+        key: ArticleSectionKey;
+        display: boolean;
+      }>;
+    };
+
 export type ArticleLanguage = 'uk' | 'ru' | 'en';
 
 export type CoverImageDto = string[];

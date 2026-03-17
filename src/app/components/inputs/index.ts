@@ -1,6 +1,7 @@
 export { default as AutoSlugField } from './AutoSlugField';
 export { default as Checkbox } from './Checkbox';
 export { default as Input } from './Input';
+export { default as RepeatableFieldsSection } from './RepeatableFieldsSection';
 export { default as Select } from './Select';
 export { default as TagsInputField } from './TagsInputField';
 export { default as Textarea } from './Textarea';

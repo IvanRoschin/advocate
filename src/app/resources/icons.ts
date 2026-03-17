@@ -135,6 +135,7 @@ export const iconLibrary = {
   categories: FaTags,
   orders: FaShoppingCart,
   leads: FaBullhorn,
+  reviews: FiBookOpen,
 
   // actions
   pen: FaPen,

@@ -1,40 +1,31 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { NextImage } from '@/app/components';
+import { ServiceReviewForm } from '@/app/components';
 import { baseUrl } from '@/app/config/routes';
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
+import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import { articleService } from '@/app/lib/services/article.service';
-import { Badge } from '@/components/ui/badge';
+import { reviewService } from '@/app/lib/services/review.service';
+import { articleLayout } from '@/app/resources/content/pages/article.layout';
 import { parseArticleContent } from '@/lib/toc/parseArticleContent';
-import { ArticleListPreview } from '../_components/ArticleListPreview';
-import { ShareSection } from '../_components/ShareSection';
-import ArticleContent from '../ArticleContent';
-import ArticleToc from '../ArticleToc';
-import { estimateReadTimeFromHtml } from '../readTime';
+import {
+  BLOG_ARTICLE_SECTIONS,
+  BlogArticleSectionProps,
+} from './_components/article.sections';
+import { estimateReadTimeFromHtml } from './_components/readTime';
 
-function formatDate(iso?: string) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('uk-UA', {
-    year: 'numeric',
-    month: 'long',
-    day: '2-digit',
-  });
-}
+type BlogArticlePageProps = {
+  params: Promise<{ slug: string }>;
+};
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+}: BlogArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
 
   const article = await articleService.getPublicBySlug(slug);
   const cover = article.src?.[0];
-
-  // Публичный метод отдаёт published, но оставим защиту на случай данных
   const isDraft = article.status === 'draft' || !article.publishedAt;
 
   return buildMetadata({
@@ -56,12 +47,11 @@ export async function generateMetadata({
 
 export default async function BlogArticlePage({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+}: BlogArticlePageProps) {
   const { slug } = await params;
 
   let article: Awaited<ReturnType<typeof articleService.getPublicBySlug>>;
+
   try {
     article = await articleService.getPublicBySlug(slug);
   } catch {
@@ -82,7 +72,6 @@ export default async function BlogArticlePage({
       })
     : [];
 
-  // ✅ JSON-LD (точнее для блога: BlogPosting)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -100,6 +89,22 @@ export default async function BlogArticlePage({
     keywords: article.tags?.length ? article.tags.join(', ') : undefined,
   };
 
+  const reviews = await reviewService.getApprovedByTarget({
+    targetType: 'article',
+    targetId: article.id,
+  });
+
+  const sectionProps: BlogArticleSectionProps = {
+    article,
+    html,
+    minutes,
+    toc,
+    related,
+    url,
+    reviews,
+    reviewForm: <ServiceReviewForm serviceId={article.id} />,
+  };
+
   return (
     <>
       <script
@@ -107,95 +112,13 @@ export default async function BlogArticlePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_280px]">
-        <main className="min-w-0">
-          <article className="min-w-0">
-            <header className="space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                {article.category?.title ? (
-                  <Badge variant="secondary">{article.category.title}</Badge>
-                ) : null}
-
-                {article.publishedAt ? (
-                  <time
-                    className="text-muted-foreground text-sm"
-                    dateTime={article.publishedAt}
-                  >
-                    {formatDate(article.publishedAt)}
-                  </time>
-                ) : (
-                  <Badge variant="outline">draft</Badge>
-                )}
-
-                <span className="text-muted-foreground">•</span>
-
-                <span className="text-accent text-sm">
-                  ≈ {minutes} хв читання
-                </span>
-              </div>
-
-              <h1 className="text-accent text-3xl font-semibold tracking-tight">
-                {article.title}
-              </h1>
-
-              {article.subtitle ? (
-                <p className="text-muted-foreground italic">
-                  {article.subtitle}
-                </p>
-              ) : null}
-
-              {/* ✅ Mobile TOC */}
-              {toc.length ? (
-                <div className="mt-4 lg:hidden">
-                  <details className="border-accent rounded-xl border p-4">
-                    <summary className="text-accent cursor-pointer font-semibold">
-                      Зміст
-                    </summary>
-                    <div className="mt-3">
-                      <ArticleToc items={toc} />
-                    </div>
-                  </details>
-                </div>
-              ) : null}
-
-              {cover ? (
-                <div className="bg-muted relative mt-4 aspect-16/7 w-full overflow-hidden rounded-xl">
-                  <NextImage
-                    useSkeleton
-                    src={cover}
-                    alt={article.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 900px"
-                  />
-                </div>
-              ) : null}
-            </header>
-
-            <section className="mt-8">
-              <ArticleContent html={html} />
-            </section>
-
-            <ShareSection title={article.title} url={url} />
-
-            {related.length ? (
-              <section className="mt-12">
-                <h2 className="text-accent mb-4 text-lg font-semibold">
-                  Ще з цієї категорії
-                </h2>
-                <ArticleListPreview items={related} baseHref="/blog" />
-              </section>
-            ) : null}
-          </article>
-        </main>
-
-        {/* Desktop TOC */}
-        <aside className="hidden lg:block">
-          <div className="sticky top-24 space-y-6">
-            <ArticleToc items={toc} />
-          </div>
-        </aside>
-      </div>
+      <main className="bg-background text-foreground min-h-screen">
+        {renderLayout({
+          layout: articleLayout,
+          sections: BLOG_ARTICLE_SECTIONS,
+          sectionProps,
+        })}
+      </main>
     </>
   );
 }
