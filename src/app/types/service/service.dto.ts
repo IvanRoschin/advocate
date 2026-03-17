@@ -5,8 +5,8 @@ export type ServiceSectionKey =
   | 'benefits'
   | 'process'
   | 'faq'
-  | 'reviews'
-  | 'cta';
+  | 'cta'
+  | 'reviews';
 
 export type ServiceLayoutItemInput = {
   key: ServiceSectionKey;
@@ -84,11 +84,6 @@ export type ServiceFaqDto = {
   items: ServiceFaqItemDto[];
 };
 
-export type ServiceReviewsDto = {
-  title: string;
-  reviewIds: string[];
-};
-
 export type ServiceCtaDto = {
   title: string;
   description: string;
@@ -100,7 +95,6 @@ export type ServiceSectionsDto = {
   benefits?: ServiceBenefitsDto;
   process?: ServiceProcessDto;
   faq?: ServiceFaqDto;
-  reviews?: ServiceReviewsDto;
   cta?: ServiceCtaDto;
 };
 

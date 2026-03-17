@@ -2,13 +2,17 @@
 
 import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo } from 'react';
 
 import Btn from '@/app/components/ui/button/Btn';
 import storageKeys from '@/app/config/storageKeys';
+import { useFormDraft } from '@/app/hooks/useFormDraft';
+import { clearFormDraft } from '@/app/lib/client/form-draft';
 import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
 import { createArticleSchema, updateArticleSchema } from '@/app/types';
 import { Input, Select, TagsInputField, Textarea } from '@/components/index';
+
+import FormDraftPersist from './FormDraftPersist';
 
 import type {
   ArticleLanguage,
@@ -17,17 +21,8 @@ import type {
   CreateArticleRequestDTO,
   UpdateArticleDTO,
 } from '@/app/types';
-
 /* ------------------------------------------------------------------ */
 /* Helpers ------------------------------------------------------------ */
-
-const safeJsonParse = <T,>(raw: string): T | null => {
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
-    return null;
-  }
-};
 
 const parseTags = (raw: string): string[] =>
   raw
@@ -114,67 +109,6 @@ type EditModeProps = BaseProps & {
 
 type Props = CreateModeProps | EditModeProps;
 
-/* ------------------------------------------------------------------ */
-/* Draft helpers ------------------------------------------------------ */
-
-type DraftShape = Partial<ArticleFormValues>;
-
-const loadDraft = (): DraftShape | null => {
-  if (typeof window === 'undefined') return null;
-  const raw = window.localStorage.getItem(storageKeys.article);
-  if (!raw) return null;
-  return safeJsonParse<DraftShape>(raw);
-};
-
-const saveDraft = (draft: DraftShape) => {
-  if (typeof window === 'undefined') return;
-  try {
-    window.localStorage.setItem(storageKeys.article, JSON.stringify(draft));
-  } catch {
-    // ignore
-  }
-};
-
-const clearDraft = () => {
-  if (typeof window === 'undefined') return;
-  try {
-    window.localStorage.removeItem(storageKeys.article);
-  } catch {
-    // ignore
-  }
-};
-
-function AutoSaveToLocalStorage({
-  enabled,
-  values,
-}: {
-  enabled: boolean;
-  values: ArticleFormValues;
-}) {
-  const timerRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (!enabled) return;
-
-    if (timerRef.current) {
-      window.clearTimeout(timerRef.current);
-    }
-
-    timerRef.current = window.setTimeout(() => {
-      saveDraft(values);
-    }, 400);
-
-    return () => {
-      if (timerRef.current) {
-        window.clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    };
-  }, [enabled, values]);
-
-  return null;
-}
-
 const ArticleForm = (props: Props) => {
   const { onClose, submitLabel, users, categories } = props;
 
@@ -186,10 +120,10 @@ const ArticleForm = (props: Props) => {
 
   const clearOnClose = props.clearDraftOnClose ?? true;
 
-  const [draft] = useState<DraftShape | null>(() => {
-    if (!persist || props.mode !== 'create') return null;
-    return loadDraft();
-  });
+  const { draft, clearDraft } = useFormDraft<ArticleFormValues>(
+    storageKeys.article,
+    persist && props.mode === 'create'
+  );
 
   const baseValues: ArticleFormValues = useMemo(
     () => ({
@@ -206,19 +140,7 @@ const ArticleForm = (props: Props) => {
       authorId: initialValues?.authorId ?? '',
       categoryId: initialValues?.categoryId ?? '',
     }),
-    [
-      initialValues?.slug,
-      initialValues?.status,
-      initialValues?.title,
-      initialValues?.subtitle,
-      initialValues?.summary,
-      initialValues?.content,
-      initialValues?.tags,
-      initialValues?.src,
-      initialValues?.language,
-      initialValues?.authorId,
-      initialValues?.categoryId,
-    ]
+    [initialValues]
   );
 
   const defaultValues: ArticleFormValues = useMemo(() => {
@@ -246,7 +168,7 @@ const ArticleForm = (props: Props) => {
   );
 
   const handleClose = () => {
-    if (clearOnClose) clearDraft();
+    if (clearOnClose) clearFormDraft(storageKeys.article);
     onClose();
   };
 
@@ -288,7 +210,8 @@ const ArticleForm = (props: Props) => {
       >
         {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
           <Form className="flex w-full max-w-4xl flex-col gap-6">
-            <AutoSaveToLocalStorage
+            <FormDraftPersist<ArticleFormValues>
+              storageKey={storageKeys.article}
               enabled={persist && props.mode === 'create'}
               values={values}
             />

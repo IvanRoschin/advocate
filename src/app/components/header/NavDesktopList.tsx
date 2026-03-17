@@ -3,14 +3,23 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { NavScope } from '@/app/config/nav';
 import { AppLink } from '@/components';
 import { cn } from '@/lib/utils';
 import { menuText } from '@/resources';
 
 import { isSelected, useNavItems } from './nav.shared';
 
-export const NavDesktopList = () => {
-  const items = useNavItems();
+type NavDesktopListProps = {
+  scope?: NavScope;
+  showLabelsFrom?: 'md' | 'lg';
+};
+
+export const NavDesktopList = ({
+  scope = 'public',
+  showLabelsFrom = 'md',
+}: NavDesktopListProps) => {
+  const items = useNavItems(scope);
   const pathname = usePathname() ?? '';
   const [hash, setHash] = useState('');
 
@@ -27,10 +36,13 @@ export const NavDesktopList = () => {
     };
   }, []);
 
+  const labelClass =
+    showLabelsFrom === 'lg' ? 'hidden lg:inline' : 'hidden md:inline';
+
   return (
     <nav className="font-eukrainehead" aria-label={menuText.navAria}>
       <ul className="flex h-10 items-center gap-1">
-        {items.map(({ route, href, label, startsWith }) => {
+        {items.map(({ key, href, label, startsWith, Icon }) => {
           const active = isSelected({
             pathname,
             hash,
@@ -39,18 +51,19 @@ export const NavDesktopList = () => {
           });
 
           return (
-            <li key={route}>
+            <li key={key}>
               <AppLink
                 href={href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'flex h-9 items-center rounded-xl px-3 text-sm leading-none font-medium transition',
+                  'desktop-nav-link flex h-9 items-center gap-2 rounded-xl px-3 text-sm leading-none font-medium transition',
                   active
-                    ? 'bg-neutral-900 text-white shadow-sm'
-                    : 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:bg-neutral-100'
+                    ? 'desktop-nav-link-active shadow-sm'
+                    : 'desktop-nav-link-inactive'
                 )}
               >
-                {label}
+                <Icon className="text-[18px]" aria-hidden />
+                <span className={labelClass}>{label}</span>
               </AppLink>
             </li>
           );

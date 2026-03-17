@@ -14,7 +14,7 @@ const About = () => {
   return (
     <section
       id={aboutSection.id}
-      className="bg-about-section pt-120 sm:pt-100 md:py-60 lg:pt-40"
+      className="bg-about-section pt-120 sm:pt-100 md:py-60 lg:py-10 lg:pt-40"
       itemScope
       itemType={aboutSection.schemaType}
     >

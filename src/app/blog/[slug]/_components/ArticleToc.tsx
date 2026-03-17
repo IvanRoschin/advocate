@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { iconLibrary } from '../resources';
+import { iconLibrary } from '../../../resources';
 
-type TocItem = {
+export type TocItem = {
   id: string;
   text: string;
   level: 2 | 3;

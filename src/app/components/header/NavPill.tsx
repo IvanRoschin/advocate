@@ -12,13 +12,19 @@ import { cn } from '@/lib/utils';
 
 import { isSelected, useNavItems, useSelectedPathname } from './nav.shared';
 
+import type { NavScope } from '@/app/config/nav';
+
 type NavPillProps = {
+  scope?: NavScope;
   showLabelsFrom?: 'md' | 'lg';
 };
 
-export const NavPill = ({ showLabelsFrom = 'md' }: NavPillProps) => {
+export const NavPill = ({
+  scope = 'public',
+  showLabelsFrom = 'md',
+}: NavPillProps) => {
   const pathname = useSelectedPathname();
-  const items = useNavItems();
+  const items = useNavItems(scope);
 
   const labelClass =
     showLabelsFrom === 'lg'
@@ -41,6 +47,7 @@ export const NavPill = ({ showLabelsFrom = 'md' }: NavPillProps) => {
             href,
             startsWith,
           });
+
           return (
             <Tooltip key={href}>
               <TooltipTrigger asChild>
@@ -48,10 +55,10 @@ export const NavPill = ({ showLabelsFrom = 'md' }: NavPillProps) => {
                   variant={selected ? 'default' : 'ghost'}
                   size="sm"
                   className={cn(
-                    'h-9 shrink-0 rounded-xl px-2',
+                    'mobile-nav-pill h-9 shrink-0 rounded-xl px-2',
                     selected
-                      ? 'bg-neutral-900 text-white hover:bg-neutral-900'
-                      : 'text-neutral-700 hover:bg-neutral-100'
+                      ? 'mobile-nav-pill-active'
+                      : 'mobile-nav-pill-inactive'
                   )}
                   asChild
                 >

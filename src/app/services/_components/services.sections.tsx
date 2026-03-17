@@ -7,6 +7,7 @@ import { Footer, Header } from '@/components';
 
 import type { ServicesSectionKey } from '@/app/resources/content/pages/services.layout';
 import type { ServiceListItemDto } from '@/app/types';
+
 export type ServicesSectionProps = {
   services: ServiceListItemDto[];
 };
