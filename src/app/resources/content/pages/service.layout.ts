@@ -21,12 +21,6 @@ export const serviceLayout: ServiceLayoutNode[] = [
 
   {
     type: 'section',
-    key: 'reviews',
-    display: true,
-  },
-
-  {
-    type: 'section',
     key: 'cta',
     display: true,
   },

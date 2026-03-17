@@ -1,32 +1,35 @@
 'use client';
 
+import { NavScope } from '@/app/config/nav';
 import { cn } from '@/lib/utils';
 
 import { NavDesktopList } from './NavDesktopList';
 import { ThemeToggle } from './ThemeToggle';
 
 type DesktopControlRailProps = {
+  scope?: NavScope;
   showThemeToggle?: boolean;
   className?: string;
 };
 
 export const DesktopControlRail = ({
+  scope = 'public',
   showThemeToggle = true,
   className,
 }: DesktopControlRailProps) => {
   return (
     <div
       className={cn(
-        // общая капсула
-        'flex h-12 items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white/70 px-2 shadow-sm backdrop-blur supports-backdrop-filter:bg-white/60',
+        'desktop-control-rail flex h-12 items-center gap-3 rounded-2xl border px-2 shadow-sm backdrop-blur',
+        'supports-[backdrop-filter]:desktop-control-rail-supported',
         className
       )}
     >
-      <NavDesktopList />
+      <NavDesktopList scope={scope} />
 
       {showThemeToggle ? (
         <>
-          <div className="h-7 w-px shrink-0 bg-neutral-200" />
+          <div className="desktop-control-rail-divider h-7 w-px shrink-0" />
           <div className="flex h-10 shrink-0 items-center">
             <ThemeToggle />
           </div>

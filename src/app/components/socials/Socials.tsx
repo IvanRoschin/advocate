@@ -20,9 +20,9 @@ const Socials = () => {
   };
 
   return (
-    <div className="bg-socials text-socials hidden pb-3 sm:block">
+    <div className="bg-socials text-socials socials-divider hidden pb-3 sm:block">
       <div className="container flex flex-col gap-6 py-6 sm:flex-row sm:items-center sm:justify-between">
-        <ul className="flex flex-col gap-2">
+        <ul className="socials-link flex flex-col items-center gap-2">
           {essential.map(item => (
             <li key={`${item.icon}-${item.link}`}>
               <AppLink
