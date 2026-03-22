@@ -41,7 +41,7 @@ export const MobileHeader = ({
       <div className="mobile-header-fade-bottom pointer-events-none fixed bottom-0 left-0 z-40 h-20 w-full xl:hidden" />
 
       <header className="fixed bottom-0 left-0 z-50 w-full xl:hidden">
-        <div className="mx-auto grid h-20 w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center px-3">
+        <div className="relative mx-auto h-20 w-full max-w-6xl px-3">
           <div className="min-w-18">
             {showTime ? (
               <div className="text-mobile-header-time text-xs leading-none sm:text-sm">
@@ -49,7 +49,6 @@ export const MobileHeader = ({
               </div>
             ) : null}
           </div>
-
           <motion.div
             className="mx-auto flex max-w-full justify-self-center"
             initial={{ y: 8, opacity: 0 }}
@@ -90,8 +89,7 @@ export const MobileHeader = ({
               ) : null}
             </div>
           </motion.div>
-
-          <div className="min-w-6" />
+          <div className="min-w-18" />{' '}
         </div>
       </header>
     </>

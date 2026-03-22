@@ -20,12 +20,14 @@ export const DesktopControlRail = ({
   return (
     <div
       className={cn(
-        'desktop-control-rail flex h-12 items-center gap-3 rounded-2xl border px-2 shadow-sm backdrop-blur',
+        'desktop-control-rail flex h-12 min-w-0 items-center gap-2 rounded-2xl border px-2 shadow-sm backdrop-blur',
         'supports-[backdrop-filter]:desktop-control-rail-supported',
         className
       )}
     >
-      <NavDesktopList scope={scope} />
+      <div className="scrollbar-none min-w-0 flex-1 overflow-x-auto">
+        <NavDesktopList scope={scope} showLabelsFrom="xl" />
+      </div>
 
       {showThemeToggle ? (
         <>

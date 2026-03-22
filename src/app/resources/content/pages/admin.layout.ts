@@ -1,9 +1,4 @@
-export type AdminSectionKey =
-  | 'socials'
-  | 'header'
-  | 'sidebar'
-  | 'content'
-  | 'footer';
+export type AdminSectionKey = 'socials' | 'header' | 'sidebar' | 'content';
 
 export type AdminLayoutNode =
   | {
@@ -33,6 +28,4 @@ export const adminLayout: AdminLayoutNode[] = [
       { key: 'content', display: true },
     ],
   },
-
-  { type: 'section', key: 'footer', display: true },
 ];

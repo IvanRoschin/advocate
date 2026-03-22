@@ -1,12 +1,11 @@
 import type { ReactNode } from 'react';
 
+import Footer from '@/app/components/footer/Footer';
 import { blog } from '@/app/resources/content';
-import { Footer, Header, ScrollToTopButton, Socials } from '@/components';
-
+import type { BlogSectionKey } from '@/app/resources/content/pages/blog.layout';
+import { Header, ScrollToTopButton, Socials } from '@/components';
 import { ArticleListPreview } from './ArticleListPreview';
 import BlogAside from './BlogAside';
-
-import type { BlogSectionKey } from '@/app/resources/content/pages/blog.layout';
 export type BlogSectionProps = {
   category?: string;
   items: Awaited<
@@ -70,7 +69,11 @@ const BlogSubscribeSection: BlogSectionComponent = () => null;
 
 const BlogSocialsSection: BlogSectionComponent = () => <Socials />;
 const BlogHeaderSection: BlogSectionComponent = () => <Header />;
-const BlogFooterSection: BlogSectionComponent = () => <Footer />;
+const BlogFooterSection: BlogSectionComponent = () => (
+  <section className="mt-16 lg:mt-20">
+    <Footer />
+  </section>
+);
 const BlogScrollToTopSection: BlogSectionComponent = () => (
   <ScrollToTopButton />
 );

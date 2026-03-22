@@ -1,5 +1,6 @@
 import { AppLink } from '@/components';
 import { logo } from '@/resources/content';
+
 import { NextImage } from '../common';
 
 interface LogoProps {
@@ -18,7 +19,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'dark' }) => {
         width={200}
         height={60}
         priority
-        className="h-14 w-auto object-contain"
+        className="h-12 w-auto object-contain 2xl:h-14"
       />
     </AppLink>
   );

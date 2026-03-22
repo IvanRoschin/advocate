@@ -1,16 +1,19 @@
 import Review from '@/app/models/Review';
+
 import type { CreateReviewRequestDTO, ReviewTargetType } from '@/app/types';
 
 type FindApprovedByTargetParams =
   | {
-      targetType: Exclude<ReviewTargetType, 'page'>;
-      targetId: string;
-      pageKey?: never;
-    }
-  | {
       targetType: 'page';
       pageKey: string;
       targetId?: never;
+      limit?: number;
+    }
+  | {
+      targetType: Exclude<ReviewTargetType, 'page'>;
+      targetId: string;
+      pageKey?: never;
+      limit?: number;
     };
 
 export const reviewRepo = {
@@ -31,6 +34,8 @@ export const reviewRepo = {
   },
 
   findApprovedByTarget(params: FindApprovedByTargetParams) {
+    const limit = params.limit ?? 4;
+
     if (params.targetType === 'page') {
       return Review.find({
         targetType: 'page',
@@ -38,6 +43,7 @@ export const reviewRepo = {
         status: 'approved',
       })
         .sort({ createdAt: -1 })
+        .limit(limit)
         .lean();
     }
 
@@ -47,6 +53,7 @@ export const reviewRepo = {
       status: 'approved',
     })
       .sort({ createdAt: -1 })
+      .limit(limit)
       .lean();
   },
 };

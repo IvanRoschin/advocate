@@ -25,7 +25,6 @@ export default async function ServicesPage() {
   const sectionProps: ServicesSectionProps = {
     services,
   };
-
   return (
     <main className="bg-background text-foreground min-h-screen">
       {renderLayout({

@@ -1,7 +1,6 @@
-'use client';
-
 import type { ReactNode } from 'react';
 
+import Footer from '../components/footer/Footer';
 import { renderLayout } from '../lib/layouts/renderLayout';
 import { adminLayout } from '../resources/content/pages/admin.layout';
 import {
@@ -25,6 +24,7 @@ export default function AdminLayout({
         sections: ADMIN_SECTIONS,
         sectionProps,
       })}
+      <Footer />
     </main>
   );
 }

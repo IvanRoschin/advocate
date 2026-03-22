@@ -1,12 +1,9 @@
-'use client';
-
 import { iconLibrary } from '@/app/resources/icons';
+import { ReviewResponseDTO } from '@/app/types';
 
-import type { ReviewItem } from '@/app/resources/content/sections/reviews';
-
-interface Props {
-  review: ReviewItem;
-}
+type Props = {
+  review: ReviewResponseDTO;
+};
 
 const ReviewCard = ({ review }: Props) => {
   const QuoteLeft = iconLibrary.quoteLeft;
@@ -16,12 +13,8 @@ const ReviewCard = ({ review }: Props) => {
     <article className="group relative flex h-full flex-col justify-between rounded-3xl bg-(--reviews-card-bg) p-6 shadow-(--reviews-card-shadow) transition-all duration-300 hover:-translate-y-2 hover:bg-(--reviews-card-bg-hover) hover:shadow-(--reviews-card-shadow-hover)">
       <header className="mb-4">
         <p className="relative text-base font-semibold text-(--reviews-card-name) transition-colors duration-300 md:text-lg">
-          {review.name}
+          {review.authorName}
           <span className="absolute bottom-0 left-0 h-0.5 w-10 rounded-full bg-(--reviews-card-accent) transition-all duration-500 group-hover:w-20" />
-        </p>
-
-        <p className="mt-1 text-xs text-(--reviews-card-role) md:text-sm">
-          {review.order}
         </p>
       </header>
 

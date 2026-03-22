@@ -57,31 +57,30 @@ export const DesktopHeader = ({
         'transition-[box-shadow,border-color,background-color] duration-200 ease-out'
       )}
     >
-      <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-6">
-        <div className="flex min-w-0 items-center gap-6">
+      <div className="mx-auto grid h-20 w-full max-w-7xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 px-4 2xl:px-6">
+        <div className="shrink-0">
           <Logo variant={logoVariant} />
-
-          <div className="min-w-0">
-            <DesktopControlRail
-              scope={scope}
-              showThemeToggle={showThemeToggle}
-            />
-          </div>
         </div>
 
-        <div className="flex h-10 shrink-0 items-center gap-4">
+        <div className="min-w-0">
+          <DesktopControlRail
+            scope={scope}
+            showThemeToggle={showThemeToggle}
+            className="max-w-full min-w-0"
+          />
+        </div>
+
+        <div className="flex h-10 shrink-0 items-center gap-3">
           {showTime ? (
-            <div className="text-desktop-header-time hidden text-sm md:flex md:h-10 md:items-center">
+            <div className="text-desktop-header-time hidden text-sm 2xl:flex 2xl:h-10 2xl:items-center">
               <TimeDisplay timeZone={timeZone} />
             </div>
           ) : null}
-
           {showCta ? (
-            <Btn
-              label={ctaLabel}
-              href={ctaHref}
-              className="h-10 rounded-xl px-5 leading-none"
-            />
+            <Btn href={ctaHref} className="h-10 rounded-xl px-4 leading-none">
+              <span className="hidden 2xl:inline">{ctaLabel}</span>
+              <span className="xl:inline 2xl:hidden">Консультація</span>
+            </Btn>
           ) : null}
         </div>
       </div>

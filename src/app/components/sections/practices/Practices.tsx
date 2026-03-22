@@ -1,9 +1,14 @@
-import Btn from '@/app/components/ui/button/Btn';
-import { practicesSection } from '@/app/resources';
+import Link from 'next/link';
 
+import Btn from '@/app/components/ui/button/Btn';
+import { routes } from '@/app/config';
+import { serviceService } from '@/app/lib/services/service.service';
+import { practicesSection } from '@/app/resources';
 import PracticesCard from './PracticesCard';
 
-const Practices = () => {
+export default async function Practices() {
+  const services = await serviceService.getPublicList({ limit: 4 });
+
   return (
     <section
       id={practicesSection.id}
@@ -23,23 +28,29 @@ const Practices = () => {
           <span className="bg-accent mt-4 h-8 w-px" />
         </header>
 
-        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 md:py-10 lg:grid-cols-4">
-          {practicesSection.items.map(practice => (
-            <PracticesCard
-              key={practice.id}
-              title={practice.title}
-              text={practice.text}
-              link={practice.link}
-            />
-          ))}
-        </div>
+        {services.length > 0 ? (
+          <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 md:py-10 lg:grid-cols-4">
+            {services.map(service => (
+              <PracticesCard
+                key={service.id}
+                title={service.title}
+                description={service.summary}
+                href={`/services/${service.slug}`}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="mb-4 rounded-2xl border p-6 text-center">
+            Наразі опублікованих послуг ще немає.
+          </div>
+        )}
 
         <div className="flex items-center justify-center">
-          <Btn label={practicesSection.cta.label} />
+          <Link href={routes.public.services}>
+            <Btn label={practicesSection.cta.label} />
+          </Link>
         </div>
       </div>
     </section>
   );
-};
-
-export default Practices;
+}

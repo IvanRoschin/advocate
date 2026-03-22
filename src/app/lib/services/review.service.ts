@@ -21,11 +21,13 @@ type GetApprovedByTargetParams =
       targetType: Exclude<ReviewTargetType, 'page'>;
       targetId: string;
       pageKey?: never;
+      limit?: number;
     }
   | {
       targetType: 'page';
       pageKey: string;
       targetId?: never;
+      limit?: number;
     };
 
 const normalizeTarget = <
@@ -76,6 +78,8 @@ export const reviewService = {
   async getApprovedByTarget(params: GetApprovedByTargetParams) {
     await dbConnect();
 
+    const limit = params.limit ?? 4;
+
     if (params.targetType === 'page') {
       const pageKey = params.pageKey?.trim();
       if (!pageKey) {
@@ -85,6 +89,7 @@ export const reviewService = {
       const reviews = await reviewRepo.findApprovedByTarget({
         targetType: 'page',
         pageKey,
+        limit,
       });
 
       return reviews.map(mapReviewToResponse);
@@ -95,6 +100,7 @@ export const reviewService = {
     const reviews = await reviewRepo.findApprovedByTarget({
       targetType: params.targetType,
       targetId: params.targetId,
+      limit,
     });
 
     return reviews.map(mapReviewToResponse);

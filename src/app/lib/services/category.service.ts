@@ -2,6 +2,7 @@ import slugify from 'slugify';
 
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import {
+  CategoryResponseDTO,
   CreateCategoryRequestDTO,
   mapCategoryToResponse,
   UpdateCategoryDTO,
@@ -14,6 +15,13 @@ export const categoryService = {
   async getAll() {
     await dbConnect();
     return categoryRepo.findAll();
+  },
+
+  async getPublicList(limit = 20): Promise<CategoryResponseDTO[]> {
+    await dbConnect();
+
+    const rows = await categoryRepo.findPublicList(limit);
+    return rows.map(mapCategoryToResponse);
   },
 
   async getById(id: string) {

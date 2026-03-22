@@ -1,9 +1,11 @@
-import { Footer, Header, ServiceReviewForm } from '@/app/components';
+import { Header, ServiceReviewForm } from '@/app/components';
+import Footer from '@/app/components/footer/Footer';
 import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import { reviewService } from '@/app/lib/services/review.service';
 import { serviceService } from '@/app/lib/services/service.service';
 import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
 import { ServiceLayoutNode } from '@/app/types';
+
 import {
   SERVICE_SECTIONS,
   ServiceSectionProps,

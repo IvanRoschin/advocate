@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { Footer, Header, Socials } from '@/components';
+import { Header, Socials } from '@/components';
 
 import AdminSidebar from '../components/AdminSidebar';
 
@@ -25,12 +25,9 @@ const AdminContentSection: AdminSectionComponent = ({ children }) => (
   </section>
 );
 
-const AdminFooterSection: AdminSectionComponent = () => <Footer />;
-
 export const ADMIN_SECTIONS: Record<AdminSectionKey, AdminSectionComponent> = {
   socials: AdminSocialsSection,
   header: AdminHeaderSection,
   sidebar: AdminSidebarSection,
   content: AdminContentSection,
-  footer: AdminFooterSection,
 };

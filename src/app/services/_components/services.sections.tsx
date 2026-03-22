@@ -3,11 +3,10 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 
 import { NextImage } from '@/app/components';
-import { Footer, Header } from '@/components';
-
+import Footer from '@/app/components/footer/Footer';
 import type { ServicesSectionKey } from '@/app/resources/content/pages/services.layout';
 import type { ServiceListItemDto } from '@/app/types';
-
+import { Header } from '@/components';
 export type ServicesSectionProps = {
   services: ServiceListItemDto[];
 };
@@ -57,36 +56,39 @@ const ServicesListSection: ServicesSectionComponent = ({ services }) => {
             key={service.id}
             className="border-border bg-card overflow-hidden rounded-2xl border"
           >
-            {service.src ? (
-              <div className="relative aspect-16/10 w-full overflow-hidden">
-                <NextImage
-                  src={service.src}
-                  alt={service.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                  className="object-cover"
-                />
+            <Link
+              href={`/services/${service.slug}`}
+              className="text-accent text-sm font-semibold"
+            >
+              {service.src ? (
+                <div className="relative aspect-16/10 w-full overflow-hidden">
+                  <NextImage
+                    src={service.src}
+                    alt={service.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    className="object-cover"
+                  />
+                </div>
+              ) : null}
+
+              <div className="p-5">
+                <h2 className="text-accent text-xl font-semibold">
+                  {service.title}
+                </h2>
+                <p className="text-app mt-3 text-sm leading-6">
+                  {service.summary}
+                </p>
+                {/* <div className="mt-5">
+                  <Link
+                    href={`/services/${service.slug}`}
+                    className="text-accent text-sm font-semibold"
+                  >
+                    Детальніше
+                  </Link>
+                </div> */}
               </div>
-            ) : null}
-
-            <div className="p-5">
-              <h2 className="text-accent text-xl font-semibold">
-                {service.title}
-              </h2>
-
-              <p className="text-app mt-3 text-sm leading-6">
-                {service.summary}
-              </p>
-
-              <div className="mt-5">
-                <Link
-                  href={`/services/${service.slug}`}
-                  className="text-accent text-sm font-semibold"
-                >
-                  Детальніше
-                </Link>
-              </div>
-            </div>
+            </Link>
           </article>
         ))}
       </div>
@@ -94,7 +96,11 @@ const ServicesListSection: ServicesSectionComponent = ({ services }) => {
   );
 };
 
-const ServicesFooterSection: ServicesSectionComponent = () => <Footer />;
+const ServicesFooterSection: ServicesSectionComponent = () => (
+  <section className="mt-16 lg:mt-20">
+    <Footer />
+  </section>
+);
 
 export const SERVICES_SECTIONS: Record<
   ServicesSectionKey,
