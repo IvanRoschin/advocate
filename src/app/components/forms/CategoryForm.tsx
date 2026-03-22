@@ -56,6 +56,7 @@ const CategoryForm = ({
               transition={{ delay: 0.3 }}
             >
               <ImageUploadCloudinary
+                fieldName="src"
                 setFieldValue={setFieldValue}
                 values={values.src}
                 error={typeof errors.src === 'string' ? errors.src : undefined}

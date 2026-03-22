@@ -3,23 +3,23 @@ import type { ReactNode } from 'react';
 import {
   About,
   Advantages,
-  Footer,
   Header,
   Hero,
   Order,
-  Practices,
-  Reviews,
   ScrollToTopButton,
-  Services,
   Socials,
   WhyChooseMe,
 } from '@/components';
+import Footer from './components/footer/Footer';
+import Practices from './components/sections/practices/Practices';
+import Reviews from './components/sections/reviews/Reviews';
+import Services from './components/sections/services/Services';
+import { HomeSectionKey } from './resources/content/pages/home.layout';
+import { ReviewResponseDTO, ServicePublicPageDto } from './types';
 
-import { ReviewResponseDTO } from './types';
-
-import type { HomeSectionKey } from '@/app/resources/content/pages/home.layout';
 export type HomeSectionProps = {
   reviews?: ReviewResponseDTO[];
+  services?: ServicePublicPageDto[];
 };
 
 export type HomeSectionComponent = (props: HomeSectionProps) => ReactNode;
@@ -44,7 +44,11 @@ const HomeWhyChooseMeSection: HomeSectionComponent = () => <WhyChooseMe />;
 
 const HomeOrderSection: HomeSectionComponent = () => <Order />;
 
-const HomeFooterSection: HomeSectionComponent = () => <Footer />;
+const HomeFooterSection: HomeSectionComponent = () => (
+  <section className="mt-16 lg:mt-20">
+    <Footer />
+  </section>
+);
 
 const HomeScrollToTopSection: HomeSectionComponent = () => (
   <ScrollToTopButton />

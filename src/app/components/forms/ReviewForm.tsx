@@ -8,6 +8,7 @@ import {
   createReviewFormSchema,
   CreateReviewRequestDTO,
   ReviewFormValues,
+  ReviewTargetOptionDto,
   UpdateReviewDTO,
   updateReviewFormSchema,
 } from '@/app/types';
@@ -16,6 +17,9 @@ import { Input, Select, Textarea } from '@/components';
 type BaseProps = {
   onClose: () => void;
   submitLabel?: string;
+  serviceOptions: ReviewTargetOptionDto[];
+  articleOptions: ReviewTargetOptionDto[];
+  pageOptions: ReviewTargetOptionDto[];
 };
 
 type CreateModeProps = BaseProps & {
@@ -31,39 +35,60 @@ type EditModeProps = BaseProps & {
 
 type Props = CreateModeProps | EditModeProps;
 
+const withPlaceholder = (
+  label: string,
+  options?: ReviewTargetOptionDto[]
+): ReviewTargetOptionDto[] => [{ value: '', label }, ...(options ?? [])];
+
 const buildCreatePayload = (
   values: ReviewFormValues
-): CreateReviewRequestDTO => ({
-  authorName: values.authorName.trim(),
-  text: values.text.trim(),
-  rating: values.rating === '' ? undefined : Number(values.rating),
-  status: values.status,
-  targetType: values.targetType,
-  targetId:
-    values.targetType === 'page'
-      ? undefined
-      : values.targetId.trim() || undefined,
-  pageKey:
-    values.targetType === 'page'
-      ? values.pageKey.trim() || undefined
-      : undefined,
-});
+): CreateReviewRequestDTO => {
+  const base = {
+    authorName: values.authorName.trim(),
+    text: values.text.trim(),
+    rating: values.rating === '' ? undefined : Number(values.rating),
+    status: values.status,
+  };
 
-const buildUpdatePayload = (values: ReviewFormValues): UpdateReviewDTO => ({
-  authorName: values.authorName.trim(),
-  text: values.text.trim(),
-  rating: values.rating === '' ? undefined : Number(values.rating),
-  status: values.status,
-  targetType: values.targetType,
-  targetId:
-    values.targetType === 'page'
-      ? undefined
-      : values.targetId.trim() || undefined,
-  pageKey:
-    values.targetType === 'page'
-      ? values.pageKey.trim() || undefined
-      : undefined,
-});
+  if (values.targetType === 'page') {
+    return {
+      ...base,
+      targetType: 'page',
+      pageKey: values.pageKey.trim(),
+    };
+  }
+
+  return {
+    ...base,
+    targetType: values.targetType,
+    targetId: values.targetId.trim(),
+  };
+};
+
+const buildUpdatePayload = (values: ReviewFormValues): UpdateReviewDTO => {
+  const base = {
+    authorName: values.authorName.trim(),
+    text: values.text.trim(),
+    rating: values.rating === '' ? undefined : Number(values.rating),
+    status: values.status,
+  };
+
+  if (values.targetType === 'page') {
+    return {
+      ...base,
+      targetType: 'page',
+      pageKey: values.pageKey.trim(),
+      targetId: undefined,
+    };
+  }
+
+  return {
+    ...base,
+    targetType: values.targetType,
+    targetId: values.targetId.trim(),
+    pageKey: undefined,
+  };
+};
 
 const ReviewForm = (props: Props) => {
   const isEditMode = props.mode === 'edit';
@@ -72,6 +97,10 @@ const ReviewForm = (props: Props) => {
     () => (isEditMode ? updateReviewFormSchema : createReviewFormSchema),
     [isEditMode]
   );
+
+  const serviceOptions = props.serviceOptions ?? [];
+  const articleOptions = props.articleOptions ?? [];
+  const pageOptions = props.pageOptions ?? [];
 
   const initialValues: ReviewFormValues = {
     authorName:
@@ -104,63 +133,82 @@ const ReviewForm = (props: Props) => {
         await props.onSubmit(buildUpdatePayload(values));
       }}
     >
-      {({ isValid, isSubmitting, values }) => (
-        <Form className="flex w-full max-w-3xl flex-col gap-6">
-          <Input name="authorName" label="Автор" required />
+      {({ isValid, isSubmitting, values }) => {
+        const targetOptions =
+          values.targetType === 'service'
+            ? withPlaceholder('Оберіть послугу', serviceOptions)
+            : values.targetType === 'article'
+              ? withPlaceholder('Оберіть статтю', articleOptions)
+              : withPlaceholder('Оберіть сторінку', pageOptions);
 
-          <Textarea name="text" label="Текст відгуку" rows={6} required />
+        return (
+          <Form className="flex w-full max-w-3xl flex-col gap-6">
+            <Input name="authorName" label="Автор" required />
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <Input name="rating" label="Рейтинг (1-5)" type="number" />
+            <Textarea name="text" label="Текст відгуку" rows={6} required />
 
-            <Select
-              name="status"
-              label="Статус"
-              options={[
-                { value: 'pending', label: 'Очікує' },
-                { value: 'approved', label: 'Погоджено' },
-                { value: 'rejected', label: 'Відхилено' },
-              ]}
-            />
+            <div className="grid gap-4 md:grid-cols-3">
+              <Input name="rating" label="Рейтинг (1-5)" type="number" />
 
-            <Select
-              name="targetType"
-              label="Тип привʼязки"
-              options={[
-                { value: 'service', label: 'Послуга' },
-                { value: 'article', label: 'Стаття' },
-                { value: 'page', label: 'Сторінка' },
-              ]}
-            />
-          </div>
+              <Select
+                name="status"
+                label="Статус"
+                options={[
+                  { value: 'pending', label: 'Очікує' },
+                  { value: 'approved', label: 'Погоджено' },
+                  { value: 'rejected', label: 'Відхилено' },
+                ]}
+              />
 
-          {values.targetType === 'page' ? (
-            <Input name="pageKey" label="Page key" required />
-          ) : (
-            <Input name="targetId" label="Target ID" required />
-          )}
+              <Select
+                name="targetType"
+                label="Тип привʼязки"
+                options={[
+                  { value: 'service', label: 'Послуга' },
+                  { value: 'article', label: 'Стаття' },
+                  { value: 'page', label: 'Сторінка' },
+                ]}
+              />
+            </div>
 
-          <div className="flex justify-end gap-2">
-            <Btn
-              type="button"
-              label="Скасувати"
-              uiVariant="ghost"
-              onClick={props.onClose}
-            />
+            {values.targetType === 'page' ? (
+              <Select
+                name="pageKey"
+                label="Сторінка"
+                required
+                options={targetOptions}
+              />
+            ) : (
+              <Select
+                name="targetId"
+                label={values.targetType === 'service' ? 'Послуга' : 'Стаття'}
+                required
+                options={targetOptions}
+              />
+            )}
 
-            <Btn
-              uiVariant="accent"
-              radius={12}
-              type="submit"
-              label={
-                props.submitLabel ??
-                (isEditMode ? 'Оновити відгук' : 'Додати відгук')
-              }
-              disabled={!isValid || isSubmitting}
-            />
-          </div>
-        </Form>
-      )}
+            <div className="flex justify-end gap-2">
+              <Btn
+                type="button"
+                label="Скасувати"
+                uiVariant="ghost"
+                onClick={props.onClose}
+              />
+
+              <Btn
+                uiVariant="accent"
+                radius={12}
+                type="submit"
+                label={
+                  props.submitLabel ??
+                  (isEditMode ? 'Оновити відгук' : 'Додати відгук')
+                }
+                disabled={!isValid || isSubmitting}
+              />
+            </div>
+          </Form>
+        );
+      }}
     </Formik>
   );
 };

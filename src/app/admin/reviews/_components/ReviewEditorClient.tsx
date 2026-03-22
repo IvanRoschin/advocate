@@ -7,17 +7,26 @@ import ReviewForm from '@/app/components/forms/ReviewForm';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 
-import type { CreateReviewRequestDTO } from '@/app/types';
+import type {
+  CreateReviewRequestDTO,
+  ReviewTargetOptionDto,
+} from '@/app/types';
+
+type BaseProps = {
+  serviceOptions: ReviewTargetOptionDto[];
+  articleOptions: ReviewTargetOptionDto[];
+  pageOptions: ReviewTargetOptionDto[];
+};
 
 type Props =
-  | {
+  | (BaseProps & {
       mode: 'create';
-    }
-  | {
+    })
+  | (BaseProps & {
       mode: 'edit';
       reviewId: string;
       initialValues: Partial<CreateReviewRequestDTO>;
-    };
+    });
 
 export default function ReviewEditorClient(props: Props) {
   const router = useRouter();
@@ -29,6 +38,9 @@ export default function ReviewEditorClient(props: Props) {
       {props.mode === 'create' ? (
         <ReviewForm
           mode="create"
+          serviceOptions={props.serviceOptions}
+          articleOptions={props.articleOptions}
+          pageOptions={props.pageOptions}
           onClose={backToList}
           onSubmit={async payload => {
             try {
@@ -51,6 +63,9 @@ export default function ReviewEditorClient(props: Props) {
           mode="edit"
           initialValues={props.initialValues}
           submitLabel="Оновити відгук"
+          serviceOptions={props.serviceOptions}
+          articleOptions={props.articleOptions}
+          pageOptions={props.pageOptions}
           onClose={backToList}
           onSubmit={async patch => {
             try {

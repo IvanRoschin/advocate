@@ -50,8 +50,12 @@ export const serviceService = {
     return dto;
   },
 
-  async getPublicList(limit = 30): Promise<ServiceListItemDto[]> {
+  async getPublicList(args?: {
+    limit?: number;
+  }): Promise<ServiceListItemDto[]> {
     await dbConnect();
+
+    const limit = args?.limit ?? 30;
 
     const rows = await serviceRepo.findPublicList(limit);
     return rows.map(mapServiceRowToListItem);

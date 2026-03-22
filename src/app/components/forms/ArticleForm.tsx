@@ -310,6 +310,7 @@ const ArticleForm = (props: Props) => {
               transition={{ delay: 0.15 }}
             >
               <ImageUploadCloudinary
+                fieldName="src"
                 setFieldValue={setFieldValue}
                 values={values.src}
                 error={typeof errors.src === 'string' ? errors.src : undefined}

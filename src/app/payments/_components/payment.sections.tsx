@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
+import Footer from '@/app/components/footer/Footer';
 import { PaymentSectionKey } from '@/app/resources/content/pages/payment.layout';
-import { Footer, Header } from '@/components';
-
+import { Header } from '@/components';
 import PaymentsAside from './paymentsAside';
 import PaymentsContent from './paymentsContent';
 
@@ -34,7 +34,11 @@ const PaymentOrderSummarySection: PaymentSectionComponent = () => (
 const PaymentMethodsSection: PaymentSectionComponent = () => null;
 const PaymentSecuritySection: PaymentSectionComponent = () => null;
 
-const PaymentFooterSection: PaymentSectionComponent = () => <Footer />;
+const PaymentFooterSection: PaymentSectionComponent = () => (
+  <section className="mt-16 lg:mt-20">
+    <Footer />
+  </section>
+);
 
 export const PAYMENT_SECTIONS: Record<
   PaymentSectionKey,
