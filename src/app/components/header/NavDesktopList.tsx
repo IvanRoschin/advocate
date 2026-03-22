@@ -12,12 +12,12 @@ import { isSelected, useNavItems } from './nav.shared';
 
 type NavDesktopListProps = {
   scope?: NavScope;
-  showLabelsFrom?: 'md' | 'lg';
+  showLabelsFrom?: 'md' | 'lg' | 'xl' | '2xl';
 };
 
 export const NavDesktopList = ({
   scope = 'public',
-  showLabelsFrom = 'md',
+  showLabelsFrom = 'xl',
 }: NavDesktopListProps) => {
   const items = useNavItems(scope);
   const pathname = usePathname() ?? '';
@@ -36,12 +36,21 @@ export const NavDesktopList = ({
     };
   }, []);
 
-  const labelClass =
-    showLabelsFrom === 'lg' ? 'hidden lg:inline' : 'hidden md:inline';
+  const labelClassMap: Record<
+    NonNullable<NavDesktopListProps['showLabelsFrom']>,
+    string
+  > = {
+    md: 'hidden md:inline',
+    lg: 'hidden lg:inline',
+    xl: 'hidden xl:inline',
+    '2xl': 'hidden 2xl:inline',
+  };
+
+  const labelClass = labelClassMap[showLabelsFrom];
 
   return (
-    <nav className="font-eukrainehead" aria-label={menuText.navAria}>
-      <ul className="flex h-10 items-center gap-1">
+    <nav className="font-eukrainehead min-w-0" aria-label={menuText.navAria}>
+      <ul className="flex h-10 min-w-0 items-center gap-1 whitespace-nowrap">
         {items.map(({ key, href, label, startsWith, Icon }) => {
           const active = isSelected({
             pathname,
@@ -51,18 +60,19 @@ export const NavDesktopList = ({
           });
 
           return (
-            <li key={key}>
+            <li key={key} className="shrink-0">
               <AppLink
                 href={href}
                 aria-current={active ? 'page' : undefined}
+                title={label}
                 className={cn(
-                  'desktop-nav-link flex h-9 items-center gap-2 rounded-xl px-3 text-sm leading-none font-medium transition',
+                  'desktop-nav-link flex h-9 items-center gap-1.5 rounded-xl px-2.5 text-sm leading-none font-medium transition',
                   active
                     ? 'desktop-nav-link-active shadow-sm'
                     : 'desktop-nav-link-inactive'
                 )}
               >
-                <Icon className="text-[18px]" aria-hidden />
+                <Icon className="shrink-0 text-base" aria-hidden />
                 <span className={labelClass}>{label}</span>
               </AppLink>
             </li>

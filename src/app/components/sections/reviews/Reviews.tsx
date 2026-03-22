@@ -1,11 +1,17 @@
-'use client';
-
+import { reviewService } from '@/app/lib/services/review.service';
 import { reviewsSection } from '@/app/resources';
 
 import ReviewCard from './ReviewCard';
 
-const Reviews = () => {
-  const { id, header, items } = reviewsSection;
+export default async function Reviews() {
+  const { id, header } = reviewsSection;
+
+  const reviews = await reviewService.getApprovedByTarget({
+    targetType: 'page',
+    pageKey: 'home',
+  });
+
+  const limitedReviews = reviews.slice(0, 4);
 
   return (
     <section id={id} className="bg-reviews-section py-20">
@@ -24,14 +30,18 @@ const Reviews = () => {
           <span className="bg-accent mt-4 h-8 w-px" />
         </header>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {items.map(review => (
-            <ReviewCard key={review.id} review={review} />
-          ))}
-        </div>
+        {limitedReviews.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {limitedReviews.map(review => (
+              <ReviewCard key={review._id} review={review} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-3xl border p-6 text-center">
+            Відгуки наразі відсутні.
+          </div>
+        )}
       </div>
     </section>
   );
-};
-
-export default Reviews;
+}

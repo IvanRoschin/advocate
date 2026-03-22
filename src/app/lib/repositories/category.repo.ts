@@ -1,4 +1,8 @@
-import { CreateCategoryRequestDTO, UpdateCategoryDTO } from '@/app/types';
+import {
+  CategoryResponseDTO,
+  CreateCategoryRequestDTO,
+  UpdateCategoryDTO,
+} from '@/app/types';
 import { Category } from '@/models';
 
 export const categoryRepo = {
@@ -30,5 +34,11 @@ export const categoryRepo = {
 
   delete(id: string) {
     return Category.findByIdAndDelete(id);
+  },
+  findPublicList(limit = 20): Promise<CategoryResponseDTO[]> {
+    return Category.find()
+      .sort({ publishedAt: -1, _id: -1 })
+      .limit(limit)
+      .lean<CategoryResponseDTO[]>();
   },
 };

@@ -350,8 +350,8 @@ const ServiceForm = (props: Props) => {
                 name="status"
                 label="Статус"
                 options={[
-                  { value: 'draft', label: 'Draft' },
-                  { value: 'published', label: 'Published' },
+                  { value: 'draft', label: 'Чернетка' },
+                  { value: 'published', label: 'Опубліковано' },
                 ]}
               />
 
@@ -369,7 +369,7 @@ const ServiceForm = (props: Props) => {
               transition={{ delay: 0.08 }}
             >
               <ImageUploadCloudinary
-                key={JSON.stringify(values.src ?? [])}
+                fieldName="src"
                 setFieldValue={setFieldValue}
                 values={values.src}
                 error={typeof errors.src === 'string' ? errors.src : undefined}
@@ -391,7 +391,7 @@ const ServiceForm = (props: Props) => {
                 />
 
                 <ImageUploadCloudinary
-                  key={JSON.stringify(values.heroSrc ?? [])}
+                  fieldName="heroSrc"
                   setFieldValue={setFieldValue}
                   values={values.heroSrc}
                   uploadPreset="Services"
@@ -444,7 +444,6 @@ const ServiceForm = (props: Props) => {
                   label="CTA description"
                   rows={4}
                 />
-
                 <Input name="ctaButtonLabel" label="CTA button label" />
               </div>
             </div>

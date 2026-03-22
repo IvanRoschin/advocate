@@ -1,12 +1,14 @@
 import type { ReactNode } from 'react';
 
 import { Breadcrumbs, NextImage, ReviewsSection } from '@/app/components';
+
+import ServiceCtaOrderButton from './ServiceCtaOrderButton';
+
 import type {
   ReviewResponseDTO,
   ServicePublicPageDto,
   ServiceSectionKey,
 } from '@/app/types';
-
 export type ServiceSectionProps = {
   service: ServicePublicPageDto;
   reviews?: ReviewResponseDTO[];
@@ -174,12 +176,7 @@ const ServiceCtaSection: ServiceSectionComponent = ({ service }) => {
           <p className="text-app mt-4 text-base leading-7">{cta.description}</p>
 
           <div className="mt-6">
-            <button
-              type="button"
-              className="bg-accent text-accent-foreground rounded-xl px-5 py-3 text-sm font-semibold"
-            >
-              {cta.buttonLabel}
-            </button>
+            <ServiceCtaOrderButton label={cta.buttonLabel} />
           </div>
         </div>
       </div>

@@ -1,6 +1,5 @@
 import { servicesSection } from '@/app/resources';
 import { iconLibrary } from '@/app/resources/icons';
-
 import ServiceCard from './ServiceCard';
 
 const Services = () => {
