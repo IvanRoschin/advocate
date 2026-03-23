@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 import { NextImage } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
+import { getServiceImageUrl } from '@/app/lib';
 import type { ServicesSectionKey } from '@/app/resources/content/pages/services.layout';
 import type { ServiceListItemDto } from '@/app/types';
 import { Header } from '@/components';
@@ -63,7 +64,8 @@ const ServicesListSection: ServicesSectionComponent = ({ services }) => {
               {service.src ? (
                 <div className="relative aspect-16/10 w-full overflow-hidden">
                   <NextImage
-                    src={service.src}
+                    useSkeleton
+                    src={getServiceImageUrl(service.src, 'card')}
                     alt={service.title}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"

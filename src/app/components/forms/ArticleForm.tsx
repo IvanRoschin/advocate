@@ -266,8 +266,8 @@ const ArticleForm = (props: Props) => {
                 name="status"
                 label="Статус"
                 options={[
-                  { value: 'draft', label: 'Draft' },
-                  { value: 'published', label: 'Published' },
+                  { value: 'draft', label: 'Чернета' },
+                  { value: 'published', label: 'Опубліковано' },
                 ]}
               />
 
@@ -314,7 +314,7 @@ const ArticleForm = (props: Props) => {
                 setFieldValue={setFieldValue}
                 values={values.src}
                 error={typeof errors.src === 'string' ? errors.src : undefined}
-                uploadPreset="Articles"
+                uploadPreset="article_cover"
                 multiple
               />
             </motion.div>

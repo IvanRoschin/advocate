@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import { Breadcrumbs, NextImage, ReviewsSection } from '@/app/components';
 import { formatDate } from '@/app/helpers';
+import { getArticleImageUrl } from '@/app/lib';
 import { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
 import { Badge } from '@/components/ui/badge';
 
@@ -43,7 +44,9 @@ const BlogArticleHeroSection: BlogArticleSectionComponent = ({
   minutes,
   toc,
 }) => {
-  const cover = article.src?.[0];
+  const coverSrc = article.src?.[0];
+
+  const cover = coverSrc ? getArticleImageUrl(coverSrc, 'hero') : undefined;
 
   return (
     <section className="container py-10 lg:py-14">
@@ -98,14 +101,7 @@ const BlogArticleHeroSection: BlogArticleSectionComponent = ({
 
           {cover ? (
             <div className="bg-muted relative mt-4 aspect-16/7 w-full overflow-hidden rounded-2xl">
-              <NextImage
-                useSkeleton
-                src={cover}
-                alt={article.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 900px"
-              />
+              <NextImage useSkeleton src={cover} alt={article.title} fill />
             </div>
           ) : null}
         </header>
