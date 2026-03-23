@@ -373,8 +373,8 @@ const ServiceForm = (props: Props) => {
                 setFieldValue={setFieldValue}
                 values={values.src}
                 error={typeof errors.src === 'string' ? errors.src : undefined}
-                uploadPreset="Services"
-                multiple
+                uploadPreset="service_cover"
+                multiple={false}
               />
             </motion.div>
 
@@ -394,8 +394,8 @@ const ServiceForm = (props: Props) => {
                   fieldName="heroSrc"
                   setFieldValue={setFieldValue}
                   values={values.heroSrc}
-                  uploadPreset="Services"
-                  multiple
+                  uploadPreset="service_hero"
+                  multiple={false}
                 />
               </div>
             </div>
