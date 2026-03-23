@@ -1,7 +1,8 @@
 import { Calendar, Tag } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 
+import { NextImage } from '@/app/components';
+import { getArticleImageUrl } from '@/app/lib';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -58,12 +59,11 @@ export function ArticleListPreview({
                     <div className="bg-muted border-border relative ml-4 h-full w-full overflow-hidden rounded-md border">
                       {' '}
                       {a.src ? (
-                        <Image
-                          src={a.src}
+                        <NextImage
+                          useSkeleton
+                          src={getArticleImageUrl(a.src, 'card')}
                           alt={a.title}
                           fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                          sizes="(max-width: 640px) 100vw, 224px"
                           priority={false}
                         />
                       ) : (
