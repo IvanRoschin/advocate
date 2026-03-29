@@ -1,5 +1,6 @@
 export { default as Article } from './Article';
 export type { ArticleDocument, ArticleInput } from './Article';
+export { default as Client } from './Client';
 export { default as Lead } from './Lead';
 export type { LeadDocument, LeadInput } from './Lead';
 export { default as Review } from './Review';

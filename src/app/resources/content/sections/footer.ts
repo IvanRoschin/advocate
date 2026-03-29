@@ -24,7 +24,21 @@ export const footerSection = {
       items: [
         { id: 'about', title: 'Про мене', route: 'about' as const },
         { id: 'practices', title: 'Послуги', route: 'practices' as const },
-        { id: 'contact', title: 'Контакти', route: 'contact' as const },
+        {
+          id: 'contact',
+          title: 'Контакти',
+          route: 'contact' as const,
+        },
+        {
+          id: 'privacy-policy',
+          title: 'Політика конфіденційності',
+          route: 'privacyPolicy' as const,
+        },
+        {
+          id: 'offer',
+          title: 'Публічний договір',
+          route: 'offer' as const,
+        },
       ] satisfies FooterQuickLink[],
     },
     contacts: {

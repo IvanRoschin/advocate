@@ -1,4 +1,4 @@
-import type { Blog, Newsletter, Person, Social } from '@/types';
+import type { Blog, ContactContent, Newsletter, Person, Social } from '@/types';
 
 type PaymentDetail = {
   label: string;
@@ -206,6 +206,59 @@ const payment: PaymentContent = {
   },
 };
 
+const contact: ContactContent = {
+  path: '/contact',
+  label: 'Контакти',
+  title: `Контакти — ${person.role} ${person.name}`,
+  description:
+    'Контактна інформація, консультації, запис на прийом та способи зв’язку для отримання юридичної допомоги.',
+  eyebrow: 'Контакти',
+  heading: 'Контакти та юридична консультація',
+  lead: 'Зв’яжіться зручним для вас способом для консультації, правового супроводу або запису на прийом.',
+
+  phone: phone1,
+  phonePretty: phone1Pretty,
+  phoneSecondary: phone2,
+  phoneSecondaryPretty: phone2Pretty,
+
+  email: person.email,
+  address: 'м. Київ, вул. Антоновича, 47',
+  city: 'Київ',
+  region: 'Київська область',
+  postalCode: '03150',
+  country: 'UA',
+
+  latitude: 50.4501,
+  longitude: 30.5234,
+
+  workHours: [
+    { day: 'Понеділок — П’ятниця', hours: '09:00 — 18:00' },
+    { day: 'Субота', hours: 'За попереднім записом' },
+    { day: 'Неділя', hours: 'Вихідний' },
+  ],
+
+  mapEmbedUrl:
+    'https://www.google.com/maps/d/embed?mid=1jxiKyVm9tBik41i5K1Ecu3XxK3i3yBw&ehbc=2E312F',
+
+  seo: {
+    title: 'Контакти',
+    description:
+      'Контактна інформація, консультації, запис на прийом та способи зв’язку для отримання юридичної допомоги.',
+    canonical: '/contact',
+    openGraph: {
+      title: 'Контакти',
+      description:
+        'Зв’яжіться для отримання юридичної консультації та правової допомоги.',
+      url: '/contact',
+      type: 'website',
+    },
+  },
+
+  structuredData: {
+    organizationName: 'Advocate Ivan Roschin',
+    siteUrl: 'https://roschin.com.ua',
+  },
+};
 // const about: About = {
 //   path: '/about',
 //   label: 'Про мене',
@@ -481,5 +534,15 @@ const payment: PaymentContent = {
 //   ],
 // };
 
-export { blog, brand, home, logo, newsletter, payment, person, social };
+export {
+  blog,
+  brand,
+  contact,
+  home,
+  logo,
+  newsletter,
+  payment,
+  person,
+  social,
+};
 export type { BlogContent, PaymentContent, PaymentDetail };

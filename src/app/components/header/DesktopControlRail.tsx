@@ -1,7 +1,7 @@
 'use client';
 
 import { NavScope } from '@/app/config/nav';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/lib/utils';
 
 import { NavDesktopList } from './NavDesktopList';
 import { ThemeToggle } from './ThemeToggle';

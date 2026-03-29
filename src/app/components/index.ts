@@ -1,7 +1,5 @@
 export { default as Header } from '@/app/components/header/Header';
 
-export { default as Header2 } from '@/app/components/header/Header';
-
 export { default as Logo } from '@/app/components/logo/Logo';
 
 export { default as Socials } from '@/app/components/socials/Socials';
