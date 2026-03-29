@@ -11,6 +11,8 @@ export const routes = {
     blog: '/blog',
     contact: '/contact',
     notFound: '/not-found',
+    privacyPolicy: '/privacy-policy',
+    offer: '/offer',
 
     auth: {
       verifyEmail: '/auth/verify-email',

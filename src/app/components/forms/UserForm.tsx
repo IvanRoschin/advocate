@@ -38,7 +38,7 @@ const UserForm = ({
           email: initialValues?.email ?? '',
           password: initialValues?.password ?? '',
           phone: initialValues?.phone ?? '+380',
-          role: initialValues?.role ?? UserRole.CLIENT,
+          role: initialValues?.role ?? UserRole.ADMIN,
           isActive: initialValues?.isActive ?? true,
         }}
         validationSchema={createUserSchema}

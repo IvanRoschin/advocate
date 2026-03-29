@@ -222,10 +222,10 @@ const contact: ContactContent = {
   phoneSecondaryPretty: phone2Pretty,
 
   email: person.email,
-  address: 'м. Київ, вул. Прикладна, 10',
+  address: 'м. Київ, вул. Антоновича, 47',
   city: 'Київ',
   region: 'Київська область',
-  postalCode: '01001',
+  postalCode: '03150',
   country: 'UA',
 
   latitude: 50.4501,
@@ -237,7 +237,8 @@ const contact: ContactContent = {
     { day: 'Неділя', hours: 'Вихідний' },
   ],
 
-  mapEmbedUrl: '',
+  mapEmbedUrl:
+    'https://www.google.com/maps/d/embed?mid=1jxiKyVm9tBik41i5K1Ecu3XxK3i3yBw&ehbc=2E312F',
 
   seo: {
     title: 'Контакти',

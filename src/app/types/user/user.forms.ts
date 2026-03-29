@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 
+import type { CreateUserRequestDTO } from './user.dto';
 import { UserRole } from './user.enums';
-
 const nameRegex = /^[а-яА-ЯіІїЇєЄґҐ']+$/;
 const emailRegex =
   /^(?=.{1,63}$)(?=.{2,}@)[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -36,29 +36,28 @@ export const baseUserSchema = {
     .min(6)
     .optional(),
 
-  role: Yup.mixed<UserRole>().oneOf(Object.values(UserRole)),
+  role: Yup.mixed<UserRole>().oneOf(Object.values(UserRole)).optional(),
 
-  isActive: Yup.boolean(),
+  isActive: Yup.boolean().optional(),
 
   googleId: Yup.string().transform(emptyToUndefined).optional(),
 };
 
-export const createUserSchema = Yup.object({
-  name: baseUserSchema.name.required("Обов'язкове поле"),
+export const createUserSchema: Yup.ObjectSchema<CreateUserRequestDTO> =
+  Yup.object({
+    name: baseUserSchema.name.required("Обов'язкове поле"),
 
-  email: baseUserSchema.email.required("Обов'язкове поле"),
+    email: baseUserSchema.email.required("Обов'язкове поле"),
 
-  password: baseUserSchema.password.optional(),
+    password: baseUserSchema.password.optional(),
 
-  phone: baseUserSchema.phone,
-  role: baseUserSchema.role.default(UserRole.CLIENT),
-  isActive: baseUserSchema.isActive.default(false),
-  googleId: baseUserSchema.googleId,
-});
+    phone: baseUserSchema.phone,
+    role: baseUserSchema.role.default(UserRole.ADMIN),
+    isActive: baseUserSchema.isActive.default(false),
+    googleId: baseUserSchema.googleId,
+  }).noUnknown(true);
 
 export type CreateUserFormValues = Yup.InferType<typeof createUserSchema>;
-
-/* -------------------------------- Update (PATCH) -------------------------------- */
 
 export const updateUserSchema = Yup.object({
   name: baseUserSchema.name.optional(),
@@ -68,8 +67,8 @@ export const updateUserSchema = Yup.object({
 
   phone: baseUserSchema.phone.optional(),
   role: baseUserSchema.role.optional(),
-  isActive: baseUserSchema.isActive,
-  googleId: baseUserSchema.googleId,
+  isActive: baseUserSchema.isActive.optional(),
+  googleId: baseUserSchema.googleId.optional(),
 })
   .noUnknown(true)
   .test(

@@ -51,6 +51,7 @@ const adminDefaultValues: AdminLeadFormValues = {
   notes: '',
   clientId: null,
   assignedToUserId: null,
+  convertedToClient: false,
 };
 
 const fieldMotion = (delay: number) => ({

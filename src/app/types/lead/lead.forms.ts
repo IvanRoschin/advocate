@@ -34,6 +34,7 @@ export type AdminLeadFormValues = {
   notes: string;
   clientId: string | null;
   assignedToUserId: string | null;
+  convertedToClient: boolean;
 };
 
 export type LeadAdminFormSubmitValues = Pick<
