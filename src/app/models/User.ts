@@ -14,7 +14,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: Object.values(UserRole),
-      default: UserRole.CLIENT,
+      default: UserRole.ADMIN,
     },
     googleId: { type: String, unique: true, sparse: true },
     isActive: { type: Boolean, default: false },

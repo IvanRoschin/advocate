@@ -18,6 +18,8 @@ export type EmailTemplatePropsMap = {
     name: string;
     email: string;
     phone: string;
+    message: string;
+    source: string;
   };
 
   [EmailTemplateType.SUBSCRIBER_CLIENT]: {

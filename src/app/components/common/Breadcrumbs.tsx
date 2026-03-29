@@ -18,6 +18,9 @@ const customNames: Record<string, string> = {
   testimonials: 'Відгуки',
   slider: 'Слайди',
   search: 'Пошук',
+  leads: 'Ліди',
+  clients: 'Клієнти',
+  articles: 'Статті',
   'suprovid-pry-rozluchenni': 'Супровід при розлученні',
 };
 

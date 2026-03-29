@@ -29,15 +29,26 @@ export const routes = {
   },
 
   api: {
+    admin: {
+      articles: '/api/admin/articles',
+      categories: '/api/admin/categories',
+      dashboard: '/api/admin/dashboard',
+      leads: '/api/admin/leads',
+      reviews: '/api/admin/reviews',
+      subscribe: '/api/admin/subscribe',
+      users: '/api/admin/users',
+    },
     v1: {
-      leads: '/api/v1/leads',
-      subscribe: '/api/v1/subscribe',
-      categories: '/api/v1/categories',
       articles: '/api/v1/articles',
-      comments: '/api/v1/comments',
+      categories: '/api/v1/categories',
       cloudinary: {
         sign: '/api/v1/cloudinary/sign',
       },
+      leads: '/api/v1/leads',
+      reviews: '/api/v1/reviews',
+      services: (slug: string) => `/api/v1/services/${slug}`,
+      subscribe: '/api/v1/subscribe',
+      comments: '/api/v1/comments',
     },
   },
 

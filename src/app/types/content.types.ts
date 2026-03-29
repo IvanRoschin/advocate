@@ -242,3 +242,52 @@ export interface Gallery extends BasePageConfig {
     orientation: string;
   }>;
 }
+
+export type ContactContent = {
+  path: string;
+  label: string;
+  title: string;
+  description: string;
+  eyebrow: string;
+  heading: string;
+  lead: string;
+
+  phone: string;
+  phonePretty: string;
+  phoneSecondary?: string;
+  phoneSecondaryPretty?: string;
+
+  email: string;
+  address: string;
+  city: string;
+  region?: string;
+  postalCode?: string;
+  country?: string;
+
+  latitude?: number;
+  longitude?: number;
+
+  workHours: Array<{
+    day: string;
+    hours: string;
+  }>;
+
+  mapEmbedUrl?: string;
+
+  seo: {
+    title: string;
+    description: string;
+    canonical: string;
+    openGraph: {
+      title: string;
+      description: string;
+      url: string;
+      type: 'website';
+    };
+  };
+
+  structuredData: {
+    organizationName: string;
+    siteUrl: string;
+  };
+};
