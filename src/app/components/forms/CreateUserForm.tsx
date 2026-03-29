@@ -19,7 +19,7 @@ export default function CreateUserForm({ onSubmit, onClose }: Props) {
             email: '',
             password: '',
             phone: '',
-            role: UserRole.CLIENT,
+            role: UserRole.ADMIN,
             isActive: true,
           }}
           validationSchema={createUserSchema}
@@ -35,7 +35,7 @@ export default function CreateUserForm({ onSubmit, onClose }: Props) {
               <input name="phone" placeholder="+380..." />
 
               <select name="role">
-                <option value={UserRole.CLIENT}>Client</option>
+                <option value={UserRole.MANAGER}>Manager</option>
                 <option value={UserRole.ADMIN}>Admin</option>
               </select>
 

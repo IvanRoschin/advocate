@@ -105,6 +105,13 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
     startsWith: true,
   },
   {
+    key: 'Клієнти',
+    href: routes.admin.crm.clients,
+    label: 'Клієнти',
+    Icon: iconLibrary.clients,
+    startsWith: true,
+  },
+  {
     key: 'payments',
     href: routes.admin.finance.payments,
     label: 'Оплати',

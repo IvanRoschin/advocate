@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/app/lib/utils';
 import { AppLink } from '@/components';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,7 +9,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
 
 import { isSelected, useNavItems, useSelectedPathname } from './nav.shared';
 

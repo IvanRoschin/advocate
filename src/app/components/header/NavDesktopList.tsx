@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { NavScope } from '@/app/config/nav';
+import { cn } from '@/app/lib/utils';
 import { AppLink } from '@/components';
-import { cn } from '@/lib/utils';
 import { menuText } from '@/resources';
 
 import { isSelected, useNavItems } from './nav.shared';

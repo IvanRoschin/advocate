@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 
 import { NavScope } from '@/app/config/nav';
 import { routes } from '@/app/config/routes';
+import { cn } from '@/app/lib/utils';
 import { useThemeStore } from '@/app/store/theme.store';
 import { Btn, Logo } from '@/components';
-import { cn } from '@/lib/utils';
 
 import { DesktopControlRail } from './DesktopControlRail';
 import { TimeDisplay } from './TimeDisplay';

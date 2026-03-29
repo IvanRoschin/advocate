@@ -1,6 +1,5 @@
-import { Fragment } from 'react';
-
 import type { ReactNode } from 'react';
+import { Fragment } from 'react';
 
 type LayoutSectionNode<TSectionKey extends string> = {
   type: 'section';
