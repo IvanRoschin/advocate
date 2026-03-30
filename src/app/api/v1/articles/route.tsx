@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
 
-import { Article } from '@/models';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { dbConnect } from '@/app/lib/server/mongoose';
+import { articleService } from '@/app/lib/services';
 
 export async function GET() {
   try {
     await dbConnect();
 
-    const articles = await Article.find().sort({ createdAt: -1 }).lean();
+    const articles = await articleService.getPublicList();
 
     return NextResponse.json({ ok: true, data: articles });
   } catch (err) {

@@ -11,8 +11,9 @@ import { useRecaptchaWidget } from '@/app/hooks/useRecaptchaWidget';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { ApiResponse } from '@/app/lib/server/ApiError';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
+import { useThemeStore } from '@/app/store/theme.store';
 import { adminLeadSubmitSchema, leadFormSchema } from '@/app/types';
-import { Input, Switcher, Textarea } from '@/components/index';
+import { Input, Switcher, Textarea } from '@/components';
 
 import type {
   AdminLeadFormValues,
@@ -20,7 +21,6 @@ import type {
   LeadResponseDTO,
   PublicLeadFormValues,
 } from '@/app/types';
-
 interface Props {
   onSubmit?: (values: LeadAdminFormSubmitValues) => Promise<void> | void;
   onClose?: () => void;
@@ -61,12 +61,21 @@ const fieldMotion = (delay: number) => ({
 });
 
 const cardClassName =
-  'border-border bg-card/80 supports-[backdrop-filter]:bg-card/70 rounded-2xl border shadow-sm backdrop-blur';
+  'border-border rounded-2xl border bg-transparent shadow-sm dark:bg-card';
+
 const sectionTitleClassName =
-  'text-foreground text-sm font-semibold tracking-wide';
-const helperTextClassName = 'text-muted-foreground text-xs leading-5';
+  'text-primary text-sm font-semibold tracking-wide';
+
+const helperTextClassName = 'text-secondary text-xs leading-5';
+
 const selectClassName =
-  'border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-accent/30 rounded-xl border px-3 py-2.5 transition outline-none focus:ring-2';
+  'border-border text-primary placeholder:text-secondary focus:ring-ring/30 rounded-xl border bg-transparent px-3 py-2.5 outline-none transition focus:ring-2 dark:bg-card';
+
+const panelClassName =
+  'border-border rounded-2xl border bg-transparent p-4 dark:bg-card';
+
+const footerClassName =
+  'border-border sticky bottom-0 mt-4 flex flex-wrap items-center justify-end gap-2 border-t bg-transparent pt-4';
 
 export default function LeadForm({
   onSubmit,
@@ -98,11 +107,13 @@ export default function LeadForm({
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
 
+  const theme = useThemeStore(state => state.theme);
+
   const { containerRef, captchaToken, isRendered, resetCaptcha } =
     useRecaptchaWidget({
       siteKey,
+      theme: theme === 'dark' ? 'dark' : 'light',
     });
-
   const validationSchema = isAdminMode ? adminLeadSubmitSchema : leadFormSchema;
 
   const resolvedInitialValues: PublicLeadFormValues | AdminLeadFormValues =
@@ -190,13 +201,14 @@ export default function LeadForm({
   };
 
   return (
-    <div className="text-foreground w-full">
+    <div className="text-primary w-full">
       {(isEditMode || isAdminMode) && (
         <div className="mb-4">
-          <h2 className="text-foreground text-xl font-semibold">
+          <h2 className="text-primary text-xl font-semibold">
             {isEditMode ? 'Редагувати лід' : 'Додати нового ліда'}
           </h2>
-          <p className="text-muted-foreground mt-1 text-sm">
+
+          <p className="text-secondary mt-1 text-sm">
             Заповніть основні дані та, за потреби, виконайте конвертацію в
             клієнта.
           </p>
@@ -243,12 +255,6 @@ export default function LeadForm({
           const publicCaptchaBlocked =
             isPublicMode && shouldUseCaptcha && !isRendered;
 
-          /**
-           * ВАЖНО:
-           * Не блокируем admin submit по !isValid.
-           * Иначе форма может "залипнуть" disabled из-за скрытого/несовпадающего schema-поля.
-           * Валидация всё равно отработает внутри Formik при submit.
-           */
           const isSubmitDisabled =
             isSubmitting || isConverting || publicCaptchaBlocked;
 
@@ -268,6 +274,7 @@ export default function LeadForm({
                   >
                     <div className="mb-4">
                       <h3 className={sectionTitleClassName}>Контактні дані</h3>
+
                       <p className={`${helperTextClassName} mt-1`}>
                         Основна інформація для звʼязку з лідом.
                       </p>
@@ -277,8 +284,13 @@ export default function LeadForm({
                       <Input name="name" label="Імʼя" required />
                       <Input name="email" label="Email" type="email" required />
                       <Input name="phone" label="Телефон" type="tel" required />
+
                       {shouldShowSource && (
                         <label className="flex flex-col gap-2">
+                          <span className="text-secondary text-sm font-medium">
+                            Джерело
+                          </span>
+
                           <select
                             name="source"
                             value={values.source}
@@ -314,6 +326,7 @@ export default function LeadForm({
                         <h3 className={sectionTitleClassName}>
                           Адміністрування
                         </h3>
+
                         <p className={`${helperTextClassName} mt-1`}>
                           Статус ліда, внутрішні нотатки та конвертація.
                         </p>
@@ -321,9 +334,10 @@ export default function LeadForm({
 
                       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                         <label className="flex flex-col gap-2">
-                          <span className="text-foreground text-sm font-medium">
+                          <span className="text-secondary text-sm font-medium">
                             Статус
                           </span>
+
                           <select
                             name="status"
                             value={'status' in values ? values.status : 'new'}
@@ -338,12 +352,13 @@ export default function LeadForm({
                         </label>
 
                         {isEditMode ? (
-                          <div className="border-border bg-background/70 rounded-2xl border p-4">
+                          <div className={panelClassName}>
                             <div className="mb-3">
-                              <div className="text-foreground text-sm font-medium">
+                              <div className="text-primary text-sm font-medium">
                                 Конвертація в клієнта
                               </div>
-                              <div className="text-muted-foreground mt-1 text-xs leading-5">
+
+                              <div className="text-secondary mt-1 text-xs leading-5">
                                 Викликає окрему дію через{' '}
                                 <code className="bg-muted rounded px-1 py-0.5 text-[11px]">
                                   /api/admin/leads/[id]/convert
@@ -374,7 +389,7 @@ export default function LeadForm({
                             />
 
                             {initialValues?.clientId ? (
-                              <div className="text-muted-foreground mt-3 text-xs break-all">
+                              <div className="text-secondary mt-3 text-xs break-all">
                                 Client ID: {initialValues.clientId}
                               </div>
                             ) : null}
@@ -407,7 +422,8 @@ export default function LeadForm({
                           }
                           className="accent-accent mt-1 h-4 w-4 rounded"
                         />
-                        <span className="text-foreground text-sm leading-6">
+
+                        <span className="text-secondary text-sm leading-6">
                           Даю згоду на обробку персональних даних
                         </span>
                       </label>
@@ -435,7 +451,7 @@ export default function LeadForm({
                       </div>
 
                       {!isRendered ? (
-                        <p className="text-muted-foreground mt-3 text-center text-sm">
+                        <p className="text-secondary mt-3 text-center text-sm">
                           Завантаження перевірки безпеки...
                         </p>
                       ) : null}
@@ -443,7 +459,7 @@ export default function LeadForm({
                   )}
 
                   {showDebugHint && (
-                    <div className="border-border bg-muted/40 text-muted-foreground rounded-2xl border px-4 py-3 text-sm">
+                    <div className="border-border text-secondary bg-muted/40 rounded-2xl border px-4 py-3 text-sm">
                       Форма не проходить валідацію. Найімовірніше, в
                       <code className="bg-muted mx-1 rounded px-1 py-0.5 text-[11px]">
                         adminLeadFormSchema
@@ -455,7 +471,7 @@ export default function LeadForm({
                 </div>
               </div>
 
-              <div className="border-border bg-background/95 supports-backdrop-filter:bg-background/80 sticky bottom-0 mt-4 flex flex-wrap items-center justify-end gap-2 border-t pt-4 backdrop-blur">
+              <div className={footerClassName}>
                 {onClose && (
                   <Btn
                     type="button"

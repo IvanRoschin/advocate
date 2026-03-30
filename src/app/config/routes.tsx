@@ -5,10 +5,10 @@ export const routes = {
     home: '/',
     about: '/#about',
     practices: '/#practices',
-    services: '/services',
     order: '/#order',
-    payments: '/payments',
+    services: '/services',
     blog: '/blog',
+    payments: '/payments',
     contact: '/contact',
     notFound: '/not-found',
     privacyPolicy: '/privacy-policy',
@@ -75,8 +75,9 @@ export const routes = {
     },
 
     ui: {
-      testimonials: '/admin/testimonials',
+      reviews: '/admin/reviews',
       slides: '/admin/slides',
+      pageSettings: '/admin/page-settings/article',
     },
   },
 

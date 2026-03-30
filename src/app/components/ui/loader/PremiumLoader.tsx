@@ -65,12 +65,12 @@ export function PremiumLoader() {
               transition={{ delay: 0.12 }}
             >
               <motion.div
-                className="bg-foreground h-full w-full origin-left"
-                animate={{ scaleX: [0.1, 1, 0.1] }}
+                className="bg-foreground h-full w-24 rounded-full"
+                animate={{ x: ['-100%', '200%'] }}
                 transition={{
                   repeat: Infinity,
-                  duration: 1.3,
-                  ease: 'easeInOut',
+                  duration: 1.2,
+                  ease: 'linear',
                 }}
               />
             </motion.div>

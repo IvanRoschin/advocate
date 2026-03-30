@@ -24,7 +24,6 @@ const ArticleSchema = new Schema(
     subtitle: { type: String, trim: true },
 
     summary: { type: String, required: true, maxlength: 500 },
-
     content: { type: String, required: true },
 
     authorId: {
@@ -41,11 +40,16 @@ const ArticleSchema = new Schema(
       index: true,
     },
 
-    tags: { type: [String], default: [], index: true },
+    tags: {
+      type: [String],
+      default: [],
+      index: true,
+    },
 
     src: {
       type: [String],
       required: true,
+      default: [],
     },
 
     publishedAt: { type: Date, index: true },
@@ -63,16 +67,10 @@ const ArticleSchema = new Schema(
   }
 );
 
-// Листинг опубликованных
 ArticleSchema.index({ status: 1, publishedAt: -1 });
-
-// По категории
 ArticleSchema.index({ categoryId: 1, publishedAt: -1 });
-
-// По автору
 ArticleSchema.index({ authorId: 1, createdAt: -1 });
 
-// Простой full-text
 ArticleSchema.index(
   { title: 'text', summary: 'text', content: 'text' },
   {
@@ -81,6 +79,7 @@ ArticleSchema.index(
     language_override: '__lang',
   }
 );
+
 ArticleSchema.virtual('isPublished').get(function () {
   return this.status === 'published' && !!this.publishedAt;
 });

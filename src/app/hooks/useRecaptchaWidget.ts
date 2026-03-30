@@ -2,8 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+type RecaptchaTheme = 'light' | 'dark';
+
 type GrecaptchaRenderParams = {
   sitekey: string;
+  theme?: RecaptchaTheme;
   callback: (token: string) => void;
   'expired-callback'?: () => void;
   'error-callback'?: () => void;
@@ -45,6 +48,7 @@ function getGrecaptcha(): GrecaptchaApi | null {
 
 type UseRecaptchaWidgetOptions = {
   siteKey?: string;
+  theme?: RecaptchaTheme;
 };
 
 type UseRecaptchaWidgetResult = {
@@ -56,6 +60,7 @@ type UseRecaptchaWidgetResult = {
 
 export function useRecaptchaWidget({
   siteKey,
+  theme = 'light',
 }: UseRecaptchaWidgetOptions): UseRecaptchaWidgetResult {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<number | null>(null);
@@ -82,6 +87,10 @@ export function useRecaptchaWidget({
     if (!containerRef.current) return;
 
     let cancelled = false;
+    let frameId: number | null = null;
+
+    widgetIdRef.current = null;
+    containerRef.current.innerHTML = '';
 
     const tryRender = () => {
       if (cancelled) return;
@@ -91,8 +100,13 @@ export function useRecaptchaWidget({
       const grecaptcha = getGrecaptcha();
       if (!grecaptcha) return;
 
-      widgetIdRef.current = grecaptcha.render(containerRef.current, {
+      const mountNode = document.createElement('div');
+      containerRef.current.innerHTML = '';
+      containerRef.current.appendChild(mountNode);
+
+      widgetIdRef.current = grecaptcha.render(mountNode, {
         sitekey: siteKey,
+        theme,
         callback: (token: string) => {
           if (!cancelled) {
             setCaptchaToken(token);
@@ -110,30 +124,33 @@ export function useRecaptchaWidget({
         },
       });
 
-      setIsRendered(true);
+      if (!cancelled) {
+        setIsRendered(true);
+      }
     };
 
-    tryRender();
-
-    if (widgetIdRef.current !== null) {
-      return () => {
-        cancelled = true;
-      };
-    }
+    frameId = window.requestAnimationFrame(() => {
+      tryRender();
+    });
 
     const intervalId = window.setInterval(() => {
-      tryRender();
-
       if (widgetIdRef.current !== null) {
         window.clearInterval(intervalId);
+        return;
       }
+
+      tryRender();
     }, 300);
 
     return () => {
       cancelled = true;
       window.clearInterval(intervalId);
+
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
     };
-  }, [siteKey]);
+  }, [siteKey, theme]);
 
   return {
     containerRef,

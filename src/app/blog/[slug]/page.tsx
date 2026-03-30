@@ -6,15 +6,15 @@ import { baseUrl } from '@/app/config/routes';
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
 import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import { articleService } from '@/app/lib/services/article.service';
+import { pageSettingsService } from '@/app/lib/services/page-settings.service';
 import { reviewService } from '@/app/lib/services/review.service';
-import { articleLayout } from '@/app/resources/content/pages/article.layout';
+import type { ArticleSectionKey } from '@/app/types';
 import { parseArticleContent } from '@/lib/toc/parseArticleContent';
 import {
   BLOG_ARTICLE_SECTIONS,
   BlogArticleSectionProps,
 } from './_components/article.sections';
 import { estimateReadTimeFromHtml } from './_components/readTime';
-
 type BlogArticlePageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -105,16 +105,16 @@ export default async function BlogArticlePage({
     reviewForm: <ServiceReviewForm serviceId={article.id} />,
   };
 
+  const layout = await pageSettingsService.getArticleLayout();
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-
       <main className="bg-background text-foreground min-h-screen">
-        {renderLayout({
-          layout: articleLayout,
+        {renderLayout<ArticleSectionKey, BlogArticleSectionProps>({
+          layout,
           sections: BLOG_ARTICLE_SECTIONS,
           sectionProps,
         })}
