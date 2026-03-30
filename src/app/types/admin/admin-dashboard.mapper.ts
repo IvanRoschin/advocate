@@ -12,6 +12,16 @@ export const mapAdminDashboardToResponse = (
 ): AdminDashboardResponseDTO => {
   const stats: AdminDashboardStatDTO[] = [
     {
+      key: 'leads',
+      title: 'Ліди',
+      value: counters.leads,
+      formattedValue: formatCount(counters.leads),
+      icon: 'leads',
+      color: 'bg-pink-500',
+      trend: 55,
+      href: '/admin/leads',
+    },
+    {
       key: 'clients',
       title: 'Клієнти',
       value: counters.clients,
@@ -62,16 +72,6 @@ export const mapAdminDashboardToResponse = (
       href: '/admin/categories',
     },
     {
-      key: 'leads',
-      title: 'Ліди',
-      value: counters.leads,
-      formattedValue: formatCount(counters.leads),
-      icon: 'leads',
-      color: 'bg-pink-500',
-      trend: 55,
-      href: '/admin/leads',
-    },
-    {
       key: 'reviews',
       title: 'Відгуки',
       value: counters.reviews,
@@ -80,6 +80,16 @@ export const mapAdminDashboardToResponse = (
       color: 'bg-purple-500',
       trend: 55,
       href: '/admin/reviews',
+    },
+    {
+      key: 'pageSettings',
+      title: 'Налаштування сторінок',
+      value: counters.pageSettings,
+      formattedValue: formatCount(counters.pageSettings),
+      icon: 'settings',
+      color: 'bg-red-500',
+      trend: 55,
+      href: '/admin/page-settings',
     },
   ];
 

@@ -86,7 +86,7 @@ export default function ClientForm({
         {({ isSubmitting, values, setFieldValue }) => (
           <Form className="flex max-h-[80vh] w-full flex-col overflow-hidden">
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
-              <section className="border-border bg-card/80 rounded-2xl border p-3 sm:p-4">
+              <section className="border-border bg-card rounded-2xl border p-3 shadow-sm sm:p-4">
                 <div className="mb-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <label className="flex flex-col gap-2">
                     <span className="text-sm font-medium">Тип</span>
@@ -94,7 +94,7 @@ export default function ClientForm({
                       name="type"
                       value={values.type}
                       onChange={e => setFieldValue('type', e.target.value)}
-                      className="border-border bg-background rounded-xl border px-3 py-2.5 outline-none"
+                      className="select-field rounded-xl px-3 py-2.5"
                     >
                       <option value="individual">Фізична особа</option>
                       <option value="company">Компанія</option>
@@ -107,7 +107,7 @@ export default function ClientForm({
                       name="status"
                       value={values.status}
                       onChange={e => setFieldValue('status', e.target.value)}
-                      className="border-border bg-background rounded-xl border px-3 py-2.5 outline-none"
+                      className="select-field rounded-xl px-3 py-2.5"
                     >
                       <option value="active">Активний</option>
                       <option value="inactive">Неактивний</option>
@@ -130,7 +130,7 @@ export default function ClientForm({
               </section>
             </div>
 
-            <div className="border-border bg-background/95 sticky bottom-0 mt-2 flex justify-end gap-2 border-t pt-3">
+            <div className="border-border bg-card/95 sticky bottom-0 mt-2 flex justify-end gap-2 border-t pt-3 dark:bg-transparent">
               {onClose && (
                 <Btn
                   type="button"

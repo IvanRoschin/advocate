@@ -189,14 +189,22 @@ const ContactForm = () => {
             {status ? (
               <div
                 className={
-                  status.type === 'success'
-                    ? 'rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800'
-                    : 'rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800'
+                  status.type === 'error'
+                    ? 'bg-card text-foreground border-destructive/30 rounded-2xl border px-4 py-3 text-sm shadow-sm'
+                    : 'bg-card text-foreground border-border rounded-2xl border px-4 py-3 text-sm shadow-sm'
                 }
                 role={status.type === 'error' ? 'alert' : 'status'}
                 aria-live="polite"
               >
-                {status.message}
+                <p
+                  className={
+                    status.type === 'error'
+                      ? 'text-destructive leading-6 font-medium'
+                      : 'text-foreground leading-6 font-medium'
+                  }
+                >
+                  {status.message}
+                </p>
               </div>
             ) : null}
 

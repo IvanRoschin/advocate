@@ -3,6 +3,7 @@ export type { ArticleDocument, ArticleInput } from './Article';
 export { default as Client } from './Client';
 export { default as Lead } from './Lead';
 export type { LeadDocument, LeadInput } from './Lead';
+export { default as PageSettings } from './PageSettings';
 export { default as Review } from './Review';
 export { default as Service } from './Service';
 export { default as Subscriber } from './Subscriber';

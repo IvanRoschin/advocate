@@ -1,16 +1,20 @@
 import type { ReactNode } from 'react';
 
-import { Breadcrumbs, NextImage, ReviewsSection } from '@/app/components';
+import {
+  Breadcrumbs,
+  Header,
+  NextImage,
+  ReviewsSection,
+} from '@/app/components';
+import Footer from '@/app/components/footer/Footer';
 import { formatDate } from '@/app/helpers';
 import { getArticleImageUrl } from '@/app/lib';
-import { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
+import type { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
 import { Badge } from '@/components/ui/badge';
-
 import { ArticleListPreview } from '../../_components/ArticleListPreview';
 import { ShareSection } from '../../_components/ShareSection';
 import ArticleContent from './ArticleContent';
 import ArticleToc, { TocItem } from './ArticleToc';
-
 type RelatedArticle = Awaited<
   ReturnType<
     typeof import('@/app/lib/services/article.service').articleService.getRelatedPublicByCategory
@@ -38,6 +42,8 @@ export type BlogArticleSectionProps = {
 export type BlogArticleSectionComponent = (
   props: BlogArticleSectionProps
 ) => ReactNode;
+
+const BlogArticleHeaderSection: BlogArticleSectionComponent = () => <Header />;
 
 const BlogArticleHeroSection: BlogArticleSectionComponent = ({
   article,
@@ -168,6 +174,12 @@ const BlogArticleReviewsSection: BlogArticleSectionComponent = ({
   );
 };
 
+const BlogArticleFooterSection: BlogArticleSectionComponent = () => (
+  <section className="mt-16 lg:mt-20">
+    <Footer />
+  </section>
+);
+
 /**
  * Секция-заглушка. Нужна только если твой renderLayout требует,
  * чтобы каждый key был в map sections. Фактический desktop TOC уже встроен в content.
@@ -177,10 +189,12 @@ export const BLOG_ARTICLE_SECTIONS: Record<
   ArticleSectionKey,
   BlogArticleSectionComponent
 > = {
+  header: BlogArticleHeaderSection,
   hero: BlogArticleHeroSection,
   content: BlogArticleContentSection,
   share: BlogArticleShareSection,
   related: BlogArticleRelatedSection,
   toc: BlogArticleTocSection,
   reviews: BlogArticleReviewsSection,
+  footer: BlogArticleFooterSection,
 };

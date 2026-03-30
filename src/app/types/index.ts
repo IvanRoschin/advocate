@@ -5,6 +5,7 @@ export * from './client';
 export * from './content.types';
 export * from './lead';
 export * from './mail';
+export * from './page-settings';
 export * from './review';
 export * from './service';
 export * from './token';

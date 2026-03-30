@@ -1,12 +1,14 @@
 export type ArticleStatus = 'draft' | 'published';
 
 export type ArticleSectionKey =
+  | 'header'
   | 'hero'
   | 'content'
   | 'share'
   | 'related'
   | 'toc'
-  | 'reviews';
+  | 'reviews'
+  | 'footer';
 
 export type ArticleLayoutItemInput = {
   key: ArticleSectionKey;

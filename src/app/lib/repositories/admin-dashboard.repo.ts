@@ -2,13 +2,14 @@ import type { AdminDashboardCountersDTO } from '@/app/types';
 import {
   Article,
   Category,
+  Client,
   Lead,
+  PageSettings,
   Review,
   Service,
   Subscriber,
   User,
 } from '@/models';
-
 export const adminDashboardRepo = {
   async getCounters(): Promise<AdminDashboardCountersDTO> {
     const [
@@ -20,6 +21,7 @@ export const adminDashboardRepo = {
       leads,
       clients,
       subscribers,
+      pageSettings,
     ] = await Promise.all([
       User.countDocuments(),
       Article.countDocuments(),
@@ -27,8 +29,9 @@ export const adminDashboardRepo = {
       Category.countDocuments(),
       Review.countDocuments(),
       Lead.countDocuments(),
-      User.countDocuments({ role: 'client' }),
+      Client.countDocuments(),
       Subscriber.countDocuments(),
+      PageSettings.countDocuments(),
     ]);
 
     return {
@@ -40,6 +43,7 @@ export const adminDashboardRepo = {
       leads,
       clients,
       subscribers,
+      pageSettings,
     };
   },
 };

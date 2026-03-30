@@ -51,8 +51,9 @@ export const PUBLIC_NAV_ITEMS: readonly NavItem[] = [
   {
     key: 'payments',
     href: routes.public.payments,
-    label: 'Оплата послуг',
+    label: 'Оплата',
     Icon: iconLibrary.payments,
+    startsWith: true,
   },
   {
     key: 'contact',
@@ -105,17 +106,31 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
     startsWith: true,
   },
   {
-    key: 'Клієнти',
+    key: 'clients',
     href: routes.admin.crm.clients,
     label: 'Клієнти',
     Icon: iconLibrary.clients,
     startsWith: true,
   },
   {
-    key: 'payments',
-    href: routes.admin.finance.payments,
-    label: 'Оплати',
-    Icon: iconLibrary.payments,
+    key: 'reviews',
+    href: routes.admin.ui.reviews,
+    label: 'Відгуки',
+    Icon: iconLibrary.reviews,
+    startsWith: true,
+  },
+  {
+    key: 'slides',
+    href: routes.admin.ui.slides,
+    label: 'Слайди',
+    Icon: iconLibrary.gallery,
+    startsWith: true,
+  },
+  {
+    key: 'pageSettings',
+    href: routes.admin.ui.pageSettings,
+    label: 'Налаштування сторінок',
+    Icon: iconLibrary.settings,
     startsWith: true,
   },
 ];
@@ -144,6 +159,6 @@ export const NAV_ITEMS_BY_SCOPE: Record<NavScope, readonly NavItem[]> = {
 };
 
 export const navCta = {
-  href: routes.public.order,
+  href: routes.public.offer,
   label: menuText.cta,
 } as const;

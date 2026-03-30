@@ -1,15 +1,13 @@
-import { reviewService } from '@/app/lib/services/review.service';
 import { reviewsSection } from '@/app/resources';
-
+import { ReviewResponseDTO } from '@/app/types';
 import ReviewCard from './ReviewCard';
 
-export default async function Reviews() {
-  const { id, header } = reviewsSection;
+type ReviewsProps = {
+  reviews: ReviewResponseDTO[];
+};
 
-  const reviews = await reviewService.getApprovedByTarget({
-    targetType: 'page',
-    pageKey: 'home',
-  });
+export default function Reviews({ reviews }: ReviewsProps) {
+  const { id, header } = reviewsSection;
 
   const limitedReviews = reviews.slice(0, 4);
 
