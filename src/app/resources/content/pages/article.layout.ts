@@ -1,6 +1,6 @@
 import type { ArticleLayoutNode } from '@/app/types';
 
-export const articleLayout: ArticleLayoutNode[] = [
+export const defaultArticleLayout: ArticleLayoutNode[] = [
   {
     type: 'section',
     key: 'hero',

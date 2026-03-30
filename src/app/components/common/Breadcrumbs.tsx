@@ -21,6 +21,9 @@ const customNames: Record<string, string> = {
   leads: 'Ліди',
   clients: 'Клієнти',
   articles: 'Статті',
+  article: 'Стаття',
+  service: 'Послуга',
+  'Page-settings': 'Налаштування сторінок',
   'suprovid-pry-rozluchenni': 'Супровід при розлученні',
 };
 

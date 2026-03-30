@@ -7,7 +7,8 @@ export type AdminDashboardStatColor =
   | 'bg-indigo-500'
   | 'bg-yellow-500'
   | 'bg-purple-500'
-  | 'bg-pink-500';
+  | 'bg-pink-500'
+  | 'bg-red-500';
 
 export interface AdminDashboardStatDTO {
   key:
@@ -18,7 +19,8 @@ export interface AdminDashboardStatDTO {
     | 'categories'
     | 'orders'
     | 'leads'
-    | 'reviews';
+    | 'reviews'
+    | 'pageSettings';
   title: string;
   value: number;
   formattedValue: string;
@@ -37,6 +39,7 @@ export interface AdminDashboardCountersDTO {
   subscribers: number;
   leads: number;
   reviews: number;
+  pageSettings: number;
 }
 
 export interface AdminDashboardResponseDTO {

@@ -6,8 +6,6 @@ export const routes = {
     about: '/#about',
     practices: '/#practices',
     services: '/services',
-    order: '/#order',
-    payments: '/payments',
     blog: '/blog',
     contact: '/contact',
     notFound: '/not-found',
@@ -75,8 +73,9 @@ export const routes = {
     },
 
     ui: {
-      testimonials: '/admin/testimonials',
+      reviews: '/admin/reviews',
       slides: '/admin/slides',
+      pageSettings: '/admin/page-settings/article',
     },
   },
 

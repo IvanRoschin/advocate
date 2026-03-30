@@ -3,14 +3,12 @@ import type { ReactNode } from 'react';
 import { Breadcrumbs, NextImage, ReviewsSection } from '@/app/components';
 import { formatDate } from '@/app/helpers';
 import { getArticleImageUrl } from '@/app/lib';
-import { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
+import type { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
 import { Badge } from '@/components/ui/badge';
-
 import { ArticleListPreview } from '../../_components/ArticleListPreview';
 import { ShareSection } from '../../_components/ShareSection';
 import ArticleContent from './ArticleContent';
 import ArticleToc, { TocItem } from './ArticleToc';
-
 type RelatedArticle = Awaited<
   ReturnType<
     typeof import('@/app/lib/services/article.service').articleService.getRelatedPublicByCategory

@@ -49,12 +49,6 @@ export const PUBLIC_NAV_ITEMS: readonly NavItem[] = [
     startsWith: true,
   },
   {
-    key: 'payments',
-    href: routes.public.payments,
-    label: 'Оплата послуг',
-    Icon: iconLibrary.payments,
-  },
-  {
     key: 'contact',
     href: routes.public.contact,
     label: 'Контакти',
@@ -144,6 +138,6 @@ export const NAV_ITEMS_BY_SCOPE: Record<NavScope, readonly NavItem[]> = {
 };
 
 export const navCta = {
-  href: routes.public.order,
+  href: routes.public.offer,
   label: menuText.cta,
 } as const;
