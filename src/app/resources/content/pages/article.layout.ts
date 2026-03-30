@@ -3,6 +3,11 @@ import type { ArticleLayoutNode } from '@/app/types';
 export const defaultArticleLayout: ArticleLayoutNode[] = [
   {
     type: 'section',
+    key: 'header',
+    display: true,
+  },
+  {
+    type: 'section',
     key: 'hero',
     display: true,
   },
@@ -18,5 +23,10 @@ export const defaultArticleLayout: ArticleLayoutNode[] = [
       { key: 'toc', display: true },
       { key: 'reviews', display: true },
     ],
+  },
+  {
+    type: 'section',
+    key: 'footer',
+    display: true,
   },
 ];

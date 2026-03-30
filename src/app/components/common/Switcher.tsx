@@ -80,7 +80,7 @@ const Switcher: React.FC<SwitcherProps> = ({
           disabled={isDisabled}
           onClick={toggle}
           onKeyDown={handleKeyDown}
-          className={`relative inline-flex h-7 w-12 items-center rounded-full border transition-all duration-200 ${
+          className={`relative inline-flex h-7 w-12 items-center rounded-full border transition-colors duration-200 ${
             checked ? 'border-accent bg-accent/15' : 'border-border bg-muted'
           } ${
             isDisabled
@@ -89,12 +89,10 @@ const Switcher: React.FC<SwitcherProps> = ({
           }`}
         >
           <motion.span
-            layout
+            animate={{ x: checked ? 20 : 0 }}
             transition={{ type: 'spring', stiffness: 650, damping: 34 }}
-            className={`absolute h-5 w-5 rounded-full shadow-sm ${
-              checked
-                ? 'bg-accent left-[calc(100%-1.35rem)]'
-                : 'bg-background left-1'
+            className={`absolute top-1 left-1 h-5 w-5 rounded-full shadow-sm ${
+              checked ? 'bg-accent' : 'bg-background'
             }`}
           />
         </button>

@@ -1,13 +1,21 @@
 import type { ReactNode } from 'react';
 
-import { Breadcrumbs, NextImage, ReviewsSection } from '@/app/components';
+import {
+  Breadcrumbs,
+  Header,
+  NextImage,
+  ReviewsSection,
+} from '@/app/components';
+import Footer from '@/app/components/footer/Footer';
 import { getServiceImageUrl } from '@/app/lib';
+
+import ServiceCtaOrderButton from './ServiceCtaOrderButton';
+
 import type {
   ReviewResponseDTO,
   ServicePublicPageDto,
   ServiceSectionKey,
 } from '@/app/types';
-import ServiceCtaOrderButton from './ServiceCtaOrderButton';
 export type ServiceSectionProps = {
   service: ServicePublicPageDto;
   reviews?: ReviewResponseDTO[];
@@ -15,6 +23,8 @@ export type ServiceSectionProps = {
 };
 
 export type ServiceSectionComponent = (props: ServiceSectionProps) => ReactNode;
+
+const ServiceHeaderSection: ServiceSectionComponent = () => <Header />;
 
 const ServiceHeroSection: ServiceSectionComponent = ({ service }) => {
   const hero = service.sections.hero;
@@ -186,14 +196,22 @@ const ServiceCtaSection: ServiceSectionComponent = ({ service }) => {
   );
 };
 
+const ServiceFooterSection: ServiceSectionComponent = () => (
+  <section className="mt-16 lg:mt-20">
+    <Footer />
+  </section>
+);
+
 export const SERVICE_SECTIONS: Record<
   ServiceSectionKey,
   ServiceSectionComponent
 > = {
+  header: ServiceHeaderSection,
   hero: ServiceHeroSection,
   benefits: ServiceBenefitsSection,
   process: ServiceProcessSection,
   faq: ServiceFaqSection,
   reviews: ServiceReviewsSection,
   cta: ServiceCtaSection,
+  footer: ServiceFooterSection,
 };

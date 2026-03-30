@@ -10,6 +10,7 @@ import {
   Socials,
   WhyChooseMe,
 } from '@/components';
+
 import Footer from './components/footer/Footer';
 import Practices from './components/sections/practices/Practices';
 import Reviews from './components/sections/reviews/Reviews';
@@ -38,8 +39,9 @@ const HomePracticesSection: HomeSectionComponent = () => <Practices />;
 
 const HomeAdvantagesSection: HomeSectionComponent = () => <Advantages />;
 
-const HomeReviewsSection: HomeSectionComponent = () => <Reviews />;
-
+const HomeReviewsSection: HomeSectionComponent = props => (
+  <Reviews reviews={props.reviews ?? []} />
+);
 const HomeWhyChooseMeSection: HomeSectionComponent = () => <WhyChooseMe />;
 
 const HomeOrderSection: HomeSectionComponent = () => <Order />;

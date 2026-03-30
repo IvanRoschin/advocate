@@ -6,6 +6,7 @@ import type {
   ArticleLayoutNode,
   PageSettingsResponseDTO,
   ServiceLayoutNode,
+  UpdatePageSettingsDTO,
 } from '@/app/types';
 
 const getDefaultLayoutByEntity = (entity: 'article' | 'service') => {
@@ -61,10 +62,7 @@ export const pageSettingsService = {
       ? (settings.layout as ServiceLayoutNode[])
       : defaultServiceLayout;
   },
-  async update(data: {
-    entity: 'article' | 'service';
-    layout: unknown[];
-  }): Promise<PageSettingsResponseDTO> {
+  async update(data: UpdatePageSettingsDTO): Promise<PageSettingsResponseDTO> {
     await dbConnect();
 
     const saved = await pageSettingsRepo.upsertByEntity(data);

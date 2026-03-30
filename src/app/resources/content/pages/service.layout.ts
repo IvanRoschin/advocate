@@ -3,6 +3,11 @@ import type { ServiceLayoutNode } from '@/app/types';
 export const defaultServiceLayout: ServiceLayoutNode[] = [
   {
     type: 'section',
+    key: 'header',
+    display: true,
+  },
+  {
+    type: 'section',
     key: 'hero',
     display: true,
   },
@@ -18,5 +23,10 @@ export const defaultServiceLayout: ServiceLayoutNode[] = [
       { key: 'reviews', display: true },
       { key: 'cta', display: true },
     ],
+  },
+  {
+    type: 'section',
+    key: 'footer',
+    display: true,
   },
 ];

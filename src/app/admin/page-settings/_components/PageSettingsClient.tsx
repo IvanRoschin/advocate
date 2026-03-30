@@ -28,6 +28,7 @@ const ENTITY_META = {
 } as const;
 
 const SECTION_LABELS: Record<string, string> = {
+  header: 'Header секція',
   hero: 'Hero секція',
   content: 'Основний контент',
   share: 'Поширення',
@@ -38,6 +39,7 @@ const SECTION_LABELS: Record<string, string> = {
   process: 'Процес',
   faq: 'Поширені питання',
   cta: 'Заклик до дії',
+  footer: 'Footer секція',
 };
 
 const GROUP_LABELS: Record<string, string> = {
@@ -201,11 +203,18 @@ export default function PageSettingsClient({ initialSettings }: Props) {
         })}
       </div>
 
-      {isDirty ? (
-        <div className="border-accent/30 bg-accent/5 rounded-2xl border px-4 py-3 text-sm">
-          Є незбережені зміни.
+      <div className="min-h-13">
+        <div
+          className={`flex min-h-13 items-center rounded-2xl border px-4 py-3 text-sm transition-opacity duration-200 ${
+            isDirty
+              ? 'border-accent/30 bg-accent/5 opacity-100'
+              : 'border-transparent bg-transparent opacity-0'
+          }`}
+          aria-live="polite"
+        >
+          <span className="text-secondary">Є незбережені зміни.</span>
         </div>
-      ) : null}
+      </div>
 
       <div className="space-y-5">
         {layout.map(node => (

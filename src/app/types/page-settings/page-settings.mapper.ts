@@ -1,24 +1,30 @@
 import type {
-  ArticleLayoutItemInput,
-  ArticleLayoutNodeInput,
-  ArticleSectionKey,
+  PageLayoutItemInput,
+  PageLayoutNodeInput,
+  PageSectionKey,
 } from '@/app/types';
 
-const ARTICLE_SECTION_KEYS: ArticleSectionKey[] = [
+const PAGE_SECTION_KEYS: PageSectionKey[] = [
+  'header',
   'hero',
   'content',
   'share',
   'related',
   'toc',
   'reviews',
+  'benefits',
+  'process',
+  'faq',
+  'cta',
+  'footer',
 ];
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
-const isArticleSectionKey = (value: unknown): value is ArticleSectionKey =>
+const isPageSectionKey = (value: unknown): value is PageSectionKey =>
   typeof value === 'string' &&
-  ARTICLE_SECTION_KEYS.includes(value as ArticleSectionKey);
+  PAGE_SECTION_KEYS.includes(value as PageSectionKey);
 
 const toTrimmedString = (value: unknown): string =>
   typeof value === 'string' ? value.trim() : '';
@@ -26,11 +32,11 @@ const toTrimmedString = (value: unknown): string =>
 const toBoolean = (value: unknown, fallback = true): boolean =>
   typeof value === 'boolean' ? value : fallback;
 
-const normalizeArticleLayoutItem = (
+const normalizePageLayoutItem = (
   value: unknown
-): ArticleLayoutItemInput | null => {
+): PageLayoutItemInput | null => {
   if (!isRecord(value)) return null;
-  if (!isArticleSectionKey(value.key)) return null;
+  if (!isPageSectionKey(value.key)) return null;
 
   return {
     key: value.key,
@@ -38,16 +44,16 @@ const normalizeArticleLayoutItem = (
   };
 };
 
-const normalizeArticleLayoutNode = (
+const normalizePageLayoutNode = (
   value: unknown
-): ArticleLayoutNodeInput | null => {
+): PageLayoutNodeInput | null => {
   if (!isRecord(value)) return null;
 
   const type = value.type;
   const display = toBoolean(value.display, true);
 
   if (type === 'section') {
-    if (!isArticleSectionKey(value.key)) return null;
+    if (!isPageSectionKey(value.key)) return null;
 
     return {
       type: 'section',
@@ -58,12 +64,13 @@ const normalizeArticleLayoutNode = (
 
   if (type === 'group') {
     const key = toTrimmedString(value.key);
+
     if (!key) return null;
 
     const items = Array.isArray(value.items)
       ? value.items
-          .map(normalizeArticleLayoutItem)
-          .filter((item): item is ArticleLayoutItemInput => item !== null)
+          .map(normalizePageLayoutItem)
+          .filter((item): item is PageLayoutItemInput => item !== null)
       : [];
 
     return {
@@ -78,12 +85,10 @@ const normalizeArticleLayoutNode = (
   return null;
 };
 
-export const normalizeArticleLayout = (
-  value: unknown
-): ArticleLayoutNodeInput[] => {
+export const normalizePageLayout = (value: unknown): PageLayoutNodeInput[] => {
   if (!Array.isArray(value)) return [];
 
   return value
-    .map(normalizeArticleLayoutNode)
-    .filter((node): node is ArticleLayoutNodeInput => node !== null);
+    .map(normalizePageLayoutNode)
+    .filter((node): node is PageLayoutNodeInput => node !== null);
 };

@@ -23,7 +23,8 @@ const customNames: Record<string, string> = {
   articles: 'Статті',
   article: 'Стаття',
   service: 'Послуга',
-  'Page-settings': 'Налаштування сторінок',
+  reviews: 'Відгуки',
+  'page-settings': 'Налаштування сторінок',
   'suprovid-pry-rozluchenni': 'Супровід при розлученні',
 };
 

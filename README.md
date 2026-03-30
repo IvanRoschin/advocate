@@ -32,6 +32,7 @@
 **Advocate** — это production-ready fullstack приложение для юридических услуг.
 
 Система объединяет:
+
 - публичный сайт
 - блог
 - управление услугами
@@ -40,6 +41,7 @@
 - клиентский кабинет
 
 Проект построен с акцентом на:
+
 - ⚡ производительность
 - 🧠 чистую архитектуру
 - 🔒 безопасность
@@ -50,6 +52,7 @@
 ## 🚀 Features
 
 ### Public Platform
+
 - 📰 Blog (articles, categories, SEO)
 - ⚖️ Services pages (modular layout sections)
 - 🔍 Related content & navigation
@@ -57,17 +60,20 @@
 - 🌙 Dark / light mode
 
 ### Admin Panel
+
 - CRUD for services, articles, categories
 - Review moderation system
 - Image upload (Cloudinary)
 - Data tables & actions
 
 ### Client Features
+
 - Role-based access
 - Protected routes
 - Personalized flows
 
 ### UX / UI
+
 - Smooth animations (Framer Motion)
 - Adaptive mobile navigation
 - Scroll interactions
@@ -167,6 +173,7 @@ npm run dev
 ```
 
 ### 🔐 Environment Variables
+
 ```
 </> env
 
@@ -182,9 +189,7 @@ NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=
 
 Подход:
 
-upload → оригинал (без resize)
-хранение → publicId
-render → через helper
+upload → оригинал (без resize) хранение → publicId render → через helper
 
 Пример:
 
@@ -194,17 +199,13 @@ getServiceImageUrl(id, 'hero')
 ```
 
 ### 🧪 Validation
-Formik (forms)
-Yup (validation)
-DTO + mapper layer
+
+Formik (forms) Yup (validation) DTO + mapper layer
 
 ### 🧑‍💻 Development Rules
-❌ no any
-❌ no business logic in route.ts
-❌ no DB calls outside repository
-✅ strict typing
-✅ clean architecture
-✅ minimal abstractions
+
+❌ no any ❌ no business logic in route.ts ❌ no DB calls outside repository ✅
+strict typing ✅ clean architecture ✅ minimal abstractions
 
 ### 📦 Scripts
 
@@ -217,11 +218,10 @@ npm run typecheck
 ```
 
 ### 🚀 Deployment
+
 Recommended:
 
-Vercel
-MongoDB Atlas
-Cloudinary
+Vercel MongoDB Atlas Cloudinary
 
 Build:
 
@@ -232,21 +232,17 @@ npm run start
 
 ### 📌 Roadmap
 
- Search
- Pagination
- SEO improvements
- Caching / ISR
- Analytics
+Search Pagination SEO improvements Caching / ISR Analytics
 
 ### 🧑‍⚖️ Author
 
-Fullstack legal platform focused on performance, scalability and clean architecture.
+Fullstack legal platform focused on performance, scalability and clean
+architecture.
 
 ### 📄 License
+
 MIT
 
-
- 
-
+```
 
 ```

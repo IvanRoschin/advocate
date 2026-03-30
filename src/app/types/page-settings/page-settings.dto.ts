@@ -1,4 +1,5 @@
 export type PageSectionKey =
+  | 'header'
   | 'hero'
   | 'content'
   | 'share'
@@ -8,7 +9,8 @@ export type PageSectionKey =
   | 'benefits'
   | 'process'
   | 'faq'
-  | 'cta';
+  | 'cta'
+  | 'footer';
 
 export type PageLayoutItemInput = {
   key: PageSectionKey;
@@ -41,4 +43,9 @@ export type PageSettingsResponseDTO = {
   layout: PageLayoutNode[];
   createdAt?: string;
   updatedAt?: string;
+};
+
+export type UpdatePageSettingsDTO = {
+  entity: PageSettingsEntity;
+  layout: PageLayoutNode[];
 };

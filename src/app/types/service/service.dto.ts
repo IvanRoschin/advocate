@@ -1,12 +1,14 @@
 export type ServiceStatus = 'draft' | 'published';
 
 export type ServiceSectionKey =
+  | 'header'
   | 'hero'
   | 'benefits'
   | 'process'
   | 'faq'
   | 'cta'
-  | 'reviews';
+  | 'reviews'
+  | 'footer';
 
 export type ServiceLayoutItemInput = {
   key: ServiceSectionKey;
