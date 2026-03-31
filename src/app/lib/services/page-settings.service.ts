@@ -1,28 +1,30 @@
 import { pageSettingsRepo } from '@/app/lib/repositories/page-settings.repo';
 import { dbConnect } from '@/app/lib/server/mongoose';
 import { defaultArticleLayout } from '@/app/resources/content/pages/article.layout';
+import { defaultHomeLayout } from '@/app/resources/content/pages/home.layout';
 import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
 import type {
   ArticleLayoutNode,
+  HomeLayoutNode,
   PageSettingsResponseDTO,
   ServiceLayoutNode,
   UpdatePageSettingsDTO,
 } from '@/app/types';
 
-const getDefaultLayoutByEntity = (entity: 'article' | 'service') => {
+const getDefaultLayoutByEntity = (entity: 'article' | 'service' | 'home') => {
   switch (entity) {
     case 'article':
       return defaultArticleLayout;
     case 'service':
       return defaultServiceLayout;
-    default:
-      return [];
+    case 'home':
+      return defaultHomeLayout;
   }
 };
 
 export const pageSettingsService = {
   async getByEntity(
-    entity: 'article' | 'service'
+    entity: 'article' | 'service' | 'home'
   ): Promise<PageSettingsResponseDTO> {
     await dbConnect();
 
@@ -62,6 +64,14 @@ export const pageSettingsService = {
       ? (settings.layout as ServiceLayoutNode[])
       : defaultServiceLayout;
   },
+  async getHomeLayout(): Promise<HomeLayoutNode[]> {
+    const settings = await this.getByEntity('home');
+
+    return Array.isArray(settings.layout)
+      ? (settings.layout as HomeLayoutNode[])
+      : defaultHomeLayout;
+  },
+
   async update(data: UpdatePageSettingsDTO): Promise<PageSettingsResponseDTO> {
     await dbConnect();
 

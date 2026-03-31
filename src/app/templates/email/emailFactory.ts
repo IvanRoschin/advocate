@@ -1,8 +1,9 @@
-import { accountActivatedTemplate } from './accountActivated/accountActivatedTemplate';
-import { createUserNotificationTemplate } from './createUserNotification/createUserNotificationTemplate';
-import { emailChangeTemplate } from './emailChange/emailChangeTemplate';
+import { accountActivatedTemplate } from './account-activated/accountActivatedTemplate';
+import { createUserNotificationTemplate } from './create-user-notification/createUserNotificationTemplate';
+import { emailChangeTemplate } from './email-change/emailChangeTemplate';
 import { leadAdminTemplate } from './lead/leadAdminTemplate';
 import { leadClientTemplate } from './lead/leadClientTemplate';
+import { resetPasswordTemplate } from './restore-password/restorePassword';
 import { subscriberAdminTemplate } from './subscriber/subscriberAdminTemplate';
 import { subscriberClientTemplate } from './subscriber/subscriberClientTemplate';
 import { EmailTemplatePropsMap, EmailTemplateType } from './types';
@@ -26,6 +27,7 @@ const templateMap: {
 
   [EmailTemplateType.ACCOUNT_ACTIVATED]: accountActivatedTemplate,
   [EmailTemplateType.EMAIL_CHANGE]: emailChangeTemplate,
+  [EmailTemplateType.RESET_PASSWORD]: resetPasswordTemplate,
 };
 
 export function renderEmailTemplate<T extends EmailTemplateType>(

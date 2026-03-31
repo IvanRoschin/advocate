@@ -3,6 +3,7 @@
 import { Form, Formik, FormikHelpers } from 'formik';
 import { motion } from 'framer-motion';
 import { getSession, signIn } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
@@ -14,7 +15,7 @@ import { Btn, Input } from '@/components';
 import { UserRole } from '@/types';
 
 interface InitialStateType {
-  email: string;
+  phone: string;
   password: string;
 }
 
@@ -24,7 +25,7 @@ const LoginForm = () => {
   const router = useRouter();
 
   const initialValues: InitialStateType = {
-    email: '',
+    phone: '+380',
     password: '',
   };
 
@@ -32,37 +33,57 @@ const LoginForm = () => {
     values: InitialStateType,
     { resetForm }: FormikHelpers<InitialStateType>
   ) => {
-    setIsLoading(true);
+    if (isLoading) return;
 
-    const callback = await signIn('credentials', {
-      email: values.email.toLowerCase(),
-      password: values.password,
-      redirect: false,
-    });
+    try {
+      setIsLoading(true);
 
-    setIsLoading(false);
+      const callback = await signIn('credentials', {
+        phone: values.phone.trim(),
+        password: values.password,
+        redirect: false,
+      });
 
-    if (callback?.ok) {
+      if (!callback?.ok) {
+        toast.error(callback?.error || 'Помилка входу');
+        return;
+      }
+
       toast.success('Успішний вхід');
       resetForm();
 
       const session = await getSession();
+      const role = session?.user?.role as UserRole | undefined;
 
-      const role = session?.user?.role as UserRole;
-
-      if (role === UserRole.ADMIN) router.replace('/admin');
-      else router.replace('/client');
+      if (role === UserRole.ADMIN) {
+        router.replace('/admin');
+      } else {
+        router.replace('/client');
+      }
 
       router.refresh();
-    } else {
-      toast.error(callback?.error || 'Помилка входу');
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Не вдалося виконати вхід');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleGoogleLogin = () => {
-    signIn('google', {
-      callbackUrl: '/auth/redirect',
-    });
+  const handleGoogleLogin = async () => {
+    if (isLoading) return;
+
+    try {
+      setIsLoading(true);
+
+      await signIn('google', {
+        callbackUrl: '/auth/redirect',
+      });
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      toast.error('Не вдалося розпочати вхід через Google');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -80,25 +101,26 @@ const LoginForm = () => {
           <Formik
             initialValues={initialValues}
             onSubmit={handleSubmit}
-            // validationSchema={userLoginSchema}
             enableReinitialize
           >
             {() => (
               <Form className="flex flex-col gap-5">
-                {/* Email */}
-                <Input name="email" label="Email" type="text" required />
-                {/* Password с глазиком 👇 */}
+                <Input name="phone" label="Телефон" type="tel" required />
+
                 <div className="relative">
                   <Input
                     name="password"
-                    label="Password"
-                    type={`${showPassword ? 'text' : 'password'}`}
+                    label="Пароль"
+                    type={showPassword ? 'text' : 'password'}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(prev => !prev)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 transition-colors hover:text-gray-700"
+                    className="absolute top-1/2 right-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-gray-500"
+                    aria-label={
+                      showPassword ? 'Сховати пароль' : 'Показати пароль'
+                    }
                     tabIndex={-1}
                   >
                     {showPassword ? (
@@ -109,20 +131,22 @@ const LoginForm = () => {
                   </button>
                 </div>
 
-                <motion.div
-                  whileHover={{
-                    scale: 1.02,
-                    boxShadow: '0px 0px 12px rgba(59,130,246,0.5)',
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                >
-                  <Btn
-                    type="submit"
-                    label={isLoading ? 'Завантаження...' : 'Увійти'}
-                    disabled={isLoading}
-                  />
-                </motion.div>
+                <div className="flex justify-center">
+                  <motion.div
+                    className="inline-block"
+                    whileHover={{
+                      scale: isLoading ? 1 : 1.02,
+                    }}
+                    whileTap={{ scale: isLoading ? 1 : 0.97 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                  >
+                    <Btn
+                      type="submit"
+                      label={isLoading ? 'Завантаження...' : 'Увійти'}
+                      disabled={isLoading}
+                    />
+                  </motion.div>
+                </div>
               </Form>
             )}
           </Formik>
@@ -133,31 +157,33 @@ const LoginForm = () => {
             <hr className="grow border-gray-300" />
           </div>
 
-          <motion.div
-            whileHover={{
-              scale: 1.02,
-              boxShadow: '0px 0px 12px rgba(234,67,53,0.4)',
-            }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: 'spring', stiffness: 300 }}
-          >
-            <Btn
-              uiVariant="outline"
-              label="Continue with Google"
-              icon={FcGoogle}
-              onClick={handleGoogleLogin}
-              disabled={isLoading}
-            />
-          </motion.div>
+          <div className="flex justify-center">
+            <motion.div
+              whileHover={{
+                scale: isLoading ? 1 : 1.02,
+              }}
+              whileTap={{ scale: isLoading ? 1 : 0.97 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
+              <Btn
+                type="button"
+                uiVariant="outline"
+                label="Continue with Google"
+                icon={FcGoogle}
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
+              />
+            </motion.div>
+          </div>
 
           <p className="mt-8 text-center text-sm text-gray-500">
             Забули пароль?{' '}
-            <a
+            <Link
               href={routes.public.auth.forgotPassword}
               className="nav font-medium hover:text-gray-500"
             >
               Відновити
-            </a>
+            </Link>
           </p>
         </motion.div>
       </div>

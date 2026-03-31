@@ -1,6 +1,11 @@
 export type PageSectionKey =
+  | 'socials'
   | 'header'
   | 'hero'
+  | 'services'
+  | 'about'
+  | 'practices'
+  | 'advantages'
   | 'content'
   | 'share'
   | 'related'
@@ -10,7 +15,10 @@ export type PageSectionKey =
   | 'process'
   | 'faq'
   | 'cta'
-  | 'footer';
+  | 'whyChooseMe'
+  | 'order'
+  | 'footer'
+  | 'scrollToTop';
 
 export type PageLayoutItemInput = {
   key: PageSectionKey;
@@ -35,7 +43,7 @@ export type PageLayoutNodeInput = PageSectionLayoutInput | PageGroupLayoutInput;
 
 export type PageLayoutNode = PageLayoutNodeInput;
 
-export type PageSettingsEntity = 'article' | 'service';
+export type PageSettingsEntity = 'article' | 'service' | 'home';
 
 export type PageSettingsResponseDTO = {
   _id: string;

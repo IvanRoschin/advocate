@@ -11,7 +11,6 @@ export default function PageSettingsPage() {
           Оберіть тип сторінки для налаштування layout.
         </p>
       </div>
-
       <div className="grid gap-4 md:grid-cols-2">
         <Link
           href="/admin/page-settings/article"
@@ -19,12 +18,17 @@ export default function PageSettingsPage() {
         >
           Article
         </Link>
-
         <Link
           href="/admin/page-settings/service"
           className="rounded-2xl border p-5"
         >
           Service
+        </Link>
+        <Link
+          href="/admin/page-settings/home"
+          className="rounded-2xl border p-5"
+        >
+          Home
         </Link>
       </div>
     </div>
