@@ -26,7 +26,7 @@ export type HomeLayoutNode =
       items: Array<{ key: HomeSectionKey; display: boolean }>;
     };
 
-export const homeLayout: HomeLayoutNode[] = [
+export const defaultHomeLayout: HomeLayoutNode[] = [
   { type: 'section', key: 'socials', display: true },
   { type: 'section', key: 'header', display: true },
 

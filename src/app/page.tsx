@@ -1,9 +1,9 @@
-import { homeLayout } from '@/app/resources/content/pages/home.layout';
-import { home, person } from './resources/content';
 import { buildOgImageUrl, generateMetadata } from './helpers';
 import { HOME_SECTIONS, HomeSectionProps } from './home.sections';
 import { renderLayout } from './lib/layouts/renderLayout';
+import { pageSettingsService } from './lib/services/page-settings.service';
 import { reviewService } from './lib/services/review.service';
+import { home, person } from './resources/content';
 
 export const metadata = generateMetadata({
   title: home.title,
@@ -26,11 +26,12 @@ export default async function Home() {
   const sectionProps: HomeSectionProps = {
     reviews,
   };
+  const layout = await pageSettingsService.getHomeLayout();
 
   return (
     <main className="relative">
       {renderLayout({
-        layout: homeLayout,
+        layout,
         sections: HOME_SECTIONS,
         sectionProps,
       })}

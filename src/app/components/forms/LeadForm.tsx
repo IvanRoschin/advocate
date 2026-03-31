@@ -60,8 +60,7 @@ const fieldMotion = (delay: number) => ({
   transition: { delay, duration: 0.2 },
 });
 
-const cardClassName =
-  'border-border rounded-2xl border bg-transparent shadow-sm dark:bg-card';
+const cardClassName = 'border-border rounded-2xl border bg-card shadow-sm';
 
 const sectionTitleClassName =
   'text-primary text-sm font-semibold tracking-wide';

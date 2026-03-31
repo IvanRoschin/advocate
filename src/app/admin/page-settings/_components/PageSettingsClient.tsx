@@ -25,21 +25,34 @@ const ENTITY_META = {
     description: 'Глобальний layout для всіх сторінок послуг.',
     href: '/admin/page-settings/service',
   },
+  home: {
+    label: 'Головна сторінка',
+    description: 'Глобальний layout для всіх Головної сторінки.',
+    href: '/admin/page-settings/home',
+  },
 } as const;
 
 const SECTION_LABELS: Record<string, string> = {
+  socials: 'Соціальні мережі',
   header: 'Header секція',
   hero: 'Hero секція',
+  services: 'Послуги',
+  about: 'Про мене',
+  practices: 'Практики',
+  advantages: 'Переваги',
   content: 'Основний контент',
   share: 'Поширення',
   related: 'Схожі матеріали',
   toc: 'Зміст',
   reviews: 'Відгуки',
-  benefits: 'Переваги',
+  benefits: 'Переваги (Service)',
   process: 'Процес',
   faq: 'Поширені питання',
   cta: 'Заклик до дії',
+  whyChooseMe: 'Чому обирають мене',
+  order: 'Форма заявки',
   footer: 'Footer секція',
+  scrollToTop: 'Кнопка "Вгору"',
 };
 
 const GROUP_LABELS: Record<string, string> = {
