@@ -1,10 +1,10 @@
+import crypto from 'crypto';
 import { Types } from 'mongoose';
 
 import { tokenRepo } from '@/app/lib/repositories/token.repo';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import { TokenDocument } from '@/app/models/Token';
 import { CreateTokenDTO, TokenType } from '@/app/types';
-import crypto from 'crypto';
 
 // ❗️НУЖНО: подключить userService / userRepo (пример ниже)
 // import { userService } from '@/app/lib/services/user.service';
@@ -24,6 +24,7 @@ export const tokenService = {
       [TokenType.VERIFICATION]: 60 * 60 * 24,
       [TokenType.PASSWORD_RESET]: 60 * 60 * 2,
       [TokenType.EMAIL_CHANGE]: 60 * 60,
+      [TokenType.PASSWORD_RESTORE]: 60 * 60,
     };
 
     const ttl = data.ttlSeconds ?? ttlDefault[data.type ?? TokenType.REFRESH];

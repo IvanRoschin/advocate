@@ -4,11 +4,10 @@ import { routes } from '@/app/config';
 import { sendEmail } from '@/app/lib';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { dbConnect } from '@/app/lib/server/mongoose';
+import { person } from '@/app/resources';
 import { EmailTemplateType } from '@/app/templates/email';
 import { CreateUserRequestDTO, createUserSchema } from '@/app/types';
 import { userService } from '@/lib/services/user.service';
-
-const ADMIN_EMAIL = 'advocate.roschin@gmail.com';
 
 export async function GET() {
   try {
@@ -43,7 +42,7 @@ export async function POST(req: Request) {
     }).catch(console.error);
 
     await sendEmail({
-      to: ADMIN_EMAIL,
+      to: person.email,
       type: EmailTemplateType.USER_CREATED,
       props: {
         name: user.name,
