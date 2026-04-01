@@ -14,7 +14,7 @@ const Advantages = () => {
   return (
     <section
       id={advantagesSection.id}
-      className="text-advantages relative flex min-h-screen items-center py-20"
+      className="text-advantages section relative flex min-h-screen items-center pt-24"
       itemScope
       itemType={advantagesSection.schemaType}
     >
@@ -29,7 +29,7 @@ const Advantages = () => {
 
       <div className="bg-advantages-overlay absolute inset-0 -z-10" />
 
-      <div className="relative z-10 container grid gap-16 px-4 lg:grid-cols-2">
+      <div className="relative z-10 container grid gap-12 px-4 sm:gap-14 lg:grid-cols-2 lg:gap-16">
         <div>
           <p className="text-accent mb-4 text-sm tracking-widest uppercase">
             {advantagesSection.header.uptitle}

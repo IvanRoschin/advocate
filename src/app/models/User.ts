@@ -22,9 +22,18 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-userSchema.methods.setPassword = function (password: string) {
-  this.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-};
+userSchema.pre('save', async function () {
+  if (!this.isModified('password') || !this.password) return;
+
+  const looksHashed =
+    this.password.startsWith('$2a$') ||
+    this.password.startsWith('$2b$') ||
+    this.password.startsWith('$2y$');
+
+  if (looksHashed) return;
+
+  this.password = await bcrypt.hash(this.password, 10);
+});
 
 userSchema.methods.comparePassword = function (password: string) {
   if (!this.password) return false;

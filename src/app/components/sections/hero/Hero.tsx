@@ -20,7 +20,7 @@ const Hero = () => {
       ?.link ?? null;
 
   return (
-    <section className="relative flex h-screen w-full items-center overflow-hidden">
+    <section className="relative flex h-screen w-full items-center overflow-hidden md:min-h-100">
       <HeroCarousel
         items={slides}
         className="z-0"
@@ -28,9 +28,7 @@ const Hero = () => {
         showArrows
         debugBarsTopRight
       />
-
       <div className="bg-hero-overlay pointer-events-none absolute inset-0 z-10" />
-
       <div className="font-eukrainehead text-hero relative z-30 container px-4">
         <p className="text-hero-uptitle mb-6 text-xs tracking-widest uppercase md:text-sm">
           {heroSection.header.uptitle}

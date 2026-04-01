@@ -21,12 +21,12 @@ const WhyChooseMe = () => {
   return (
     <section
       id={id}
-      className="bg-why-section py-20 sm:py-28 md:py-36"
+      className="bg-why-section section"
       itemScope
       itemType={schemaType}
     >
       <div className="container mx-auto px-4">
-        <header className="mb-12 text-center sm:mb-16 md:mb-20">
+        <header className="section-header text-center">
           <span className="bg-accent mb-4 inline-block h-8 w-px" />
           <p className="text-accent text-xs tracking-widest uppercase">
             {header.uptitle}
@@ -37,7 +37,7 @@ const WhyChooseMe = () => {
           <span className="bg-accent mt-4 inline-block h-8 w-px" />
         </header>
 
-        <div className="flex flex-col items-center gap-12 md:flex-row md:items-start md:gap-16">
+        <div className="section-content flex flex-col items-center gap-12 md:flex-row md:items-start md:gap-16">
           <div className="relative h-75 w-full max-w-125 overflow-hidden rounded-2xl shadow-lg sm:h-87.5 md:h-100 md:max-w-150 lg:h-112.5 lg:max-w-175">
             <NextImage
               useSkeleton
@@ -52,7 +52,6 @@ const WhyChooseMe = () => {
             <meta itemProp="name" content={image.personName} />
             <meta itemProp="jobTitle" content={image.jobTitle} />
           </div>
-
           <div className="w-full flex-1 space-y-4">
             <h3 className="text-why-lead font-eukrainehead text-lg font-semibold sm:text-xl md:text-2xl">
               {lead.line1.split(lead.accentWords[0]).map((chunk, idx) =>

@@ -87,107 +87,93 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl md:max-w-lg md:p-10">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
-        >
-          <h2 className="mb-6 text-center text-2xl font-bold text-gray-800 md:text-3xl">
-            Сторінка авторизації
-          </h2>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+    >
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        enableReinitialize
+      >
+        {() => (
+          <Form className="flex flex-col gap-5">
+            <Input name="phone" label="Телефон" type="tel" required />
 
-          <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            enableReinitialize
-          >
-            {() => (
-              <Form className="flex flex-col gap-5">
-                <Input name="phone" label="Телефон" type="tel" required />
-
-                <div className="relative">
-                  <Input
-                    name="password"
-                    label="Пароль"
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(prev => !prev)}
-                    className="absolute top-1/2 right-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-gray-500"
-                    aria-label={
-                      showPassword ? 'Сховати пароль' : 'Показати пароль'
-                    }
-                    tabIndex={-1}
-                  >
-                    {showPassword ? (
-                      <FiEyeOff size={20} />
-                    ) : (
-                      <FiEye size={20} />
-                    )}
-                  </button>
-                </div>
-
-                <div className="flex justify-center">
-                  <motion.div
-                    className="inline-block"
-                    whileHover={{
-                      scale: isLoading ? 1 : 1.02,
-                    }}
-                    whileTap={{ scale: isLoading ? 1 : 0.97 }}
-                    transition={{ type: 'spring', stiffness: 300 }}
-                  >
-                    <Btn
-                      type="submit"
-                      label={isLoading ? 'Завантаження...' : 'Увійти'}
-                      disabled={isLoading}
-                    />
-                  </motion.div>
-                </div>
-              </Form>
-            )}
-          </Formik>
-
-          <div className="my-8 flex items-center">
-            <hr className="grow border-gray-300" />
-            <span className="px-3 text-sm text-gray-500">або</span>
-            <hr className="grow border-gray-300" />
-          </div>
-
-          <div className="flex justify-center">
-            <motion.div
-              whileHover={{
-                scale: isLoading ? 1 : 1.02,
-              }}
-              whileTap={{ scale: isLoading ? 1 : 0.97 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            >
-              <Btn
-                type="button"
-                uiVariant="outline"
-                label="Continue with Google"
-                icon={FcGoogle}
-                onClick={handleGoogleLogin}
-                disabled={isLoading}
+            <div className="relative">
+              <Input
+                name="password"
+                label="Пароль"
+                type={showPassword ? 'text' : 'password'}
+                required
               />
-            </motion.div>
-          </div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute top-1/2 right-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-gray-500"
+                aria-label={showPassword ? 'Сховати пароль' : 'Показати пароль'}
+                tabIndex={-1}
+              >
+                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </button>
+            </div>
 
-          <p className="mt-8 text-center text-sm text-gray-500">
-            Забули пароль?{' '}
-            <Link
-              href={routes.public.auth.forgotPassword}
-              className="nav font-medium hover:text-gray-500"
-            >
-              Відновити
-            </Link>
-          </p>
+            <div className="flex justify-center">
+              <motion.div
+                className="inline-block"
+                whileHover={{
+                  scale: isLoading ? 1 : 1.02,
+                }}
+                whileTap={{ scale: isLoading ? 1 : 0.97 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                <Btn
+                  type="submit"
+                  label={isLoading ? 'Завантаження...' : 'Увійти'}
+                  disabled={isLoading}
+                />
+              </motion.div>
+            </div>
+          </Form>
+        )}
+      </Formik>
+
+      <div className="my-8 flex items-center">
+        <hr className="grow border-gray-300" />
+        <span className="px-3 text-sm text-gray-500">або</span>
+        <hr className="grow border-gray-300" />
+      </div>
+
+      <div className="flex justify-center">
+        <motion.div
+          whileHover={{
+            scale: isLoading ? 1 : 1.02,
+          }}
+          whileTap={{ scale: isLoading ? 1 : 0.97 }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
+          <Btn
+            type="button"
+            uiVariant="outline"
+            label="Continue with Google"
+            icon={FcGoogle}
+            onClick={handleGoogleLogin}
+            disabled={isLoading}
+          />
         </motion.div>
       </div>
-    </div>
+
+      <p className="mt-8 text-center text-sm text-gray-500">
+        Забули пароль?{' '}
+        <Link
+          href={routes.public.auth.forgotPassword}
+          className="nav font-medium hover:text-gray-500"
+        >
+          Відновити
+        </Link>
+      </p>
+    </motion.div>
   );
 };
 

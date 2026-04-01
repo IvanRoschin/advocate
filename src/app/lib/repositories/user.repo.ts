@@ -1,6 +1,5 @@
-import { CreateUserRequestDTO, UpdateUserDTO } from '@/app/types';
+import { CreateUserRequestDTO } from '@/app/types';
 import { User } from '@/models';
-
 import { dbConnect } from '../server/mongoose';
 
 export const userRepo = {
@@ -30,11 +29,11 @@ export const userRepo = {
     return User.create(data);
   },
 
-  async update(id: string, data: UpdateUserDTO) {
-    await dbConnect();
+  // async update(id: string, data: UpdateUserDTO) {
+  //   await dbConnect();
 
-    return User.findByIdAndUpdate(id, data, { new: true });
-  },
+  //   return User.findByIdAndUpdate(id, data, { new: true });
+  // },
 
   async delete(id: string) {
     await dbConnect();

@@ -1,11 +1,13 @@
 import { servicesSection } from '@/app/resources';
 import { iconLibrary } from '@/app/resources/icons';
+
 import ServiceCard from './ServiceCard';
 
 const Services = () => {
   return (
-    <section className="absolute top-full left-0 z-20 w-full -translate-y-1/5 sm:-translate-y-1/4 md:-translate-y-1/2">
-      <div className="container grid grid-cols-1 md:grid-cols-2 md:py-10 lg:grid-cols-4">
+    <section className="pointer-events-none absolute inset-x-0 top-full z-20 -translate-y-20 sm:-translate-y-24 lg:-translate-y-28">
+      {' '}
+      <div className="pointer-events-auto container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {servicesSection.items.map(service => {
           const Icon = iconLibrary[service.icon];
 

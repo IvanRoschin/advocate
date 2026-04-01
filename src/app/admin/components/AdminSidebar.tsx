@@ -13,7 +13,7 @@ const AdminSidebar = memo(() => {
 
   const handleLogout = async () => {
     await signOut({
-      callbackUrl: '/auth/signin',
+      callbackUrl: '/signin',
     });
   };
 

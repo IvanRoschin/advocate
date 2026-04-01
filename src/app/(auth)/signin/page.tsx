@@ -3,9 +3,11 @@
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
+import { LoginForm } from '@/app/components';
 import { authOptions } from '@/app/config/authOptions';
 import { UserRole } from '@/types';
-import SignInClient from './SignInClient';
+
+import AuthCard from '../_components/AuthCard';
 
 const SignInPage = async () => {
   const session = await getServerSession(authOptions);
@@ -15,7 +17,14 @@ const SignInPage = async () => {
     redirect(role === UserRole.ADMIN ? '/admin' : '/client');
   }
 
-  return <SignInClient />;
+  return (
+    <AuthCard
+      title="Увійти в кабінет"
+      description="Введіть ваші дані для входу в особистий кабінет."
+    >
+      <LoginForm />
+    </AuthCard>
+  );
 };
 
 export default SignInPage;
