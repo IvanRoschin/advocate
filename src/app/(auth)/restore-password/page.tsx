@@ -1,5 +1,4 @@
 import { RestorePasswordForm } from '@/app/components';
-import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { tokenService } from '@/app/lib/services/token.service';
 import { TokenType } from '@/app/types';
 
@@ -7,13 +6,14 @@ import AuthCard from '../_components/AuthCard';
 import AuthStatusBadge from '../_components/AuthStatusBadge';
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     token?: string;
-  };
+  }>;
 };
 
 export default async function RestorePasswordPage({ searchParams }: Props) {
-  const token = searchParams.token;
+  const params = await searchParams;
+  const token = params.token;
 
   let isValid = false;
   let errorMessage = '';
@@ -24,10 +24,9 @@ export default async function RestorePasswordPage({ searchParams }: Props) {
     try {
       await tokenService.verify(token, TokenType.RESET_PASSWORD);
       isValid = true;
-    } catch (error) {
-      errorToResponse(error);
+    } catch {
       errorMessage =
-        'Термін дії посилання закінчився або воно вже використане.';
+        'Термін дії посилання закінчився або посилання вже використане.';
     }
   }
 
