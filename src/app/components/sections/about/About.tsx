@@ -14,12 +14,12 @@ const About = () => {
   return (
     <section
       id={aboutSection.id}
-      className="bg-about-section pt-120 sm:pt-100 md:py-60 lg:py-10 lg:pt-40"
+      className="bg-about-section section-first-after-hero"
       itemScope
       itemType={aboutSection.schemaType}
     >
       <div className="font-eukraine container">
-        <header className="mb-10 flex flex-col items-center text-center sm:mb-14">
+        <header className="section-header">
           <span className="bg-accent mb-4 h-8 w-px" />
           <p className="text-about-uptitle text-xs tracking-widest uppercase">
             {aboutSection.header.uptitle}
@@ -30,7 +30,7 @@ const About = () => {
           <span className="bg-accent mt-4 h-8 w-px" />
         </header>
 
-        <div className="flex flex-col items-center justify-center gap-8 md:flex-row md:gap-0 lg:mt-30">
+        <div className="section-content flex flex-col items-center justify-center gap-8 md:flex-row md:gap-0">
           <div
             className="relative h-105 w-full max-w-70 shadow-lg sm:h-140 sm:max-w-90 md:-mt-24 lg:-mt-48"
             itemScope

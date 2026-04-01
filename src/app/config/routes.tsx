@@ -15,10 +15,10 @@ export const routes = {
     offer: '/offer',
 
     auth: {
-      verifyEmail: '/auth/verify-email',
-      signIn: '/auth/signin',
-      forgotPassword: '/auth/forgot-password',
-      restorePassword: '/auth/restore-password',
+      verifyEmail: '/verify-email',
+      signIn: '/signin',
+      forgotPassword: '/forgot-password',
+      restorePassword: '/restore-password',
     },
   },
 
@@ -42,6 +42,10 @@ export const routes = {
     },
     v1: {
       articles: '/api/v1/articles',
+      auth: {
+        restorePassword: '/api/v1/auth/forgot-password',
+        resetPassword: '/api/v1/auth/reset-password',
+      },
       categories: '/api/v1/categories',
       cloudinary: {
         sign: '/api/v1/cloudinary/sign',

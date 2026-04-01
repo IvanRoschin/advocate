@@ -2,153 +2,124 @@
 
 import { Form, Formik, FormikHelpers } from 'formik';
 import { motion } from 'framer-motion';
-import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
 
-import { useModal } from '@/app/hooks/useModal';
-// import { resetPasswordAction } from '@/app/actions/auth';
-// import { restorePasswordFormSchema } from '@/app/helpers/validationSchemas';
-// import { useNotificationModal } from '@/app/hooks';
-import { Btn, Input, Modal, ModalNotification } from '@/components';
+import { useAuthFeedback } from '@/app/(auth)/_components/AuthFeedbackProvider';
+import { routes } from '@/app/config/routes';
+import { Btn, Input } from '@/components';
 
 interface InitialStateType {
-  newPassword: string;
-  confirmNewPassword: string;
-  token: string;
+  password: string;
+  confirmPassword: string;
 }
 
-const RestorePasswordForm = () => {
-  const [showPassword1, setShowPassword1] = useState(false);
-  const [showPassword2, setShowPassword2] = useState(false);
+type RestorePasswordResponse = {
+  ok: boolean;
+  message: string;
+};
 
+type Props = {
+  token: string;
+};
+
+const RestorePasswordForm = ({ token }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [message] = useState('');
-
-  const searchParams = useSearchParams();
-  const token = searchParams.get('token') as string;
-
-  const notificationModal = useModal('notificationModal');
+  const { openAuthNotification } = useAuthFeedback();
 
   const initialValues: InitialStateType = {
-    newPassword: '',
-    confirmNewPassword: '',
-    token: token,
+    password: '',
+    confirmPassword: '',
   };
 
   const handleSubmit = async (
     values: InitialStateType,
     { resetForm }: FormikHelpers<InitialStateType>
   ) => {
-    setIsLoading(true);
+    if (isLoading) return;
 
-    // const res = await resetPasswordAction(
-    //   values.token, // token
-    //   values.newPassword, // password
-    //   values.confirmNewPassword // confirmPassword
-    // );
+    if (values.password !== values.confirmPassword) {
+      openAuthNotification({
+        title: 'Помилка',
+        message: 'Паролі не співпадають.',
+      });
+      return;
+    }
 
-    // setMessage(res.message);
-    notificationModal.open();
+    try {
+      setIsLoading(true);
 
-    setIsLoading(false);
-    resetForm();
+      const res = await fetch(routes.api.v1.auth.resetPassword, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token,
+          password: values.password,
+        }),
+      });
+
+      const data: RestorePasswordResponse = await res.json();
+
+      if (data.ok) {
+        resetForm();
+      }
+
+      openAuthNotification({
+        title: data.ok ? 'Успіх' : 'Помилка',
+        message: data.message,
+        redirectTo: data.ok ? routes.public.auth.signIn : undefined,
+      });
+    } catch (error) {
+      console.error('[RESTORE_PASSWORD_FORM_ERROR]', error);
+
+      openAuthNotification({
+        title: 'Помилка',
+        message: 'Сталася помилка. Спробуйте ще раз пізніше.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl md:p-10">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
-        >
-          <h2 className="subtitle mb-6">Сторінка зміни паролю</h2>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+    >
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        {() => (
+          <Form className="flex flex-col gap-5">
+            <Input
+              label="Новий пароль"
+              type="password"
+              name="password"
+              required
+            />
+            <Input
+              label="Повторіть пароль"
+              type="password"
+              name="confirmPassword"
+              required
+            />
 
-          <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            // validationSchema={restorePasswordFormSchema}
-            enableReinitialize
-          >
-            {() => (
-              <Form className="flex flex-col gap-5">
-                {/* New password */}
-                <div className="relative">
-                  <Input
-                    name="Новий пароль"
-                    label="Новий пароль"
-                    type={`${showPassword1} ? 'text' : 'password'`}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword1(prev => !prev)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500"
-                    tabIndex={-1}
-                  >
-                    {showPassword1 ? (
-                      <FiEyeOff size={20} />
-                    ) : (
-                      <FiEye size={20} />
-                    )}
-                  </button>
-                </div>
-
-                {/* Confirm password */}
-                <div className="relative">
-                  <Input
-                    name="Повторіть пароль"
-                    label="Повторіть пароль"
-                    type={`${showPassword2} ? 'text' : 'password'`}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword2(prev => !prev)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500"
-                    tabIndex={-1}
-                  >
-                    {showPassword2 ? (
-                      <FiEyeOff size={20} />
-                    ) : (
-                      <FiEye size={20} />
-                    )}
-                  </button>
-                </div>
-
-                <motion.div
-                  whileHover={{
-                    scale: 1.02,
-                    boxShadow: '0px 0px 12px rgba(59,130,246,0.5)',
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <Btn
-                    type="submit"
-                    label={isLoading ? 'Завантаження...' : 'Змінити пароль'}
-                    disabled={isLoading}
-                  />
-                </motion.div>
-              </Form>
-            )}
-          </Formik>
-        </motion.div>
-      </div>
-
-      {/* Модалка */}
-      <Modal
-        body={
-          <ModalNotification
-            title="Повідомлення"
-            message={message}
-            onConfirm={notificationModal.close}
-          />
-        }
-        isOpen={notificationModal.isOpen}
-        onClose={notificationModal.close}
-      />
-    </div>
+            <div className="flex justify-center">
+              <motion.div
+                className="inline-block"
+                whileHover={{ scale: isLoading ? 1 : 1.02 }}
+                whileTap={{ scale: isLoading ? 1 : 0.97 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                <Btn
+                  type="submit"
+                  label={isLoading ? 'Завантаження...' : 'Змінити пароль'}
+                  disabled={isLoading}
+                />
+              </motion.div>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </motion.div>
   );
 };
 

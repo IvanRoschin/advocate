@@ -119,7 +119,10 @@ export default function Breadcrumbs() {
             <li key={crumb.href + idx} className="flex items-center space-x-2">
               <FaChevronRight className="mx-1 text-xs text-gray-400" />
               {isLastCrumb ? (
-                <span className="text-gray-900" aria-current="page">
+                <span
+                  className="text-gray-900 dark:text-gray-100"
+                  aria-current="page"
+                >
                   {crumb.name}
                 </span>
               ) : (

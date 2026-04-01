@@ -3,6 +3,7 @@ export * from './article';
 export * from './category';
 export * from './client';
 export * from './content.types';
+export * from './home';
 export * from './lead';
 export * from './mail';
 export * from './page-settings';

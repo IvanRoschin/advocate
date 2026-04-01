@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import { cn } from '@/app/lib/utils';
 import { AppLink } from '@/components';
 import { Button } from '@/components/ui/button';
@@ -26,6 +28,19 @@ export const NavPill = ({
   const pathname = useSelectedPathname();
   const items = useNavItems(scope);
 
+  const [hash, setHash] = useState('');
+
+  useEffect(() => {
+    const updateHash = () => {
+      setHash(window.location.hash);
+    };
+
+    updateHash();
+
+    window.addEventListener('hashchange', updateHash);
+    return () => window.removeEventListener('hashchange', updateHash);
+  }, []);
+
   const labelClass =
     showLabelsFrom === 'lg'
       ? 'hidden text-sm lg:inline'
@@ -43,7 +58,7 @@ export const NavPill = ({
         {items.map(({ href, label, Icon, startsWith }) => {
           const selected = isSelected({
             pathname,
-            hash: typeof window !== 'undefined' ? window.location.hash : '',
+            hash,
             href,
             startsWith,
           });
@@ -52,7 +67,7 @@ export const NavPill = ({
             <Tooltip key={href}>
               <TooltipTrigger asChild>
                 <Button
-                  variant={selected ? 'default' : 'ghost'}
+                  variant="ghost"
                   size="sm"
                   className={cn(
                     'mobile-nav-pill h-9 shrink-0 rounded-xl px-2',

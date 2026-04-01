@@ -20,7 +20,7 @@ const ServicesHeaderSection: ServicesSectionComponent = () => <Header />;
 
 const ServicesHeroSection: ServicesSectionComponent = () => (
   <section className="min-w-0">
-    <div className="max-w-3xl">
+    <div className="mb-20 max-w-3xl">
       <p className="text-accent mb-2 text-sm font-semibold tracking-[0.18em] uppercase">
         Послуги
       </p>
