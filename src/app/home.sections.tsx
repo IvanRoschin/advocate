@@ -47,7 +47,7 @@ const HomeWhyChooseMeSection: HomeSectionComponent = () => <WhyChooseMe />;
 const HomeOrderSection: HomeSectionComponent = () => <Order />;
 
 const HomeFooterSection: HomeSectionComponent = () => (
-  <section className="mt-16 lg:mt-20">
+  <section className="mt-20 sm:mt-24 lg:mt-28">
     <Footer />
   </section>
 );

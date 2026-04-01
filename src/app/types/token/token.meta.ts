@@ -20,7 +20,7 @@ export interface PasswordRestoreMeta extends BaseTokenMeta {
 export type TokenMetaByType = {
   [TokenType.VERIFICATION]: VerificationTokenMeta;
   // future:
-  [TokenType.PASSWORD_RESET]: ResetPasswordMeta;
+  [TokenType.RESET_PASSWORD]: ResetPasswordMeta;
   [TokenType.PASSWORD_RESTORE]: PasswordRestoreMeta;
 
   // [TokenType.INVITE]: InviteMeta;

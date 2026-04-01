@@ -1,4 +1,23 @@
 @layer utilities {
+
+  /* ===== Sections ===== */
+
+  .section {
+    @apply pb-20 sm:pb-24 lg:pb-28;
+  }
+
+  .section-header {
+    @apply flex flex-col items-center text-center;
+  }
+
+  .section-content {
+    @apply mt-12 sm:mt-14 lg:mt-16;
+  }
+
+  .section-first-after-hero {
+    @apply pt-36 sm:pt-44 md:pt-52 lg:pt-60 pb-20 sm:pb-24 lg:pb-28;
+  }
+
   /* ===== app / text ===== */
   .text-primary {
     color: var(--foreground);

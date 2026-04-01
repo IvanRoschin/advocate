@@ -6,6 +6,8 @@ import { tokenService } from '@/app/lib/services/token.service';
 import { EmailTemplateType } from '@/app/templates/email';
 import { TokenType } from '@/app/types';
 
+import { userService } from './user.service';
+
 export const authService = {
   async requestPasswordReset(email: string) {
     const normalizedEmail = email.trim().toLowerCase();
@@ -22,7 +24,7 @@ export const authService = {
 
     const tokenDoc = await tokenService.create({
       userId: user._id.toString(),
-      type: TokenType.PASSWORD_RESET,
+      type: TokenType.RESET_PASSWORD,
       email: user.email,
     });
 
@@ -53,7 +55,7 @@ export const authService = {
   async resetPassword(tokenValue: string, newPassword: string) {
     const token = await tokenService.verify(
       tokenValue,
-      TokenType.PASSWORD_RESET
+      TokenType.RESET_PASSWORD
     );
 
     const user = await userRepo.findById(token.userId.toString());
@@ -61,11 +63,15 @@ export const authService = {
       throw new ValidationError('Користувача не знайдено');
     }
 
-    user.password = newPassword;
-    await user.save();
+    await userService.update(user._id.toString(), {
+      password: newPassword,
+    });
 
     await tokenService.markUsed(token);
 
-    return { ok: true };
+    return {
+      ok: true,
+      message: 'Пароль успішно змінено.',
+    };
   },
 };

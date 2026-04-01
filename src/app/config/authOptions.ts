@@ -1,11 +1,13 @@
 import { DefaultSession, DefaultUser, NextAuthOptions } from 'next-auth';
-import type { JWT } from 'next-auth/jwt';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
 import User from '@/models/User';
+
 import { dbConnect } from '../lib/server/mongoose';
 import { routes } from './routes';
+
+import type { JWT } from 'next-auth/jwt';
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -82,14 +84,18 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        if (!credentials?.phone || !credentials?.password) return null;
-
+        if (!credentials?.phone || !credentials?.password) {
+          return null;
+        }
         await dbConnect();
 
-        const user = await User.findOne({ phone: credentials.phone });
+        const phone = credentials.phone.replace(/\s+/g, '');
+
+        const user = await User.findOne({ phone });
+
         if (!user) return null;
 
-        const isCorrect = user.comparePassword(credentials.password);
+        const isCorrect = await user.comparePassword(credentials.password);
 
         if (!isCorrect) return null;
 
@@ -173,6 +179,7 @@ export const authOptions: NextAuthOptions = {
     // -------------------------------
     async session({ session, token }) {
       session.user = {
+        ...session.user,
         id: token.id,
         role: token.role || '',
         phone: token.phone || '',

@@ -15,10 +15,10 @@ export const routes = {
     offer: '/offer',
 
     auth: {
-      verifyEmail: '/auth/verify-email',
-      signIn: '/auth/signin',
-      forgotPassword: '/auth/forgot-password',
-      restorePassword: '/auth/restore-password',
+      verifyEmail: '/verify-email',
+      signIn: '/signin',
+      forgotPassword: '/forgot-password',
+      restorePassword: '/restore-password',
     },
   },
 

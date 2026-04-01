@@ -32,7 +32,7 @@ export default function FooterClient({ categories }: Props) {
 
   return (
     <footer className="bg-footer text-footer">
-      <div className="container mx-auto p-12 px-6">
+      <div className="container mx-auto px-6 py-16 sm:py-20">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-6">
             <Logo variant={logoVariant} />

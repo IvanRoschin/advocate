@@ -22,7 +22,7 @@ export const tokenService = {
     const ttlDefault: Record<TokenType, number> = {
       [TokenType.REFRESH]: 60 * 60 * 24 * 30,
       [TokenType.VERIFICATION]: 60 * 60 * 24,
-      [TokenType.PASSWORD_RESET]: 60 * 60 * 2,
+      [TokenType.RESET_PASSWORD]: 60 * 60 * 2,
       [TokenType.EMAIL_CHANGE]: 60 * 60,
       [TokenType.PASSWORD_RESTORE]: 60 * 60,
     };
