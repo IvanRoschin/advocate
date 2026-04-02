@@ -6,6 +6,7 @@ export type { LeadDocument, LeadInput } from './Lead';
 export { default as PageSettings } from './PageSettings';
 export { default as Review } from './Review';
 export { default as Service } from './Service';
+export { default as Slider } from './Slider';
 export { default as Subscriber } from './Subscriber';
 export type { SubscriberDocument, SubscriberInput } from './Subscriber';
 export { default as User } from './User';

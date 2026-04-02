@@ -20,7 +20,7 @@ import {
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
-import { LeadMobileCard } from '../_components/table/mobileRender';
+import { LeadMobileCard } from './_components/LeadMobileCard';
 import { leadColumns } from './lead.columns';
 
 import type {
