@@ -24,6 +24,7 @@ const customNames: Record<string, string> = {
   article: 'Стаття',
   service: 'Послуга',
   reviews: 'Відгуки',
+  slides: 'Слайди',
   'page-settings': 'Налаштування сторінок',
   'suprovid-pry-rozluchenni': 'Супровід при розлученні',
 };

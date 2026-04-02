@@ -4,16 +4,17 @@ import { AnimatePresence, motion } from 'framer-motion';
 import * as React from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
+import { SlideResponseDTO } from '@/app/types';
 import { NextImage } from '@/components';
 import { cn } from '@/lib';
 
-export type CarouselItem = {
-  src: string;
-  alt: string;
-};
+// export type CarouselItem = {
+//   src: string;
+//   alt: string;
+// };
 
 type HeroCarouselProps = {
-  items: CarouselItem[];
+  items: SlideResponseDTO[];
   autoplay?: boolean;
   intervalMs?: number;
   initialIndex?: number;
@@ -102,7 +103,7 @@ export function HeroCarousel({
       <AnimatePresence initial={false} custom={direction}>
         {current ? (
           <motion.div
-            key={current.src}
+            key={current._id}
             custom={direction}
             initial={{ opacity: 0, x: direction === 1 ? 20 : -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -111,8 +112,8 @@ export function HeroCarousel({
             className="absolute inset-0"
           >
             <NextImage
-              src={current.src}
-              alt={current.alt}
+              src={current.src[0]}
+              alt={current.title}
               fill
               priority={index === 0}
               sizes="100vw"

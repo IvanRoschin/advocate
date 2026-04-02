@@ -1,20 +1,22 @@
 'use client';
 
 import { getRouteUrl } from '@/app/config/routes';
+import { SlideResponseDTO } from '@/app/types';
 import { Btn } from '@/components';
-import {
-  CarouselItem,
-  HeroCarousel,
-} from '@/components/sections/hero/HeroCarousel';
+import { HeroCarousel } from '@/components/sections/hero/HeroCarousel';
 import { heroSection, person, social } from '@/resources';
 
-const slides: CarouselItem[] = [
-  { src: '/images/bg/hero_bg.webp', alt: 'Hero background 1' },
-  { src: '/images/bg/hero_bg_2.webp', alt: 'Hero background 2' },
-  { src: '/images/bg/hero_bg_3.webp', alt: 'Hero background 3' },
-];
+type HeroProps = {
+  slides: SlideResponseDTO[];
+};
 
-const Hero = () => {
+// const slides: CarouselItem[] = [
+//   { src: '/images/bg/hero_bg.webp', alt: 'Hero background 1' },
+//   { src: '/images/bg/hero_bg_2.webp', alt: 'Hero background 2' },
+//   { src: '/images/bg/hero_bg_3.webp', alt: 'Hero background 3' },
+// ];
+
+const Hero = ({ slides }: HeroProps) => {
   const phoneLink =
     social.find(item => item.icon === 'phone' && item.essential && item.link)
       ?.link ?? null;
