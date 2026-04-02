@@ -1,11 +1,13 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { iconLibrary } from '@/app/resources';
-import type { ArticleResponseDTO, ArticleStatus } from '@/app/types';
 import { Btn } from '@/components';
 import { Badge } from '@/components/ui/badge';
-import { Center } from '../components/table/Center';
-import { SortableHeader } from '../components/table/SortableHeader';
+
+import { Center } from '../_components/table/Center';
+import { SortableHeader } from '../_components/table/SortableHeader';
+
+import type { ArticleResponseDTO, ArticleStatus } from '@/app/types';
 type ColumnActions = {
   onEdit: (article: ArticleResponseDTO) => void;
   onDelete: (article: ArticleResponseDTO) => void;

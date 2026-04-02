@@ -17,12 +17,11 @@ export type AdminLayoutNode =
 export const adminLayout: AdminLayoutNode[] = [
   { type: 'section', key: 'socials', display: true },
   { type: 'section', key: 'header', display: true },
-
   {
     type: 'group',
     key: 'adminShell',
     display: true,
-    wrapperClassName: 'mx-auto flex w-full max-w-7xl gap-0 px-0',
+    wrapperClassName: 'flex w-full min-w-0 items-start gap-0',
     items: [
       { key: 'sidebar', display: true },
       { key: 'content', display: true },

@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { DataTable } from '@/app/components/data-table/DataTable';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -17,10 +16,13 @@ import {
   Modal,
 } from '@/components';
 
+import { AdminPageContainer } from '../_components/AdminPageContainer';
+import { AdminTable } from '../_components/table';
+import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
+import { ReviewMobileCard } from './_components/ReviewMobileCard';
 import { reviewsColumns } from './reviews.columns';
 
 import type { ReviewResponseDTO } from '@/app/types';
-
 type Props = {
   initialReviews: ReviewResponseDTO[];
 };
@@ -29,6 +31,7 @@ export default function ReviewsClient({ initialReviews }: Props) {
   const router = useRouter();
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
+  const isLoading = useLoadingStore(state => state.isLoading);
 
   const [reviews, setReviews] = useState<ReviewResponseDTO[]>(initialReviews);
   const [reviewToDelete, setReviewToDelete] =
@@ -48,7 +51,6 @@ export default function ReviewsClient({ initialReviews }: Props) {
     if (!reviewToDelete) return;
 
     start();
-
     try {
       await apiFetch<void>(apiUrl(`/api/admin/reviews/${reviewToDelete._id}`), {
         method: 'DELETE',
@@ -86,58 +88,67 @@ export default function ReviewsClient({ initialReviews }: Props) {
     [handleEdit, handleDelete]
   );
 
+  const renderDeleteModal = (
+    <Modal
+      isOpen={deleteModal.isOpen}
+      onClose={deleteModal.close}
+      body={
+        <DeleteConfirmation
+          title={`Відгук: ${reviewToDelete?.authorName ?? '—'}`}
+          onConfirm={handleDeleteConfirm}
+          onCancel={deleteModal.close}
+        />
+      }
+    />
+  );
+
   if (reviews.length === 0) {
     return (
-      <div className="container">
+      <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
         <EmptyState
           title="Відгуки відсутні"
           subtitle="Додайте перший відгук"
           actionLabel="Додати новий відгук"
           actionOnClick={handleCreate}
         />
-
-        <Modal
-          isOpen={deleteModal.isOpen}
-          onClose={deleteModal.close}
-          body={
-            <DeleteConfirmation
-              title={`Відгук: ${reviewToDelete?.authorName ?? '—'}`}
-              onConfirm={handleDeleteConfirm}
-              onCancel={deleteModal.close}
-            />
-          }
-        />
+        {renderDeleteModal}
       </div>
     );
   }
 
   return (
-    <div className="container">
+    <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
       <Breadcrumbs />
 
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-accent text-xl font-semibold">Відгуки</h1>
-        <Btn label="Додати відгук" onClick={handleCreate} />
-      </div>
-
-      <DataTable
-        data={reviews}
-        columns={columns}
-        searchColumnId="authorName"
-        searchPlaceholder="Пошук за автором…"
-      />
-
-      <Modal
-        isOpen={deleteModal.isOpen}
-        onClose={deleteModal.close}
-        body={
-          <DeleteConfirmation
-            title={`Відгук: ${reviewToDelete?.authorName ?? '—'}`}
-            onConfirm={handleDeleteConfirm}
-            onCancel={deleteModal.close}
+      <AdminPageContainer
+        title="Відгуки"
+        description="Керуйте відгуками клієнтів"
+        actions={<Btn label="Додати відгук" onClick={handleCreate} />}
+      >
+        <AdminTableToolbar>
+          <input
+            type="text"
+            placeholder="Пошук за автором..."
+            className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
-        }
-      />
+        </AdminTableToolbar>
+
+        <AdminTable
+          data={reviews}
+          columns={columns}
+          isLoading={isLoading}
+          emptyMessage="Відгуків поки немає"
+          mobileRender={review => (
+            <ReviewMobileCard
+              row={review}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+        />
+      </AdminPageContainer>
+
+      {renderDeleteModal}
     </div>
   );
 }

@@ -3,16 +3,10 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { DataTable } from '@/app/components/data-table/DataTable';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
-import {
-  CreateUserRequestDTO,
-  UpdateUserDTO,
-  UserResponseDTO,
-} from '@/app/types';
 import {
   Breadcrumbs,
   Btn,
@@ -23,8 +17,17 @@ import {
   UserForm,
 } from '@/components';
 
+import { AdminPageContainer } from '../_components/AdminPageContainer';
+import { AdminTable } from '../_components/table';
+import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
+import { UserMobileCard } from './_components/UserMobileCard';
 import { userColumns } from './user.columns';
 
+import type {
+  CreateUserRequestDTO,
+  UpdateUserDTO,
+  UserResponseDTO,
+} from '@/app/types';
 interface Props {
   initialUsers: UserResponseDTO[];
 }
@@ -32,12 +35,12 @@ interface Props {
 export default function UsersClient({ initialUsers }: Props) {
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
-  const [users, setUsers] = useState<UserResponseDTO[]>(initialUsers);
+  const isLoading = useLoadingStore(state => state.isLoading);
 
+  const [users, setUsers] = useState<UserResponseDTO[]>(initialUsers);
   const [userToDelete, setUserToDelete] = useState<UserResponseDTO | null>(
     null
   );
-
   const [userToUpdate, setUserToUpdate] = useState<UserResponseDTO | null>(
     null
   );
@@ -61,7 +64,7 @@ export default function UsersClient({ initialUsers }: Props) {
         method: 'DELETE',
       });
 
-      setUsers(prev => prev.filter(user => user._id !== userToDelete._id));
+      setUsers(prev => prev.filter(u => u._id !== userToDelete._id));
 
       toast.success('Користувача видалено');
       deleteModal.close();
@@ -101,12 +104,10 @@ export default function UsersClient({ initialUsers }: Props) {
     try {
       const { password, ...rest } = payload;
 
-      // 1) убираем пустые строки ('' -> undefined -> ключ не попадёт)
       const cleanedRest = Object.fromEntries(
         Object.entries(rest).filter(([, v]) => v !== '' && v !== undefined)
       ) as Omit<UpdateUserDTO, 'password'>;
 
-      // 2) пароль — только если непустой после trim
       const cleanPayload: UpdateUserDTO = {
         ...cleanedRest,
         ...(password?.trim() ? { password: password.trim() } : {}),
@@ -133,6 +134,8 @@ export default function UsersClient({ initialUsers }: Props) {
     }
   };
 
+  /* ---------- modals ---------- */
+
   const renderCreateModal = (
     <Modal
       isOpen={createModal.isOpen}
@@ -142,13 +145,52 @@ export default function UsersClient({ initialUsers }: Props) {
       }
     />
   );
-  /* ---------------- UI ---------------- */
+
+  const renderDeleteModal = (
+    <Modal
+      isOpen={deleteModal.isOpen}
+      onClose={deleteModal.close}
+      body={
+        <DeleteConfirmation
+          title={`Користувач: ${userToDelete?.email}`}
+          onConfirm={handleDeleteConfirm}
+          onCancel={deleteModal.close}
+        />
+      }
+    />
+  );
+
+  const renderUpdateModal = (
+    <Modal
+      isOpen={updateModal.isOpen}
+      onClose={() => {
+        updateModal.close();
+        setUserToUpdate(null);
+      }}
+      body={
+        userToUpdate && (
+          <UserForm
+            initialValues={{
+              name: userToUpdate.name,
+              email: userToUpdate.email,
+              password: '',
+              role: userToUpdate.role,
+              isActive: userToUpdate.isActive,
+            }}
+            submitLabel="Оновити користувача"
+            onSubmit={handleUpdateUser}
+            onClose={updateModal.close}
+          />
+        )
+      }
+    />
+  );
 
   if (!users) return <Loader />;
 
   if (users.length === 0) {
     return (
-      <div className="container">
+      <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
         <EmptyState
           title="Користувачі відсутні 🤷"
           subtitle="Додайте першого користувача"
@@ -161,62 +203,43 @@ export default function UsersClient({ initialUsers }: Props) {
   }
 
   return (
-    <div className="container">
+    <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
       <Breadcrumbs />
 
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-accent text-xl font-semibold">Користувачі</h1>
-        <Btn label="Додати користувача" onClick={createModal.open} />
-      </div>
-
-      <DataTable
-        data={users}
-        columns={userColumns({
-          onEdit: handleEdit,
-          onDelete: handleDelete,
-        })}
-      />
-
-      {/* Create */}
-      {renderCreateModal}
-
-      {/* Delete */}
-      <Modal
-        isOpen={deleteModal.isOpen}
-        onClose={deleteModal.close}
-        body={
-          <DeleteConfirmation
-            title={`Користувач: ${userToDelete?.email}`}
-            onConfirm={handleDeleteConfirm}
-            onCancel={deleteModal.close}
+      <AdminPageContainer
+        title="Користувачі"
+        description="Керуйте доступами та ролями"
+        actions={<Btn label="Додати користувача" onClick={createModal.open} />}
+      >
+        <AdminTableToolbar>
+          <input
+            type="text"
+            placeholder="Пошук..."
+            className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
-        }
-      />
+        </AdminTableToolbar>
 
-      {/* Update */}
-      <Modal
-        isOpen={updateModal.isOpen}
-        onClose={() => {
-          updateModal.close();
-          setUserToUpdate(null);
-        }}
-        body={
-          userToUpdate && (
-            <UserForm
-              initialValues={{
-                name: userToUpdate.name,
-                email: userToUpdate.email,
-                password: '',
-                role: userToUpdate.role,
-                isActive: userToUpdate.isActive,
-              }}
-              submitLabel="Оновити користувача"
-              onSubmit={handleUpdateUser}
-              onClose={updateModal.close}
+        <AdminTable
+          data={users}
+          columns={userColumns({
+            onEdit: handleEdit,
+            onDelete: handleDelete,
+          })}
+          isLoading={isLoading}
+          emptyMessage="Користувачів поки немає"
+          mobileRender={user => (
+            <UserMobileCard
+              row={user}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
-          )
-        }
-      />
+          )}
+        />
+      </AdminPageContainer>
+
+      {renderCreateModal}
+      {renderDeleteModal}
+      {renderUpdateModal}
     </div>
   );
 }

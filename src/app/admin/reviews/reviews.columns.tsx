@@ -8,9 +8,7 @@ import type {
 } from '@/app/types';
 import { Btn } from '@/components';
 import { Badge } from '@/components/ui/badge';
-import { Center } from '../../components/table/Center';
-import { SortableHeader } from '../../components/table/SortableHeader';
-
+import { Center, SortableHeader } from '../_components/table';
 type ColumnActions = {
   onEdit: (review: ReviewResponseDTO) => void;
   onDelete: (review: ReviewResponseDTO) => void;

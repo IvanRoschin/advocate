@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { DataTable } from '@/app/components/data-table/DataTable';
 import ClientForm from '@/app/components/forms/ClientForm';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
@@ -18,6 +17,10 @@ import {
   Modal,
 } from '@/components';
 
+import { AdminPageContainer } from '../_components/AdminPageContainer';
+import { AdminTable } from '../_components/table';
+import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
+import { ClientMobileCard } from './_components/ClientMobileCard';
 import { clientsColumns } from './clients.columns';
 
 import type {
@@ -25,7 +28,6 @@ import type {
   CreateClientDTO,
   UpdateClientDTO,
 } from '@/app/types';
-
 type Props = {
   initialClients: ClientResponseDTO[];
 };
@@ -33,6 +35,7 @@ type Props = {
 export default function ClientsClient({ initialClients }: Props) {
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
+  const isLoading = useLoadingStore(state => state.isLoading);
 
   const [clients, setClients] = useState<ClientResponseDTO[]>(initialClients);
   const [clientToDelete, setClientToDelete] =
@@ -152,11 +155,49 @@ export default function ClientsClient({ initialClients }: Props) {
     />
   );
 
+  const renderDeleteModal = (
+    <Modal
+      isOpen={deleteModal.isOpen}
+      onClose={deleteModal.close}
+      body={
+        <DeleteConfirmation
+          title={`Клієнт: ${clientToDelete?.fullName ?? '—'}`}
+          onConfirm={handleDeleteConfirm}
+          onCancel={deleteModal.close}
+        />
+      }
+    />
+  );
+
+  const renderUpdateModal = (
+    <Modal
+      isOpen={updateModal.isOpen}
+      onClose={() => {
+        updateModal.close();
+        setClientToUpdate(null);
+      }}
+      body={
+        clientToUpdate && (
+          <ClientForm
+            mode="edit"
+            initialValues={clientToUpdate}
+            submitLabel="Оновити клієнта"
+            onSubmit={handleUpdateClient}
+            onClose={() => {
+              updateModal.close();
+              setClientToUpdate(null);
+            }}
+          />
+        )
+      }
+    />
+  );
+
   if (!clients) return <Loader />;
 
   if (clients.length === 0) {
     return (
-      <div className="container">
+      <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
         <EmptyState
           title="Клієнти відсутні"
           subtitle="Додайте першого клієнта"
@@ -164,61 +205,50 @@ export default function ClientsClient({ initialClients }: Props) {
           actionOnClick={createModal.open}
         />
         {renderCreateModal}
+        {renderDeleteModal}
+        {renderUpdateModal}
       </div>
     );
   }
 
   return (
-    <div className="container">
+    <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
       <Breadcrumbs />
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-accent text-xl font-semibold">Клієнти</h1>
-        <Btn label="Додати клієнта" onClick={createModal.open} />
-      </div>
 
-      <DataTable
-        data={clients}
-        columns={clientsColumns({
-          onEdit: handleEdit,
-          onDelete: handleDelete,
-        })}
-      />
+      <AdminPageContainer
+        title="Клієнти"
+        description="Керуйте базою клієнтів"
+        actions={<Btn label="Додати клієнта" onClick={createModal.open} />}
+      >
+        <AdminTableToolbar>
+          <input
+            type="text"
+            placeholder="Пошук..."
+            className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
+          />
+        </AdminTableToolbar>
+
+        <AdminTable
+          data={clients}
+          columns={clientsColumns({
+            onEdit: handleEdit,
+            onDelete: handleDelete,
+          })}
+          isLoading={isLoading}
+          emptyMessage="Клієнтів поки немає"
+          mobileRender={client => (
+            <ClientMobileCard
+              row={client}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+        />
+      </AdminPageContainer>
 
       {renderCreateModal}
-
-      <Modal
-        isOpen={deleteModal.isOpen}
-        onClose={deleteModal.close}
-        body={
-          <DeleteConfirmation
-            title={`Клієнт: ${clientToDelete?.fullName}`}
-            onConfirm={handleDeleteConfirm}
-            onCancel={deleteModal.close}
-          />
-        }
-      />
-
-      <Modal
-        isOpen={updateModal.isOpen}
-        onClose={() => {
-          updateModal.close();
-          setClientToUpdate(null);
-        }}
-        body={
-          clientToUpdate && (
-            <ClientForm
-              mode="edit"
-              initialValues={clientToUpdate}
-              submitLabel="Оновити клієнта"
-              onSubmit={handleUpdateClient}
-              onClose={() => {
-                updateModal.close();
-                setClientToUpdate(null);
-              }}
-            />
-          )
-        }
-      />
+      {renderDeleteModal}
+      {renderUpdateModal}
     </div>
   );
 }

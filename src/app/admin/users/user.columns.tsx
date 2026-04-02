@@ -1,11 +1,12 @@
-import { ColumnDef } from '@tanstack/react-table';
-
+import { iconLibrary } from '@/app/resources'; // ✅ как в категориях
 import { Btn } from '@/components';
 import { Badge } from '@/components/ui/badge';
-import { iconLibrary } from '@/app/resources'; // ✅ как в категориях
+import { ColumnDef } from '@tanstack/react-table';
+
+import { Center } from '../_components/table/Center';
+import { SortableHeader } from '../_components/table/SortableHeader';
+
 import type { UserResponseDTO } from '@/app/types';
-import { Center } from '../components/table/Center';
-import { SortableHeader } from '../components/table/SortableHeader';
 interface ColumnActions {
   onEdit: (user: UserResponseDTO) => void;
   onDelete: (user: UserResponseDTO) => void;
