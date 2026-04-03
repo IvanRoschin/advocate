@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { DataTable } from '@/app/components/data-table/DataTable';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -17,6 +16,10 @@ import {
   Modal,
 } from '@/components';
 
+import { AdminPageContainer } from '../_components/AdminPageContainer';
+import { AdminTable } from '../_components/table';
+import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
+import { ServiceMobileCard } from './_components/ServiceMobileCard';
 import { servicesColumns } from './services.columns';
 
 import type { ServiceResponseDTO } from '@/app/types';
@@ -28,6 +31,7 @@ export default function ServicesClient({ initialServices }: Props) {
   const router = useRouter();
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
+  const isLoading = useLoadingStore(state => state.isLoading);
 
   const [services, setServices] =
     useState<ServiceResponseDTO[]>(initialServices);
@@ -57,7 +61,9 @@ export default function ServicesClient({ initialServices }: Props) {
         }
       );
 
-      setServices(prev => prev.filter(s => s._id !== serviceToDelete._id));
+      setServices(prev =>
+        prev.filter(service => service._id !== serviceToDelete._id)
+      );
 
       toast.success('Послугу видалено');
       deleteModal.close();
@@ -89,53 +95,67 @@ export default function ServicesClient({ initialServices }: Props) {
     [handleDelete, handleEdit]
   );
 
+  const renderDeleteModal = (
+    <Modal
+      isOpen={deleteModal.isOpen}
+      onClose={deleteModal.close}
+      body={
+        <DeleteConfirmation
+          title={`Послуга: ${serviceToDelete?.title ?? '—'}`}
+          onConfirm={handleDeleteConfirm}
+          onCancel={deleteModal.close}
+        />
+      }
+    />
+  );
+
   if (services.length === 0) {
     return (
-      <div className="container">
+      <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
         <EmptyState
           title="Послуги відсутні"
           subtitle="Додайте першу послугу"
           actionLabel="Додати нову послугу"
           actionOnClick={handleCreate}
         />
-
-        <Modal
-          isOpen={deleteModal.isOpen}
-          onClose={deleteModal.close}
-          body={
-            <DeleteConfirmation
-              title={`Послуга: ${serviceToDelete?.title ?? '—'}`}
-              onConfirm={handleDeleteConfirm}
-              onCancel={deleteModal.close}
-            />
-          }
-        />
+        {renderDeleteModal}
       </div>
     );
   }
 
   return (
-    <div className="container">
+    <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
       <Breadcrumbs />
 
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-accent text-xl font-semibold">Послуги</h1>
-        <Btn label="Додати послугу" onClick={handleCreate} />
-      </div>
-
-      <DataTable data={services} columns={columns} />
-
-      <Modal
-        isOpen={deleteModal.isOpen}
-        onClose={deleteModal.close}
-        body={
-          <DeleteConfirmation
-            title={`Послуга: ${serviceToDelete?.title ?? '—'}`}
-            onConfirm={handleDeleteConfirm}
-            onCancel={deleteModal.close}
+      <AdminPageContainer
+        title="Послуги"
+        description="Керуйте сторінками послуг"
+        actions={<Btn label="Додати послугу" onClick={handleCreate} />}
+      >
+        <AdminTableToolbar>
+          <input
+            type="text"
+            placeholder="Пошук..."
+            className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
-        }
-      />
+        </AdminTableToolbar>
+
+        <AdminTable
+          data={services}
+          columns={columns}
+          isLoading={isLoading}
+          emptyMessage="Послуг поки немає"
+          mobileRender={service => (
+            <ServiceMobileCard
+              row={service}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+        />
+      </AdminPageContainer>
+
+      {renderDeleteModal}
     </div>
   );
 }

@@ -3,17 +3,11 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { DataTable } from '@/app/components/data-table/DataTable';
-import { CategoryForm } from '@/app/components/forms/index';
+import { CategoryForm } from '@/app/components/forms';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
-import {
-  CategoryResponseDTO,
-  CreateCategoryRequestDTO,
-  UpdateCategoryDTO,
-} from '@/app/types';
 import {
   Breadcrumbs,
   Btn,
@@ -21,10 +15,19 @@ import {
   EmptyState,
   Loader,
   Modal,
-} from '@/components/index';
+} from '@/components';
 
+import { AdminPageContainer } from '../_components/AdminPageContainer';
+import { AdminTable } from '../_components/table';
+import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
+import { CategoryMobileCard } from './_components/CategoryMobileCard';
 import { categoryColumns } from './category.columns';
 
+import type {
+  CategoryResponseDTO,
+  CreateCategoryRequestDTO,
+  UpdateCategoryDTO,
+} from '@/app/types';
 interface Props {
   initialCategories: CategoryResponseDTO[];
 }
@@ -32,6 +35,7 @@ interface Props {
 export default function CategoriesClient({ initialCategories }: Props) {
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
+  const isLoading = useLoadingStore(state => state.isLoading);
 
   const [categories, setCategories] =
     useState<CategoryResponseDTO[]>(initialCategories);
@@ -46,8 +50,6 @@ export default function CategoriesClient({ initialCategories }: Props) {
   const deleteModal = useModal('deleteCategory');
   const updateModal = useModal('updateCategory');
 
-  /* ---------- handlers ---------- */
-
   const handleDelete = (category: CategoryResponseDTO) => {
     setCategoryToDelete(category);
     deleteModal.open();
@@ -55,6 +57,7 @@ export default function CategoriesClient({ initialCategories }: Props) {
 
   const handleDeleteConfirm = async () => {
     if (!categoryToDelete) return;
+
     start();
     try {
       await apiFetch<void>(
@@ -63,7 +66,7 @@ export default function CategoriesClient({ initialCategories }: Props) {
       );
 
       setCategories(prev =>
-        prev.filter(cat => cat._id !== categoryToDelete._id)
+        prev.filter(category => category._id !== categoryToDelete._id)
       );
 
       toast.success('Категорію видалено');
@@ -104,20 +107,23 @@ export default function CategoriesClient({ initialCategories }: Props) {
 
   const handleUpdateCategory = async (payload: UpdateCategoryDTO) => {
     if (!categoryToUpdate) return;
+
     start();
     try {
       const updatedCategory = await apiFetch<CategoryResponseDTO>(
-        apiUrl(`/api/admin/categories/${categoryToUpdate?._id}`),
+        apiUrl(`/api/admin/categories/${categoryToUpdate._id}`),
         {
           method: 'PATCH',
           body: JSON.stringify(payload),
         }
       );
+
       setCategories(prev =>
-        prev.map(cat =>
-          cat._id === updatedCategory._id ? updatedCategory : cat
+        prev.map(category =>
+          category._id === updatedCategory._id ? updatedCategory : category
         )
       );
+
       toast.success('Категорію оновлено');
       updateModal.close();
       setCategoryToUpdate(null);
@@ -141,13 +147,52 @@ export default function CategoriesClient({ initialCategories }: Props) {
     />
   );
 
-  /* ---------------- UI ---------------- */
+  const renderDeleteModal = (
+    <Modal
+      isOpen={deleteModal.isOpen}
+      onClose={deleteModal.close}
+      body={
+        <DeleteConfirmation
+          title={`Категорія: ${categoryToDelete?.title ?? '—'}`}
+          onConfirm={handleDeleteConfirm}
+          onCancel={deleteModal.close}
+        />
+      }
+    />
+  );
+
+  const renderUpdateModal = (
+    <Modal
+      isOpen={updateModal.isOpen}
+      onClose={() => {
+        updateModal.close();
+        setCategoryToUpdate(null);
+      }}
+      body={
+        categoryToUpdate && (
+          <CategoryForm
+            initialValues={{
+              title: categoryToUpdate.title,
+              src: categoryToUpdate.src,
+              slug: categoryToUpdate.slug,
+            }}
+            submitLabel="Оновити категорію"
+            onSubmit={handleUpdateCategory}
+            onClose={() => {
+              updateModal.close();
+              setCategoryToUpdate(null);
+            }}
+          />
+        )
+      }
+    />
+  );
 
   if (!categories) return <Loader />;
 
   if (categories.length === 0) {
     return (
-      <div className="container">
+      <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
         <EmptyState
           title="Категорії відсутні"
           subtitle="Додайте першу категорію"
@@ -155,63 +200,50 @@ export default function CategoriesClient({ initialCategories }: Props) {
           actionOnClick={createModal.open}
         />
         {renderCreateModal}
+        {renderDeleteModal}
+        {renderUpdateModal}
       </div>
     );
   }
 
   return (
-    <div className="container">
+    <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
       <Breadcrumbs />
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-accent text-xl font-semibold">Категорії</h1>
-        <Btn label="Додати категорію" onClick={createModal.open} />
-      </div>
 
-      <DataTable
-        data={categories}
-        columns={categoryColumns({
-          onEdit: handleEdit,
-          onDelete: handleDelete,
-        })}
-      />
-      {/* Create */}
-      {renderCreateModal}
-
-      {/* Delete */}
-      <Modal
-        isOpen={deleteModal.isOpen}
-        onClose={deleteModal.close}
-        body={
-          <DeleteConfirmation
-            title={`Категорія: ${categoryToDelete?.title}`}
-            onConfirm={handleDeleteConfirm}
-            onCancel={deleteModal.close}
+      <AdminPageContainer
+        title="Категорії"
+        description="Керуйте категоріями контенту"
+        actions={<Btn label="Додати категорію" onClick={createModal.open} />}
+      >
+        <AdminTableToolbar>
+          <input
+            type="text"
+            placeholder="Пошук..."
+            className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
-        }
-      />
+        </AdminTableToolbar>
 
-      {/* Update */}
-      <Modal
-        isOpen={updateModal.isOpen}
-        onClose={() => {
-          updateModal.close();
-          setCategoryToUpdate(null);
-        }}
-        body={
-          categoryToUpdate && (
-            <CategoryForm
-              initialValues={{
-                title: categoryToUpdate.title,
-                src: categoryToUpdate.src,
-                slug: categoryToUpdate.slug,
-              }}
-              submitLabel="Оновити категорію"
-              onSubmit={handleUpdateCategory}
-              onClose={updateModal.close}
+        <AdminTable
+          data={categories}
+          columns={categoryColumns({
+            onEdit: handleEdit,
+            onDelete: handleDelete,
+          })}
+          isLoading={isLoading}
+          emptyMessage="Категорій поки немає"
+          mobileRender={category => (
+            <CategoryMobileCard
+              row={category}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
-          )
-        }
-      />
+          )}
+        />
+      </AdminPageContainer>
+
+      {renderCreateModal}
+      {renderDeleteModal}
+      {renderUpdateModal}
     </div>
   );
 }

@@ -9,5 +9,6 @@ export * from './mail';
 export * from './page-settings';
 export * from './review';
 export * from './service';
+export * from './slide';
 export * from './token';
 export * from './user';

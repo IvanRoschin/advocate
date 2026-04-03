@@ -3,8 +3,8 @@ import { CategoryResponseDTO } from '@/app/types';
 import { Btn, NextImage } from '@/components';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { Center } from '../components/table/Center';
-import { SortableHeader } from '../components/table/SortableHeader';
+import { Center } from '../_components/table/Center';
+import { SortableHeader } from '../_components/table/SortableHeader';
 
 interface ColumnActions {
   onEdit: (category: CategoryResponseDTO) => void;

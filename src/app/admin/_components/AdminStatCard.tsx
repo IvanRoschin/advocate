@@ -1,6 +1,6 @@
 import { iconLibrary } from '@/app/resources/icons';
+import { AdminDashboardStatDTO } from '@/app/types';
 import { AppLink } from '@/components';
-import type { AdminDashboardStatDTO } from '@/types';
 
 interface Props {
   item: AdminDashboardStatDTO;
@@ -17,9 +17,9 @@ export default function AdminStatCard({ item }: Props) {
     >
       <div className={`${item.color} absolute top-0 left-0 h-1.5 w-full`} />
 
-      <div className="relative z-10 flex items-center gap-4 p-5">
+      <div className="relative z-10 flex items-center gap-3 p-4 sm:gap-4 sm:p-5">
         <div
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${item.color}`}
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl sm:h-12 sm:w-12 ${item.color}`}
         >
           <Icon className="h-5 w-5 text-white" />
         </div>
@@ -29,7 +29,7 @@ export default function AdminStatCard({ item }: Props) {
             {item.title}
           </h3>
 
-          <p className="text-foreground mt-1 text-2xl font-semibold">
+          <p className="text-foreground mt-1 text-xl font-semibold sm:text-2xl">
             {item.formattedValue}
           </p>
 

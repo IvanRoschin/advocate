@@ -3,6 +3,7 @@ import { HOME_SECTIONS, HomeSectionProps } from './home.sections';
 import { renderLayout } from './lib/layouts/renderLayout';
 import { pageSettingsService } from './lib/services/page-settings.service';
 import { reviewService } from './lib/services/review.service';
+import { slideService } from './lib/services/slide.service';
 import { home, person } from './resources/content';
 
 export const metadata = generateMetadata({
@@ -23,8 +24,11 @@ export default async function Home() {
     limit: 4,
   });
 
+  const slides = await slideService.getActiveSlides();
+
   const sectionProps: HomeSectionProps = {
     reviews,
+    slides,
   };
   const layout = await pageSettingsService.getHomeLayout();
 

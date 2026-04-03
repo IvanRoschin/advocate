@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { DataTable } from '@/app/components/data-table/DataTable';
 import { LeadForm } from '@/app/components/forms';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
@@ -18,6 +17,10 @@ import {
   Modal,
 } from '@/components';
 
+import { AdminPageContainer } from '../_components/AdminPageContainer';
+import { AdminTable } from '../_components/table';
+import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
+import { LeadMobileCard } from './_components/LeadMobileCard';
 import { leadColumns } from './lead.columns';
 
 import type {
@@ -204,20 +207,39 @@ export default function LeadsClient({ initialLeads }: Props) {
   }
 
   return (
-    <div className="container">
+    <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
       <Breadcrumbs />
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-accent text-xl font-semibold">Ліди</h1>
-        <Btn label="Додати лід" onClick={createModal.open} />
-      </div>
 
-      <DataTable
-        data={leads}
-        columns={leadColumns({
-          onEdit: handleEdit,
-          onDelete: handleDelete,
-        })}
-      />
+      <AdminPageContainer
+        title="Ліди"
+        description="Керуйте заявками користувачів"
+        actions={<Btn label="Додати лід" onClick={createModal.open} />}
+      >
+        <AdminTableToolbar>
+          <input
+            type="text"
+            placeholder="Пошук..."
+            className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
+          />
+        </AdminTableToolbar>
+
+        <AdminTable
+          data={leads}
+          columns={leadColumns({
+            onEdit: handleEdit,
+            onDelete: handleDelete,
+          })}
+          isLoading={false}
+          emptyMessage="Заявок поки немає"
+          mobileRender={lead => (
+            <LeadMobileCard
+              row={lead}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+        />
+      </AdminPageContainer>
 
       {renderCreateModal}
 

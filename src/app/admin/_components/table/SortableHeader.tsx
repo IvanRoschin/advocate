@@ -1,5 +1,6 @@
-import { Column } from '@tanstack/react-table';
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa';
+
+import { Column } from '@tanstack/react-table';
 
 interface SortableHeaderProps<T> {
   title: string;
@@ -13,13 +14,15 @@ export function SortableHeader<T>({ title, column }: SortableHeaderProps<T>) {
     <button
       type="button"
       onClick={column.getToggleSortingHandler()}
-      className="flex items-center gap-2 select-none"
+      className="inline-flex items-center gap-2 select-none"
     >
       <span>{title}</span>
 
-      {sorted === 'asc' && <FaSortUp />}
-      {sorted === 'desc' && <FaSortDown />}
-      {!sorted && <FaSort className="opacity-40" />}
+      <span className="opacity-60">
+        {sorted === 'asc' && <FaSortUp />}
+        {sorted === 'desc' && <FaSortDown />}
+        {!sorted && <FaSort className="opacity-40" />}
+      </span>
     </button>
   );
 }

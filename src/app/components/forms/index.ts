@@ -9,5 +9,6 @@ export { default as RestorePasswordForm } from '@/app/components/forms/RestorePa
 export { default as ReviewForm } from '@/app/components/forms/ReviewForm';
 export { default as ServiceForm } from '@/app/components/forms/ServiceForm';
 export { default as ServiceReviewForm } from '@/app/components/forms/ServiceReviewForm';
+export { default as SlideForm } from '@/app/components/forms/SlideForm';
 export { default as SubscribeForm } from '@/app/components/forms/SubscribeForm';
 export { default as UserForm } from '@/app/components/forms/UserForm';
