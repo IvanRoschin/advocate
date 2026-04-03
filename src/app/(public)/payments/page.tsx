@@ -1,9 +1,8 @@
 import { Metadata } from 'next/types';
 
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
+import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import { paymentLayout } from '@/app/resources/content/pages/payment.layout';
-
-import { renderLayout } from '../lib/layouts/renderLayout';
 import {
   PAYMENT_SECTIONS,
   PaymentSectionProps,

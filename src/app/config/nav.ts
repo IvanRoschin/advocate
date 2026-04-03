@@ -3,7 +3,7 @@ import type { IconType } from 'react-icons';
 import { routes } from '@/app/config/routes';
 import { iconLibrary, menuText } from '@/resources';
 
-export type NavScope = 'public' | 'admin' | 'client';
+export type NavScope = 'public' | 'admin' | 'client' | 'manager';
 
 export type NavItem = {
   key: string;
@@ -152,10 +152,55 @@ export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
   },
 ];
 
+export const MANAGER_NAV_ITEMS: readonly NavItem[] = [
+  {
+    key: 'dashboard',
+    href: routes.admin.dashboard,
+    label: 'Головна',
+    Icon: iconLibrary.home,
+  },
+  {
+    key: 'articles',
+    href: routes.admin.content.articles,
+    label: 'Статті',
+    Icon: iconLibrary.blog,
+    startsWith: true,
+  },
+  {
+    key: 'categories',
+    href: routes.admin.content.categories,
+    label: 'Категорії',
+    Icon: iconLibrary.folder,
+    startsWith: true,
+  },
+  {
+    key: 'services',
+    href: routes.admin.content.services,
+    label: 'Послуги',
+    Icon: iconLibrary.services,
+    startsWith: true,
+  },
+  {
+    key: 'reviews',
+    href: routes.admin.ui.reviews,
+    label: 'Відгуки',
+    Icon: iconLibrary.reviews,
+    startsWith: true,
+  },
+  {
+    key: 'slides',
+    href: routes.admin.ui.slides,
+    label: 'Слайди',
+    Icon: iconLibrary.gallery,
+    startsWith: true,
+  },
+];
+
 export const NAV_ITEMS_BY_SCOPE: Record<NavScope, readonly NavItem[]> = {
   public: PUBLIC_NAV_ITEMS,
   admin: ADMIN_NAV_ITEMS,
   client: CLIENT_NAV_ITEMS,
+  manager: MANAGER_NAV_ITEMS,
 };
 
 export const navCta = {

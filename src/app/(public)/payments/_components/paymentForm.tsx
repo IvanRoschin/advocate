@@ -5,12 +5,13 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 import Btn from '@/app/components/ui/button/Btn';
-import { createPaymentInvoiceAction } from '@/app/payments/actions';
 import {
   CreatePaymentRequestDTO,
   createPaymentSchema,
 } from '@/app/types/payment';
 import { Input } from '@/components/index';
+
+import { createPaymentInvoiceAction } from '../actions';
 
 const initialValues: CreatePaymentRequestDTO = {
   serviceName: '',
