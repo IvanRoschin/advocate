@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { DataTable } from '@/app/components/data-table/DataTable';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -17,6 +16,10 @@ import {
   Modal,
 } from '@/components';
 
+import { AdminPageContainer } from '../_components/AdminPageContainer';
+import { AdminTable } from '../_components/table';
+import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
+import { ArticleMobileCard } from './_components/ArticleMobileCard';
 import { articlesColumns } from './articles.columns';
 
 import type {
@@ -24,7 +27,6 @@ import type {
   UserOption,
 } from '@/app/components/forms/ArticleForm';
 import type { ArticleResponseDTO } from '@/app/types';
-
 interface Props {
   initialArticles: ArticleResponseDTO[];
   users: UserOption[];
@@ -48,18 +50,17 @@ export default function ArticlesClient({
   const deleteModal = useModal('deleteArticle');
 
   const authorNameById = useMemo(() => {
-    const m = new Map<string, string>();
-    for (const u of users) m.set(u.id, u.name);
-    return m;
+    const map = new Map<string, string>();
+    for (const user of users) map.set(user.id, user.name);
+    return map;
   }, [users]);
 
   const categoryTitleById = useMemo(() => {
-    const m = new Map<string, string>();
-    for (const c of categories) m.set(c.id, c.title);
-    return m;
+    const map = new Map<string, string>();
+    for (const category of categories) map.set(category.id, category.title);
+    return map;
   }, [categories]);
 
-  // ✅ стабилизируем коллбеки
   const handleDelete = useCallback(
     (article: ArticleResponseDTO) => {
       setArticleToDelete(article);
@@ -80,7 +81,9 @@ export default function ArticlesClient({
         }
       );
 
-      setArticles(prev => prev.filter(a => a._id !== articleToDelete._id));
+      setArticles(prev =>
+        prev.filter(article => article._id !== articleToDelete._id)
+      );
 
       toast.success('Статтю видалено');
       deleteModal.close();
@@ -94,7 +97,6 @@ export default function ArticlesClient({
 
   const handleEdit = useCallback(
     (article: ArticleResponseDTO) => {
-      // ✅ это страница, не api
       router.push(`/admin/articles/${article._id}/edit`);
     },
     [router]
@@ -115,53 +117,69 @@ export default function ArticlesClient({
     [authorNameById, categoryTitleById, handleDelete, handleEdit]
   );
 
+  const renderDeleteModal = (
+    <Modal
+      isOpen={deleteModal.isOpen}
+      onClose={deleteModal.close}
+      body={
+        <DeleteConfirmation
+          title={`Стаття: ${articleToDelete?.title ?? '—'}`}
+          onConfirm={handleDeleteConfirm}
+          onCancel={deleteModal.close}
+        />
+      }
+    />
+  );
+
   if (articles.length === 0) {
     return (
-      <div className="container">
+      <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
         <EmptyState
           title="Статті відсутні"
           subtitle="Додайте першу статтю"
           actionLabel="Додати нову статтю"
           actionOnClick={handleCreate}
         />
-
-        <Modal
-          isOpen={deleteModal.isOpen}
-          onClose={deleteModal.close}
-          body={
-            <DeleteConfirmation
-              title={`Стаття: ${articleToDelete?.title ?? '—'}`}
-              onConfirm={handleDeleteConfirm}
-              onCancel={deleteModal.close}
-            />
-          }
-        />
+        {renderDeleteModal}
       </div>
     );
   }
 
   return (
-    <div className="container">
+    <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
       <Breadcrumbs />
 
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-accent text-xl font-semibold">Статті</h1>
-        <Btn label="Додати статтю" onClick={handleCreate} />
-      </div>
-
-      <DataTable data={articles} columns={columns} />
-
-      <Modal
-        isOpen={deleteModal.isOpen}
-        onClose={deleteModal.close}
-        body={
-          <DeleteConfirmation
-            title={`Стаття: ${articleToDelete?.title ?? '—'}`}
-            onConfirm={handleDeleteConfirm}
-            onCancel={deleteModal.close}
+      <AdminPageContainer
+        title="Статті"
+        description="Керуйте опублікованими та чернетками статей"
+        actions={<Btn label="Додати статтю" onClick={handleCreate} />}
+      >
+        <AdminTableToolbar>
+          <input
+            type="text"
+            placeholder="Пошук..."
+            className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
-        }
-      />
+        </AdminTableToolbar>
+
+        <AdminTable
+          data={articles}
+          columns={columns}
+          isLoading={false}
+          emptyMessage="Статей поки немає"
+          mobileRender={article => (
+            <ArticleMobileCard
+              row={article}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              authorName={authorNameById.get(article.authorId) ?? '—'}
+              categoryTitle={categoryTitleById.get(article.categoryId) ?? '—'}
+            />
+          )}
+        />
+      </AdminPageContainer>
+
+      {renderDeleteModal}
     </div>
   );
 }

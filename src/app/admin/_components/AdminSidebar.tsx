@@ -18,22 +18,22 @@ const AdminSidebar = memo(() => {
   };
 
   return (
-    <aside className="bg-surface-input sticky top-0 flex h-screen w-64 flex-col border-r border-gray-200 p-6 dark:border-white/10">
+    <aside className="bg-surface-input sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-gray-200 p-6 dark:border-white/10">
       <div className="mb-6">
         <h2 className="text-accent text-xl font-semibold">Адмінка</h2>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-2">
+      <nav className="flex flex-1 flex-col gap-2 overflow-y-auto">
         {items.map(({ key, href, label, Icon }) => (
           <AppLink
             key={key}
             href={href}
             className={cn(
-              'flex items-center gap-3 rounded-xl px-3 py-2 transition',
+              'flex items-center gap-3 rounded-xl px-3 py-2.5 transition',
               'hover:bg-neutral-100 dark:hover:bg-white/10'
             )}
           >
-            <Icon className="h-5 w-5" />
+            <Icon className="h-5 w-5 shrink-0" />
             <span className="font-medium">{label}</span>
           </AppLink>
         ))}
@@ -44,7 +44,7 @@ const AdminSidebar = memo(() => {
           type="button"
           onClick={handleLogout}
           className={cn(
-            'flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition',
+            'flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition',
             'border border-red-200 text-red-600 hover:bg-red-50',
             'dark:border-red-500/30 dark:text-red-400 dark:hover:bg-red-500/10'
           )}

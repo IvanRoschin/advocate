@@ -1,10 +1,10 @@
-import { ColumnDef } from '@tanstack/react-table';
-
 import { iconLibrary } from '@/app/resources';
 import { LeadResponseDTO } from '@/app/types';
 import { Btn } from '@/components';
-import { Center } from '../components/table/Center';
-import { SortableHeader } from '../components/table/SortableHeader';
+import { ColumnDef } from '@tanstack/react-table';
+
+import { Center } from '../_components/table/Center';
+import { SortableHeader } from '../_components/table/SortableHeader';
 
 interface ColumnActions {
   onEdit: (lead: LeadResponseDTO) => void;

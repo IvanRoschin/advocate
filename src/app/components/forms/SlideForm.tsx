@@ -1,178 +1,237 @@
-// 'use client';
+'use client';
 
-// import { Form, Formik, FormikState } from 'formik';
-// import { motion } from 'framer-motion';
-// import { useRouter } from 'next/navigation';
-// import React, { useState } from 'react';
-// import { toast } from 'sonner';
-// import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
+import { Form, Formik } from 'formik';
+import { motion } from 'framer-motion';
+import { useMemo } from 'react';
 
-// import {
-//   Btn,
-//   Input,
-//   Switcher,
-// } from '@/components/index';
-// // import { useAddData, useUpdateData } from '@/hooks/index';
-// // import { ISlider } from '@/types/index';
+import Btn from '@/app/components/ui/button/Btn';
+import storageKeys from '@/app/config/storageKeys';
+import { useFormDraft } from '@/app/hooks/useFormDraft';
+import { clearFormDraft } from '@/app/lib/client/form-draft';
+import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
+import { createSlideSchema, updateSlideSchema } from '@/app/types';
+import { Checkbox, Input, Textarea } from '@/components';
 
-// // interface InitialStateType extends Omit<ISlider, '_id'> {}
+import FormDraftPersist from './FormDraftPersist';
 
-// // interface ResetFormProps {
-// //   resetForm: (nextState?: Partial<FormikState<InitialStateType>>) => void;
-// // }
+import type {
+  CreateSlideDTO,
+  SlideResponseDTO,
+  UpdateSlideDTO,
+} from '@/app/types';
 
-// interface SliderFormProps {
-//   slide?: string;
-//   title?: string;
-//   // action: (values: ISlider) => Promise<{ success: boolean; message: string }>;
-// }
+type SlideFormValues = {
+  title: string;
+  desc: string;
+  src: string[];
+  isActive: boolean;
+};
 
-// const SlideForm: React.FC<SliderFormProps> = ({ slide, title }) => {
-//   const { push } = useRouter();
-//   const [isLoading, setIsLoading] = useState(false);
+type BaseProps = {
+  onClose: () => void;
+  submitLabel?: string;
+  persistToLocalStorage?: boolean;
+  clearDraftOnClose?: boolean;
+};
 
-//   const textareaStyles: React.CSSProperties = {
-//     height: '100px',
-//     overflowY: 'auto',
-//   };
-//   // const addSlideMutation = useAddData(action, ['slides']);
-//   // const updateSlideMutation = useUpdateData(action, ['slides']);
+type CreateModeProps = BaseProps & {
+  mode: 'create';
+  onSubmit: (values: CreateSlideDTO) => void | Promise<void>;
+};
 
-//   // const isUpdating = Boolean(slide?._id);
+type EditModeProps = BaseProps & {
+  mode: 'edit';
+  initialValues: Partial<SlideResponseDTO>;
+  onSubmit: (values: UpdateSlideDTO) => void | Promise<void>;
+};
 
-//   // const initialValues: InitialStateType = {
-//   //   src: Array.isArray(slide?.src) ? slide.src : [slide?.src || ''],
-//   //   title: slide?.title || '',
-//   //   desc: slide?.desc || '',
-//   //   isActive: slide?.isActive || false,
-//   // };
+type Props = CreateModeProps | EditModeProps;
 
-//   const slideInputs = [
-//     {
-//       id: 'title',
-//       label: 'Заголовок слайду',
-//       type: 'text',
-//       required: true,
-//     },
-//     {
-//       id: 'desc',
-//       label: 'Опис',
-//       type: 'textarea',
-//       required: true,
-//       style: textareaStyles,
-//     },
-//     {
-//       id: 'isActive',
-//       label: 'Публікується?',
-//       type: 'switcher',
-//       required: true,
-//     },
-//   ];
+const normalize = (values: SlideFormValues): SlideFormValues => ({
+  ...values,
+  title: values.title.trim(),
+  desc: values.desc.trim(),
+  src: values.src.filter(Boolean).map(item => item.trim()),
+});
 
-//   // const handleSubmit = async (
-//   //   values: ISlider,
-//   //   { resetForm }: ResetFormProps
-//   // ) => {
-//   //   try {
-//   //     setIsLoading(true);
+const sameArray = (a?: string[], b?: string[]) =>
+  JSON.stringify(a ?? []) === JSON.stringify(b ?? []);
 
-//   //     const updateSliderData = isUpdating ? { ...values, _id: slide?._id } : {};
+const buildPatch = (
+  initial: SlideFormValues,
+  current: SlideFormValues
+): UpdateSlideDTO => {
+  const i = normalize(initial);
+  const c = normalize(current);
 
-//   //     const result = isUpdating
-//   //       ? await updateSlideMutation.mutateAsync(updateSliderData)
-//   //       : await addSlideMutation.mutateAsync(values);
+  const patch: UpdateSlideDTO = {};
 
-//   //     if (!result.success) throw new Error(result.message);
+  if (c.title !== i.title) patch.title = c.title;
+  if (c.desc !== i.desc) patch.desc = c.desc;
+  if (c.isActive !== i.isActive) patch.isActive = c.isActive;
+  if (!sameArray(c.src, i.src)) patch.src = c.src;
 
-//   //     resetForm();
-//   //     toast.success(isUpdating ? 'Слайд оновлено!!' : 'Новий слайд додано!');
-//   //     push('/admin/slides');
-//   //   } catch (error) {
-//   //     toast.error('Помилка!');
-//   //     console.error('Error submitting form:', error);
-//   //   } finally {
-//   //     setIsLoading(false);
-//   //   }
-//   // };
+  return patch;
+};
 
-//   return (
-//     <div className="my-10 flex justify-center rounded-2xl bg-white p-6 shadow-sm">
-//       <motion.div
-//         initial={{ opacity: 0, scale: 0.95 }}
-//         animate={{ opacity: 1, scale: 1 }}
-//         transition={{ duration: 0.3 }}
-//       >
-//         <div className="title mb-4">
-//           <motion.h3
-//             initial={{ opacity: 0, y: -10 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             transition={{ delay: 0.1 }}
-//           >
-//             {title || (isUpdating ? 'Редагувати слайд' : 'Додати слайд')}
-//           </motion.h3>
-//         </div>
-//         <Formik
-//           initialValues={initialValues}
-//           onSubmit={handleSubmit}
-//           enableReinitialize
-//         >
-//           {({ errors, setFieldValue, values }) => (
-//             <Form className="flex w-[600px] flex-col gap-4 space-y-5">
-//               <motion.div
-//                 initial={{ opacity: 0, y: 10 }}
-//                 animate={{ opacity: 1, y: 0 }}
-//                 transition={{ delay: 0.15 }}
-//               >
-//                 {slideInputs.map((item, i) => (
-//                   <div key={i}>
-//                     {item.type === 'switcher' ? (
-//                       <Switcher
-//                         id={item.id}
-//                         label={item.label}
-//                         checked={
-//                           values[item.id as keyof InitialStateType] as boolean
-//                         }
-//                         onChange={(checked: boolean) =>
-//                           setFieldValue(
-//                             item.id.toString() as keyof InitialStateType,
-//                             checked
-//                           )
-//                         }
-//                       />
-//                     ) : (
-//                       <FormField
-//                         item={item}
-//                         errors={errors}
-//                         setFieldValue={setFieldValue}
-//                       />
-//                     )}
-//                   </div>
-//                 ))}
-//               </motion.div>
-//               <motion.div
-//                 initial={{ opacity: 0, y: 10 }}
-//                 animate={{ opacity: 1, y: 0 }}
-//                 transition={{ delay: 0.25 }}
-//               >
-//                 <ImageUploadCloudinary
-//                   setFieldValue={setFieldValue}
-//                   values={values.src}
-//                   errors={errors.src as unknown}
-//                   uploadPreset="preset_slide"
-//                   multiple={false}
-//                 />
-//               </motion.div>
+const SlideForm = (props: Props) => {
+  const isEditMode = props.mode === 'edit';
+  const initialValues = isEditMode ? props.initialValues : undefined;
 
-//               <Btn
-//                 label={isLoading ? 'Збереження...' : 'Зберегти'}
-//                 disabled={isLoading}
-//               />
-//             </Form>
-//           )}
-//         </Formik>
-//       </motion.div>
-//     </div>
-//   );
-// };
+  const persist =
+    props.persistToLocalStorage ?? (props.mode === 'create' ? true : false);
 
-// export default SlideForm;
+  const clearOnClose = props.clearDraftOnClose ?? true;
+
+  const { draft, clearDraft } = useFormDraft<SlideFormValues>(
+    storageKeys.slide,
+    persist && props.mode === 'create'
+  );
+
+  const baseValues: SlideFormValues = useMemo(
+    () => ({
+      title: initialValues?.title ?? '',
+      desc: initialValues?.desc ?? '',
+      src: initialValues?.src ?? [],
+      isActive: initialValues?.isActive ?? false,
+    }),
+    [initialValues]
+  );
+
+  const defaultValues: SlideFormValues = useMemo(() => {
+    if (!persist || props.mode !== 'create' || !draft) return baseValues;
+
+    return {
+      ...baseValues,
+      ...draft,
+      src: Array.isArray(draft.src) ? draft.src : baseValues.src,
+      isActive:
+        typeof draft.isActive === 'boolean'
+          ? draft.isActive
+          : baseValues.isActive,
+    };
+  }, [baseValues, draft, persist, props.mode]);
+
+  const schema = useMemo(
+    () => (isEditMode ? updateSlideSchema : createSlideSchema),
+    [isEditMode]
+  );
+
+  const handleClose = () => {
+    if (clearOnClose) clearFormDraft(storageKeys.slide);
+    props.onClose();
+  };
+
+  return (
+    <>
+      {isEditMode ? 'Редагувати слайд' : 'Додати новий слайд'}
+
+      <Formik<SlideFormValues>
+        enableReinitialize={isEditMode || (props.mode === 'create' && persist)}
+        initialValues={defaultValues}
+        validationSchema={schema}
+        onSubmit={async values => {
+          const normalized = normalize(values);
+
+          if (props.mode === 'create') {
+            const payload: CreateSlideDTO = {
+              title: normalized.title,
+              desc: normalized.desc,
+              src: normalized.src,
+              isActive: normalized.isActive,
+            };
+
+            await props.onSubmit(payload);
+            clearDraft();
+            return;
+          }
+
+          const patch = buildPatch(baseValues, normalized);
+          await props.onSubmit(patch);
+          clearDraft();
+        }}
+      >
+        {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
+          <Form className="flex w-full max-w-4xl flex-col gap-6">
+            <FormDraftPersist<SlideFormValues>
+              storageKey={storageKeys.slide}
+              enabled={persist && props.mode === 'create'}
+              values={values}
+            />
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.04 }}
+            >
+              <Input name="title" label="Назва" required />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.08 }}
+            >
+              <Textarea name="desc" label="Опис" rows={2} required />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.12 }}
+            >
+              <div className="border-border bg-background/50 rounded-2xl border p-4">
+                <Checkbox name="isActive">
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium">Активний слайд</div>
+                    <div className="text-muted-foreground text-xs">
+                      Якщо увімкнено, слайд може бути показаний у публічному
+                      слайдері.
+                    </div>
+                  </div>
+                </Checkbox>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.16 }}
+            >
+              <ImageUploadCloudinary
+                fieldName="src"
+                setFieldValue={setFieldValue}
+                values={values.src}
+                error={typeof errors.src === 'string' ? errors.src : undefined}
+                uploadPreset="slides"
+                multiple
+              />
+            </motion.div>
+
+            <div className="flex justify-end gap-2">
+              <Btn
+                type="button"
+                label="Скасувати"
+                uiVariant="ghost"
+                onClick={handleClose}
+              />
+
+              <Btn
+                uiVariant="accent"
+                radius={12}
+                type="submit"
+                label={
+                  props.submitLabel ??
+                  (isEditMode ? 'Оновити слайд' : 'Додати слайд')
+                }
+                disabled={!isValid || isSubmitting}
+              />
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </>
+  );
+};
+
+export default SlideForm;

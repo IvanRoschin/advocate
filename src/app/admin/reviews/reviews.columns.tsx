@@ -1,16 +1,16 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { iconLibrary } from '@/app/resources';
+import { Btn } from '@/components';
+import { Badge } from '@/components/ui/badge';
+
+import { Center, SortableHeader } from '../_components/table';
+
 import type {
   ReviewResponseDTO,
   ReviewStatus,
   ReviewTargetType,
 } from '@/app/types';
-import { Btn } from '@/components';
-import { Badge } from '@/components/ui/badge';
-import { Center } from '../../components/table/Center';
-import { SortableHeader } from '../../components/table/SortableHeader';
-
 type ColumnActions = {
   onEdit: (review: ReviewResponseDTO) => void;
   onDelete: (review: ReviewResponseDTO) => void;

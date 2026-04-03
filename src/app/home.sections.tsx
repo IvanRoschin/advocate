@@ -16,11 +16,16 @@ import Practices from './components/sections/practices/Practices';
 import Reviews from './components/sections/reviews/Reviews';
 import Services from './components/sections/services/Services';
 import { HomeSectionKey } from './resources/content/pages/home.layout';
-import { ReviewResponseDTO, ServicePublicPageDto } from './types';
+import {
+  ReviewResponseDTO,
+  ServicePublicPageDto,
+  SlideResponseDTO,
+} from './types';
 
 export type HomeSectionProps = {
   reviews?: ReviewResponseDTO[];
   services?: ServicePublicPageDto[];
+  slides?: SlideResponseDTO[];
 };
 
 export type HomeSectionComponent = (props: HomeSectionProps) => ReactNode;
@@ -29,7 +34,9 @@ const HomeHeaderSection: HomeSectionComponent = () => <Header scope="public" />;
 
 const HomeSocialsSection: HomeSectionComponent = () => <Socials />;
 
-const HomeHeroSection: HomeSectionComponent = () => <Hero />;
+const HomeHeroSection: HomeSectionComponent = props => (
+  <Hero slides={props.slides ?? []} />
+);
 
 const HomeServicesSection: HomeSectionComponent = () => <Services />;
 
@@ -46,12 +53,7 @@ const HomeWhyChooseMeSection: HomeSectionComponent = () => <WhyChooseMe />;
 
 const HomeOrderSection: HomeSectionComponent = () => <Order />;
 
-const HomeFooterSection: HomeSectionComponent = () => (
-  <section className="mt-20 sm:mt-24 lg:mt-28">
-    <Footer />
-  </section>
-);
-
+const HomeFooterSection: HomeSectionComponent = () => <Footer />;
 const HomeScrollToTopSection: HomeSectionComponent = () => (
   <ScrollToTopButton />
 );

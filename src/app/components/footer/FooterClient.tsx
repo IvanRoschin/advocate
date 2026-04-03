@@ -31,111 +31,113 @@ export default function FooterClient({ categories }: Props) {
     (person.email ? `mailto:${person.email}` : null);
 
   return (
-    <footer className="bg-footer text-footer">
-      <div className="container mx-auto px-6 py-16 sm:py-20">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="space-y-6">
-            <Logo variant={logoVariant} />
-            <p className="text-footer-muted text-xs leading-relaxed">
-              {footerSection.brand.text}
-            </p>
-          </div>
+    <section className="mt-10 sm:mt-12 lg:mt-10">
+      <footer className="bg-footer text-footer">
+        <div className="container mx-auto px-6 py-16 sm:py-20">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-6">
+              <Logo variant={logoVariant} />
+              <p className="text-footer-muted text-xs leading-relaxed">
+                {footerSection.brand.text}
+              </p>
+            </div>
 
-          <nav
-            className="space-y-4"
-            aria-label={footerSection.columns.practices.title}
-          >
-            <h3 className="footer-title nav">
-              {footerSection.columns.practices.title}
-            </h3>
+            <nav
+              className="space-y-4"
+              aria-label={footerSection.columns.practices.title}
+            >
+              <h3 className="footer-title nav">
+                {footerSection.columns.practices.title}
+              </h3>
 
-            <ul className="text-footer-muted space-y-2 text-sm">
-              {categories.length > 0 ? (
-                categories.map(category => (
-                  <li key={category._id}>
+              <ul className="text-footer-muted space-y-2 text-sm">
+                {categories.length > 0 ? (
+                  categories.map(category => (
+                    <li key={category._id}>
+                      <AppLink
+                        className="footer-link"
+                        href={`/blog?category=${encodeURIComponent(category.slug)}`}
+                      >
+                        {category.title}
+                      </AppLink>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-footer-muted">
+                    Категорії наразі недоступні
+                  </li>
+                )}
+              </ul>
+            </nav>
+
+            <nav
+              className="space-y-4"
+              aria-label={footerSection.columns.quickLinks.title}
+            >
+              <h3 className="footer-title nav">
+                {footerSection.columns.quickLinks.title}
+              </h3>
+              <ul className="text-footer-muted space-y-2 text-sm">
+                {footerSection.columns.quickLinks.items.map(item => (
+                  <li key={item.id}>
                     <AppLink
                       className="footer-link"
-                      href={`/blog?category=${encodeURIComponent(category.slug)}`}
+                      href={getRouteUrl(item.route)}
                     >
-                      {category.title}
+                      {item.title}
                     </AppLink>
                   </li>
-                ))
-              ) : (
-                <li className="text-footer-muted">
-                  Категорії наразі недоступні
+                ))}
+              </ul>
+            </nav>
+
+            <address className="space-y-4 not-italic">
+              <h3 className="footer-title nav">
+                {footerSection.columns.contacts.title}
+              </h3>
+
+              <ul className="text-footer-muted space-y-2 text-sm">
+                <li>
+                  <div className="flex flex-col gap-2">
+                    {phoneLinks.map(href => (
+                      <AppLink
+                        key={href}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="footer-link flex items-center"
+                      >
+                        <PhoneIcon className="mr-3 h-5 w-5" />
+                        <span className="nav">{href.replace(/^tel:/, '')}</span>
+                      </AppLink>
+                    ))}
+                  </div>
                 </li>
-              )}
-            </ul>
-          </nav>
 
-          <nav
-            className="space-y-4"
-            aria-label={footerSection.columns.quickLinks.title}
-          >
-            <h3 className="footer-title nav">
-              {footerSection.columns.quickLinks.title}
-            </h3>
-            <ul className="text-footer-muted space-y-2 text-sm">
-              {footerSection.columns.quickLinks.items.map(item => (
-                <li key={item.id}>
-                  <AppLink
-                    className="footer-link"
-                    href={getRouteUrl(item.route)}
-                  >
-                    {item.title}
-                  </AppLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <address className="space-y-4 not-italic">
-            <h3 className="footer-title nav">
-              {footerSection.columns.contacts.title}
-            </h3>
-
-            <ul className="text-footer-muted space-y-2 text-sm">
-              <li>
-                <div className="flex flex-col gap-2">
-                  {phoneLinks.map(href => (
+                {emailLink && (
+                  <li>
                     <AppLink
-                      key={href}
-                      href={href}
+                      href={emailLink}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="footer-link flex items-center"
                     >
-                      <PhoneIcon className="mr-3 h-5 w-5" />
-                      <span className="nav">{href.replace(/^tel:/, '')}</span>
+                      <EmailIcon className="mr-3 h-5 w-5" />
+                      <span className="nav">{person.email}</span>
                     </AppLink>
-                  ))}
-                </div>
-              </li>
+                  </li>
+                )}
 
-              {emailLink && (
-                <li>
-                  <AppLink
-                    href={emailLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="footer-link flex items-center"
-                  >
-                    <EmailIcon className="mr-3 h-5 w-5" />
-                    <span className="nav">{person.email}</span>
-                  </AppLink>
-                </li>
-              )}
+                <li>{footerSection.columns.contacts.locationLabel}</li>
+              </ul>
+            </address>
+          </div>
 
-              <li>{footerSection.columns.contacts.locationLabel}</li>
-            </ul>
-          </address>
+          <div className="border-footer text-footer-bottom mt-12 border-t pt-6 text-center text-xs">
+            © {new Date().getFullYear()} {footerSection.bottom.rights}
+          </div>
         </div>
-
-        <div className="border-footer text-footer-bottom mt-12 border-t pt-6 text-center text-xs">
-          © {new Date().getFullYear()} {footerSection.bottom.rights}
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </section>
   );
 }
