@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 
-import { UserResponseDTO } from '@/types/user/user.dto';
+import { SessionUserDTO } from '../types';
 
 export interface UserState {
-  user: UserResponseDTO | null;
-  setUser: (user: UserResponseDTO) => void;
-  updateField: <K extends keyof UserResponseDTO>(
+  user: SessionUserDTO | null;
+  setUser: (user: SessionUserDTO) => void;
+  updateField: <K extends keyof SessionUserDTO>(
     field: K,
-    value: UserResponseDTO[K]
+    value: SessionUserDTO[K]
   ) => void;
   clearUser: () => void;
 }

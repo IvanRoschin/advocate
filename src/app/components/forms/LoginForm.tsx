@@ -55,12 +55,10 @@ const LoginForm = () => {
       const session = await getSession();
       const role = session?.user?.role as UserRole | undefined;
 
-      if (role === UserRole.ADMIN) {
-        router.replace('/admin');
-      } else {
-        router.replace('/client');
-      }
+      const isBackofficeRole =
+        role === UserRole.ADMIN || role === UserRole.MANAGER;
 
+      router.replace(isBackofficeRole ? '/admin' : '/');
       router.refresh();
     } catch (error) {
       console.error('Login error:', error);

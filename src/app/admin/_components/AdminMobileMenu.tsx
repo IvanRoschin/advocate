@@ -2,14 +2,20 @@
 
 import { LogOut, Menu, X } from 'lucide-react';
 import { signOut } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useNavItems } from '@/app/components/header/nav.shared';
+import { getUserScope } from '@/app/lib/auth/getUserScope';
 import { cn } from '@/app/lib/utils';
+import { useUserStore } from '@/app/store/user.store';
 import { AppLink } from '@/components';
 
 export default function AdminMobileMenu() {
-  const items = useNavItems('admin');
+  const user = useUserStore(state => state.user);
+
+  const scope = useMemo(() => getUserScope(user?.role), [user?.role]);
+  const items = useNavItems(scope);
+
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {

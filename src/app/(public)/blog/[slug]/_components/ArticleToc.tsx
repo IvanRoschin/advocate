@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { cn } from '@/app/lib/utils';
-
-import { iconLibrary } from '../../../resources';
+import { iconLibrary } from '@/app/resources';
 
 export type TocItem = {
   id: string;

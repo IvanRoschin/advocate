@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 
+import { contact } from '@/app/resources';
 import { CONTACT_PAGE_LAYOUT } from '@/app/resources/content/pages/contact.layout';
-
-import { contact } from '../resources';
 import {
   CONTACT_PAGE_SECTIONS,
   ContactPageProps,

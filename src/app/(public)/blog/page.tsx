@@ -1,9 +1,9 @@
+import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import { articleService } from '@/app/lib/services/article.service';
 import {
   blogLayout,
   BlogLayoutNode,
 } from '@/app/resources/content/pages/blog.layout';
-import { renderLayout } from '../lib/layouts/renderLayout';
 import { BLOG_SECTIONS, BlogSectionProps } from './_components/blog.sections';
 
 type BlogPageProps = {

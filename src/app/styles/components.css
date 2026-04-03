@@ -1,5 +1,4 @@
 @layer utilities {
-
   /* ===== Sections ===== */
 
   .section {
@@ -15,7 +14,7 @@
   }
 
   .section-first-after-hero {
-    @apply pt-36 sm:pt-44 md:pt-52 lg:pt-60 pb-20 sm:pb-24 lg:pb-28;
+    @apply pt-36 pb-20 sm:pt-44 sm:pb-24 md:pt-52 lg:pt-60 lg:pb-28;
   }
 
   /* ===== app / text ===== */
