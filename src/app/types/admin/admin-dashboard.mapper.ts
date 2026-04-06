@@ -1,3 +1,5 @@
+import { routes } from '@/app/config/routes';
+
 import type {
   AdminDashboardCountersDTO,
   AdminDashboardResponseDTO,
@@ -20,7 +22,7 @@ export const mapAdminDashboardToResponse = (
       icon: 'leads',
       color: 'bg-pink-500',
       trend: 55,
-      href: '/admin/leads',
+      href: routes.admin.crm.leads,
     },
     {
       key: 'clients',
@@ -30,7 +32,7 @@ export const mapAdminDashboardToResponse = (
       icon: 'clients',
       color: 'bg-teal-500',
       trend: 80,
-      href: '/admin/clients',
+      href: routes.admin.crm.clients,
     },
 
     // System
@@ -42,7 +44,7 @@ export const mapAdminDashboardToResponse = (
       icon: 'users',
       color: 'bg-blue-500',
       trend: 75,
-      href: '/admin/users',
+      href: routes.admin.users,
     },
 
     // Content
@@ -54,7 +56,7 @@ export const mapAdminDashboardToResponse = (
       icon: 'articles',
       color: 'bg-green-500',
       trend: 60,
-      href: '/admin/articles',
+      href: routes.admin.content.articles,
     },
     {
       key: 'services',
@@ -64,7 +66,7 @@ export const mapAdminDashboardToResponse = (
       icon: 'services',
       color: 'bg-indigo-500',
       trend: 70,
-      href: '/admin/services',
+      href: routes.admin.content.services,
     },
     {
       key: 'categories',
@@ -74,7 +76,7 @@ export const mapAdminDashboardToResponse = (
       icon: 'categories',
       color: 'bg-yellow-500',
       trend: 90,
-      href: '/admin/categories',
+      href: routes.admin.content.categories,
     },
 
     // UI / Вітрина
@@ -86,7 +88,7 @@ export const mapAdminDashboardToResponse = (
       icon: 'reviews',
       color: 'bg-purple-500',
       trend: 55,
-      href: '/admin/reviews',
+      href: routes.admin.ui.reviews,
     },
     {
       key: 'slides',
@@ -96,7 +98,7 @@ export const mapAdminDashboardToResponse = (
       icon: 'gallery',
       color: 'bg-fuchsia-500',
       trend: 55,
-      href: '/admin/slides',
+      href: routes.admin.ui.slides,
     },
     {
       key: 'pageSettings',
@@ -106,7 +108,7 @@ export const mapAdminDashboardToResponse = (
       icon: 'settings',
       color: 'bg-rose-500',
       trend: 55,
-      href: '/admin/page-settings',
+      href: routes.admin.ui.pageSettings,
     },
   ];
 

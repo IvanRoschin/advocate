@@ -58,8 +58,8 @@ export default function ClientForm({
   };
 
   return (
-    <div className="text-foreground w-full">
-      <div className="mb-3">
+    <section className="border-border bg-card rounded-[28px] border p-6 shadow-sm">
+      <div className="mb-4">
         <h2 className="text-xl font-semibold">
           {mode === 'edit' ? 'Редагувати клієнта' : 'Додати клієнта'}
         </h2>
@@ -84,8 +84,8 @@ export default function ClientForm({
         }}
       >
         {({ isSubmitting, values, setFieldValue }) => (
-          <Form className="flex max-h-[80vh] w-full flex-col overflow-hidden">
-            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
+          <Form className="flex w-full flex-col">
+            <div className="space-y-3">
               <section className="border-border bg-card rounded-2xl border p-3 shadow-sm sm:p-4">
                 <div className="mb-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <label className="flex flex-col gap-2">
@@ -130,7 +130,7 @@ export default function ClientForm({
               </section>
             </div>
 
-            <div className="border-border bg-card/95 sticky bottom-0 mt-2 flex justify-end gap-2 border-t pt-3 dark:bg-transparent">
+            <div className="border-border bg-card/95 mt-4 flex justify-end gap-2 border-t pt-3 dark:bg-transparent">
               {onClose && (
                 <Btn
                   type="button"
@@ -154,6 +154,6 @@ export default function ClientForm({
           </Form>
         )}
       </Formik>
-    </div>
+    </section>
   );
 }
