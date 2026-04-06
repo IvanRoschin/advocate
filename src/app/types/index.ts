@@ -1,5 +1,6 @@
 export * from './admin';
 export * from './article';
+export * from './case';
 export * from './category';
 export * from './client';
 export * from './content.types';

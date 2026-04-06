@@ -1,9 +1,7 @@
 import { EmptyState } from '@/app/components';
+import { caseAdminService } from '@/app/lib/services/case-admin.service';
 import { clientService } from '@/app/lib/services/client.service';
-
 import ClientEditorClient from '../../_components/ClientEditorClient';
-
-export const dynamic = 'force-dynamic';
 
 type EditClientPageProps = {
   params: Promise<{ id: string }>;
@@ -12,8 +10,10 @@ type EditClientPageProps = {
 export default async function EditClientPage({ params }: EditClientPageProps) {
   const { id } = await params;
 
-  const client = await clientService.getById(id);
-
+  const [client, cases] = await Promise.all([
+    clientService.getById(id),
+    caseAdminService.getByClientId(id),
+  ]);
   if (!client) {
     return (
       <div className="container">
@@ -37,6 +37,7 @@ export default async function EditClientPage({ params }: EditClientPageProps) {
         address: client.address,
         notes: client.notes,
       }}
+      initialCases={cases}
     />
   );
 }

@@ -72,7 +72,7 @@ export const DesktopHeader = ({
 
         <div className="flex h-10 shrink-0 items-center gap-3">
           {showTime ? (
-            <div className="text-desktop-header-time hidden text-sm 2xl:flex 2xl:h-10 2xl:items-center">
+            <div className="text-desktop-header-time flex h-10 items-center text-sm">
               <TimeDisplay timeZone={timeZone} />
             </div>
           ) : null}

@@ -4,6 +4,7 @@ import MobileMenu from '@/app/admin/_components/MobileMenu';
 import Footer from '@/app/components/footer/Footer';
 import { ClientSectionKey } from '@/app/resources/content/pages/client.layout';
 import { Header, Socials } from '@/components';
+
 import ClientSidebar from './ClientSidebar';
 
 export type ClientSectionProps = {
@@ -16,7 +17,7 @@ const SocialsSection: ClientSectionComponent = () => <Socials />;
 
 const HeaderSection: ClientSectionComponent = () => (
   <>
-    <Header scope="client" showCta={false} />
+    <Header scope="client" showCta={false} showTime={true} />
     <MobileMenu />
   </>
 );
