@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -23,16 +24,15 @@ import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
 import { ClientMobileCard } from './_components/ClientMobileCard';
 import { clientsColumns } from './clients.columns';
 
-import type {
-  ClientResponseDTO,
-  CreateClientDTO,
-  UpdateClientDTO,
-} from '@/app/types';
+import type { ClientResponseDTO, CreateClientDTO } from '@/app/types';
+
 type Props = {
   initialClients: ClientResponseDTO[];
 };
 
 export default function ClientsClient({ initialClients }: Props) {
+  const router = useRouter();
+
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
@@ -40,12 +40,9 @@ export default function ClientsClient({ initialClients }: Props) {
   const [clients, setClients] = useState<ClientResponseDTO[]>(initialClients);
   const [clientToDelete, setClientToDelete] =
     useState<ClientResponseDTO | null>(null);
-  const [clientToUpdate, setClientToUpdate] =
-    useState<ClientResponseDTO | null>(null);
 
   const createModal = useModal('createClient');
   const deleteModal = useModal('deleteClient');
-  const updateModal = useModal('updateClient');
 
   const handleDelete = (client: ClientResponseDTO) => {
     setClientToDelete(client);
@@ -53,14 +50,14 @@ export default function ClientsClient({ initialClients }: Props) {
   };
 
   const handleEdit = (client: ClientResponseDTO) => {
-    setClientToUpdate(client);
-    updateModal.open();
+    router.push(`/admin/clients/${client.id}/edit`);
   };
 
   const handleDeleteConfirm = async () => {
     if (!clientToDelete) return;
 
     start();
+
     try {
       await apiFetch<void>(apiUrl(`/api/admin/clients/${clientToDelete.id}`), {
         method: 'DELETE',
@@ -69,6 +66,7 @@ export default function ClientsClient({ initialClients }: Props) {
       setClients(prev =>
         prev.filter(client => client.id !== clientToDelete.id)
       );
+
       toast.success('Клієнта видалено');
       deleteModal.close();
       setClientToDelete(null);
@@ -81,6 +79,7 @@ export default function ClientsClient({ initialClients }: Props) {
 
   const handleCreateClient = async (values: CreateClientDTO) => {
     start();
+
     try {
       const newClient = await apiFetch<ClientResponseDTO>(
         apiUrl('/api/admin/clients'),
@@ -95,47 +94,6 @@ export default function ClientsClient({ initialClients }: Props) {
       createModal.close();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Помилка створення');
-    } finally {
-      done();
-    }
-  };
-
-  const handleUpdateClient = async (values: CreateClientDTO) => {
-    if (!clientToUpdate) return;
-
-    const payload: UpdateClientDTO = {
-      type: values.type,
-      status: values.status,
-      fullName: values.fullName,
-      email: values.email,
-      phone: values.phone,
-      companyName: values.companyName,
-      taxId: values.taxId,
-      address: values.address,
-      notes: values.notes,
-    };
-
-    start();
-    try {
-      const updatedClient = await apiFetch<ClientResponseDTO>(
-        apiUrl(`/api/admin/clients/${clientToUpdate.id}`),
-        {
-          method: 'PATCH',
-          body: JSON.stringify(payload),
-        }
-      );
-
-      setClients(prev =>
-        prev.map(client =>
-          client.id === updatedClient.id ? updatedClient : client
-        )
-      );
-
-      toast.success('Клієнта оновлено');
-      updateModal.close();
-      setClientToUpdate(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка оновлення');
     } finally {
       done();
     }
@@ -163,37 +121,18 @@ export default function ClientsClient({ initialClients }: Props) {
         <DeleteConfirmation
           title={`Клієнт: ${clientToDelete?.fullName ?? '—'}`}
           onConfirm={handleDeleteConfirm}
-          onCancel={deleteModal.close}
+          onCancel={() => {
+            deleteModal.close();
+            setClientToDelete(null);
+          }}
         />
       }
     />
   );
 
-  const renderUpdateModal = (
-    <Modal
-      isOpen={updateModal.isOpen}
-      onClose={() => {
-        updateModal.close();
-        setClientToUpdate(null);
-      }}
-      body={
-        clientToUpdate && (
-          <ClientForm
-            mode="edit"
-            initialValues={clientToUpdate}
-            submitLabel="Оновити клієнта"
-            onSubmit={handleUpdateClient}
-            onClose={() => {
-              updateModal.close();
-              setClientToUpdate(null);
-            }}
-          />
-        )
-      }
-    />
-  );
-
-  if (!clients) return <Loader />;
+  if (!clients) {
+    return <Loader />;
+  }
 
   if (clients.length === 0) {
     return (
@@ -206,7 +145,6 @@ export default function ClientsClient({ initialClients }: Props) {
         />
         {renderCreateModal}
         {renderDeleteModal}
-        {renderUpdateModal}
       </div>
     );
   }
@@ -248,7 +186,6 @@ export default function ClientsClient({ initialClients }: Props) {
 
       {renderCreateModal}
       {renderDeleteModal}
-      {renderUpdateModal}
     </div>
   );
 }

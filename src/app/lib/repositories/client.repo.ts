@@ -61,6 +61,22 @@ export const clientRepo = {
     return client ? mapClientToResponse(client) : null;
   },
 
+  updateProfileById(
+    id: string,
+    data: {
+      fullName: string;
+      email: string;
+      phone: string;
+      address: string;
+      companyName: string;
+      type: 'individual' | 'company';
+    }
+  ) {
+    return Client.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+  },
+
   delete(id: string) {
     return Client.findByIdAndDelete(id).lean();
   },

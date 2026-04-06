@@ -17,7 +17,7 @@ const SocialsSection: AdminSectionComponent = () => <Socials />;
 
 const HeaderSection: AdminSectionComponent = () => (
   <>
-    <Header scope="admin" showCta={false} />
+    <Header scope="admin" showCta={false} showTime={true} />
     <MobileMenu />
   </>
 );

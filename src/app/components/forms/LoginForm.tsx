@@ -19,6 +19,19 @@ interface InitialStateType {
   password: string;
 }
 
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+  AUTH_MISSING_CREDENTIALS: 'Вкажіть телефон і пароль',
+  AUTH_USER_NOT_FOUND: 'Користувача з таким телефоном не знайдено',
+  AUTH_INVALID_PASSWORD: 'Невірний пароль',
+  CredentialsSignin: 'Невірні дані для входу',
+  default: 'Не вдалося виконати вхід',
+};
+
+const resolveAuthErrorMessage = (error?: string | null) => {
+  if (!error) return AUTH_ERROR_MESSAGES.default;
+  return AUTH_ERROR_MESSAGES[error] ?? AUTH_ERROR_MESSAGES.default;
+};
+
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +58,7 @@ const LoginForm = () => {
       });
 
       if (!callback?.ok) {
-        toast.error(callback?.error || 'Помилка входу');
+        toast.error(resolveAuthErrorMessage(callback?.error));
         return;
       }
 
@@ -125,9 +138,7 @@ const LoginForm = () => {
             <div className="flex justify-center">
               <motion.div
                 className="inline-block"
-                whileHover={{
-                  scale: isLoading ? 1 : 1.02,
-                }}
+                whileHover={{ scale: isLoading ? 1 : 1.02 }}
                 whileTap={{ scale: isLoading ? 1 : 0.97 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
@@ -150,9 +161,7 @@ const LoginForm = () => {
 
       <div className="flex justify-center">
         <motion.div
-          whileHover={{
-            scale: isLoading ? 1 : 1.02,
-          }}
+          whileHover={{ scale: isLoading ? 1 : 1.02 }}
           whileTap={{ scale: isLoading ? 1 : 0.97 }}
           transition={{ type: 'spring', stiffness: 300 }}
         >

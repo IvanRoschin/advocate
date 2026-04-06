@@ -7,12 +7,14 @@ import ClientForm from '@/app/components/forms/ClientForm';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 
+import ClientCasesManager from './ClientCasesManager';
+
 import type {
+  AdminClientCaseDto,
   ClientResponseDTO,
   CreateClientDTO,
   UpdateClientDTO,
 } from '@/app/types';
-
 type Props =
   | {
       mode: 'create';
@@ -21,6 +23,7 @@ type Props =
       mode: 'edit';
       clientId: string;
       initialValues: Partial<ClientResponseDTO>;
+      initialCases: AdminClientCaseDto[];
     };
 
 export default function ClientEditorClient(props: Props) {
@@ -74,22 +77,31 @@ export default function ClientEditorClient(props: Props) {
   };
 
   return (
-    <div className="container py-6">
+    <>
       {props.mode === 'create' ? (
-        <ClientForm
-          mode="create"
-          onClose={backToList}
-          onSubmit={handleCreate}
-        />
+        <>
+          <ClientForm
+            mode="create"
+            onClose={backToList}
+            onSubmit={handleCreate}
+          />
+        </>
       ) : (
-        <ClientForm
-          mode="edit"
-          initialValues={props.initialValues}
-          submitLabel="Оновити клієнта"
-          onClose={backToList}
-          onSubmit={handleUpdate}
-        />
+        <>
+          <ClientForm
+            mode="edit"
+            initialValues={props.initialValues}
+            submitLabel="Оновити клієнта"
+            onClose={backToList}
+            onSubmit={handleUpdate}
+          />
+          <div className="mb-8" />
+          <ClientCasesManager
+            clientId={props.clientId}
+            initialCases={props.initialCases}
+          />
+        </>
       )}
-    </div>
+    </>
   );
 }

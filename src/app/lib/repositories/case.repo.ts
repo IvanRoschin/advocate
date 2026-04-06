@@ -22,25 +22,27 @@ export type CaseRow = {
   updatedAt?: Date;
 };
 
+export type CreateCaseRepoInput = {
+  clientId: string;
+  title: string;
+  description?: string;
+  status?: CaseStatus;
+  currentStage?: string;
+  sourceLeadId?: string | null;
+  assignedLawyerId?: string | null;
+};
+
+export type UpdateCaseRepoInput = Partial<{
+  title: string;
+  description: string;
+  status: CaseStatus;
+  currentStage: string;
+  sourceLeadId: string | null;
+  assignedLawyerId: string | null;
+}>;
+
 export const caseRepo = {
-  async create(
-    data: {
-      clientId: string;
-      title: string;
-      description?: string;
-      status?:
-        | 'new'
-        | 'in_progress'
-        | 'awaiting_client'
-        | 'in_court'
-        | 'completed'
-        | 'archived';
-      currentStage?: string;
-      sourceLeadId?: string | null;
-      assignedLawyerId?: string | null;
-    },
-    session?: ClientSession
-  ) {
+  async create(data: CreateCaseRepoInput, session?: ClientSession) {
     return Case.create(
       [
         {
@@ -57,9 +59,24 @@ export const caseRepo = {
     ).then(([doc]) => doc);
   },
 
+  findById(caseId: string) {
+    return Case.findById(caseId);
+  },
+
   findByClientId(clientId: string): Promise<CaseRow[]> {
     return Case.find({ clientId })
       .sort({ updatedAt: -1, _id: -1 })
       .lean<CaseRow[]>();
+  },
+
+  updateById(caseId: string, data: UpdateCaseRepoInput) {
+    return Case.findByIdAndUpdate(caseId, data, {
+      new: true,
+      runValidators: true,
+    });
+  },
+
+  deleteById(caseId: string) {
+    return Case.findByIdAndDelete(caseId);
   },
 };

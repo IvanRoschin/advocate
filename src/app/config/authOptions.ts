@@ -1,13 +1,12 @@
 import { DefaultSession, DefaultUser, NextAuthOptions } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
 import User from '@/models/User';
-
 import { dbConnect } from '../lib/server/mongoose';
 import { routes } from './routes';
 
-import type { JWT } from 'next-auth/jwt';
 declare module 'next-auth' {
   interface Session {
     user: {
@@ -36,7 +35,7 @@ declare module 'next-auth/jwt' {
 }
 
 export type AuthUser =
-  | { id: string } // credentials
+  | { id: string }
   | {
       id: string;
       name?: string;
@@ -46,9 +45,12 @@ export type AuthUser =
       role?: string;
     };
 
-// -------------------------------
-// Helpers
-// -------------------------------
+export const AUTH_ERROR_CODES = {
+  MISSING_CREDENTIALS: 'AUTH_MISSING_CREDENTIALS',
+  USER_NOT_FOUND: 'AUTH_USER_NOT_FOUND',
+  INVALID_PASSWORD: 'AUTH_INVALID_PASSWORD',
+  UNKNOWN: 'AUTH_UNKNOWN',
+} as const;
 
 async function loadUserData(userId: string) {
   const dbUser = await User.findById(userId).lean();
@@ -60,10 +62,6 @@ async function loadUserData(userId: string) {
     surname: dbUser?.surname,
   };
 }
-
-// -------------------------------
-// Auth Config
-// -------------------------------
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -84,20 +82,27 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        if (!credentials?.phone || !credentials?.password) {
-          return null;
+        const rawPhone = credentials?.phone?.trim();
+        const rawPassword = credentials?.password;
+
+        if (!rawPhone || !rawPassword) {
+          throw new Error(AUTH_ERROR_CODES.MISSING_CREDENTIALS);
         }
+
         await dbConnect();
 
-        const phone = credentials.phone.replace(/\s+/g, '');
-
+        const phone = rawPhone.replace(/\s+/g, '');
         const user = await User.findOne({ phone });
 
-        if (!user) return null;
+        if (!user) {
+          throw new Error(AUTH_ERROR_CODES.USER_NOT_FOUND);
+        }
 
-        const isCorrect = await user.comparePassword(credentials.password);
+        const isCorrect = await user.comparePassword(rawPassword);
 
-        if (!isCorrect) return null;
+        if (!isCorrect) {
+          throw new Error(AUTH_ERROR_CODES.INVALID_PASSWORD);
+        }
 
         return {
           id: user._id.toString(),
@@ -144,28 +149,24 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
-  // -------------------------------
-  // JWT callback
-  // -------------------------------
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       await dbConnect();
 
-      // 1) Login → записываем только id
       if (user) {
         token.id = (user as AuthUser).id;
       }
 
-      // 2) update() → обновляем только переданные поля
       if (trigger === 'update' && session?.user) {
         const typedToken = token as JWT & Record<string, unknown>;
+
         Object.entries(session.user).forEach(([key, value]) => {
           typedToken[key] = value;
         });
+
         return typedToken;
       }
 
-      // 3) Любой обычный вызов → загружаем свежие данные из БД
       if (token.id) {
         const fullData = await loadUserData(token.id.toString());
         Object.assign(token, fullData);
@@ -174,9 +175,6 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    // -------------------------------
-    // Session → отдаём ровно то, что в JWT
-    // -------------------------------
     async session({ session, token }) {
       session.user = {
         ...session.user,

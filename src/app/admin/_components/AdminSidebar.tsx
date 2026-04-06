@@ -21,7 +21,7 @@ const AdminSidebar = memo(() => {
           Кабінет управління
         </h2>
       </div>
-      <nav className="flex flex-1 flex-col gap-2 overflow-y-auto">
+      <nav className="flex flex-1 flex-col gap-2">
         {items.map(item => {
           const itemClassName = cn(
             'flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition',
