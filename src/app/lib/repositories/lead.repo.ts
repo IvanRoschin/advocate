@@ -1,11 +1,13 @@
+import { ClientSession } from 'mongoose';
+
+import { mapLeadToResponse } from '@/app/types';
+import { Lead } from '@/models';
+
 import type {
   CreateLeadDTO,
   LeadResponseDTO,
   UpdateLeadDTO,
 } from '@/app/types';
-import { mapLeadToResponse } from '@/app/types';
-import { Lead } from '@/models';
-
 export const leadRepository = {
   async findAll(): Promise<LeadResponseDTO[]> {
     const leads = await Lead.find().sort({ createdAt: -1 });
@@ -56,7 +58,14 @@ export const leadRepository = {
     return Lead.findById(id);
   },
 
-  async updateRaw(id: string, data: Record<string, unknown>): Promise<void> {
-    await Lead.findByIdAndUpdate(id, { $set: data }, { new: false });
+  async updateRaw(
+    id: string,
+    data: Record<string, unknown>,
+    session?: ClientSession
+  ) {
+    return Lead.findByIdAndUpdate(id, data, {
+      new: true,
+      session,
+    });
   },
 };

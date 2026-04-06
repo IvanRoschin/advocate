@@ -8,7 +8,7 @@ import { cn } from '@/app/lib/utils';
 import { useUserStore } from '@/app/store/user.store';
 import { AppLink } from '@/components';
 
-const AdminSidebar = memo(() => {
+const ClientSidebar = memo(() => {
   const user = useUserStore(state => state.user);
 
   const scope = useMemo(() => getUserScope(user?.role), [user?.role]);
@@ -18,7 +18,7 @@ const AdminSidebar = memo(() => {
     <aside className="bg-surface-input sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-gray-200 p-6 dark:border-white/10">
       <div className="mb-6">
         <h2 className="text-accent text-xl font-semibold">
-          Кабінет управління
+          Кабінет користувача
         </h2>
       </div>
       <nav className="flex flex-1 flex-col gap-2 overflow-y-auto">
@@ -65,6 +65,6 @@ const AdminSidebar = memo(() => {
   );
 });
 
-AdminSidebar.displayName = 'AdminSidebar';
+ClientSidebar.displayName = 'ClientSidebar';
 
-export default AdminSidebar;
+export default ClientSidebar;

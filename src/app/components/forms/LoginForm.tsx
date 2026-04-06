@@ -55,10 +55,14 @@ const LoginForm = () => {
       const session = await getSession();
       const role = session?.user?.role as UserRole | undefined;
 
-      const isBackofficeRole =
-        role === UserRole.ADMIN || role === UserRole.MANAGER;
+      if (role === UserRole.ADMIN || role === UserRole.MANAGER) {
+        router.replace('/admin');
+      } else if (role === UserRole.CLIENT) {
+        router.replace('/client');
+      } else {
+        router.replace('/');
+      }
 
-      router.replace(isBackofficeRole ? '/admin' : '/');
       router.refresh();
     } catch (error) {
       console.error('Login error:', error);
@@ -105,6 +109,7 @@ const LoginForm = () => {
                 label="Пароль"
                 type={showPassword ? 'text' : 'password'}
                 required
+                autoComplete=""
               />
               <button
                 type="button"

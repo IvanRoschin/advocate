@@ -1,14 +1,14 @@
-export type AdminSectionKey =
+export type ClientSectionKey =
   | 'socials'
   | 'header'
   | 'sidebar'
   | 'content'
   | 'footer';
 
-export type AdminLayoutNode =
+export type ClientLayoutNode =
   | {
       type: 'section';
-      key: AdminSectionKey;
+      key: ClientSectionKey;
       display: boolean;
     }
   | {
@@ -16,15 +16,15 @@ export type AdminLayoutNode =
       key: string;
       display: boolean;
       wrapperClassName?: string;
-      items: Array<{ key: AdminSectionKey; display: boolean }>;
+      items: Array<{ key: ClientSectionKey; display: boolean }>;
     };
 
-export const adminLayout: AdminLayoutNode[] = [
+export const clientLayout: ClientLayoutNode[] = [
   { type: 'section', key: 'socials', display: true },
   { type: 'section', key: 'header', display: true },
   {
     type: 'group',
-    key: 'adminShell',
+    key: 'clientShell',
     display: true,
     wrapperClassName: 'flex w-full min-w-0 items-start gap-0',
     items: [

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Header, ScrollToTopButton, Socials } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
 import { privacyPolicyContent } from '@/app/resources/content/pages/privacy-policy.content';
-
 import type { PrivacyPolicySectionKey } from '@/app/resources/content/pages/privacy-policy.layout';
 export type PrivacyPolicySectionProps = Record<string, never>;
 type PrivacyPolicySectionComponent = (
@@ -90,6 +89,7 @@ const FooterSection: PrivacyPolicySectionComponent = () => (
     <Footer />
   </section>
 );
+
 const ScrollToTopSection: PrivacyPolicySectionComponent = () => (
   <ScrollToTopButton />
 );

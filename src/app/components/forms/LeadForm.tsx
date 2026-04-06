@@ -12,7 +12,11 @@ import { apiFetch } from '@/app/lib/client/apiFetch';
 import { ApiResponse } from '@/app/lib/server/ApiError';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
 import { useThemeStore } from '@/app/store/theme.store';
-import { adminLeadSubmitSchema, leadFormSchema } from '@/app/types';
+import {
+  adminLeadSubmitSchema,
+  publicLeadContactsSchema,
+  publicLeadHomeSchema,
+} from '@/app/types';
 import { Input, Switcher, Textarea } from '@/components';
 
 import type {
@@ -29,6 +33,7 @@ interface Props {
   submitLabel?: string;
   mode: 'public' | 'create' | 'edit';
   publicVariant?: 'home' | 'contacts';
+  source: 'home' | 'contacts';
 }
 
 const publicDefaultValues: PublicLeadFormValues = {
@@ -84,6 +89,7 @@ export default function LeadForm({
   submitLabel,
   mode,
   publicVariant = 'home',
+  source,
 }: Props) {
   const [isConverting, setIsConverting] = useState(false);
 
@@ -113,7 +119,11 @@ export default function LeadForm({
       siteKey,
       theme: theme === 'dark' ? 'dark' : 'light',
     });
-  const validationSchema = isAdminMode ? adminLeadSubmitSchema : leadFormSchema;
+  const validationSchema = isAdminMode
+    ? adminLeadSubmitSchema
+    : publicVariant === 'contacts'
+      ? publicLeadContactsSchema
+      : publicLeadHomeSchema;
 
   const resolvedInitialValues: PublicLeadFormValues | AdminLeadFormValues =
     isAdminMode
@@ -121,7 +131,10 @@ export default function LeadForm({
           ...adminDefaultValues,
           ...initialValues,
         }
-      : publicDefaultValues;
+      : {
+          ...publicDefaultValues,
+          source,
+        };
 
   const initialConverted = useMemo(
     () =>
@@ -174,19 +187,23 @@ export default function LeadForm({
     }
 
     try {
+      const normalizedMessage = values.message?.trim();
+
+      const payload = {
+        ...values,
+        name: values.name.trim(),
+        email: values.email.trim(),
+        phone: values.phone.trim(),
+        recaptchaToken: captchaToken,
+        ...(normalizedMessage ? { message: normalizedMessage } : {}),
+      };
+
       await apiFetch<ApiResponse<LeadResponseDTO>>(apiUrl('/api/v1/leads'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...values,
-          name: values.name.trim(),
-          email: values.email.trim(),
-          phone: values.phone.trim(),
-          message: values.message.trim(),
-          recaptchaToken: captchaToken,
-        }),
+        body: JSON.stringify(payload),
       });
 
       toast.success('Ваша заявка успішно надіслана!');
@@ -244,7 +261,6 @@ export default function LeadForm({
               name: publicValues.name.trim(),
               email: publicValues.email.trim(),
               phone: publicValues.phone.trim(),
-              message: publicValues.message.trim(),
             },
             resetForm
           );

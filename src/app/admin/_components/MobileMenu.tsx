@@ -4,21 +4,35 @@ import { LogOut, Menu, X } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { useNavItems } from '@/app/components/header/nav.shared';
+import { useNavLinkItems } from '@/app/components/header/nav.shared';
 import { getUserScope } from '@/app/lib/auth/getUserScope';
 import { cn } from '@/app/lib/utils';
 import { useUserStore } from '@/app/store/user.store';
 import { AppLink } from '@/components';
 
-export default function AdminMobileMenu() {
+const getMenuTitle = (scope: string) => {
+  switch (scope) {
+    case 'admin':
+      return 'Адмінка';
+    case 'client':
+      return 'Кабінет клієнта';
+    default:
+      return 'Меню';
+  }
+};
+
+export default function MobileMenu() {
   const user = useUserStore(state => state.user);
+  const clearUser = useUserStore(state => state.clearUser);
 
   const scope = useMemo(() => getUserScope(user?.role), [user?.role]);
-  const items = useNavItems(scope);
+  const items = useNavLinkItems(scope);
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
+    clearUser();
+
     await signOut({
       callbackUrl: '/signin',
     });
@@ -38,7 +52,9 @@ export default function AdminMobileMenu() {
   return (
     <>
       <div className="border-border bg-app/90 sticky top-0 z-30 flex items-center justify-between border-b px-4 py-3 backdrop-blur xl:hidden">
-        <p className="text-foreground text-sm font-semibold">Адмінка</p>
+        <p className="text-foreground text-sm font-semibold">
+          {getMenuTitle(scope)}
+        </p>
 
         <button
           type="button"
@@ -71,7 +87,9 @@ export default function AdminMobileMenu() {
           )}
         >
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-accent text-lg font-semibold">Меню</h2>
+            <h2 className="text-accent text-lg font-semibold">
+              {getMenuTitle(scope)}
+            </h2>
 
             <button
               type="button"
@@ -84,18 +102,18 @@ export default function AdminMobileMenu() {
           </div>
 
           <nav className="flex flex-1 flex-col gap-2 overflow-y-auto">
-            {items.map(({ key, href, label, Icon }) => (
+            {items.map(item => (
               <AppLink
-                key={key}
-                href={href}
+                key={item.key}
+                href={item.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
                   'flex items-center gap-3 rounded-xl px-3 py-2.5 transition',
                   'hover:bg-neutral-100 dark:hover:bg-white/10'
                 )}
               >
-                <Icon className="h-5 w-5 shrink-0" />
-                <span className="font-medium">{label}</span>
+                <item.Icon className="h-5 w-5 shrink-0" />
+                <span className="font-medium">{item.label}</span>
               </AppLink>
             ))}
           </nav>
