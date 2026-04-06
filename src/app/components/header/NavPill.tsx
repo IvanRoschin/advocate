@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { getUserScope } from '@/app/lib/auth/getUserScope';
 import { cn } from '@/app/lib/utils';
+import { useUserStore } from '@/app/store/user.store';
 import { AppLink } from '@/components';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,21 +14,24 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-import { isSelected, useNavItems, useSelectedPathname } from './nav.shared';
+import { isSelected, useNavLinkItems, useSelectedPathname } from './nav.shared';
 
 import type { NavScope } from '@/app/config/nav';
-
 type NavPillProps = {
   scope?: NavScope;
   showLabelsFrom?: 'md' | 'lg';
 };
 
-export const NavPill = ({
-  scope = 'public',
-  showLabelsFrom = 'md',
-}: NavPillProps) => {
+export const NavPill = ({ scope, showLabelsFrom = 'md' }: NavPillProps) => {
   const pathname = useSelectedPathname();
-  const items = useNavItems(scope);
+  const user = useUserStore(state => state.user);
+
+  const resolvedScope = useMemo(
+    () => scope ?? getUserScope(user?.role),
+    [scope, user?.role]
+  );
+
+  const items = useNavLinkItems(resolvedScope);
 
   const [hash, setHash] = useState('');
 
@@ -55,16 +60,16 @@ export const NavPill = ({
         )}
         aria-label="Навігація"
       >
-        {items.map(({ href, label, Icon, startsWith }) => {
+        {items.map(item => {
           const selected = isSelected({
             pathname,
             hash,
-            href,
-            startsWith,
+            href: item.href,
+            startsWith: item.startsWith,
           });
 
           return (
-            <Tooltip key={href}>
+            <Tooltip key={item.key}>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
@@ -77,15 +82,15 @@ export const NavPill = ({
                   )}
                   asChild
                 >
-                  <AppLink href={href} aria-label={label}>
+                  <AppLink href={item.href} aria-label={item.label}>
                     <span className="flex items-center gap-2">
-                      <Icon className="text-[18px]" aria-hidden />
-                      <span className={labelClass}>{label}</span>
+                      <item.Icon className="text-[18px]" aria-hidden />
+                      <span className={labelClass}>{item.label}</span>
                     </span>
                   </AppLink>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>{label}</TooltipContent>
+              <TooltipContent>{item.label}</TooltipContent>
             </Tooltip>
           );
         })}

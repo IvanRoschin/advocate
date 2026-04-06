@@ -174,6 +174,7 @@ export default function UsersClient({ initialUsers }: Props) {
               name: userToUpdate.name,
               email: userToUpdate.email,
               password: '',
+              phone: userToUpdate.phone,
               role: userToUpdate.role,
               isActive: userToUpdate.isActive,
             }}

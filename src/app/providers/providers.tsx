@@ -10,6 +10,7 @@ import { TopProgressBar } from '../components/ui/top-progress/TopProgressBar';
 import { LoadingProvider } from './LoadingProvider';
 import { PageTransition } from './PageTransition';
 import { ThemeStoreProvider } from './ThemeStoreProvider';
+import UserProvider from './UserProvider';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -25,8 +26,9 @@ export function Providers({ children }: ProvidersProps) {
 
           <Suspense fallback={null}>
             <RouteLoadingReset />
-
-            <PageTransition>{children}</PageTransition>
+            <UserProvider>
+              <PageTransition>{children}</PageTransition>
+            </UserProvider>
           </Suspense>
 
           <Toaster position="top-right" richColors />

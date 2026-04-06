@@ -1,3 +1,5 @@
+import mongoose, { ClientSession } from 'mongoose';
+
 import { validate } from '@/app/helpers/validate';
 import { leadRepository } from '@/app/lib/repositories/lead.repo';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
@@ -13,8 +15,13 @@ import {
   LeadResponseDTO,
   mapLeadToClientDraft,
   UpdateLeadDTO,
+  UserRole,
 } from '@/app/types';
-import { clientRepository } from '../repositories';
+
+import { generateTempPassword } from '../auth/generateTempPassword';
+import { clientRepo, userRepo } from '../repositories';
+import { caseRepo } from '../repositories/case.repo';
+import { clientAccessRepo } from '../repositories/client-access.repo';
 import { recaptchaService } from '../server/recaptcha.service';
 
 async function notifyClient(data: CreateLeadDTO): Promise<void> {
@@ -147,49 +154,136 @@ export const leadService = {
   async convertToClient(leadId: string) {
     await dbConnect();
 
-    const lead = await leadRepository.findEntityById(leadId);
-    if (!lead) {
-      throw new ValidationError('Лід не знайдено');
-    }
+    const mongoSession: ClientSession = await mongoose.startSession();
 
-    if (lead.clientId) {
-      const existingLead = await leadRepository.findById(leadId);
+    try {
+      let result: {
+        lead: unknown;
+        client: unknown;
+        cabinetUser: {
+          email: string;
+          phone: string;
+          temporaryPassword: string;
+        } | null;
+        case: unknown | null;
+      } | null = null;
 
-      if (!existingLead) {
-        throw new ValidationError('Лід не знайдено');
+      await mongoSession.withTransaction(async () => {
+        const lead = await leadRepository.findEntityById(leadId);
+        if (!lead) {
+          throw new ValidationError('Лід не знайдено');
+        }
+
+        if (lead.clientId) {
+          const existingLead = await leadRepository.findById(leadId);
+
+          if (!existingLead) {
+            throw new ValidationError('Лід не знайдено');
+          }
+
+          result = {
+            lead: existingLead,
+            client: null,
+            cabinetUser: null,
+            case: null,
+          };
+
+          return;
+        }
+
+        const clientDraft = mapLeadToClientDraft({
+          id: lead._id.toString(),
+          name: lead.name,
+          email: lead.email,
+          phone: lead.phone,
+          message: lead.message ?? '',
+        });
+
+        const client = await clientRepo.create(clientDraft, mongoSession);
+
+        const normalizedEmail = lead.email.trim().toLowerCase();
+        const normalizedPhone = lead.phone.trim();
+
+        const existingUserByEmail = await userRepo.findByEmail(normalizedEmail);
+        const existingUserByPhone = await userRepo.findByPhone(normalizedPhone);
+
+        if (existingUserByEmail || existingUserByPhone) {
+          throw new ValidationError(
+            'Для цього клієнта вже існує користувач кабінету'
+          );
+        }
+
+        const temporaryPassword = generateTempPassword();
+
+        const cabinetUser = await userRepo.create(
+          {
+            name: lead.name,
+            email: normalizedEmail,
+            phone: normalizedPhone,
+            password: temporaryPassword,
+            role: UserRole.CLIENT,
+            isActive: true,
+          },
+          mongoSession
+        );
+
+        await clientAccessRepo.create(
+          {
+            userId: cabinetUser._id.toString(),
+            clientId: client.id,
+            accessRole: 'owner',
+            isActive: true,
+          },
+          mongoSession
+        );
+
+        const createdCase = await caseRepo.create(
+          {
+            clientId: client.id,
+            title: `Звернення: ${lead.name}`,
+            description: lead.message ?? '',
+            status: 'new',
+            currentStage: 'Первинний аналіз',
+            sourceLeadId: lead._id.toString(),
+          },
+          mongoSession
+        );
+
+        await leadRepository.updateRaw(
+          leadId,
+          {
+            convertedToClient: true,
+            clientId: client.id,
+            status: 'processed',
+          },
+          mongoSession
+        );
+
+        const updatedLead = await leadRepository.findById(leadId);
+
+        if (!updatedLead) {
+          throw new ValidationError('Не вдалося отримати оновлений лід');
+        }
+
+        result = {
+          lead: updatedLead,
+          client,
+          cabinetUser: {
+            email: cabinetUser.email,
+            phone: cabinetUser.phone ?? '',
+            temporaryPassword,
+          },
+          case: createdCase,
+        };
+      });
+
+      if (!result) {
+        throw new ValidationError('Не вдалося конвертувати ліда');
       }
 
-      return {
-        lead: existingLead,
-        client: null,
-      };
+      return result;
+    } finally {
+      await mongoSession.endSession();
     }
-
-    const clientDraft = mapLeadToClientDraft({
-      id: lead._id.toString(),
-      name: lead.name,
-      email: lead.email,
-      phone: lead.phone,
-      message: lead.message ?? '',
-    });
-
-    const client = await clientRepository.create(clientDraft);
-
-    await leadRepository.updateRaw(leadId, {
-      convertedToClient: true,
-      clientId: client.id,
-      status: 'processed',
-    });
-
-    const updatedLead = await leadRepository.findById(leadId);
-
-    if (!updatedLead) {
-      throw new ValidationError('Не вдалося отримати оновлений лід');
-    }
-
-    return {
-      lead: updatedLead,
-      client,
-    };
   },
 };

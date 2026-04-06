@@ -1,18 +1,31 @@
+import { signOut } from 'next-auth/react';
 import type { IconType } from 'react-icons';
 
 import { routes } from '@/app/config/routes';
+import { useUserStore } from '@/app/store/user.store';
 import { iconLibrary, menuText } from '@/resources';
 
-export type NavScope = 'public' | 'admin' | 'client';
+export type NavScope = 'public' | 'admin' | 'client' | 'manager';
 
-export type NavItem = {
+type BaseNavItem = {
   key: string;
-  href: string;
   label: string;
   Icon: IconType;
   startsWith?: boolean;
   enabled?: boolean;
 };
+
+export type NavItemLink = BaseNavItem & {
+  href: string;
+  onClick?: never;
+};
+
+export type NavItemAction = BaseNavItem & {
+  href?: never;
+  onClick: () => void | Promise<void>;
+};
+
+export type NavItem = NavItemLink | NavItemAction;
 
 export const PUBLIC_NAV_ITEMS: readonly NavItem[] = [
   {
@@ -60,6 +73,12 @@ export const PUBLIC_NAV_ITEMS: readonly NavItem[] = [
     href: routes.public.contact,
     label: 'Контакти',
     Icon: iconLibrary.contact,
+  },
+  {
+    key: 'dashboard',
+    href: routes.public.dashboard,
+    label: 'Кабінет',
+    Icon: iconLibrary.person,
   },
 ];
 
@@ -133,6 +152,18 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
     Icon: iconLibrary.settings,
     startsWith: true,
   },
+  {
+    key: 'singout',
+    label: 'Вихід',
+    Icon: iconLibrary.arrowUpRightFromSquare,
+    onClick: async () => {
+      useUserStore.getState().clearUser();
+
+      await signOut({
+        callbackUrl: routes.public.auth.signIn,
+      });
+    },
+  },
 ];
 
 export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
@@ -141,14 +172,117 @@ export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
     href: routes.client.dashboard,
     label: 'Кабінет',
     Icon: iconLibrary.home,
+    startsWith: false,
+  },
+  {
+    key: 'cases',
+    href: routes.client.cases,
+    label: 'Мої справи',
+    Icon: iconLibrary.briefcaseBusiness,
     startsWith: true,
   },
   {
-    key: 'changePassword',
-    href: routes.client.changePassword,
-    label: 'Зміна пароля',
+    key: 'documents',
+    href: routes.client.documents,
+    label: 'Документи',
+    Icon: iconLibrary.document,
+    startsWith: true,
+  },
+  {
+    key: 'messages',
+    href: routes.client.messages,
+    label: 'Повідомлення',
+    Icon: iconLibrary.envelope,
+    startsWith: true,
+  },
+  {
+    key: 'profile',
+    href: routes.client.profile,
+    label: 'Профіль',
+    Icon: iconLibrary.user,
+    startsWith: true,
+  },
+  {
+    key: 'access',
+    href: routes.client.access,
+    label: 'Доступ',
+    Icon: iconLibrary.people,
+    startsWith: true,
+  },
+  {
+    key: 'settings',
+    href: routes.client.settings.changePassword,
+    label: 'Налаштування',
     Icon: iconLibrary.settings,
     startsWith: true,
+  },
+  {
+    key: 'singout',
+    label: 'Вихід',
+    Icon: iconLibrary.arrowUpRightFromSquare,
+    onClick: async () => {
+      useUserStore.getState().clearUser();
+
+      await signOut({
+        callbackUrl: routes.public.auth.signIn,
+      });
+    },
+  },
+];
+
+export const MANAGER_NAV_ITEMS: readonly NavItem[] = [
+  {
+    key: 'dashboard',
+    href: routes.admin.dashboard,
+    label: 'Головна',
+    Icon: iconLibrary.home,
+  },
+  {
+    key: 'articles',
+    href: routes.admin.content.articles,
+    label: 'Статті',
+    Icon: iconLibrary.blog,
+    startsWith: true,
+  },
+  {
+    key: 'categories',
+    href: routes.admin.content.categories,
+    label: 'Категорії',
+    Icon: iconLibrary.folder,
+    startsWith: true,
+  },
+  {
+    key: 'services',
+    href: routes.admin.content.services,
+    label: 'Послуги',
+    Icon: iconLibrary.services,
+    startsWith: true,
+  },
+  {
+    key: 'reviews',
+    href: routes.admin.ui.reviews,
+    label: 'Відгуки',
+    Icon: iconLibrary.reviews,
+    startsWith: true,
+  },
+  {
+    key: 'slides',
+    href: routes.admin.ui.slides,
+    label: 'Слайди',
+    Icon: iconLibrary.gallery,
+    startsWith: true,
+  },
+  {
+    key: 'singout',
+    label: 'Вихід',
+    Icon: iconLibrary.arrowUpRightFromSquare,
+    onClick: async () => {
+      useUserStore.getState().clearUser();
+
+      await signOut({
+        callbackUrl: routes.public.auth.signIn,
+      });
+    },
   },
 ];
 
@@ -156,6 +290,7 @@ export const NAV_ITEMS_BY_SCOPE: Record<NavScope, readonly NavItem[]> = {
   public: PUBLIC_NAV_ITEMS,
   admin: ADMIN_NAV_ITEMS,
   client: CLIENT_NAV_ITEMS,
+  manager: MANAGER_NAV_ITEMS,
 };
 
 export const navCta = {

@@ -6,7 +6,6 @@ export type AdminDashboardGroupKey =
   | 'finance'
   | 'ui'
   | 'system'
-  | 'pageSettings'
   | 'other';
 
 export type AdminDashboardGroup = {

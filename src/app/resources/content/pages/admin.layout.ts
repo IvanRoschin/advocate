@@ -1,4 +1,9 @@
-export type AdminSectionKey = 'socials' | 'header' | 'sidebar' | 'content';
+export type AdminSectionKey =
+  | 'socials'
+  | 'header'
+  | 'sidebar'
+  | 'content'
+  | 'footer';
 
 export type AdminLayoutNode =
   | {

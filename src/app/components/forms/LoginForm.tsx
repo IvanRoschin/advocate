@@ -55,10 +55,12 @@ const LoginForm = () => {
       const session = await getSession();
       const role = session?.user?.role as UserRole | undefined;
 
-      if (role === UserRole.ADMIN) {
+      if (role === UserRole.ADMIN || role === UserRole.MANAGER) {
         router.replace('/admin');
-      } else {
+      } else if (role === UserRole.CLIENT) {
         router.replace('/client');
+      } else {
+        router.replace('/');
       }
 
       router.refresh();
@@ -107,6 +109,7 @@ const LoginForm = () => {
                 label="Пароль"
                 type={showPassword ? 'text' : 'password'}
                 required
+                autoComplete=""
               />
               <button
                 type="button"

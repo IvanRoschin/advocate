@@ -7,9 +7,11 @@ import {
   PageSettings,
   Review,
   Service,
+  Slide,
   Subscriber,
   User,
 } from '@/models';
+
 export const adminDashboardRepo = {
   async getCounters(): Promise<AdminDashboardCountersDTO> {
     const [
@@ -22,6 +24,7 @@ export const adminDashboardRepo = {
       clients,
       subscribers,
       pageSettings,
+      slides,
     ] = await Promise.all([
       User.countDocuments(),
       Article.countDocuments(),
@@ -32,6 +35,7 @@ export const adminDashboardRepo = {
       Client.countDocuments(),
       Subscriber.countDocuments(),
       PageSettings.countDocuments(),
+      Slide.countDocuments(),
     ]);
 
     return {
@@ -44,6 +48,7 @@ export const adminDashboardRepo = {
       clients,
       subscribers,
       pageSettings,
+      slides,
     };
   },
 };

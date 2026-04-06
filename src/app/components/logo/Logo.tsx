@@ -1,6 +1,5 @@
 import { AppLink } from '@/components';
 import { logo } from '@/resources/content';
-
 import { NextImage } from '../common';
 
 interface LogoProps {
@@ -16,7 +15,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'dark' }) => {
         useSkeleton
         src={src}
         alt="Company logo"
-        width={200}
+        width={160}
         height={60}
         priority
         className="h-12 w-auto object-contain 2xl:h-14"

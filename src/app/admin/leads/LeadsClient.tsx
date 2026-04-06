@@ -185,6 +185,7 @@ export default function LeadsClient({ initialLeads }: Props) {
           mode="create"
           onSubmit={handleCreateLead}
           onClose={createModal.close}
+          source={'home'}
         />
       }
     />
@@ -284,6 +285,7 @@ export default function LeadsClient({ initialLeads }: Props) {
                   updateModal.close();
                   setLeadToUpdate(null);
                 }}
+                source={'home'}
               />
             </>
           )
