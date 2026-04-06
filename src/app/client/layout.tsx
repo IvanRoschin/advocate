@@ -1,28 +1,25 @@
-'use client';
-
-import { Header, Socials } from '../components';
-import { SubscribeForm } from '../components/forms';
+import { renderLayout } from '../lib/layouts/renderLayout';
+import { clientLayout } from '../resources/content/pages/client.layout';
+import {
+  CLIENT_SECTIONS,
+  ClientSectionProps,
+} from './_components/client.sections';
 
 export default function BlogLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const sectionProps: ClientSectionProps = {
+    children,
+  };
   return (
-    <div className="blog-wrapper">
-      <Socials />
-      <Header />
-      <div className="flex w-3/4 justify-around">
-        {children}
-        <aside className="">
-          <p>Category</p>
-          <p className="nav font-eukrainehead mb-4 text-lg font-semibold">
-            Інформаційна розсилка
-          </p>
-          <SubscribeForm />
-          <p>Недавні записи</p>
-        </aside>
-      </div>
-    </div>
+    <main className="bg-app relative min-h-screen">
+      {renderLayout({
+        layout: clientLayout,
+        sections: CLIENT_SECTIONS,
+        sectionProps,
+      })}
+    </main>
   );
 }

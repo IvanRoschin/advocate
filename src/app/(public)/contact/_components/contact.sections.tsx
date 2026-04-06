@@ -314,7 +314,7 @@ const ContactFormSection: ContactPageSectionComponent = () => {
         </aside>
 
         <div className={`${cardClassName} h-full ${cardInnerClassName}`}>
-          <LeadForm mode="public" publicVariant="contacts" />
+          <LeadForm mode="public" publicVariant="contacts" source="contacts" />
         </div>
       </div>
     </section>

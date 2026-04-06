@@ -27,7 +27,7 @@ export type BlogSectionProps = {
 
 export type BlogSectionComponent = (props: BlogSectionProps) => ReactNode;
 
-const BlogHeroSection: BlogSectionComponent = () => (
+const HeroSection: BlogSectionComponent = () => (
   <section className="container pt-10 lg:pt-14">
     <div className="mb-8 max-w-3xl">
       <p className="text-accent mb-2 text-sm font-semibold tracking-[0.18em] uppercase">
@@ -43,7 +43,7 @@ const BlogHeroSection: BlogSectionComponent = () => (
   </section>
 );
 
-const BlogFiltersSection: BlogSectionComponent = ({
+const FiltersSection: BlogSectionComponent = ({
   recent,
   categories,
   category,
@@ -57,35 +57,29 @@ const BlogFiltersSection: BlogSectionComponent = ({
   </aside>
 );
 
-const BlogArticlesSection: BlogSectionComponent = ({ items }) => (
+const ArticlesSection: BlogSectionComponent = ({ items }) => (
   <section className="min-w-0">
     <ArticleListPreview items={items} baseHref={blog.path} />
   </section>
 );
 
-const BlogPaginationSection: BlogSectionComponent = () => null;
+const PaginationSection: BlogSectionComponent = () => null;
 
-const BlogSubscribeSection: BlogSectionComponent = () => null;
+const SubscribeSection: BlogSectionComponent = () => null;
 
-const BlogSocialsSection: BlogSectionComponent = () => <Socials />;
-const BlogHeaderSection: BlogSectionComponent = () => <Header />;
-const BlogFooterSection: BlogSectionComponent = () => (
-  <section className="mt-16 lg:mt-20">
-    <Footer />
-  </section>
-);
-const BlogScrollToTopSection: BlogSectionComponent = () => (
-  <ScrollToTopButton />
-);
+const SocialsSection: BlogSectionComponent = () => <Socials />;
+const HeaderSection: BlogSectionComponent = () => <Header />;
+const FooterSection: BlogSectionComponent = () => <Footer />;
+const ScrollToTopSection: BlogSectionComponent = () => <ScrollToTopButton />;
 
 export const BLOG_SECTIONS: Record<BlogSectionKey, BlogSectionComponent> = {
-  socials: BlogSocialsSection,
-  header: BlogHeaderSection,
-  hero: BlogHeroSection,
-  filters: BlogFiltersSection,
-  articles: BlogArticlesSection,
-  pagination: BlogPaginationSection,
-  subscribe: BlogSubscribeSection,
-  footer: BlogFooterSection,
-  scrollToTop: BlogScrollToTopSection,
+  socials: SocialsSection,
+  header: HeaderSection,
+  hero: HeroSection,
+  filters: FiltersSection,
+  articles: ArticlesSection,
+  pagination: PaginationSection,
+  subscribe: SubscribeSection,
+  footer: FooterSection,
+  scrollToTop: ScrollToTopSection,
 };

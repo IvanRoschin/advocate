@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import { ValidationError } from 'yup';
 
-import { clientRepository } from '@/app/lib/repositories/client.repo';
+import { clientRepo } from '@/app/lib/repositories/client.repo';
 import {
   ClientResponseDTO,
   CreateClientDTO,
@@ -20,19 +20,19 @@ const assertObjectId = (id: string) => {
 export const clientService = {
   async getAll(): Promise<ClientResponseDTO[]> {
     await dbConnect();
-    return clientRepository.findAll();
+    return clientRepo.findAll();
   },
 
   async getById(id: string): Promise<ClientResponseDTO | null> {
     await dbConnect();
-    return clientRepository.findById(id);
+    return clientRepo.findById(id);
   },
 
   async create(payload: CreateClientDTO): Promise<ClientResponseDTO> {
     await dbConnect();
 
     const data = normalizeClientData(payload);
-    return clientRepository.create(data);
+    return clientRepo.create(data);
   },
 
   async update(
@@ -40,14 +40,14 @@ export const clientService = {
     payload: UpdateClientDTO
   ): Promise<ClientResponseDTO | null> {
     await dbConnect();
-    return clientRepository.update(id, payload);
+    return clientRepo.update(id, payload);
   },
 
   async delete(id: string): Promise<ClientResponseDTO> {
     await dbConnect();
     assertObjectId(id);
 
-    const deleted = await clientRepository.delete(id);
+    const deleted = await clientRepo.delete(id);
     if (!deleted) {
       throw new ValidationError('Клієнта не знайдено');
     }

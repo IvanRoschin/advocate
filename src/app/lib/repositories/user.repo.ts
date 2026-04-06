@@ -1,4 +1,6 @@
-import { CreateUserRequestDTO } from '@/app/types';
+import { ClientSession } from 'mongoose';
+
+import { CreateUserRequestDTO, UpdateUserDTO } from '@/app/types';
 import { User } from '@/models';
 import { dbConnect } from '../server/mongoose';
 
@@ -23,17 +25,21 @@ export const userRepo = {
     return User.findOne({ email });
   },
 
-  async create(data: CreateUserRequestDTO) {
-    await dbConnect();
-
-    return User.create(data);
+  findByPhone(phone: string) {
+    return User.findOne({ phone: phone.trim() });
   },
 
-  // async update(id: string, data: UpdateUserDTO) {
-  //   await dbConnect();
+  async create(data: CreateUserRequestDTO, session?: ClientSession) {
+    await dbConnect();
 
-  //   return User.findByIdAndUpdate(id, data, { new: true });
-  // },
+    return User.create([data], { session }).then(([doc]) => doc);
+  },
+
+  async update(id: string, data: UpdateUserDTO) {
+    await dbConnect();
+
+    return User.findByIdAndUpdate(id, data, { new: true });
+  },
 
   async delete(id: string) {
     await dbConnect();

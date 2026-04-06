@@ -3,14 +3,16 @@
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
-import { NAV_ITEMS_BY_SCOPE, NavScope } from '@/app/config/nav';
+import { NAV_ITEMS_BY_SCOPE } from '@/app/config/nav';
+
+import type { NavItem, NavScope } from '@/app/config/nav';
 
 export type { NavScope };
 
 type IsSelectedArgs = {
   pathname: string;
   hash: string;
-  href: string;
+  href?: string;
   startsWith?: boolean;
 };
 
@@ -22,11 +24,22 @@ const getHrefHash = (href?: string) => {
 
 const isHashLink = (href?: string) => href?.startsWith('/#') ?? false;
 
+export const isNavItemLink = (
+  item: NavItem
+): item is Extract<NavItem, { href: string }> =>
+  'href' in item && typeof item.href === 'string' && item.href.length > 0;
+
 export function useNavItems(scope: NavScope) {
   return useMemo(
     () => NAV_ITEMS_BY_SCOPE[scope].filter(item => item.enabled !== false),
     [scope]
   );
+}
+
+export function useNavLinkItems(scope: NavScope) {
+  const items = useNavItems(scope);
+
+  return useMemo(() => items.filter(isNavItemLink), [items]);
 }
 
 export function useSelectedPathname() {

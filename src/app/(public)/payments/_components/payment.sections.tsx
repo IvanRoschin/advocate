@@ -10,31 +10,24 @@ export type PaymentSectionProps = Record<string, never>;
 
 export type PaymentSectionComponent = (props: PaymentSectionProps) => ReactNode;
 
-const PaymentHeaderSection: PaymentSectionComponent = () => <Header />;
+const HeaderSection: PaymentSectionComponent = () => <Header />;
 
-// temporary:
-// пока PaymentsContent не распилен на отдельные секции,
-// используем его как основной контент страницы
-const PaymentFormSection: PaymentSectionComponent = () => (
+const FormSection: PaymentSectionComponent = () => (
   <section className="min-w-0">
     <PaymentsContent />
   </section>
 );
 
-// temporary:
-// aside пока считаем order summary
-const PaymentOrderSummarySection: PaymentSectionComponent = () => (
+const OrderSummarySection: PaymentSectionComponent = () => (
   <aside className="border-accent min-w-0 space-y-4 pl-4 lg:sticky lg:top-24 lg:self-start lg:border-l">
     <PaymentsAside />
   </aside>
 );
 
-// temporary:
-// после декомпозиции PaymentsContent сюда вынесем отдельные блоки
-const PaymentMethodsSection: PaymentSectionComponent = () => null;
-const PaymentSecuritySection: PaymentSectionComponent = () => null;
+const MethodsSection: PaymentSectionComponent = () => null;
+const SecuritySection: PaymentSectionComponent = () => null;
 
-const PaymentFooterSection: PaymentSectionComponent = () => (
+const FooterSection: PaymentSectionComponent = () => (
   <section className="mt-16 lg:mt-20">
     <Footer />
   </section>
@@ -44,10 +37,10 @@ export const PAYMENT_SECTIONS: Record<
   PaymentSectionKey,
   PaymentSectionComponent
 > = {
-  header: PaymentHeaderSection,
-  orderSummary: PaymentOrderSummarySection,
-  paymentForm: PaymentFormSection,
-  paymentMethods: PaymentMethodsSection,
-  security: PaymentSecuritySection,
-  footer: PaymentFooterSection,
+  header: HeaderSection,
+  orderSummary: OrderSummarySection,
+  paymentForm: FormSection,
+  paymentMethods: MethodsSection,
+  security: SecuritySection,
+  footer: FooterSection,
 };

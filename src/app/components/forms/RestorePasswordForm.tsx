@@ -94,11 +94,13 @@ const RestorePasswordForm = ({ token }: Props) => {
               type="password"
               name="password"
               required
+              autoComplete=""
             />
             <Input
               label="Повторіть пароль"
               type="password"
               name="confirmPassword"
+              autoComplete=""
               required
             />
 

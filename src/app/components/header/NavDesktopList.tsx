@@ -1,14 +1,17 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { NavScope } from '@/app/config/nav';
+import { getUserScope } from '@/app/lib/auth/getUserScope';
 import { cn } from '@/app/lib/utils';
+import { useUserStore } from '@/app/store/user.store';
 import { AppLink } from '@/components';
 import { menuText } from '@/resources';
 
-import { isSelected, useNavItems } from './nav.shared';
+import { isSelected, useNavLinkItems } from './nav.shared';
+
+import type { NavScope } from '@/app/config/nav';
 
 type NavDesktopListProps = {
   scope?: NavScope;
@@ -16,10 +19,17 @@ type NavDesktopListProps = {
 };
 
 export const NavDesktopList = ({
-  scope = 'public',
+  scope,
   showLabelsFrom = 'xl',
 }: NavDesktopListProps) => {
-  const items = useNavItems(scope);
+  const user = useUserStore(state => state.user);
+
+  const resolvedScope = useMemo<NavScope>(() => {
+    if (scope) return scope;
+    return getUserScope(user?.role);
+  }, [scope, user?.role]);
+
+  const items = useNavLinkItems(resolvedScope);
   const pathname = usePathname() ?? '';
   const [hash, setHash] = useState('');
 
@@ -51,20 +61,20 @@ export const NavDesktopList = ({
   return (
     <nav className="font-eukrainehead min-w-0" aria-label={menuText.navAria}>
       <ul className="flex h-10 min-w-0 items-center gap-1 whitespace-nowrap">
-        {items.map(({ key, href, label, startsWith, Icon }) => {
+        {items.map(item => {
           const active = isSelected({
             pathname,
             hash,
-            href,
-            startsWith,
+            href: item.href,
+            startsWith: item.startsWith,
           });
 
           return (
-            <li key={key} className="shrink-0">
+            <li key={item.key} className="shrink-0">
               <AppLink
-                href={href}
+                href={item.href}
                 aria-current={active ? 'page' : undefined}
-                title={label}
+                title={item.label}
                 className={cn(
                   'desktop-nav-link flex h-9 items-center gap-1.5 rounded-xl px-2.5 text-sm leading-none font-medium transition',
                   active
@@ -72,8 +82,8 @@ export const NavDesktopList = ({
                     : 'desktop-nav-link-inactive'
                 )}
               >
-                <Icon className="shrink-0 text-base" aria-hidden />
-                <span className={labelClass}>{label}</span>
+                <item.Icon className="shrink-0 text-base" aria-hidden />
+                <span className={labelClass}>{item.label}</span>
               </AppLink>
             </li>
           );

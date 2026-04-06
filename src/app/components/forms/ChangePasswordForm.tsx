@@ -3,8 +3,6 @@
 import { changePasswordSchema } from '@/app/helpers/validationSchemas';
 import { PasswordForm } from '@/components/forms/PasswordForm';
 
-// import { changePasswordAction } from '@/app/actions/auth';
-
 interface Values {
   oldPassword: string;
   newPassword: string;
@@ -15,8 +13,8 @@ export const ChangePasswordForm = ({
   userId,
   userEmail,
 }: {
-  userId?: string;
-  userEmail?: string;
+  userId: string;
+  userEmail?: string | null;
 }) => {
   if (!userId) return null;
 
@@ -24,7 +22,7 @@ export const ChangePasswordForm = ({
     <PasswordForm<Values>
       title="Змінити пароль"
       submitLabel="Змінити пароль"
-      hiddenUsername={userEmail}
+      hiddenUsername={userEmail ?? ''}
       initialValues={{
         oldPassword: '',
         newPassword: '',
@@ -50,12 +48,6 @@ export const ChangePasswordForm = ({
       ]}
       onSubmit={async values => {
         console.warn('values', values);
-        // return await changePasswordAction(
-        //   userId,
-        //   values.oldPassword,
-        //   values.newPassword,
-        //   values.confirmNewPassword
-        // );
       }}
     />
   );

@@ -11,6 +11,7 @@ export const mapAdminDashboardToResponse = (
   counters: AdminDashboardCountersDTO
 ): AdminDashboardResponseDTO => {
   const stats: AdminDashboardStatDTO[] = [
+    // CRM
     {
       key: 'leads',
       title: 'Ліди',
@@ -31,6 +32,8 @@ export const mapAdminDashboardToResponse = (
       trend: 80,
       href: '/admin/clients',
     },
+
+    // System
     {
       key: 'users',
       title: 'Користувачі',
@@ -41,6 +44,8 @@ export const mapAdminDashboardToResponse = (
       trend: 75,
       href: '/admin/users',
     },
+
+    // Content
     {
       key: 'articles',
       title: 'Статті',
@@ -71,6 +76,8 @@ export const mapAdminDashboardToResponse = (
       trend: 90,
       href: '/admin/categories',
     },
+
+    // UI / Вітрина
     {
       key: 'reviews',
       title: 'Відгуки',
@@ -82,12 +89,22 @@ export const mapAdminDashboardToResponse = (
       href: '/admin/reviews',
     },
     {
+      key: 'slides',
+      title: 'Слайди',
+      value: counters.slides,
+      formattedValue: formatCount(counters.slides),
+      icon: 'gallery',
+      color: 'bg-fuchsia-500',
+      trend: 55,
+      href: '/admin/slides',
+    },
+    {
       key: 'pageSettings',
       title: 'Налаштування сторінок',
       value: counters.pageSettings,
       formattedValue: formatCount(counters.pageSettings),
       icon: 'settings',
-      color: 'bg-red-500',
+      color: 'bg-rose-500',
       trend: 55,
       href: '/admin/page-settings',
     },

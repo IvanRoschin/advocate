@@ -16,9 +16,9 @@ export type ServicesSectionComponent = (
   props: ServicesSectionProps
 ) => ReactNode;
 
-const ServicesHeaderSection: ServicesSectionComponent = () => <Header />;
+const HeaderSection: ServicesSectionComponent = () => <Header />;
 
-const ServicesHeroSection: ServicesSectionComponent = () => (
+const HeroSection: ServicesSectionComponent = () => (
   <section className="min-w-0">
     <div className="mb-20 max-w-3xl">
       <p className="text-accent mb-2 text-sm font-semibold tracking-[0.18em] uppercase">
@@ -36,7 +36,7 @@ const ServicesHeroSection: ServicesSectionComponent = () => (
   </section>
 );
 
-const ServicesListSection: ServicesSectionComponent = ({ services }) => {
+const ListSection: ServicesSectionComponent = ({ services }) => {
   if (services.length === 0) {
     return (
       <section className="min-w-0">
@@ -98,7 +98,7 @@ const ServicesListSection: ServicesSectionComponent = ({ services }) => {
   );
 };
 
-const ServicesFooterSection: ServicesSectionComponent = () => (
+const FooterSection: ServicesSectionComponent = () => (
   <section className="mt-16 lg:mt-20">
     <Footer />
   </section>
@@ -108,8 +108,8 @@ export const SERVICES_SECTIONS: Record<
   ServicesSectionKey,
   ServicesSectionComponent
 > = {
-  header: ServicesHeaderSection,
-  hero: ServicesHeroSection,
-  list: ServicesListSection,
-  footer: ServicesFooterSection,
+  header: HeaderSection,
+  hero: HeroSection,
+  list: ListSection,
+  footer: FooterSection,
 };

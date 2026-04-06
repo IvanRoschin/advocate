@@ -1,3 +1,5 @@
+import { ClientSession } from 'mongoose';
+
 import { Client } from '@/app/models';
 import {
   ClientResponseDTO,
@@ -6,7 +8,23 @@ import {
   UpdateClientDTO,
 } from '@/app/types';
 
-export const clientRepository = {
+export type ClientRow = {
+  _id: import('mongoose').Types.ObjectId;
+  type: 'individual' | 'company';
+  status: 'active' | 'inactive';
+  fullName: string;
+  email: string;
+  phone: string;
+  companyName: string;
+  taxId: string;
+  address: string;
+  notes: string;
+  sourceLeadId?: import('mongoose').Types.ObjectId | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export const clientRepo = {
   async findAll(): Promise<ClientResponseDTO[]> {
     const clients = await Client.find().sort({ createdAt: -1 });
     return clients.map(mapClientToResponse);
@@ -18,21 +36,11 @@ export const clientRepository = {
     return client ? mapClientToResponse(client) : null;
   },
 
-  async create(data: CreateClientDTO): Promise<ClientResponseDTO> {
-    const client = await Client.create({
-      type: data.type,
-      status: data.status ?? 'active',
-      fullName: data.fullName,
-      email: data.email,
-      phone: data.phone,
-      companyName: data.companyName ?? '',
-      taxId: data.taxId ?? '',
-      address: data.address ?? '',
-      notes: data.notes ?? '',
-      sourceLeadId: data.sourceLeadId ?? null,
-    });
-
-    return mapClientToResponse(client);
+  async create(
+    data: CreateClientDTO,
+    session?: ClientSession
+  ): Promise<ClientResponseDTO> {
+    return Client.create([data], { session }).then(([doc]) => doc);
   },
 
   async update(

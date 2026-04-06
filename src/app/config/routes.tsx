@@ -13,6 +13,7 @@ export const routes = {
     notFound: '/not-found',
     privacyPolicy: '/privacy-policy',
     offer: '/offer',
+    dashboard: '/signin',
 
     auth: {
       verifyEmail: '/verify-email',
@@ -22,7 +23,6 @@ export const routes = {
     },
   },
 
-  // блог-роуты отдельно
   blog: {
     index: '/blog',
     article: (slug: string) => `/blog/${slug}`,
@@ -87,7 +87,14 @@ export const routes = {
 
   client: {
     dashboard: '/client',
-    changePassword: '/client/change-password',
+    cases: '/client/cases',
+    profile: '/client/profile',
+    documents: '/client/documents',
+    messages: '/client/messages',
+    access: '/client/access',
+    settings: {
+      changePassword: '/client/settings/change-password',
+    },
   },
 } as const;
 
