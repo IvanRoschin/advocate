@@ -58,13 +58,12 @@ export default function ClientForm({
   };
 
   return (
-    <section className="border-border bg-card rounded-[28px] border p-6 shadow-sm">
+    <>
       <div className="mb-4">
         <h2 className="text-xl font-semibold">
           {mode === 'edit' ? 'Редагувати клієнта' : 'Додати клієнта'}
         </h2>
       </div>
-
       <Formik<ClientFormValues>
         enableReinitialize
         initialValues={resolvedInitialValues}
@@ -86,48 +85,46 @@ export default function ClientForm({
         {({ isSubmitting, values, setFieldValue }) => (
           <Form className="flex w-full flex-col">
             <div className="space-y-3">
-              <section className="border-border bg-card rounded-2xl border p-3 shadow-sm sm:p-4">
-                <div className="mb-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <label className="flex flex-col gap-2">
-                    <span className="text-sm font-medium">Тип</span>
-                    <select
-                      name="type"
-                      value={values.type}
-                      onChange={e => setFieldValue('type', e.target.value)}
-                      className="select-field rounded-xl px-3 py-2.5"
-                    >
-                      <option value="individual">Фізична особа</option>
-                      <option value="company">Компанія</option>
-                    </select>
-                  </label>
+              <div className="mb-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label className="flex flex-col gap-2">
+                  <span className="text-sm font-medium">Тип</span>
+                  <select
+                    name="type"
+                    value={values.type}
+                    onChange={e => setFieldValue('type', e.target.value)}
+                    className="select-field rounded-xl px-3 py-2.5"
+                  >
+                    <option value="individual">Фізична особа</option>
+                    <option value="company">Компанія</option>
+                  </select>
+                </label>
 
-                  <label className="flex flex-col gap-2">
-                    <span className="text-sm font-medium">Статус</span>
-                    <select
-                      name="status"
-                      value={values.status}
-                      onChange={e => setFieldValue('status', e.target.value)}
-                      className="select-field rounded-xl px-3 py-2.5"
-                    >
-                      <option value="active">Активний</option>
-                      <option value="inactive">Неактивний</option>
-                    </select>
-                  </label>
-                </div>
+                <label className="flex flex-col gap-2">
+                  <span className="text-sm font-medium">Статус</span>
+                  <select
+                    name="status"
+                    value={values.status}
+                    onChange={e => setFieldValue('status', e.target.value)}
+                    className="select-field rounded-xl px-3 py-2.5"
+                  >
+                    <option value="active">Активний</option>
+                    <option value="inactive">Неактивний</option>
+                  </select>
+                </label>
+              </div>
 
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Input name="fullName" label="Імʼя / Назва" required />
-                  <Input name="email" label="Email" type="email" required />
-                  <Input name="phone" label="Телефон" type="tel" required />
-                  <Input name="companyName" label="Назва компанії" />
-                  <Input name="taxId" label="ІПН / ЄДРПОУ" />
-                  <Input name="address" label="Адреса" />
-                </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Input name="fullName" label="Імʼя / Назва" required />
+                <Input name="email" label="Email" type="email" required />
+                <Input name="phone" label="Телефон" type="tel" required />
+                <Input name="companyName" label="Назва компанії" />
+                <Input name="taxId" label="ІПН / ЄДРПОУ" />
+                <Input name="address" label="Адреса" />
+              </div>
 
-                <div className="mt-2">
-                  <Input name="notes" label="Нотатки" />
-                </div>
-              </section>
+              <div className="mt-2">
+                <Input name="notes" label="Нотатки" />
+              </div>
             </div>
 
             <div className="border-border bg-card/95 mt-4 flex justify-end gap-2 border-t pt-3 dark:bg-transparent">
@@ -154,6 +151,6 @@ export default function ClientForm({
           </Form>
         )}
       </Formik>
-    </section>
+    </>
   );
 }

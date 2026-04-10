@@ -5,18 +5,19 @@ import { IoIosArrowUp } from 'react-icons/io';
 
 import { useScrollToTopVisibility } from '@/app/hooks/useScrollToTopVisibility';
 
+import { HeaderPublicAuthState } from './HeaderClient';
 import { NavPill } from './NavPill';
 import { ThemeToggle } from './ThemeToggle';
 import { TimeDisplay } from './TimeDisplay';
 
 import type { NavScope } from './nav.shared';
-
 type MobileHeaderProps = {
   scope?: NavScope;
   showTime?: boolean;
   timeZone?: string;
   showThemeToggle?: boolean;
   scrollTopThreshold?: number;
+  publicAuth?: HeaderPublicAuthState;
 };
 
 export const MobileHeader = ({
@@ -25,6 +26,7 @@ export const MobileHeader = ({
   timeZone = 'Europe/Kyiv',
   showThemeToggle = true,
   scrollTopThreshold = 300,
+  publicAuth,
 }: MobileHeaderProps) => {
   const showScrollTop = useScrollToTopVisibility(scrollTopThreshold);
 
@@ -58,7 +60,7 @@ export const MobileHeader = ({
           >
             <div className="mobile-header-shell supports-[backdrop-filter]:mobile-header-shell-supported flex w-full min-w-0 items-center justify-center gap-1.5 overflow-hidden rounded-2xl border px-1.5 py-1 shadow-lg backdrop-blur">
               <div className="min-w-0 flex-1 overflow-hidden">
-                <NavPill scope={scope} />
+                <NavPill scope={scope} publicAuth={publicAuth} />
               </div>
 
               <AnimatePresence initial={false}>

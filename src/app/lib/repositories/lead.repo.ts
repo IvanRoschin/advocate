@@ -1,8 +1,7 @@
 import { ClientSession } from 'mongoose';
 
-import { mapLeadToResponse } from '@/app/types';
 import { Lead } from '@/models';
-
+import { mapLeadToResponse } from '@/app/types';
 import type {
   CreateLeadDTO,
   LeadResponseDTO,
@@ -49,8 +48,11 @@ export const leadRepository = {
     return lead ? mapLeadToResponse(lead) : null;
   },
 
-  async delete(id: string): Promise<LeadResponseDTO | null> {
-    const lead = await Lead.findByIdAndDelete(id);
+  async delete(
+    id: string,
+    session?: ClientSession
+  ): Promise<LeadResponseDTO | null> {
+    const lead = await Lead.findByIdAndDelete(id, { session });
     return lead ? mapLeadToResponse(lead) : null;
   },
 

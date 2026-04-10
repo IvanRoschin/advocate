@@ -59,24 +59,25 @@ export const caseRepo = {
     ).then(([doc]) => doc);
   },
 
-  findById(caseId: string) {
+  async findById(caseId: string) {
     return Case.findById(caseId);
   },
 
-  findByClientId(clientId: string): Promise<CaseRow[]> {
+  async findByClientId(clientId: string): Promise<CaseRow[]> {
     return Case.find({ clientId })
+      .select('clientId title description status currentStage updatedAt')
       .sort({ updatedAt: -1, _id: -1 })
       .lean<CaseRow[]>();
   },
 
-  updateById(caseId: string, data: UpdateCaseRepoInput) {
+  async updateById(caseId: string, data: UpdateCaseRepoInput) {
     return Case.findByIdAndUpdate(caseId, data, {
       new: true,
       runValidators: true,
     });
   },
 
-  deleteById(caseId: string) {
+  async deleteById(caseId: string) {
     return Case.findByIdAndDelete(caseId);
   },
 };

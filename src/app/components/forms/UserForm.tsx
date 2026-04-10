@@ -1,35 +1,39 @@
 'use client';
 
 import { Form, Formik } from 'formik';
-import { motion } from 'framer-motion';
 
 import Btn from '@/app/components/ui/button/Btn';
 import { CreateUserRequestDTO, createUserSchema, UserRole } from '@/app/types';
-import { Checkbox, Input, Select } from '@/components';
+import { Checkbox, Input } from '@/components';
 
 interface Props {
-  onSubmit: (values: CreateUserRequestDTO) => void;
-  onClose: () => void;
+  onSubmit: (values: CreateUserRequestDTO) => void | Promise<void>;
+  onClose?: () => void;
   initialValues?: CreateUserRequestDTO;
   submitLabel?: string;
+  mode: 'create' | 'edit';
 }
 
-const roleOptions = Object.values(UserRole).map(role => ({
-  value: role,
-  label: role.toUpperCase(),
-}));
+const roleOptions = [
+  { value: UserRole.ADMIN, label: 'Адміністратор' },
+  { value: UserRole.MANAGER, label: 'Менеджер' },
+  { value: UserRole.CLIENT, label: 'Клієнт' },
+];
 
 const UserForm = ({
+  mode,
   onSubmit,
   onClose,
   initialValues,
-  submitLabel = 'Додати користувача',
+  submitLabel,
 }: Props) => {
-  const isEditMode = Boolean(initialValues);
-
   return (
     <>
-      {isEditMode ? 'Редагувати користувача' : 'Додати нового користувача'}
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold">
+          {mode === 'edit' ? 'Редагувати користувача' : 'Додати користувача'}
+        </h2>
+      </div>
 
       <Formik<CreateUserRequestDTO>
         enableReinitialize
@@ -42,52 +46,63 @@ const UserForm = ({
           isActive: initialValues?.isActive ?? true,
         }}
         validationSchema={createUserSchema}
-        onSubmit={onSubmit}
+        onSubmit={async values => {
+          await onSubmit({
+            ...values,
+            name: values.name.trim(),
+            email: values.email.trim().toLowerCase(),
+            password: values.password?.trim() ?? '',
+            phone: values.phone?.trim(),
+            role: values.role,
+            isActive: values.isActive,
+          });
+        }}
       >
-        {({ isValid, isSubmitting }) => (
-          <Form className="flex w-full max-w-lg flex-col gap-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-            >
-              <Input name="name" label="Імʼя" required />
-            </motion.div>
+        {({ isSubmitting, values, setFieldValue, isValid }) => (
+          <Form className="flex w-full flex-col">
+            <div className="space-y-3">
+              <div className="mb-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label className="flex flex-col gap-2">
+                  <span className="text-sm font-medium">Роль</span>
+                  <select
+                    name="role"
+                    value={values.role}
+                    onChange={e => setFieldValue('role', e.target.value)}
+                    className="select-field rounded-xl px-3 py-2.5"
+                  >
+                    {roleOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.15 }}
-            >
-              <Input name="email" label="Email" type="email" required />
-            </motion.div>
+                <label className="flex items-end">
+                  <div className="flex min-h-11.5 items-center">
+                    <Checkbox name="isActive" label="Активний користувач" />
+                  </div>
+                </label>
+              </div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.15 }}
-            >
-              <Input name="phone" label="Phone" type="tel" required />
-            </motion.div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Input name="name" label="Імʼя" required />
+                <Input name="email" label="Email" type="email" required />
+                <Input name="phone" label="Телефон" type="tel" required />
+                <Input
+                  name="password"
+                  label="Пароль"
+                  type="text"
+                  placeholder={
+                    mode === 'edit'
+                      ? 'Залиште порожнім, щоб не змінювати'
+                      : 'Буде згенеровано, якщо не вказати'
+                  }
+                />
+              </div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              <Select name="role" label="Роль" options={roleOptions} />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.25 }}
-              className="flex items-center gap-2"
-            >
-              <Checkbox name="isActive" label="Активний користувач" />
-            </motion.div>
-
-            <div className="flex justify-end gap-2">
+            <div className="border-border bg-card/95 mt-4 flex justify-end gap-2 border-t pt-3 dark:bg-transparent">
               {onClose && (
                 <Btn
                   type="button"
@@ -98,10 +113,15 @@ const UserForm = ({
               )}
 
               <Btn
+                type="submit"
                 uiVariant="accent"
                 radius={12}
-                type="submit"
-                label={submitLabel}
+                label={
+                  submitLabel ??
+                  (mode === 'edit'
+                    ? 'Оновити користувача'
+                    : 'Додати користувача')
+                }
                 disabled={!isValid || isSubmitting}
               />
             </div>

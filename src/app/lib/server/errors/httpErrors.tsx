@@ -1,11 +1,11 @@
 import { ApiError } from './ApiError';
 
 export class ValidationError extends ApiError {
-  constructor(
-    message = 'Validation failed',
-    public details?: unknown
-  ) {
+  details?: unknown;
+
+  constructor(message = 'Validation failed', details?: unknown) {
     super(message, 422, 'VALIDATION_ERROR');
+    this.details = details;
   }
 }
 
@@ -21,8 +21,19 @@ export class NotFoundError extends ApiError {
   }
 }
 
+export class ConflictError extends ApiError {
+  constructor(message = 'Conflict', code = 'CONFLICT') {
+    super(message, 409, code);
+  }
+}
+
 export class NotImplementedError extends ApiError {
   constructor(message = 'Not implemented') {
     super(message, 501, 'NOT_IMPLEMENTED');
+  }
+}
+export class ForbiddenError extends ApiError {
+  constructor(message = 'Forbidden') {
+    super(message, 403, 'FORBIDDEN');
   }
 }

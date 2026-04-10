@@ -11,6 +11,8 @@ import { Btn, Logo } from '@/components';
 import { DesktopControlRail } from './DesktopControlRail';
 import { TimeDisplay } from './TimeDisplay';
 
+import type { HeaderPublicAuthState } from './HeaderClient';
+
 type DesktopHeaderProps = {
   scope?: NavScope;
   showTime?: boolean;
@@ -19,6 +21,7 @@ type DesktopHeaderProps = {
   showCta?: boolean;
   ctaHref?: string;
   ctaLabel?: string;
+  publicAuth?: HeaderPublicAuthState;
 };
 
 export const DesktopHeader = ({
@@ -29,6 +32,7 @@ export const DesktopHeader = ({
   showCta = true,
   ctaHref = routes.public.order,
   ctaLabel = 'Запис на консультацію',
+  publicAuth,
 }: DesktopHeaderProps) => {
   const theme = useThemeStore(state => state.theme);
   const logoVariant = theme === 'dark' ? 'dark' : 'light';
@@ -67,6 +71,7 @@ export const DesktopHeader = ({
             scope={scope}
             showThemeToggle={showThemeToggle}
             className="max-w-full min-w-0"
+            publicAuth={publicAuth}
           />
         </div>
 

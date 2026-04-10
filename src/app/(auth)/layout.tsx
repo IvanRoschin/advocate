@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import { Header } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
+import Header from '@/app/components/header/Header';
 import AuthAside from './_components/AuthAside';
 import AuthFeedbackProvider from './_components/AuthFeedbackProvider';
 

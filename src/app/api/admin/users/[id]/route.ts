@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
-import { dbConnect } from '@/app/lib/server/mongoose';
 import { UpdateUserDTO, updateUserSchema } from '@/app/types';
 import { userService } from '@/lib/services/user.service';
 
@@ -15,7 +14,6 @@ export async function GET(
   { params }: { params: Promise<Params> }
 ) {
   try {
-    await dbConnect();
     const { id } = await params;
 
     if (!id) throw new ValidationError('ID не вказано');
@@ -32,7 +30,6 @@ export async function PATCH(
   { params }: { params: Promise<Params> }
 ) {
   try {
-    await dbConnect();
     const { id } = await params;
 
     const body = await req.json();
@@ -54,7 +51,6 @@ export async function DELETE(
   { params }: { params: Promise<Params> }
 ) {
   try {
-    await dbConnect();
     const { id } = await params;
 
     const deleted = await userService.delete(id);

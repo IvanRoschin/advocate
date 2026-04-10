@@ -1,4 +1,4 @@
-export { default as Header } from '@/app/components/header/Header';
+export { default as Header } from '@/app/components/header/HeaderClient';
 
 export { default as Logo } from '@/app/components/logo/Logo';
 

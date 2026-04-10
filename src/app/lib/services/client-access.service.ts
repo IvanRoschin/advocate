@@ -3,17 +3,18 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/config/authOptions';
 import { clientRepo } from '@/app/lib/repositories';
 import { caseRepo } from '@/app/lib/repositories/case.repo';
-import { clientAccessRepo } from '@/app/lib/repositories/client-access.repo';
 import {
   UnauthorizedError,
   ValidationError,
 } from '@/app/lib/server/errors/httpErrors';
 import { dbConnect } from '@/app/lib/server/mongoose';
 import {
-  mapClientCabinetOverview,
+  mapClientToDashboardOverviewDto,
   mapClientToProfileDto,
   UpdateClientProfileDto,
 } from '@/app/types';
+
+import { clientAccessRepo } from '../repositories/client-access.repo';
 
 const getAuthorizedClient = async () => {
   await dbConnect();
@@ -25,7 +26,7 @@ const getAuthorizedClient = async () => {
     throw new UnauthorizedError('Неавторизований користувач');
   }
 
-  const access = await clientAccessRepo.findActiveByUserId(userId);
+  const access = await clientAccessRepo.findPreferredActiveByUserId(userId);
   if (!access) {
     throw new ValidationError('Клієнтський профіль не знайдено');
   }
@@ -45,7 +46,7 @@ export const clientCabinetService = {
     const client = await getAuthorizedClient();
     const cases = await caseRepo.findByClientId(client.id.toString());
 
-    return mapClientCabinetOverview(client, cases);
+    return mapClientToDashboardOverviewDto(client, cases);
   },
 
   async getMyProfile() {

@@ -1,51 +1,17 @@
-import { DesktopHeader } from './DesktopHeader';
-import { MobileHeader } from './MobileHeader';
+import { getServerSession } from 'next-auth';
 
-import type { NavScope } from './nav.shared';
+import { authOptions } from '@/app/config/authOptions';
+import HeaderClient from './HeaderClient';
 
-type HeaderProps = {
-  scope?: NavScope;
-  showTime?: boolean;
-  timeZone?: string;
-  showThemeToggle?: boolean;
-  showCta?: boolean;
-  ctaHref?: string;
-  ctaLabel?: string;
-};
+export default async function Header() {
+  const session = await getServerSession(authOptions);
 
-const Header = ({
-  scope = 'public',
-  showTime = false,
-  timeZone = 'Europe/Kyiv',
-  showThemeToggle = true,
-  showCta = true,
-  ctaHref,
-  ctaLabel,
-}: HeaderProps) => {
-  return (
-    <>
-      <div className="xl:hidden">
-        <div className="mx-auto w-full max-w-6xl px-3">
-          <MobileHeader
-            scope={scope}
-            showTime={showTime}
-            timeZone={timeZone}
-            showThemeToggle={showThemeToggle}
-          />
-        </div>
-      </div>
+  console.log('session', session);
 
-      <DesktopHeader
-        scope={scope}
-        showTime={showTime}
-        timeZone={timeZone}
-        showThemeToggle={showThemeToggle}
-        showCta={showCta}
-        ctaHref={ctaHref}
-        ctaLabel={ctaLabel}
-      />
-    </>
-  );
-};
+  const publicAuth = {
+    isAuthenticated: Boolean(session?.user),
+    role: session?.user?.role,
+  };
 
-export default Header;
+  return <HeaderClient publicAuth={publicAuth} />;
+}

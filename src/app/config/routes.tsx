@@ -45,6 +45,8 @@ export const routes = {
       auth: {
         restorePassword: '/api/v1/auth/forgot-password',
         resetPassword: '/api/v1/auth/reset-password',
+        verify: '/api/v1/auth/verify',
+        resendVerification: '/api/v1/auth/resend-verification',
       },
       categories: '/api/v1/categories',
       cloudinary: {
@@ -94,6 +96,7 @@ export const routes = {
     access: '/client/access',
     settings: {
       changePassword: '/client/settings/change-password',
+      repairClientAccess: '/client/settings/repair-client-access',
     },
   },
 } as const;
@@ -119,8 +122,7 @@ export type PublicStringRouteKey = {
 
 // ---------- Helpers ----------
 export const baseUrl =
-  process.env.NEXT_PUBLIC_PUBLIC_URL?.replace(/\/$/, '') ??
-  'http://localhost:3000';
+  process.env.NEXT_PUBLIC_URL?.replace(/\/$/, '') ?? 'http://localhost:3000';
 
 export const apiUrl = (path: string) => {
   const base = baseUrl.replace(/\/$/, '');

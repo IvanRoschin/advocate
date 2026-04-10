@@ -2,12 +2,14 @@ import crypto from 'crypto';
 import { Types } from 'mongoose';
 
 import { tokenRepo } from '@/app/lib/repositories/token.repo';
-import { ValidationError } from '@/app/lib/server/errors/httpErrors';
+import { userRepo } from '@/app/lib/repositories/user.repo';
+import {
+  NotFoundError,
+  ValidationError,
+} from '@/app/lib/server/errors/httpErrors';
+import { dbConnect } from '@/app/lib/server/mongoose';
 import { TokenDocument } from '@/app/models/Token';
-import { CreateTokenDTO, TokenType } from '@/app/types';
-
-// ❗️НУЖНО: подключить userService / userRepo (пример ниже)
-// import { userService } from '@/app/lib/services/user.service';
+import { CreateTokenDTO, mapUserToResponse, TokenType } from '@/app/types';
 
 export const tokenService = {
   generateTokenString(bytes = 32) {
@@ -45,6 +47,7 @@ export const tokenService = {
     tokenValue: string,
     type?: T
   ): Promise<TokenDocument | null> {
+    await dbConnect();
     return tokenRepo.findValid(tokenValue, type);
   },
 
@@ -52,7 +55,7 @@ export const tokenService = {
     if (token.used) return;
 
     token.used = true;
-    token.meta = undefined; // ⚠️ см. “правильный фикс” ниже
+    token.meta = undefined;
     await token.save();
   },
 
@@ -69,42 +72,57 @@ export const tokenService = {
     return token;
   },
 
-  // ✅ ДОБАВЛЕНО: activateAccount
   async activateAccount(token: TokenDocument) {
+    await dbConnect();
+
     if (token.type !== TokenType.VERIFICATION) {
       throw new ValidationError('Невірний тип токена');
     }
 
-    // TODO: заменишь на свою реализацию userService/userRepo
-    // const user = await userService.activateAccountById(token.userId.toString());
+    const user = await userRepo.findById(token.userId.toString());
+    if (!user) {
+      throw new NotFoundError('Користувача не знайдено');
+    }
 
-    // ВРЕМЕННО: если нет userService, кинь ошибку явно, чтобы не “молчать”
-    throw new ValidationError(
-      'activateAccount() не подключен: добавь userService/userRepo'
-    );
+    user.isActive = true;
+    await user.save();
 
-    // return user;
+    await this.markUsed(token);
+
+    return mapUserToResponse(user);
   },
 
-  // ✅ ДОБАВЛЕНО: changeEmail
   async changeEmail(token: TokenDocument) {
+    await dbConnect();
+
     if (token.type !== TokenType.EMAIL_CHANGE) {
       throw new ValidationError('Невірний тип токена');
     }
 
-    // Обычно новый email либо token.email, либо token.meta.newEmail
-    const newEmail = token.email; /* ?? token.meta?.newEmail */
+    const newEmail = token.email;
     if (!newEmail) {
       throw new ValidationError('Не вказано новий email у токені');
     }
 
-    // TODO: заменишь на свою реализацию userService/userRepo
-    // const user = await userService.changeEmailById(token.userId.toString(), newEmail);
+    const user = await userRepo.findById(token.userId.toString());
+    if (!user) {
+      throw new NotFoundError('Користувача не знайдено');
+    }
 
-    throw new ValidationError(
-      'changeEmail() не подключен: добавь userService/userRepo'
-    );
+    const normalizedEmail = newEmail.trim().toLowerCase();
 
-    // return user;
+    if (normalizedEmail !== user.email) {
+      const exists = await userRepo.findByEmail(normalizedEmail);
+      if (exists) {
+        throw new ValidationError('Email вже використовується');
+      }
+    }
+
+    user.email = normalizedEmail;
+    await user.save();
+
+    await this.markUsed(token);
+
+    return mapUserToResponse(user);
   },
 };

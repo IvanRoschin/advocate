@@ -3,13 +3,13 @@ import type { ReactNode } from 'react';
 import {
   About,
   Advantages,
-  Header,
   Hero,
   Order,
   ScrollToTopButton,
   Socials,
   WhyChooseMe,
 } from '@/components';
+import Header from '@/components/header/Header';
 
 import Footer from './components/footer/Footer';
 import Practices from './components/sections/practices/Practices';
@@ -30,7 +30,7 @@ export type HomeSectionProps = {
 
 export type HomeSectionComponent = (props: HomeSectionProps) => ReactNode;
 
-const HomeHeaderSection: HomeSectionComponent = () => <Header scope="public" />;
+const HomeHeaderSection: HomeSectionComponent = () => <Header />;
 
 const HomeSocialsSection: HomeSectionComponent = () => <Socials />;
 

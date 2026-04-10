@@ -4,7 +4,6 @@ import { ValidationError as YupValidationError } from 'yup';
 import type { ApiResponse } from '@/app/lib/server/ApiError';
 import { ApiError } from './ApiError';
 import { isMongoDuplicateKeyError } from './isMongoDuplicateKeyError';
-
 export function errorToResponse(err: unknown) {
   if (isMongoDuplicateKeyError(err)) {
     return NextResponse.json<ApiResponse<null>>(
