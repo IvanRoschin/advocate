@@ -1,15 +1,6 @@
 import * as Yup from 'yup';
 
-import type { CaseStatus } from './case.dto';
-
-const CASE_STATUSES: CaseStatus[] = [
-  'new',
-  'in_progress',
-  'awaiting_client',
-  'in_court',
-  'completed',
-  'archived',
-];
+import { CASE_STATUSES, CaseStatus } from '../client';
 
 export const createCaseSchema = Yup.object({
   title: Yup.string()

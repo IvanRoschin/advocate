@@ -11,18 +11,19 @@ import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { toast } from 'sonner';
 
 import { routes } from '@/app/config/routes';
+import { getClientRedirectBySession } from '@/app/lib/auth/getClientRedirectBySession';
 import { Btn, Input } from '@/components';
-import { UserRole } from '@/types';
 
 interface InitialStateType {
-  phone: string;
+  email: string;
   password: string;
 }
 
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
-  AUTH_MISSING_CREDENTIALS: 'Вкажіть телефон і пароль',
-  AUTH_USER_NOT_FOUND: 'Користувача з таким телефоном не знайдено',
+  AUTH_MISSING_CREDENTIALS: 'Вкажіть емейл і пароль',
+  AUTH_USER_NOT_FOUND: 'Користувача з таким емейл не знайдено',
   AUTH_INVALID_PASSWORD: 'Невірний пароль',
+  AUTH_USER_NOT_ACTIVATED: 'Кабінет не активовано, перевірте e-mail',
   CredentialsSignin: 'Невірні дані для входу',
   default: 'Не вдалося виконати вхід',
 };
@@ -38,7 +39,7 @@ const LoginForm = () => {
   const router = useRouter();
 
   const initialValues: InitialStateType = {
-    phone: '+380',
+    email: '',
     password: '',
   };
 
@@ -52,12 +53,18 @@ const LoginForm = () => {
       setIsLoading(true);
 
       const callback = await signIn('credentials', {
-        phone: values.phone.trim(),
+        email: values.email.trim(),
         password: values.password,
         redirect: false,
       });
 
       if (!callback?.ok) {
+        if (callback?.error === 'AUTH_USER_NOT_ACTIVATED') {
+          const email = encodeURIComponent(values.email.trim());
+          router.replace(`${routes.public.auth.verifyEmail}?email=${email}`);
+          return;
+        }
+
         toast.error(resolveAuthErrorMessage(callback?.error));
         return;
       }
@@ -66,15 +73,10 @@ const LoginForm = () => {
       resetForm();
 
       const session = await getSession();
-      const role = session?.user?.role as UserRole | undefined;
 
-      if (role === UserRole.ADMIN || role === UserRole.MANAGER) {
-        router.replace('/admin');
-      } else if (role === UserRole.CLIENT) {
-        router.replace('/client');
-      } else {
-        router.replace('/');
-      }
+      const redirectTo = getClientRedirectBySession(session);
+
+      router.replace(redirectTo);
 
       router.refresh();
     } catch (error) {
@@ -114,7 +116,12 @@ const LoginForm = () => {
       >
         {() => (
           <Form className="flex flex-col gap-5">
-            <Input name="phone" label="Телефон" type="tel" required />
+            <Input
+              name="email"
+              label="Електронна адреса"
+              type="mail"
+              required
+            />
 
             <div className="relative">
               <Input

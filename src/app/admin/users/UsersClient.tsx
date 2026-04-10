@@ -28,6 +28,7 @@ import type {
   UpdateUserDTO,
   UserResponseDTO,
 } from '@/app/types';
+
 interface Props {
   initialUsers: UserResponseDTO[];
 }
@@ -141,7 +142,11 @@ export default function UsersClient({ initialUsers }: Props) {
       isOpen={createModal.isOpen}
       onClose={createModal.close}
       body={
-        <UserForm onSubmit={handleCreateUser} onClose={createModal.close} />
+        <UserForm
+          mode="create"
+          onSubmit={handleCreateUser}
+          onClose={createModal.close}
+        />
       }
     />
   );
@@ -170,6 +175,7 @@ export default function UsersClient({ initialUsers }: Props) {
       body={
         userToUpdate && (
           <UserForm
+            mode="edit"
             initialValues={{
               name: userToUpdate.name,
               email: userToUpdate.email,

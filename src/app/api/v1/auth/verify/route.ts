@@ -7,30 +7,40 @@ import { TokenType, VerifyTokenDTO } from '@/app/types';
 export async function POST(req: Request) {
   try {
     const { token }: VerifyTokenDTO = await req.json();
-    if (!token)
-      return NextResponse.json({ success: false, message: 'Token missing' });
 
-    const tokenDoc = await tokenService.verify(token);
+    if (!token?.trim()) {
+      return NextResponse.json(
+        { success: false, message: 'Токен відсутній' },
+        { status: 400 }
+      );
+    }
+
+    const tokenDoc = await tokenService.verify(token.trim());
 
     if (tokenDoc.type === TokenType.EMAIL_CHANGE) {
       const user = await tokenService.changeEmail(tokenDoc);
+
       return NextResponse.json({
         success: true,
-        message: 'Email changed',
+        message: 'Email успішно змінено',
         user,
       });
     }
 
     if (tokenDoc.type === TokenType.VERIFICATION) {
       const user = await tokenService.activateAccount(tokenDoc);
+
       return NextResponse.json({
         success: true,
-        message: 'Account activated',
+        message: 'Кабінет успішно активовано',
         user,
       });
     }
 
-    return NextResponse.json({ success: false, message: 'Unknown token type' });
+    return NextResponse.json(
+      { success: false, message: 'Невідомий тип токена' },
+      { status: 400 }
+    );
   } catch (err) {
     return errorToResponse(err);
   }

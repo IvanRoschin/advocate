@@ -1,21 +1,4 @@
-export type CaseStatus =
-  | 'new'
-  | 'in_progress'
-  | 'awaiting_client'
-  | 'in_court'
-  | 'completed'
-  | 'archived';
-
-export type AdminClientCaseDto = {
-  id: string;
-  clientId: string;
-  title: string;
-  description: string;
-  status: CaseStatus;
-  currentStage: string;
-  createdAt?: string;
-  updatedAt?: string;
-};
+import { CaseStatus } from '../client';
 
 export type CreateCaseDTO = {
   title: string;

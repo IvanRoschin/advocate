@@ -15,7 +15,12 @@ export async function POST(_: Request, { params }: RouteContext) {
 
     return NextResponse.json({
       ok: true,
+      message: 'Ліда успішно конвертовано в клієнта та видалено',
       data: result,
+      meta: {
+        convertedLeadId: id,
+        leadDeleted: true,
+      },
     });
   } catch (err) {
     return errorToResponse(err);

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import Btn from '@/app/components/ui/button/Btn';
-import { routes } from '@/app/config';
+import { routes } from '@/app/config/routes';
 import { serviceService } from '@/app/lib/services/service.service';
 import { practicesSection } from '@/app/resources';
 import PracticesCard from './PracticesCard';

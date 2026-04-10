@@ -1,19 +1,18 @@
-export type ClientProfileDto = {
-  id: string;
-  type: 'individual' | 'company';
-  status: 'active' | 'inactive';
-  fullName: string;
-  email: string;
-  phone: string;
-  companyName: string;
-  address: string;
-};
+import type { ClientResponseDTO } from './client.dto';
 
-export type UpdateClientProfileDto = {
-  fullName: string;
-  email: string;
-  phone: string;
-  companyName: string;
-  address: string;
-  type: 'individual' | 'company';
-};
+export type ClientProfileDto = Pick<
+  ClientResponseDTO,
+  | 'id'
+  | 'type'
+  | 'status'
+  | 'fullName'
+  | 'email'
+  | 'phone'
+  | 'companyName'
+  | 'address'
+>;
+
+export type UpdateClientProfileDto = Pick<
+  ClientResponseDTO,
+  'type' | 'fullName' | 'email' | 'phone' | 'companyName' | 'address'
+>;
