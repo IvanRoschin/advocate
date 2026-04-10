@@ -7,6 +7,7 @@ export enum EmailTemplateType {
   USER_CREATED = 'USER_CREATED',
   EMAIL_CHANGE = 'EMAIL_CHANGE',
   ACCOUNT_ACTIVATED = 'ACCOUNT_ACTIVATED',
+  ACTIVATE_USER_ACCOUNT = 'ACTIVATE_USER_ACCOUNT',
   RESET_PASSWORD = 'RESET_PASSWORD',
 }
 
@@ -54,6 +55,13 @@ export type EmailTemplatePropsMap = {
     login: string;
     password: string;
     resetPasswordUrl: string;
+  };
+
+  [EmailTemplateType.ACTIVATE_USER_ACCOUNT]: {
+    name: string;
+    verificationUrl: string;
+    temporaryPassword: string;
+    email: string;
   };
 
   [EmailTemplateType.RESET_PASSWORD]: {

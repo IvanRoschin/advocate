@@ -1,4 +1,4 @@
-import { routes } from '@/app/config';
+import { routes } from '@/app/config/routes';
 import { sendEmail } from '@/app/lib';
 import { userRepo } from '@/app/lib/repositories/user.repo';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';

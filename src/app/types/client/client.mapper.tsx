@@ -1,14 +1,46 @@
-import { ClientDocument } from '@/app/models/Client';
+import type { Types } from 'mongoose';
 
-import type { ClientResponseDTO, CreateClientDTO } from '@/app/types';
+import type {
+  ClientProfileDto,
+  ClientResponseDTO,
+  CreateClientDTO,
+} from '@/app/types';
 
-// =========================
-// CLIENT → RESPONSE DTO
-// =========================
+type ClientLike = {
+  _id: Types.ObjectId | string;
+  type: ClientResponseDTO['type'];
+  status: ClientResponseDTO['status'];
+  fullName: string;
+  email: string;
+  phone: string;
+  companyName?: string;
+  taxId?: string;
+  address?: string;
+  notes?: string;
+  sourceLeadId?: Types.ObjectId | string | null;
+  createdAt?: Date | string | null;
+  updatedAt?: Date | string | null;
+};
 
-export function mapClientToResponse(client: ClientDocument): ClientResponseDTO {
+const toIdString = (value?: Types.ObjectId | string | null): string | null => {
+  if (!value) return null;
+  return typeof value === 'string' ? value : value.toString();
+};
+
+const toIsoString = (value?: Date | string | null): string | undefined => {
+  if (!value) return undefined;
+
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+};
+
+export function mapClientToResponse(client: ClientLike): ClientResponseDTO {
   return {
-    id: client._id.toString(),
+    id: toIdString(client._id) ?? '',
     type: client.type,
     status: client.status,
     fullName: client.fullName,
@@ -18,15 +50,11 @@ export function mapClientToResponse(client: ClientDocument): ClientResponseDTO {
     taxId: client.taxId ?? '',
     address: client.address ?? '',
     notes: client.notes ?? '',
-    sourceLeadId: client.sourceLeadId ? client.sourceLeadId.toString() : null,
-    createdAt: client.createdAt ? client.createdAt.toISOString() : '',
-    updatedAt: client.updatedAt ? client.updatedAt.toISOString() : '',
+    sourceLeadId: toIdString(client.sourceLeadId),
+    createdAt: toIsoString(client.createdAt),
+    updatedAt: toIsoString(client.updatedAt),
   };
 }
-
-// =========================
-// NORMALIZE INPUT
-// =========================
 
 export function normalizeClientData(payload: CreateClientDTO): CreateClientDTO {
   return {
@@ -34,13 +62,24 @@ export function normalizeClientData(payload: CreateClientDTO): CreateClientDTO {
     fullName: payload.fullName.trim(),
     email: payload.email.trim().toLowerCase(),
     phone: payload.phone.trim(),
-
     companyName: payload.companyName?.trim() ?? '',
     taxId: payload.taxId?.trim() ?? '',
     address: payload.address?.trim() ?? '',
     notes: payload.notes?.trim() ?? '',
-
     sourceLeadId: payload.sourceLeadId ?? null,
     status: payload.status ?? 'active',
   };
 }
+
+export const mapClientToProfileDto = (
+  client: ClientResponseDTO
+): ClientProfileDto => ({
+  id: client.id,
+  type: client.type,
+  status: client.status,
+  fullName: client.fullName,
+  email: client.email,
+  phone: client.phone,
+  companyName: client.companyName,
+  address: client.address,
+});

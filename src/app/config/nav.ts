@@ -74,12 +74,6 @@ export const PUBLIC_NAV_ITEMS: readonly NavItem[] = [
     label: 'Контакти',
     Icon: iconLibrary.contact,
   },
-  {
-    key: 'dashboard',
-    href: routes.public.dashboard,
-    label: 'Кабінет',
-    Icon: iconLibrary.person,
-  },
 ];
 
 export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
@@ -168,13 +162,6 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
 
 export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
   {
-    key: 'dashboard',
-    href: routes.client.dashboard,
-    label: 'Кабінет',
-    Icon: iconLibrary.home,
-    startsWith: false,
-  },
-  {
     key: 'cases',
     href: routes.client.cases,
     label: 'Мої справи',
@@ -210,9 +197,16 @@ export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
     startsWith: true,
   },
   {
-    key: 'settings',
+    key: 'changePassword',
     href: routes.client.settings.changePassword,
-    label: 'Налаштування',
+    label: 'Змінити пароль',
+    Icon: iconLibrary.settings,
+    startsWith: true,
+  },
+  {
+    key: 'repairClient',
+    href: routes.client.settings.repairClientAccess,
+    label: 'Відновити клієнта',
     Icon: iconLibrary.settings,
     startsWith: true,
   },

@@ -42,6 +42,11 @@ export const emailMetaMap: Record<EmailTemplateType, EmailMeta> = {
   [EmailTemplateType.ACCOUNT_ACTIVATED]: {
     subject: 'Ваш обліковий запис активовано',
   },
+
+  [EmailTemplateType.ACTIVATE_USER_ACCOUNT]: {
+    subject: 'Активуйте доступ до особистого кабінету',
+  },
+
   [EmailTemplateType.RESET_PASSWORD]: {
     subject: 'Відновлення паролю',
   },

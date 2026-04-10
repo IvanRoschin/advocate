@@ -1,4 +1,5 @@
 import { accountActivatedTemplate } from './account-activated/accountActivatedTemplate';
+import { activateUserAccountAccessTemplate } from './activate-user-account/ActivateUserAccountTemplate';
 import { createUserNotificationTemplate } from './create-user-notification/createUserNotificationTemplate';
 import { emailChangeTemplate } from './email-change/emailChangeTemplate';
 import { leadAdminTemplate } from './lead/leadAdminTemplate';
@@ -26,6 +27,9 @@ const templateMap: {
   [EmailTemplateType.USER_CREATED]: createUserNotificationTemplate,
 
   [EmailTemplateType.ACCOUNT_ACTIVATED]: accountActivatedTemplate,
+
+  [EmailTemplateType.ACTIVATE_USER_ACCOUNT]: activateUserAccountAccessTemplate,
+
   [EmailTemplateType.EMAIL_CHANGE]: emailChangeTemplate,
   [EmailTemplateType.RESET_PASSWORD]: resetPasswordTemplate,
 };

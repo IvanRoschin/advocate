@@ -3,13 +3,13 @@
 import Link from 'next/link';
 import { useMemo } from 'react';
 
-import type { ClientCabinetCaseDto } from '@/app/types';
+import { ClientDashboardCaseDto } from '@/app/types';
 
 type Props = {
-  initialCases: ClientCabinetCaseDto[];
+  initialCases: ClientDashboardCaseDto[];
 };
 
-type CaseStatus = ClientCabinetCaseDto['status'];
+type CaseStatus = ClientDashboardCaseDto['status'];
 
 const statusMeta: Record<CaseStatus, { label: string; className: string }> = {
   new: {

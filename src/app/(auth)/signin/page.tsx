@@ -3,23 +3,17 @@ import { redirect } from 'next/navigation';
 
 import { LoginForm } from '@/app/components';
 import { authOptions } from '@/app/config/authOptions';
-import { UserRole } from '@/app/types';
+import { getAccountState } from '@/app/lib/auth/getAccountState';
+import { getRedirectByAccountState } from '@/app/lib/auth/getRedirectByAccountState';
 import AuthCard from '../_components/AuthCard';
 
 const SignInPage = async () => {
   const session = await getServerSession(authOptions);
-  const role = session?.user?.role;
 
-  if (role === UserRole.ADMIN || role === UserRole.MANAGER) {
-    redirect('/admin');
-  }
+  const accountState = getAccountState(session);
 
-  if (role === UserRole.CLIENT) {
-    redirect('/client');
-  }
-
-  if (session?.user) {
-    redirect('/');
+  if (accountState !== 'guest') {
+    redirect(getRedirectByAccountState(accountState));
   }
 
   return (

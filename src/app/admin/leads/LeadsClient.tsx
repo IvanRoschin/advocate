@@ -150,22 +150,23 @@ export default function LeadsClient({ initialLeads }: Props) {
 
     start();
     try {
-      const result = await apiFetch<{
+      await apiFetch<{
+        deletedLeadId: string;
         client: unknown | null;
-        lead: LeadResponseDTO | null;
+        cabinetUser: {
+          id: string;
+          name: string;
+          email: string;
+          phone: string;
+        } | null;
+        case: unknown | null;
       }>(apiUrl(`/api/admin/leads/${leadToUpdate.id}/convert`), {
         method: 'POST',
       });
 
-      if (!result.lead) {
-        throw new Error('Не вдалося отримати оновлений лід після конвертації');
-      }
-
-      setLeads(prev =>
-        prev.map(lead => (lead.id === result.lead!.id ? result.lead! : lead))
-      );
-
-      setLeadToUpdate(result.lead);
+      setLeads(prev => prev.filter(lead => lead.id !== leadToUpdate.id));
+      updateModal.close();
+      setLeadToUpdate(null);
 
       toast.success('Ліда конвертовано в клієнта');
     } catch (err) {
