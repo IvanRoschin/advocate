@@ -4,14 +4,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import * as React from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
-import { SlideResponseDTO } from '@/app/types';
+import { cloudinaryLoader } from '@/app/lib/cloudinary/cloudinaryLoader';
+import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { NextImage } from '@/components';
 import { cn } from '@/lib';
 
-// export type CarouselItem = {
-//   src: string;
-//   alt: string;
-// };
+import type { SlideResponseDTO } from '@/app/types';
 
 type HeroCarouselProps = {
   items: SlideResponseDTO[];
@@ -22,7 +20,6 @@ type HeroCarouselProps = {
   showArrows?: boolean;
   showBars?: boolean;
   pauseOnHover?: boolean;
-  debugBarsTopRight?: boolean;
 };
 
 export function HeroCarousel({
@@ -48,22 +45,21 @@ export function HeroCarousel({
     setIndex(i => Math.max(0, Math.min(i, count - 1)));
   }, [count]);
 
-  const [direction, setDirection] = React.useState<1 | -1>(1);
   const [paused, setPaused] = React.useState(false);
 
   const go = React.useCallback(
-    (nextIdx: number, dir: 1 | -1) => {
+    (nextIdx: number) => {
       if (count <= 1) return;
-      setDirection(dir);
       const normalized = ((nextIdx % count) + count) % count;
       setIndex(normalized);
     },
     [count]
   );
 
-  const next = React.useCallback(() => go(index + 1, 1), [go, index]);
-  const prev = React.useCallback(() => go(index - 1, -1), [go, index]);
+  const next = React.useCallback(() => go(index + 1), [go, index]);
+  const prev = React.useCallback(() => go(index - 1), [go, index]);
 
+  // keyboard navigation
   React.useEffect(() => {
     if (count <= 1) return;
 
@@ -76,11 +72,11 @@ export function HeroCarousel({
     return () => window.removeEventListener('keydown', onKey);
   }, [count, next, prev]);
 
+  // autoplay
   React.useEffect(() => {
     if (!autoplay || count <= 1 || paused) return;
 
     const id = window.setInterval(() => {
-      setDirection(1);
       setIndex(i => (i + 1) % count);
     }, intervalMs);
 
@@ -98,31 +94,52 @@ export function HeroCarousel({
 
   const current = count ? safeItems[index] : null;
 
+  // 🔥 normalize current src
+  const currentSrc = getCloudinarySrc(current?.src?.[0]);
+
+  // 🔥 preload next slide
+  const nextIndex = count > 1 ? (index + 1) % count : 0;
+  const nextSrc = getCloudinarySrc(safeItems[nextIndex]?.src?.[0]);
+
   return (
     <div className={cn('absolute inset-0', className)} {...pauseHandlers}>
-      <AnimatePresence initial={false} custom={direction}>
-        {current ? (
+      {nextSrc ? (
+        <link
+          rel="preload"
+          as="image"
+          href={cloudinaryLoader({
+            src: nextSrc,
+            width: 1200,
+          })}
+        />
+      ) : null}
+
+      <AnimatePresence mode="wait">
+        {current && currentSrc ? (
           <motion.div
             key={current._id}
-            custom={direction}
-            initial={{ opacity: 0, x: direction === 1 ? 20 : -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: direction === 1 ? -20 : 20 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.45, ease: 'easeOut' }}
             className="absolute inset-0"
           >
             <NextImage
-              src={current.src[0]}
+              useSkeleton
+              loader={cloudinaryLoader}
+              src={currentSrc}
               alt={current.title}
               fill
               priority={index === 0}
               sizes="100vw"
               className="object-cover"
+              fetchPriority="high"
             />
           </motion.div>
         ) : null}
       </AnimatePresence>
 
+      {/* arrows */}
       {showArrows && count > 1 ? (
         <>
           <button
@@ -130,12 +147,9 @@ export function HeroCarousel({
             aria-label="Previous slide"
             onClick={prev}
             className={cn(
-              'hero-control absolute top-1/2 left-3 z-9998 -translate-y-1/2 rounded-full p-2 backdrop-blur transition',
+              'hero-control absolute top-1/2 left-3 z-50 -translate-y-1/2 rounded-full p-2 backdrop-blur transition',
               'focus:outline-none focus-visible:ring-2'
             )}
-            style={{
-              ['--tw-ring-color' as string]: 'var(--hero-control-ring)',
-            }}
           >
             <FiChevronLeft size={20} />
           </button>
@@ -145,58 +159,40 @@ export function HeroCarousel({
             aria-label="Next slide"
             onClick={next}
             className={cn(
-              'hero-control absolute top-1/2 right-3 z-9998 -translate-y-1/2 rounded-full p-2 backdrop-blur transition',
+              'hero-control absolute top-1/2 right-3 z-50 -translate-y-1/2 rounded-full p-2 backdrop-blur transition',
               'focus:outline-none focus-visible:ring-2'
             )}
-            style={{
-              ['--tw-ring-color' as string]: 'var(--hero-control-ring)',
-            }}
           >
             <FiChevronRight size={20} />
           </button>
         </>
       ) : null}
 
+      {/* progress bars */}
       {showBars && count > 1 ? (
-        <div className="pointer-events-auto absolute top-6 right-6 z-9999">
+        <div className="pointer-events-auto absolute top-6 right-6 z-50">
           <div className="flex items-center gap-2">
             {safeItems.map((it, i) => {
               const active = i === index;
 
               return (
                 <button
-                  key={`${it.src}-${i}`}
+                  key={`${it._id}-${i}`}
                   type="button"
-                  aria-label={`Go to slide ${i + 1}`}
-                  aria-current={active ? 'true' : 'false'}
-                  onClick={() => go(i, i > index ? 1 : -1)}
+                  onClick={() => go(i)}
                   className={cn(
-                    'hero-bar relative h-2 w-12 cursor-pointer overflow-hidden rounded-full transition-colors duration-200',
+                    'relative h-2 w-12 overflow-hidden rounded-full',
                     'focus:outline-none focus-visible:ring-2'
                   )}
-                  style={{
-                    ['--tw-ring-color' as string]: 'var(--hero-bar-ring)',
-                  }}
                 >
                   <span
                     className={cn(
-                      'absolute inset-y-0 left-0 rounded-full transition-all duration-300 ease-out',
+                      'absolute inset-y-0 left-0 rounded-full transition-all duration-300',
                       active ? 'w-full' : 'w-0'
                     )}
                     style={{
                       backgroundColor:
                         'color-mix(in srgb, var(--accentcolor) 92%, white)',
-                      boxShadow: active
-                        ? '0 0 0.75rem color-mix(in srgb, var(--accentcolor) 55%, transparent)'
-                        : 'none',
-                    }}
-                  />
-
-                  <span
-                    className="absolute inset-0 opacity-0 transition-opacity duration-200 hover:opacity-100"
-                    style={{
-                      background:
-                        'linear-gradient(90deg, transparent, color-mix(in srgb, var(--accentcolor) 22%, transparent), transparent)',
                     }}
                   />
                 </button>
