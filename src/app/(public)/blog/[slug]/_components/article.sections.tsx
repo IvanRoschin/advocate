@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { Badge } from '@/components/ui/badge';
 import {
   Breadcrumbs,
   Header,
@@ -7,14 +8,15 @@ import {
   ReviewsSection,
 } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
+import { imageVariants } from '@/app/config/imageVariants';
 import { formatDate } from '@/app/helpers';
-import { getArticleImageUrl } from '@/app/lib';
+import { cloudinaryLoader } from '@/app/lib/cloudinary/cloudinaryLoader';
+import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import type { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
-import { Badge } from '@/components/ui/badge';
-import { ArticleListPreview } from '../../_components/ArticleListPreview';
-import { ShareSection } from '../../_components/ShareSection';
 import ArticleContent from './ArticleContent';
 import ArticleToc, { TocItem } from './ArticleToc';
+import { ArticleListPreview } from '../../_components/ArticleListPreview';
+import { ShareSection } from '../../_components/ShareSection';
 type RelatedArticle = Awaited<
   ReturnType<
     typeof import('@/app/lib/services/article.service').articleService.getRelatedPublicByCategory
@@ -50,9 +52,11 @@ const BlogArticleHeroSection: BlogArticleSectionComponent = ({
   minutes,
   toc,
 }) => {
+  const variant = imageVariants.card;
+
   const coverSrc = article.src?.[0];
 
-  const cover = coverSrc ? getArticleImageUrl(coverSrc, 'hero') : undefined;
+  const cover = coverSrc ? getCloudinarySrc(coverSrc) : undefined;
 
   return (
     <section className="container py-10 lg:py-14">
@@ -107,7 +111,15 @@ const BlogArticleHeroSection: BlogArticleSectionComponent = ({
 
           {cover ? (
             <div className="bg-muted relative mt-4 aspect-16/7 w-full overflow-hidden rounded-2xl">
-              <NextImage useSkeleton src={cover} alt={article.title} fill />
+              <NextImage
+                useSkeleton
+                src={cover}
+                loader={cloudinaryLoader}
+                alt={article.title}
+                fill
+                sizes={variant.sizes}
+                fetchPriority="auto"
+              />
             </div>
           ) : null}
         </header>
@@ -157,7 +169,6 @@ const BlogArticleRelatedSection: BlogArticleSectionComponent = ({
       <h2 className="text-accent mb-4 text-lg font-semibold">
         Ще з цієї категорії
       </h2>
-
       <ArticleListPreview items={related} baseHref="/blog" />
     </section>
   );

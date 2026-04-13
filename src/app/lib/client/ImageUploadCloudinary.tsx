@@ -65,13 +65,18 @@ const ImageUploadCloudinary: React.FC<ImageUploadCloudinaryProps> = ({
         }}
         onSuccess={result => {
           const info = result?.info as CloudinaryUploadWidgetInfo | string;
-          const url =
+          const value =
             typeof info === 'string'
               ? info
-              : (info?.secure_url ?? info?.url ?? '');
+              : (info?.public_id ?? info?.secure_url ?? '');
 
-          if (url) {
-            handleUpload(url);
+          // const url =
+          //   typeof info === 'string'
+          //     ? info
+          //     : (info?.secure_url ?? info?.url ?? '');
+
+          if (value) {
+            handleUpload(value);
           } else {
             unlockPageScroll();
           }

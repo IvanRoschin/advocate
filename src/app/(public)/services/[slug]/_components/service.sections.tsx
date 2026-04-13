@@ -1,21 +1,14 @@
 import type { ReactNode } from 'react';
 
-import {
-  Breadcrumbs,
-  Header,
-  NextImage,
-  ReviewsSection,
-} from '@/app/components';
+import { Header, ReviewsSection } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
-import { getServiceImageUrl } from '@/app/lib';
-
-import ServiceCtaOrderButton from './ServiceCtaOrderButton';
-
 import type {
   ReviewResponseDTO,
   ServicePublicPageDto,
   ServiceSectionKey,
 } from '@/app/types';
+import ServiceCtaOrderButton from './ServiceCtaOrderButton';
+import ServiceHero from './ServiceHero';
 export type ServiceSectionProps = {
   service: ServicePublicPageDto;
   reviews?: ReviewResponseDTO[];
@@ -26,43 +19,9 @@ export type ServiceSectionComponent = (props: ServiceSectionProps) => ReactNode;
 
 const ServiceHeaderSection: ServiceSectionComponent = () => <Header />;
 
-const ServiceHeroSection: ServiceSectionComponent = ({ service }) => {
-  const hero = service.sections.hero;
-
-  if (!hero) return null;
-
-  const imageSrc = hero.src?.[0] || service.src?.[0];
-
-  const image = imageSrc ? getServiceImageUrl(imageSrc, 'hero') : undefined;
-
-  return (
-    <section className="container py-10 lg:py-14">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center">
-        <div className="min-w-0">
-          <Breadcrumbs />
-          <h1 className="title-app text-accent text-3xl font-semibold tracking-tight lg:text-5xl">
-            {hero.title || service.title}
-          </h1>
-          <p className="text-app mt-4 text-base leading-7 lg:text-lg">
-            {hero.description || service.summary}
-          </p>
-        </div>
-        {image ? (
-          <div className="relative min-h-70 min-w-0 overflow-hidden rounded-2xl lg:min-h-90">
-            <NextImage
-              useSkeleton
-              src={image}
-              alt={hero.title || service.title}
-              fill
-              sizes="(max-width: 1024px) 100vw, 420px"
-              className="object-cover"
-            />
-          </div>
-        ) : null}
-      </div>
-    </section>
-  );
-};
+const ServiceHeroSection: ServiceSectionComponent = ({ service }) => (
+  <ServiceHero service={service} />
+);
 
 const ServiceBenefitsSection: ServiceSectionComponent = ({ service }) => {
   const benefits = service.sections.benefits;
