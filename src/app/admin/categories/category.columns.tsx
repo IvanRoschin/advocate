@@ -1,3 +1,4 @@
+import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { iconLibrary } from '@/app/resources';
 import { CategoryResponseDTO } from '@/app/types';
 import { Btn, NextImage } from '@/components';
@@ -37,11 +38,12 @@ export const categoryColumns = ({
         <Center>
           {src && (
             <NextImage
-              src={src}
+              src={getCloudinarySrc(src)}
               alt={row.original.title}
               width={50}
               height={50}
               className="object-contain"
+              fetchPriority="auto"
             />
           )}
         </Center>
