@@ -9,6 +9,8 @@ import type {
 
 /* ----------------------------- Lean row types ----------------------------- */
 export type CategoryLean = { _id: Types.ObjectId; title: string; slug: string };
+export type ServiceLean = { _id: Types.ObjectId; title: string; slug: string };
+
 export type AuthorLean = { _id: Types.ObjectId; name: string; avatar?: string };
 
 export type ArticlePublicFullRow = {
@@ -24,6 +26,7 @@ export type ArticlePublicFullRow = {
   language: ArticleLanguage;
   publishedAt?: Date;
   categoryId?: CategoryLean | null;
+  serviceId?: ServiceLean | null;
   authorId?: AuthorLean | null;
 };
 
@@ -37,6 +40,7 @@ export type ArticlePublicRow = {
   publishedAt?: Date;
   updatedAt?: Date;
   categoryId?: CategoryLean | null;
+  serviceId?: ServiceLean | null;
 };
 
 export type ArticleRecentRow = {

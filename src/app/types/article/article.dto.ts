@@ -65,6 +65,11 @@ export type ArticleCategoryDto = {
   title: string;
   slug: string;
 };
+export type ArticleServiceDto = {
+  _id: string;
+  title: string;
+  slug: string;
+};
 
 /**
  * ✅ API response (admin) — как у CategoryResponseDTO: с _id
@@ -89,10 +94,12 @@ export type ArticleResponseDTO = {
 
   authorId: string;
   categoryId: string;
+  serviceId: string;
 
   // optional populate
   author?: ArticleAuthorDto;
   category?: ArticleCategoryDto;
+  service?: ArticleServiceDto;
 
   publishedAt?: string;
   createdAt?: string;
@@ -113,6 +120,7 @@ export type CreateArticleRequestDTO = {
 
   authorId: string;
   categoryId: string;
+  serviceId: string;
 
   tags: string[];
 
@@ -140,6 +148,7 @@ export type ArticleListItemDto = {
   updatedAt?: string;
   tags: string[];
   category?: { id: string; title: string; slug: string };
+  service?: { id: string; title: string; slug: string };
 };
 
 export type ArticlePublicPageDto = {
@@ -170,6 +179,12 @@ export type ArticlePublicPageDto = {
   };
 
   category?: {
+    id: string;
+    title: string;
+    slug: string;
+  };
+
+  service?: {
     id: string;
     title: string;
     slug: string;

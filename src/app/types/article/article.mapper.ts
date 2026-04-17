@@ -30,6 +30,7 @@ type ArticleLike = {
   language: ArticleResponseDTO['language'];
   authorId: Types.ObjectId | string;
   categoryId: Types.ObjectId | string;
+  serviceId: Types.ObjectId | string;
   publishedAt?: Date | string | null;
   createdAt?: Date | string | null;
   updatedAt?: Date | string | null;
@@ -50,6 +51,7 @@ export const mapArticleToResponse = (
   language: article.language,
   authorId: toIdString(article.authorId),
   categoryId: toIdString(article.categoryId),
+  serviceId: toIdString(article.serviceId),
   publishedAt: toIsoString(article.publishedAt),
   createdAt: toIsoString(article.createdAt),
   updatedAt: toIsoString(article.updatedAt),
@@ -65,6 +67,9 @@ export const mapArticleResponseToPublic = (
     : undefined,
   category: a.category
     ? { id: a.category._id, title: a.category.title, slug: a.category.slug }
+    : undefined,
+  service: a.service
+    ? { id: a.service._id, title: a.service.title, slug: a.service.slug }
     : undefined,
 });
 
@@ -85,6 +90,13 @@ export const mapPublicRowToListItem = (
         id: a.categoryId._id.toString(),
         title: a.categoryId.title,
         slug: a.categoryId.slug,
+      }
+    : undefined,
+  service: a.serviceId
+    ? {
+        id: a.serviceId._id.toString(),
+        title: a.serviceId.title,
+        slug: a.serviceId.slug,
       }
     : undefined,
 });
@@ -116,6 +128,13 @@ export const mapPublicFullRowToPage = (
         id: row.authorId._id.toString(),
         name: row.authorId.name,
         avatar: row.authorId.avatar,
+      }
+    : undefined,
+  service: row.serviceId
+    ? {
+        id: row.serviceId._id.toString(),
+        title: row.serviceId.title,
+        slug: row.serviceId.slug,
       }
     : undefined,
 });
