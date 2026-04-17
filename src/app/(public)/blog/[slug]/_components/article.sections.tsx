@@ -1,22 +1,17 @@
 import type { ReactNode } from 'react';
 
-import { Badge } from '@/components/ui/badge';
-import {
-  Breadcrumbs,
-  Header,
-  NextImage,
-  ReviewsSection,
-} from '@/app/components';
+import { Header } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
-import { imageVariants } from '@/app/config/imageVariants';
-import { formatDate } from '@/app/helpers';
-import { cloudinaryLoader } from '@/app/lib/cloudinary/cloudinaryLoader';
-import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
-import type { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
-import ArticleContent from './ArticleContent';
-import ArticleToc, { TocItem } from './ArticleToc';
+
 import { ArticleListPreview } from '../../_components/ArticleListPreview';
 import { ShareSection } from '../../_components/ShareSection';
+import ArticleContent from './ArticleContent';
+import { TocItem } from './ArticleToc';
+import ArticleToc from './ArticleToc.client.tsx';
+import { HeroSection } from './HeroSection';
+import ReviewsSection from './ReviewsSection.client';
+
+import type { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
 type RelatedArticle = Awaited<
   ReturnType<
     typeof import('@/app/lib/services/article.service').articleService.getRelatedPublicByCategory
@@ -43,7 +38,7 @@ export type BlogArticleSectionProps = {
 
 export type BlogArticleSectionComponent = (
   props: BlogArticleSectionProps
-) => ReactNode;
+) => React.ReactElement | null;
 
 const BlogArticleHeaderSection: BlogArticleSectionComponent = () => <Header />;
 
@@ -51,82 +46,7 @@ const BlogArticleHeroSection: BlogArticleSectionComponent = ({
   article,
   minutes,
   toc,
-}) => {
-  const variant = imageVariants.card;
-
-  const coverSrc = article.src?.[0];
-
-  const cover = coverSrc ? getCloudinarySrc(coverSrc) : undefined;
-
-  return (
-    <section className="container py-10 lg:py-14">
-      <article className="min-w-0">
-        <header className="space-y-4">
-          <div className="mb-8"></div>
-          <Breadcrumbs />
-          <div className="flex flex-wrap items-center gap-2">
-            {article.category?.title ? (
-              <Badge variant="secondary">{article.category.title}</Badge>
-            ) : null}
-
-            {article.publishedAt ? (
-              <time
-                className="text-muted-foreground text-sm"
-                dateTime={article.publishedAt}
-              >
-                {formatDate(article.publishedAt)}
-              </time>
-            ) : (
-              <Badge variant="outline">draft</Badge>
-            )}
-
-            <span className="text-muted-foreground">•</span>
-
-            <span className="text-accent text-sm">≈ {minutes} хв читання</span>
-          </div>
-
-          <h1 className="title-app text-accent text-3xl font-semibold tracking-tight lg:text-5xl">
-            {article.title}
-          </h1>
-
-          {article.subtitle ? (
-            <p className="text-muted-foreground max-w-3xl text-base leading-7 italic lg:text-lg">
-              {article.subtitle}
-            </p>
-          ) : null}
-
-          {toc.length ? (
-            <div className="mt-4 lg:hidden">
-              <details className="border-accent rounded-xl border p-4">
-                <summary className="text-accent cursor-pointer font-semibold">
-                  Зміст
-                </summary>
-
-                <div className="mt-3">
-                  <ArticleToc items={toc} />
-                </div>
-              </details>
-            </div>
-          ) : null}
-
-          {cover ? (
-            <div className="bg-muted relative mt-4 aspect-16/7 w-full overflow-hidden rounded-2xl">
-              <NextImage
-                useSkeleton
-                src={cover}
-                loader={cloudinaryLoader}
-                alt={article.title}
-                fill
-                sizes={variant.sizes}
-                fetchPriority="auto"
-              />
-            </div>
-          ) : null}
-        </header>
-      </article>
-    </section>
-  );
-};
+}) => <HeroSection article={article} minutes={minutes} toc={toc} />;
 
 const BlogArticleContentSection: BlogArticleSectionComponent = ({
   html,
@@ -136,7 +56,7 @@ const BlogArticleContentSection: BlogArticleSectionComponent = ({
     <section className="container pb-10">
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
         <div className="min-w-0">
-          <ArticleContent html={html} />
+          <ArticleContent html={html ?? ''} />
         </div>
 
         <aside className="hidden lg:block">
@@ -163,7 +83,7 @@ const BlogArticleShareSection: BlogArticleSectionComponent = ({
 const BlogArticleRelatedSection: BlogArticleSectionComponent = ({
   related,
 }) => {
-  if (related.length === 0) return null;
+  if (!related?.length) return null;
   return (
     <section className="container pb-14">
       <h2 className="text-accent mb-4 text-lg font-semibold">
@@ -174,16 +94,18 @@ const BlogArticleRelatedSection: BlogArticleSectionComponent = ({
   );
 };
 
-const BlogArticleTocSection: BlogArticleSectionComponent = () => null;
-
 const BlogArticleReviewsSection: BlogArticleSectionComponent = ({
   reviews = [],
   reviewForm,
 }) => {
+  if (!reviews.length && !reviewForm) return null;
+
   return (
     <ReviewsSection title="Відгуки" reviews={reviews} reviewForm={reviewForm} />
   );
 };
+
+const BlogArticleTocSection: BlogArticleSectionComponent = () => null;
 
 const BlogArticleFooterSection: BlogArticleSectionComponent = () => (
   <section className="mt-16 lg:mt-20">

@@ -50,13 +50,11 @@ export default function Breadcrumbs() {
 
   useEffect(() => {
     if (!isBlogSlug || !last) return;
-
-    // если уже есть в кэше — не дергаем сеть
     if (titleBySlug[last]) return;
 
     const controller = new AbortController();
 
-    (async () => {
+    const fetchTitle = async () => {
       try {
         const res = await fetch(
           `/api/v1/articles/title/${encodeURIComponent(last)}`,
@@ -70,20 +68,19 @@ export default function Breadcrumbs() {
 
         const data: { title: string } = await res.json();
 
-        // ✅ setState только после async (это не вызывает warning)
-        setTitleBySlug(prev => {
-          if (prev[last] === data.title) return prev;
-          return { ...prev, [last]: data.title };
-        });
-      } catch (e: unknown) {
+        setTitleBySlug(prev =>
+          prev[last] === data.title ? prev : { ...prev, [last]: data.title }
+        );
+      } catch (e) {
         if (e instanceof DOMException && e.name === 'AbortError') return;
-
         console.error('Breadcrumbs fetch error', e);
       }
-    })();
+    };
+
+    fetchTitle();
 
     return () => controller.abort();
-  }, [isBlogSlug, last, titleBySlug]);
+  }, [isBlogSlug, titleBySlug, last]);
 
   const crumbs = useMemo(() => {
     return segments.map((segment, idx) => {

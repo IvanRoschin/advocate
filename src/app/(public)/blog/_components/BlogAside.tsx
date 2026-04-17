@@ -1,20 +1,10 @@
 import Link from 'next/link';
 
 import { SubscribeForm } from '@/app/components/forms';
+import { formatDate } from '@/app/helpers';
 import { cn } from '@/app/lib';
 import { blog } from '@/app/resources/content';
 import { BlogCategoryItemDto, BlogRecentPostItemDto } from '@/app/types';
-
-function formatDate(iso?: string) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('uk-UA', {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-  });
-}
 
 export default function BlogAside({
   categories,

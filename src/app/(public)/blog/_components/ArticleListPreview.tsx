@@ -1,13 +1,12 @@
 'use client';
 
 import { Calendar, Tag } from 'lucide-react';
+import { CldImage } from 'next-cloudinary';
 import Link from 'next/link';
 
-import { NextImage } from '@/app/components';
 import { imageVariants } from '@/app/config/imageVariants';
-import { cloudinaryLoader } from '@/app/lib/cloudinary/cloudinaryLoader';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
-import { cn } from '@/app/lib/utils';
+import { cn, formatDate } from '@/app/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -21,17 +20,6 @@ export type ArticleListItem = {
   src?: string;
   category?: { id: string; title: string; slug: string };
 };
-
-function formatDate(iso?: string) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('uk-UA', {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-  });
-}
 
 export function ArticleListPreview({
   items,
@@ -48,6 +36,7 @@ export function ArticleListPreview({
     <div className={cn('grid gap-4', className)}>
       {items.map((a, index) => {
         const href = `${baseHref}/${a.slug || a.id}`;
+        const publicId = a.src ? getCloudinarySrc(a.src) : undefined;
         return (
           <Link
             key={`${a.id}-${index}`}
@@ -62,16 +51,13 @@ export function ArticleListPreview({
                   {/* Cover */}
                   <div className="mt-4 flex h-44 w-full items-center justify-center sm:h-36 sm:w-56">
                     <div className="bg-muted border-border relative mx-4 h-full w-full overflow-hidden rounded-md border">
-                      {' '}
-                      {a.src ? (
-                        <NextImage
-                          useSkeleton
-                          loader={cloudinaryLoader}
-                          src={getCloudinarySrc(a.src)}
+                      {publicId ? (
+                        <CldImage
+                          src={publicId}
                           alt={a.title}
                           fill
                           sizes={variant.sizes}
-                          fetchPriority="auto"
+                          className="object-cover"
                         />
                       ) : (
                         <div className="text-muted-foreground flex h-full w-full items-center justify-center text-sm">
