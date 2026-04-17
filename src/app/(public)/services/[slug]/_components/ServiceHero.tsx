@@ -1,8 +1,9 @@
 'use client';
 
-import { Breadcrumbs, NextImage } from '@/app/components';
+import { CldImage } from 'next-cloudinary';
+
+import { Breadcrumbs } from '@/app/components';
 import { imageVariants } from '@/app/config/imageVariants';
-import { cloudinaryLoader } from '@/app/lib/cloudinary/cloudinaryLoader';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { ServicePublicPageDto } from '@/app/types';
 
@@ -16,6 +17,7 @@ const ServiceHero = ({ service }: ServiceSectionProps) => {
   if (!hero) return null;
 
   const variant = imageVariants.card;
+  const publicId = service.src ? getCloudinarySrc(service.src[0]) : undefined;
 
   return (
     <section className="container py-10 lg:py-14">
@@ -29,17 +31,14 @@ const ServiceHero = ({ service }: ServiceSectionProps) => {
             {hero.description || service.summary}
           </p>
         </div>
-        {service.src ? (
+        {publicId ? (
           <div className="relative min-h-70 min-w-0 overflow-hidden rounded-2xl lg:min-h-90">
-            <NextImage
-              useSkeleton
-              src={getCloudinarySrc(service.src[0])}
-              loader={cloudinaryLoader}
-              alt={hero.title || service.title}
+            <CldImage
+              src={publicId}
+              alt={service.title}
               fill
-              className="object-cover"
               sizes={variant.sizes}
-              fetchPriority="auto"
+              className="object-cover"
             />
           </div>
         ) : null}
