@@ -80,6 +80,11 @@ const ServiceSchema = new Schema(
       trim: true,
     },
 
+    relatedArticles: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Article' }],
+      default: [],
+    },
+
     publishedAt: { type: Date, index: true },
   },
   {
