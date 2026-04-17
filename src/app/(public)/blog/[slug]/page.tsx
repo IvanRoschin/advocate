@@ -8,13 +8,15 @@ import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import { articleService } from '@/app/lib/services/article.service';
 import { pageSettingsService } from '@/app/lib/services/page-settings.service';
 import { reviewService } from '@/app/lib/services/review.service';
-import type { ArticleSectionKey } from '@/app/types';
 import { parseArticleContent } from '@/lib/toc/parseArticleContent';
+
 import {
   BLOG_ARTICLE_SECTIONS,
   BlogArticleSectionProps,
 } from './_components/article.sections';
 import { estimateReadTimeFromHtml } from './_components/readTime';
+
+import type { ArticleSectionKey } from '@/app/types';
 type BlogArticlePageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -106,6 +108,7 @@ export default async function BlogArticlePage({
   };
 
   const layout = await pageSettingsService.getArticleLayout();
+
   return (
     <>
       <script

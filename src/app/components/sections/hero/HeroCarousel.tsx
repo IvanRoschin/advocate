@@ -1,16 +1,16 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { CldImage } from 'next-cloudinary';
 import * as React from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
+import { imageVariants } from '@/app/config/imageVariants';
 import { cloudinaryLoader } from '@/app/lib/cloudinary/cloudinaryLoader';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
-import { NextImage } from '@/components';
 import { cn } from '@/lib';
 
 import type { SlideResponseDTO } from '@/app/types';
-
 type HeroCarouselProps = {
   items: SlideResponseDTO[];
   autoplay?: boolean;
@@ -95,11 +95,14 @@ export function HeroCarousel({
   const current = count ? safeItems[index] : null;
 
   // 🔥 normalize current src
-  const currentSrc = getCloudinarySrc(current?.src?.[0]);
+  // const currentSrc = getCloudinarySrc( current?.src?.[0] );
+
+  const publicId = current?.src ? getCloudinarySrc(current?.src[0]) : undefined;
 
   // 🔥 preload next slide
   const nextIndex = count > 1 ? (index + 1) % count : 0;
   const nextSrc = getCloudinarySrc(safeItems[nextIndex]?.src?.[0]);
+  const variant = imageVariants.hero;
 
   return (
     <div className={cn('absolute inset-0', className)} {...pauseHandlers}>
@@ -115,7 +118,7 @@ export function HeroCarousel({
       ) : null}
 
       <AnimatePresence mode="wait">
-        {current && currentSrc ? (
+        {current && publicId ? (
           <motion.div
             key={current._id}
             initial={{ opacity: 0 }}
@@ -124,7 +127,14 @@ export function HeroCarousel({
             transition={{ duration: 0.45, ease: 'easeOut' }}
             className="absolute inset-0"
           >
-            <NextImage
+            <CldImage
+              src={publicId}
+              alt={current.title}
+              fill
+              sizes={variant.sizes}
+              className="object-cover"
+            />
+            {/* <NextImage
               useSkeleton
               loader={cloudinaryLoader}
               src={currentSrc}
@@ -134,7 +144,7 @@ export function HeroCarousel({
               sizes="100vw"
               className="object-cover"
               fetchPriority="high"
-            />
+            /> */}
           </motion.div>
         ) : null}
       </AnimatePresence>

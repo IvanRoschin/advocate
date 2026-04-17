@@ -147,6 +147,7 @@ const SlideForm = (props: Props) => {
           }
 
           const patch = buildPatch(baseValues, normalized);
+
           await props.onSubmit(patch);
           clearDraft();
         }}
@@ -204,7 +205,7 @@ const SlideForm = (props: Props) => {
                 values={values.src}
                 error={typeof errors.src === 'string' ? errors.src : undefined}
                 uploadPreset="slides"
-                multiple
+                multiple={false}
               />
             </motion.div>
 
