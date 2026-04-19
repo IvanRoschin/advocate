@@ -59,6 +59,10 @@ export type CategoryCountRow = {
 
 const POPULATE_PUBLIC: PopulateOptions[] = [
   {
+    path: 'serviceId',
+    select: '_id title slug',
+  },
+  {
     path: 'categoryId',
     select: '_id title slug',
   },
@@ -92,7 +96,7 @@ export const articleRepo = {
   },
 
   findBySlug(slug: string) {
-    return Article.findOne({ slug }); // для админ-проверок уникальности
+    return Article.findOne({ slug }).populate(POPULATE_PUBLIC);
   },
 
   /* ------------------------------ Public list ----------------------------- */
@@ -120,9 +124,7 @@ export const articleRepo = {
 
   findPublishedBySlug(slug: string): Promise<ArticlePublicFullRow | null> {
     return Article.findOne({ slug, status: 'published' })
-      .select(
-        'slug status title subtitle summary content tags src language publishedAt categoryId authorId'
-      )
+
       .populate(POPULATE_PUBLIC)
       .lean<ArticlePublicFullRow>();
   },

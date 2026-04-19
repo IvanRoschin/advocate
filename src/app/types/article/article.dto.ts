@@ -8,7 +8,7 @@ export type ArticleSectionKey =
   | 'related'
   | 'toc'
   | 'reviews'
-  | 'relatedArticles'
+  | 'serviceLink'
   | 'footer';
 
 export type ArticleLayoutItemInput = {
@@ -213,4 +213,17 @@ export type ArticlePreviewDTO = {
   summary: string;
   src: string[];
   publishedAt?: Date | string | null;
+};
+
+export type ArticleWithServiceDTO = {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+
+  service: {
+    id: string;
+    title: string;
+    slug: string;
+  } | null;
 };
