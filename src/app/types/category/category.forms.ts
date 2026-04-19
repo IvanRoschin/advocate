@@ -1,5 +1,10 @@
 import * as Yup from 'yup';
 
+import {
+  CATEGORY_ICON_KEYS,
+  CategoryIconKey,
+} from '@/app/resources/category-icons';
+
 /* -------------------------------- Base rules -------------------------------- */
 
 export const baseCategorySchema = {
@@ -8,22 +13,19 @@ export const baseCategorySchema = {
     .min(2, 'Мінімальна кількість символів 2')
     .max(50, 'Максимальна кількість символів 50'),
 
-  src: Yup.array()
-    .of(Yup.string().trim())
-    .min(1, 'Додайте хоча б одне фото')
-    .max(3, 'Максимум 3 фото'),
+  icon: Yup.string(),
 };
 
 export type CategoryBaseValues = {
   title: string;
-  src: string[];
+  icon: string;
 };
 
 /* -------------------------------- Create -------------------------------- */
 
 export const createCategorySchema = Yup.object({
   title: baseCategorySchema.title.required("Обов'язкове поле"),
-  src: baseCategorySchema.src.required("Обов'язкове поле"),
+  icon: Yup.mixed<CategoryIconKey>().oneOf(CATEGORY_ICON_KEYS).required(),
 });
 
 export type CreateCategoryFormValues = Yup.InferType<
@@ -34,7 +36,7 @@ export type CreateCategoryFormValues = Yup.InferType<
 
 export const updateCategorySchema = Yup.object({
   title: baseCategorySchema.title.optional(),
-  src: baseCategorySchema.src.optional(),
+  icon: baseCategorySchema.icon.optional(),
 })
   .noUnknown(true)
   .test(

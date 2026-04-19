@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { dbConnect } from '@/app/lib/server/mongoose';
 import { categoryService } from '@/app/lib/services/category.service';
-import { UpdateCategoryDTO } from '@/app/types';
+import { mapCategoryToResponse, UpdateCategoryDTO } from '@/app/types';
 
 /* ---------------- GET ---------------- */
 
@@ -38,7 +38,10 @@ export async function PATCH(
 
     const updatedCategory = await categoryService.update(id, payload);
 
-    return NextResponse.json({ ok: true, data: updatedCategory });
+    return NextResponse.json({
+      ok: true,
+      data: mapCategoryToResponse(updatedCategory),
+    });
   } catch (err) {
     return errorToResponse(err);
   }
