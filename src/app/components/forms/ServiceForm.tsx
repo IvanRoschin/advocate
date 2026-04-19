@@ -33,6 +33,8 @@ type DraftShape = Partial<ServiceFormValues>;
 type BaseProps = {
   onClose: () => void;
   submitLabel?: string;
+  articles?: ArticleOption[];
+
   persistToLocalStorage?: boolean;
   clearDraftOnClose?: boolean;
 };
@@ -50,8 +52,18 @@ type EditModeProps = BaseProps & {
 
 type Props = CreateModeProps | EditModeProps;
 
+type ArticleLike = { id?: string; _id?: string };
+
+export type ArticleOption = { id: string; title: string };
 /* ------------------------------------------------------------------ */
 /* Helpers ----------------------------------------------------------- */
+
+const extractArticleId = (a: string | ArticleLike): string => {
+  if (typeof a === 'string') return a;
+  if (a.id) return a.id;
+  if (a._id) return a._id;
+  throw new Error('Invalid relatedArticles item');
+};
 
 const sameArray = (a?: string[], b?: string[]) =>
   JSON.stringify(a ?? []) === JSON.stringify(b ?? []);
@@ -90,6 +102,9 @@ const normalize = (values: ServiceFormValues): ServiceFormValues => ({
     question: item.question.trim(),
     answer: item.answer.trim(),
   })),
+  relatedArticles: Array.isArray(values.relatedArticles)
+    ? values.relatedArticles
+    : [],
 });
 
 const buildSections = (values: ServiceFormValues): ServiceSectionsDto => {
@@ -177,6 +192,7 @@ const buildCreatePayload = (
     sections: buildSections(normalized),
     seoTitle: normalized.seoTitle,
     seoDescription: normalized.seoDescription,
+    relatedArticles: normalized.relatedArticles,
   };
 };
 
@@ -200,6 +216,9 @@ const buildPatch = (
     ...(c.seoTitle !== i.seoTitle ? { seoTitle: c.seoTitle } : {}),
     ...(c.seoDescription !== i.seoDescription
       ? { seoDescription: c.seoDescription }
+      : {}),
+    ...(!sameArray(c.relatedArticles, i.relatedArticles)
+      ? { relatedArticles: c.relatedArticles }
       : {}),
     ...(!sameValue(currentSections, initialSections)
       ? { sections: currentSections }
@@ -244,6 +263,10 @@ const ServiceForm = (props: Props) => {
       seoTitle: initialValues?.seoTitle ?? '',
       seoDescription: initialValues?.seoDescription ?? '',
 
+      relatedArticles: Array.isArray(initialValues?.relatedArticles)
+        ? initialValues.relatedArticles.map(extractArticleId)
+        : [],
+
       heroTitle: initialValues?.sections?.hero?.title ?? '',
       heroDescription: initialValues?.sections?.hero?.description ?? '',
       heroSrc: Array.isArray(initialValues?.sections?.hero?.src)
@@ -273,6 +296,9 @@ const ServiceForm = (props: Props) => {
       ...baseValues,
       ...draft,
       src: Array.isArray(draft.src) ? draft.src : baseValues.src,
+      relatedArticles: Array.isArray(draft?.relatedArticles)
+        ? draft.relatedArticles
+        : baseValues.relatedArticles,
       layout: Array.isArray(draft.layout) ? draft.layout : baseValues.layout,
       heroSrc: Array.isArray(draft.heroSrc)
         ? draft.heroSrc
@@ -447,6 +473,48 @@ const ServiceForm = (props: Props) => {
                 <Input name="ctaButtonLabel" label="CTA button label" />
               </div>
             </div>
+            {props.articles?.length ? (
+              <div className="border-border rounded-2xl border p-4">
+                <h3 className="text-accent mb-4 text-lg font-semibold">
+                  Пов’язані статті
+                </h3>
+
+                <div className="grid gap-2">
+                  {props.articles.map(article => {
+                    const checked = values.relatedArticles.includes(article.id);
+
+                    return (
+                      <label
+                        key={article.id}
+                        className="flex cursor-pointer items-center gap-2"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={e => {
+                            if (e.target.checked) {
+                              setFieldValue('relatedArticles', [
+                                ...values.relatedArticles,
+                                article.id,
+                              ]);
+                            } else {
+                              setFieldValue(
+                                'relatedArticles',
+                                values.relatedArticles.filter(
+                                  id => id !== article.id
+                                )
+                              );
+                            }
+                          }}
+                        />
+
+                        <span className="text-sm">{article.title}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
 
             <div className="flex justify-end gap-2">
               <Btn

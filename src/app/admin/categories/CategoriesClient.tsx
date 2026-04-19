@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { CategoryForm } from '@/app/components/forms';
@@ -33,6 +33,8 @@ interface Props {
 }
 
 export default function CategoriesClient({ initialCategories }: Props) {
+  const [search, setSearch] = useState('');
+
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
@@ -45,6 +47,16 @@ export default function CategoriesClient({ initialCategories }: Props) {
 
   const [categoryToUpdate, setCategoryToUpdate] =
     useState<CategoryResponseDTO | null>(null);
+
+  const filteredCategories = useMemo(() => {
+    if (!search.trim()) return categories;
+
+    const q = search.toLowerCase();
+
+    return categories.filter(
+      c => c.title.toLowerCase().includes(q) || c.slug.toLowerCase().includes(q)
+    );
+  }, [categories, search]);
 
   const createModal = useModal('createCategory');
   const deleteModal = useModal('deleteCategory');
@@ -64,7 +76,6 @@ export default function CategoriesClient({ initialCategories }: Props) {
         apiUrl(`/api/admin/categories/${categoryToDelete._id}`),
         { method: 'DELETE' }
       );
-
       setCategories(prev =>
         prev.filter(category => category._id !== categoryToDelete._id)
       );
@@ -119,11 +130,14 @@ export default function CategoriesClient({ initialCategories }: Props) {
       );
 
       setCategories(prev =>
-        prev.map(category =>
-          category._id === updatedCategory._id ? updatedCategory : category
+        prev.map(c =>
+          c._id === updatedCategory._id
+            ? {
+                ...updatedCategory,
+              }
+            : c
         )
       );
-
       toast.success('Категорію оновлено');
       updateModal.close();
       setCategoryToUpdate(null);
@@ -173,7 +187,7 @@ export default function CategoriesClient({ initialCategories }: Props) {
           <CategoryForm
             initialValues={{
               title: categoryToUpdate.title,
-              src: categoryToUpdate.src,
+              icon: categoryToUpdate.icon,
               slug: categoryToUpdate.slug,
             }}
             submitLabel="Оновити категорію"
@@ -205,7 +219,6 @@ export default function CategoriesClient({ initialCategories }: Props) {
       </div>
     );
   }
-
   return (
     <div className="mx-auto w-full max-w-none px-4 sm:px-5 md:px-6 xl:px-8">
       <Breadcrumbs />
@@ -218,13 +231,15 @@ export default function CategoriesClient({ initialCategories }: Props) {
         <AdminTableToolbar>
           <input
             type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder="Пошук..."
             className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
         </AdminTableToolbar>
 
         <AdminTable
-          data={categories}
+          data={filteredCategories}
           columns={categoryColumns({
             onEdit: handleEdit,
             onDelete: handleDelete,

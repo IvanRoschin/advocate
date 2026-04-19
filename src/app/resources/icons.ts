@@ -1,19 +1,31 @@
 import type { IconType } from 'react-icons';
 import {
+  FaBalanceScale,
+  FaBriefcase,
+  FaBuilding,
   FaBullhorn,
   FaChevronDown,
   FaChevronUp,
+  FaClipboardList,
+  FaCreditCard,
   FaEnvelope,
   FaFileAlt,
+  FaGavel,
+  FaHandshake,
+  FaHardHat,
   FaMoneyBillWave,
   FaPen,
   FaQuoteLeft,
   FaQuoteRight,
   FaRegRegistered,
+  FaScroll,
+  FaShieldAlt,
   FaShoppingCart,
   FaTags,
   FaTrash,
+  FaUniversity,
   FaUsers,
+  FaUserShield,
   FaUserTie,
 } from 'react-icons/fa';
 import {
@@ -145,6 +157,21 @@ export const iconLibrary = {
   payments: FaMoneyBillWave,
   contact: FaEnvelope,
   order: FaShoppingCart,
+
+  banking: FaUniversity, // 🏦 Банковское право
+  credit: FaCreditCard, // 💳 Кредитное право
+  family: FaUsers, // 👨‍👩‍👧‍👦 Семейное право
+  military: FaShieldAlt, // 🛡️ Военное право
+  inheritance: FaScroll, // 📜 Наследственное право
+  business: FaBriefcase, // 💼 Бизнес право
+  civil: FaBalanceScale, // ⚖️ Гражданское право
+  criminal: FaGavel, // 🔨 Уголовное право
+  administrative: FaClipboardList, // 📋 Административное право
+  realEstate: FaBuilding, // 🏢 Недвижимость
+  labor: FaHardHat, // 👷 Трудовое право
+  documents: FaFileAlt, // 📄 Документы
+  disputes: FaHandshake, // 🤝 Споры
+  protection: FaUserShield, // 🛡️ Защита прав
 } as const satisfies Record<string, IconType>;
 
 export type IconLibrary = typeof iconLibrary;

@@ -74,6 +74,8 @@ export type ServiceFormValues = {
   seoTitle: string;
   seoDescription: string;
 
+  relatedArticles: string[];
+
   heroTitle: string;
   heroDescription: string;
   heroSrc: string[];
@@ -394,6 +396,8 @@ export const createServiceSchema = Yup.object({
     .min(20, 'Мінімальна кількість символів 20')
     .max(160, 'Максимальна кількість символів 160')
     .required("Обов'язкове поле"),
+
+  relatedArticles: Yup.array().of(Yup.string().trim().required()).default([]),
 }).noUnknown(true);
 
 export const updateServiceSchema = Yup.object({
@@ -436,6 +440,8 @@ export const updateServiceSchema = Yup.object({
     .min(20, 'Мінімальна кількість символів 20')
     .max(160, 'Максимальна кількість символів 160')
     .optional(),
+
+  relatedArticles: Yup.array().of(Yup.string().trim().required()).optional(),
 })
   .noUnknown(true)
   .test(

@@ -9,6 +9,7 @@ import { apiFetch } from '@/app/lib/client/apiFetch';
 
 import type {
   CategoryOption,
+  ServiceOption,
   UserOption,
 } from '@/app/components/forms/ArticleForm';
 import type { CreateArticleRequestDTO } from '@/app/types';
@@ -18,6 +19,7 @@ type Props =
       mode: 'create';
       users: UserOption[];
       categories: CategoryOption[];
+      services: ServiceOption[];
     }
   | {
       mode: 'edit';
@@ -25,6 +27,7 @@ type Props =
       initialValues: Partial<CreateArticleRequestDTO>;
       users: UserOption[];
       categories: CategoryOption[];
+      services: ServiceOption[];
     };
 
 export default function ArticleEditorClient(props: Props) {
@@ -38,6 +41,7 @@ export default function ArticleEditorClient(props: Props) {
           mode="create"
           users={props.users}
           categories={props.categories}
+          services={props.services}
           onClose={backToList}
           onSubmit={async payload => {
             try {
@@ -60,6 +64,7 @@ export default function ArticleEditorClient(props: Props) {
           initialValues={props.initialValues}
           users={props.users}
           categories={props.categories}
+          services={props.services}
           submitLabel="Оновити статтю"
           onClose={backToList}
           onSubmit={async patch => {

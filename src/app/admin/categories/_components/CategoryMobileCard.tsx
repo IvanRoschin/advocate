@@ -14,7 +14,7 @@ export function CategoryMobileCard({
   onEdit,
   onDelete,
 }: CategoryMobileCardProps) {
-  const imageCount = Array.isArray(row.src) ? row.src.length : 0;
+  const imageCount = Array.isArray(row.icon) ? row.icon.length : 0;
 
   return (
     <AdminTableCard

@@ -2,23 +2,22 @@ import type { ReactNode } from 'react';
 
 import { Header } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
-
+import type { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
 import { ArticleListPreview } from '../../_components/ArticleListPreview';
 import { ShareSection } from '../../_components/ShareSection';
 import ArticleContent from './ArticleContent';
+import ArticleServiceLink from './ArticleServiceLink';
 import { TocItem } from './ArticleToc';
 import ArticleToc from './ArticleToc.client.tsx';
 import { HeroSection } from './HeroSection';
 import ReviewsSection from './ReviewsSection.client';
-
-import type { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
 type RelatedArticle = Awaited<
   ReturnType<
     typeof import('@/app/lib/services/article.service').articleService.getRelatedPublicByCategory
   >
 >[number];
 
-type ArticlePageDto = Awaited<
+export type ArticlePageDto = Awaited<
   ReturnType<
     typeof import('@/app/lib/services/article.service').articleService.getPublicBySlug
   >
@@ -105,6 +104,10 @@ const BlogArticleReviewsSection: BlogArticleSectionComponent = ({
   );
 };
 
+const BlogArticleServiceLinkSection: BlogArticleSectionComponent = ({
+  article,
+}) => <ArticleServiceLink article={article} />;
+
 const BlogArticleTocSection: BlogArticleSectionComponent = () => null;
 
 const BlogArticleFooterSection: BlogArticleSectionComponent = () => (
@@ -129,5 +132,6 @@ export const BLOG_ARTICLE_SECTIONS: Record<
   related: BlogArticleRelatedSection,
   toc: BlogArticleTocSection,
   reviews: BlogArticleReviewsSection,
+  serviceLink: BlogArticleServiceLinkSection,
   footer: BlogArticleFooterSection,
 };

@@ -22,6 +22,7 @@ export const defaultArticleLayout: ArticleLayoutNode[] = [
       { key: 'related', display: true },
       { key: 'toc', display: true },
       { key: 'reviews', display: true },
+      { key: 'serviceLink', display: true },
     ],
   },
   {

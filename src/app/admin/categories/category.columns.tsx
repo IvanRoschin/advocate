@@ -1,9 +1,9 @@
-import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
-import { iconLibrary } from '@/app/resources';
-import { CategoryResponseDTO } from '@/app/types';
-import { Btn, NextImage } from '@/components';
 import { ColumnDef } from '@tanstack/react-table';
 
+import { getCategoryIcon } from '@/app/helpers/getCategoryIcon';
+import { iconLibrary } from '@/app/resources';
+import { CategoryResponseDTO } from '@/app/types';
+import { Btn } from '@/components';
 import { Center } from '../_components/table/Center';
 import { SortableHeader } from '../_components/table/SortableHeader';
 
@@ -29,28 +29,23 @@ export const categoryColumns = ({
     ),
   },
   {
-    id: 'image',
-    header: () => <Center>Зображення</Center>,
+    id: 'icon',
+    header: () => <Center>Іконка</Center>,
     cell: ({ row }) => {
-      const src = row.original.src?.[0];
-
+      const Icon = getCategoryIcon(row.original.icon);
       return (
         <Center>
-          {src && (
-            <NextImage
-              src={getCloudinarySrc(src)}
-              alt={row.original.title}
-              width={50}
-              height={50}
-              className="object-contain"
-              fetchPriority="auto"
-            />
+          {Icon ? (
+            <Icon className="text-muted-foreground h-5 w-5" />
+          ) : (
+            <span className="text-muted-foreground text-xs">—</span>
           )}
         </Center>
       );
     },
     enableSorting: false,
   },
+
   {
     id: 'edit',
     header: () => <Center>Редагувати</Center>,

@@ -9,6 +9,8 @@ import type {
 
 /* ----------------------------- Lean row types ----------------------------- */
 export type CategoryLean = { _id: Types.ObjectId; title: string; slug: string };
+export type ServiceLean = { _id: Types.ObjectId; title: string; slug: string };
+
 export type AuthorLean = { _id: Types.ObjectId; name: string; avatar?: string };
 
 export type ArticlePublicFullRow = {
@@ -24,6 +26,7 @@ export type ArticlePublicFullRow = {
   language: ArticleLanguage;
   publishedAt?: Date;
   categoryId?: CategoryLean | null;
+  serviceId?: ServiceLean | null;
   authorId?: AuthorLean | null;
 };
 
@@ -37,6 +40,7 @@ export type ArticlePublicRow = {
   publishedAt?: Date;
   updatedAt?: Date;
   categoryId?: CategoryLean | null;
+  serviceId?: ServiceLean | null;
 };
 
 export type ArticleRecentRow = {
@@ -54,6 +58,10 @@ export type CategoryCountRow = {
 };
 
 const POPULATE_PUBLIC: PopulateOptions[] = [
+  {
+    path: 'serviceId',
+    select: '_id title slug',
+  },
   {
     path: 'categoryId',
     select: '_id title slug',
@@ -88,7 +96,7 @@ export const articleRepo = {
   },
 
   findBySlug(slug: string) {
-    return Article.findOne({ slug }); // для админ-проверок уникальности
+    return Article.findOne({ slug }).populate(POPULATE_PUBLIC);
   },
 
   /* ------------------------------ Public list ----------------------------- */
@@ -102,13 +110,21 @@ export const articleRepo = {
       .lean<ArticlePublicRow[]>();
   },
 
+  getRelatedArticles(serviceId: string) {
+    return Article.find({
+      serviceId,
+      status: 'published',
+    })
+      .sort({ publishedAt: -1 })
+      .limit(6)
+      .lean();
+  },
+
   /* ------------------------------ Public page ----------------------------- */
 
   findPublishedBySlug(slug: string): Promise<ArticlePublicFullRow | null> {
     return Article.findOne({ slug, status: 'published' })
-      .select(
-        'slug status title subtitle summary content tags src language publishedAt categoryId authorId'
-      )
+
       .populate(POPULATE_PUBLIC)
       .lean<ArticlePublicFullRow>();
   },

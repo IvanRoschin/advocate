@@ -4,19 +4,21 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { ServiceForm } from '@/app/components/forms';
+import { ArticleOption } from '@/app/components/forms/ServiceForm';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 
 import type { CreateServiceRequestDTO } from '@/app/types';
-
 type Props =
   | {
       mode: 'create';
+      articles: ArticleOption[];
     }
   | {
       mode: 'edit';
       serviceId: string;
       initialValues: Partial<CreateServiceRequestDTO>;
+      articles: ArticleOption[];
     };
 
 export default function ServiceEditorClient(props: Props) {
@@ -29,6 +31,7 @@ export default function ServiceEditorClient(props: Props) {
       {props.mode === 'create' ? (
         <ServiceForm
           mode="create"
+          articles={props.articles}
           onClose={backToList}
           onSubmit={async payload => {
             try {
@@ -50,6 +53,7 @@ export default function ServiceEditorClient(props: Props) {
         <ServiceForm
           mode="edit"
           initialValues={props.initialValues}
+          articles={props.articles}
           submitLabel="Оновити послугу"
           onClose={backToList}
           onSubmit={async patch => {

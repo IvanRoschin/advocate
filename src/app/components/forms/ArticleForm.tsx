@@ -34,6 +34,7 @@ const tagsToString = (tags?: string[]) => (tags?.length ? tags.join(', ') : '');
 
 export type UserOption = { id: string; name: string };
 export type CategoryOption = { id: string; title: string };
+export type ServiceOption = { id: string; title: string };
 
 export type ArticleFormValues = CreateArticleRequestDTO & {
   tagsInput: string;
@@ -92,6 +93,7 @@ type BaseProps = {
   submitLabel?: string;
   users?: UserOption[];
   categories?: CategoryOption[];
+  services?: ServiceOption[];
   persistToLocalStorage?: boolean;
   clearDraftOnClose?: boolean;
 };
@@ -110,7 +112,7 @@ type EditModeProps = BaseProps & {
 type Props = CreateModeProps | EditModeProps;
 
 const ArticleForm = (props: Props) => {
-  const { onClose, submitLabel, users, categories } = props;
+  const { onClose, submitLabel, users, categories, services } = props;
 
   const isEditMode = props.mode === 'edit';
   const initialValues = isEditMode ? props.initialValues : undefined;
@@ -139,6 +141,7 @@ const ArticleForm = (props: Props) => {
       language: (initialValues?.language ?? 'uk') as ArticleLanguage,
       authorId: initialValues?.authorId ?? '',
       categoryId: initialValues?.categoryId ?? '',
+      serviceId: initialValues?.serviceId ?? '',
     }),
     [initialValues]
   );
@@ -196,6 +199,7 @@ const ArticleForm = (props: Props) => {
               language: normalized.language,
               authorId: normalized.authorId,
               categoryId: normalized.categoryId,
+              serviceId: normalized.serviceId,
             };
 
             await props.onSubmit(payload);
@@ -300,6 +304,16 @@ const ArticleForm = (props: Props) => {
               options={(categories ?? []).map(c => ({
                 value: c.id,
                 label: c.title,
+              }))}
+              required
+            />
+
+            <Select
+              name="serviceId"
+              label="Послуга"
+              options={(services ?? []).map(s => ({
+                value: s.id,
+                label: s.title,
               }))}
               required
             />
