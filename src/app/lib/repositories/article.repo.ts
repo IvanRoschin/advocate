@@ -106,6 +106,16 @@ export const articleRepo = {
       .lean<ArticlePublicRow[]>();
   },
 
+  getRelatedArticles(serviceId: string) {
+    return Article.find({
+      serviceId,
+      status: 'published',
+    })
+      .sort({ publishedAt: -1 })
+      .limit(6)
+      .lean();
+  },
+
   /* ------------------------------ Public page ----------------------------- */
 
   findPublishedBySlug(slug: string): Promise<ArticlePublicFullRow | null> {

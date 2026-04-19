@@ -8,6 +8,7 @@ export type ArticleSectionKey =
   | 'related'
   | 'toc'
   | 'reviews'
+  | 'relatedArticles'
   | 'footer';
 
 export type ArticleLayoutItemInput = {
@@ -203,4 +204,13 @@ export type BlogRecentPostItemDto = {
   slug: string;
   title: string;
   publishedAt?: string;
+};
+
+export type ArticlePreviewDTO = {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  src: string[];
+  publishedAt?: Date | string | null;
 };

@@ -3,6 +3,7 @@ import slugify from 'slugify';
 
 import { serviceRepo } from '@/app/lib/repositories/service.repo';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
+import { Article } from '@/app/models';
 import {
   CreateServiceRequestDTO,
   mapPublicServiceRowToPage,
@@ -12,7 +13,6 @@ import {
   ServicePublicPageDto,
   UpdateServiceDTO,
 } from '@/app/types';
-
 import { dbConnect } from '../server/mongoose';
 
 const makeSlug = (input: string) =>
@@ -160,8 +160,14 @@ export const serviceService = {
     await dbConnect();
     assertObjectId(id);
 
-    const deleted = await serviceRepo.deleteById(id);
-    if (!deleted) throw new ValidationError('Послугу не знайдено');
+    const service = await serviceRepo.findById(id);
+    if (!service) {
+      throw new ValidationError('Послугу не знайдено');
+    }
+
+    await Article.deleteMany({ serviceId: service._id });
+
+    await serviceRepo.deleteById(id);
 
     return { ok: true };
   },

@@ -22,6 +22,7 @@ export const defaultServiceLayout: ServiceLayoutNode[] = [
       { key: 'faq', display: true },
       { key: 'reviews', display: true },
       { key: 'cta', display: true },
+      { key: 'relatedArticles', display: true },
     ],
   },
   {

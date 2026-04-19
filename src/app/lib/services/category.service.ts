@@ -1,6 +1,7 @@
 import slugify from 'slugify';
 
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
+import { Article } from '@/app/models';
 import {
   CategoryResponseDTO,
   CreateCategoryRequestDTO,
@@ -8,7 +9,6 @@ import {
   UpdateCategoryDTO,
 } from '@/app/types';
 import { categoryRepo } from '@/lib/repositories/category.repo';
-
 import { dbConnect } from '../server/mongoose';
 
 export const categoryService = {
@@ -102,9 +102,13 @@ export const categoryService = {
 
   async delete(id: string) {
     await dbConnect();
+    const category = await categoryRepo.findById(id);
+    if (!category) {
+      throw new ValidationError('Категорію не знайдено');
+    }
+    await Article.deleteMany({ categoryId: category._id });
 
-    const deleted = await categoryRepo.delete(id);
-    if (!deleted) throw new ValidationError('Категорію не знайдено');
-    return deleted;
+    await categoryRepo.delete(id);
+    return { ok: true };
   },
 };

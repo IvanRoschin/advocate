@@ -12,6 +12,7 @@ import type {
 } from '@/app/lib/repositories/article.repo';
 import type {
   ArticleListItemDto,
+  ArticlePreviewDTO,
   ArticlePublicPageDto,
   ArticleResponseDTO,
 } from '@/app/types';
@@ -25,8 +26,8 @@ type ArticleLike = {
   subtitle?: string | null;
   summary: string;
   content: string;
-  tags?: unknown;
-  src?: unknown;
+  tags?: string;
+  src?: string[];
   language: ArticleResponseDTO['language'];
   authorId: Types.ObjectId | string;
   categoryId: Types.ObjectId | string;
@@ -138,3 +139,14 @@ export const mapPublicFullRowToPage = (
       }
     : undefined,
 });
+
+export function mapArticleToPreviewDTO(doc: ArticleLike): ArticlePreviewDTO {
+  return {
+    id: doc._id.toString(),
+    title: doc.title,
+    slug: doc.slug,
+    summary: doc.summary,
+    src: doc.src ?? [],
+    publishedAt: doc.publishedAt?.toString(),
+  };
+}

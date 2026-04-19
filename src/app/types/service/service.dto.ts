@@ -6,8 +6,9 @@ export type ServiceSectionKey =
   | 'benefits'
   | 'process'
   | 'faq'
-  | 'cta'
+  | 'relatedArticles'
   | 'reviews'
+  | 'cta'
   | 'footer';
 
 export type ServiceLayoutItemInput = {
