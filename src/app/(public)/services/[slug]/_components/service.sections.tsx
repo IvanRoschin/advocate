@@ -2,15 +2,20 @@ import type { ReactNode } from 'react';
 
 import { Header, ReviewsSection } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
+
+import RelatedArticles from './RelatedArticles';
+import ServiceCtaOrderButton from './ServiceCtaOrderButton';
+import ServiceHero from './ServiceHero';
+
 import type {
+  ArticlePreviewDTO,
   ReviewResponseDTO,
   ServicePublicPageDto,
   ServiceSectionKey,
 } from '@/app/types';
-import ServiceCtaOrderButton from './ServiceCtaOrderButton';
-import ServiceHero from './ServiceHero';
 export type ServiceSectionProps = {
   service: ServicePublicPageDto;
+  articles: ArticlePreviewDTO[];
   reviews?: ReviewResponseDTO[];
   reviewForm?: ReactNode;
 };
@@ -131,6 +136,10 @@ const ServiceReviewsSection: ServiceSectionComponent = ({
   );
 };
 
+const ServiceRelatedArticlesSection: ServiceSectionComponent = ({
+  articles,
+}) => <RelatedArticles articles={articles} />;
+
 const ServiceCtaSection: ServiceSectionComponent = ({ service }) => {
   const cta = service.sections.cta;
 
@@ -171,6 +180,7 @@ export const SERVICE_SECTIONS: Record<
   process: ServiceProcessSection,
   faq: ServiceFaqSection,
   reviews: ServiceReviewsSection,
+  relatedArticles: ServiceRelatedArticlesSection,
   cta: ServiceCtaSection,
   footer: ServiceFooterSection,
 };

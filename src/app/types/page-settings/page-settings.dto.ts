@@ -15,6 +15,8 @@ export type PageSectionKey =
   | 'process'
   | 'faq'
   | 'cta'
+  | 'relatedArticles'
+  | 'serviceLink'
   | 'whyChooseMe'
   | 'order'
   | 'footer'

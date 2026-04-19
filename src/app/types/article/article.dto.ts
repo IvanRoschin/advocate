@@ -8,6 +8,7 @@ export type ArticleSectionKey =
   | 'related'
   | 'toc'
   | 'reviews'
+  | 'serviceLink'
   | 'footer';
 
 export type ArticleLayoutItemInput = {
@@ -65,6 +66,11 @@ export type ArticleCategoryDto = {
   title: string;
   slug: string;
 };
+export type ArticleServiceDto = {
+  _id: string;
+  title: string;
+  slug: string;
+};
 
 /**
  * ✅ API response (admin) — как у CategoryResponseDTO: с _id
@@ -89,10 +95,12 @@ export type ArticleResponseDTO = {
 
   authorId: string;
   categoryId: string;
+  serviceId: string;
 
   // optional populate
   author?: ArticleAuthorDto;
   category?: ArticleCategoryDto;
+  service?: ArticleServiceDto;
 
   publishedAt?: string;
   createdAt?: string;
@@ -113,6 +121,7 @@ export type CreateArticleRequestDTO = {
 
   authorId: string;
   categoryId: string;
+  serviceId: string;
 
   tags: string[];
 
@@ -140,6 +149,7 @@ export type ArticleListItemDto = {
   updatedAt?: string;
   tags: string[];
   category?: { id: string; title: string; slug: string };
+  service?: { id: string; title: string; slug: string };
 };
 
 export type ArticlePublicPageDto = {
@@ -174,6 +184,12 @@ export type ArticlePublicPageDto = {
     title: string;
     slug: string;
   };
+
+  service?: {
+    id: string;
+    title: string;
+    slug: string;
+  };
 };
 
 export type BlogCategoryItemDto = {
@@ -188,4 +204,26 @@ export type BlogRecentPostItemDto = {
   slug: string;
   title: string;
   publishedAt?: string;
+};
+
+export type ArticlePreviewDTO = {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  src: string[];
+  publishedAt?: Date | string | null;
+};
+
+export type ArticleWithServiceDTO = {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+
+  service: {
+    id: string;
+    title: string;
+    slug: string;
+  } | null;
 };

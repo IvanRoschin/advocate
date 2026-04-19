@@ -74,6 +74,8 @@ export const baseArticleSchema = {
 
   categoryId: Yup.string().transform(emptyToUndefined).trim(),
 
+  serviceId: Yup.string().transform(emptyToUndefined).trim(),
+
   tags: Yup.array()
     .of(Yup.string().trim().min(1).required())
     .default([])
@@ -133,6 +135,7 @@ export const createArticleSchema = Yup.object({
 
   authorId: baseArticleSchema.authorId.required("Обов'язкове поле"),
   categoryId: baseArticleSchema.categoryId.required("Обов'язкове поле"),
+  serviceId: baseArticleSchema.serviceId.required("Обов'язкове поле"),
 }).noUnknown(true);
 
 export type CreateArticleFormValues = Yup.InferType<typeof createArticleSchema>;
@@ -155,6 +158,7 @@ export const updateArticleSchema = Yup.object({
   language: baseArticleSchema.language.optional(),
   authorId: baseArticleSchema.authorId.optional(),
   categoryId: baseArticleSchema.categoryId.optional(),
+  serviceId: baseArticleSchema.serviceId.optional(),
 })
   .noUnknown(true)
   .test(

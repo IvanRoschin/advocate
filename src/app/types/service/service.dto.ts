@@ -6,8 +6,9 @@ export type ServiceSectionKey =
   | 'benefits'
   | 'process'
   | 'faq'
-  | 'cta'
+  | 'relatedArticles'
   | 'reviews'
+  | 'cta'
   | 'footer';
 
 export type ServiceLayoutItemInput = {
@@ -100,6 +101,14 @@ export type ServiceSectionsDto = {
   cta?: ServiceCtaDto;
 };
 
+export type RelatedArticleRef = {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  src?: string;
+};
+
 export type ServiceResponseDTO = {
   _id: string;
 
@@ -116,6 +125,8 @@ export type ServiceResponseDTO = {
 
   seoTitle: string;
   seoDescription: string;
+
+  relatedArticles: string[];
 
   publishedAt?: string;
   createdAt?: string;
@@ -136,6 +147,8 @@ export type CreateServiceRequestDTO = {
 
   seoTitle: string;
   seoDescription: string;
+
+  relatedArticles?: string[];
 };
 
 export type UpdateServiceDTO = Partial<Omit<CreateServiceRequestDTO, 'src'>> & {
@@ -166,6 +179,8 @@ export type ServicePublicPageDto = {
 
   seoTitle: string;
   seoDescription: string;
+
+  relatedArticles: RelatedArticleRef[];
 
   publishedAt?: string;
   updatedAt?: string;

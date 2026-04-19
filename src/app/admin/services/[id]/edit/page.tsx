@@ -1,4 +1,6 @@
+import { articleService } from '@/app/lib/services';
 import { serviceService } from '@/app/lib/services/service.service';
+import { mapServiceToResponse } from '@/app/types';
 import ServiceEditorClient from '../../_components/ServiceEditorClient';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +14,17 @@ export default async function EditServicePage({
 }: EditServicePageProps) {
   const { id } = await params;
 
-  const service = await serviceService.getById(id);
+  const [serviceRaw, articleRaw] = await Promise.all([
+    serviceService.getById(id),
+    articleService.getAll(),
+  ]);
+
+  const service = mapServiceToResponse(serviceRaw);
+
+  const articles = articleRaw.map(a => ({
+    id: String(a._id ?? a.id),
+    title: a.title,
+  }));
 
   return (
     <ServiceEditorClient
@@ -28,7 +40,9 @@ export default async function EditServicePage({
         sections: service.sections,
         seoTitle: service.seoTitle,
         seoDescription: service.seoDescription,
+        relatedArticles: service.relatedArticles,
       }}
+      articles={articles}
     />
   );
 }

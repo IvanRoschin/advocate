@@ -40,6 +40,13 @@ const ArticleSchema = new Schema(
       index: true,
     },
 
+    serviceId: {
+      type: Types.ObjectId,
+      ref: 'Service',
+      required: true,
+      index: true,
+    },
+
     tags: {
       type: [String],
       default: [],

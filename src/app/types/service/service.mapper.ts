@@ -8,6 +8,7 @@ import {
 } from '@/app/lib/mappers/_utils';
 
 import type {
+  PopulatedArticle,
   ServiceListRow,
   ServicePublicFullRow,
 } from '@/app/lib/repositories/service.repo';
@@ -79,6 +80,7 @@ type ServiceLike = {
   sections: ServiceResponseDTO['sections'];
   seoTitle: string;
   seoDescription: string;
+  relatedArticles?: Types.ObjectId[] | string[];
   publishedAt?: Date | string | null;
   createdAt?: Date | string | null;
   updatedAt?: Date | string | null;
@@ -97,6 +99,9 @@ export const mapServiceToResponse = (
   sections: service.sections,
   seoTitle: service.seoTitle,
   seoDescription: service.seoDescription,
+  relatedArticles: Array.isArray(service.relatedArticles)
+    ? service.relatedArticles.map(toIdString)
+    : [],
   publishedAt: toIsoString(service.publishedAt),
   createdAt: toIsoString(service.createdAt),
   updatedAt: toIsoString(service.updatedAt),
@@ -115,6 +120,7 @@ export const mapServiceResponseToPublic = (
   sections: service.sections,
   seoTitle: service.seoTitle,
   seoDescription: service.seoDescription,
+  relatedArticles: [],
   publishedAt: service.publishedAt,
   updatedAt: service.updatedAt,
 });
@@ -142,6 +148,19 @@ export const mapPublicServiceRowToPage = (
   sections: row.sections,
   seoTitle: row.seoTitle,
   seoDescription: row.seoDescription,
+  relatedArticles: Array.isArray(row.relatedArticles)
+    ? row.relatedArticles
+        .filter(
+          (a): a is PopulatedArticle => typeof a === 'object' && 'slug' in a
+        )
+        .map(a => ({
+          id: a._id.toString(),
+          slug: a.slug,
+          title: a.title,
+          summary: a.summary,
+          src: firstImage(a.src),
+        }))
+    : [],
   publishedAt: row.publishedAt?.toISOString(),
   updatedAt: row.updatedAt?.toISOString(),
 });

@@ -3,12 +3,15 @@ import slugify from 'slugify';
 
 import { articleRepo } from '@/app/lib/repositories/article.repo';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
+import { Service } from '@/app/models';
 import {
   ArticleListItemDto,
+  ArticlePreviewDTO,
   ArticlePublicPageDto,
   BlogCategoryItemDto,
   BlogRecentPostItemDto,
   CreateArticleRequestDTO,
+  mapArticleToPreviewDTO,
   mapPublicFullRowToPage,
   mapPublicRowToListItem,
   UpdateArticleDTO,
@@ -69,6 +72,13 @@ export const articleService = {
     if (!args.categoryId) return [];
     const rows = await articleRepo.findRelatedByCategoryId(args);
     return rows.map(mapPublicRowToListItem);
+  },
+
+  async getRelatedArticles(serviceId: string): Promise<ArticlePreviewDTO[]> {
+    await dbConnect();
+    if (!serviceId) return [];
+    const rows = await articleRepo.getRelatedArticles(serviceId);
+    return rows.map(mapArticleToPreviewDTO);
   },
 
   async getRecentPublic(limit = 5): Promise<BlogRecentPostItemDto[]> {
@@ -160,8 +170,12 @@ export const articleService = {
     await dbConnect();
     assertObjectId(id);
 
-    const deleted = await articleRepo.deleteById(id);
-    if (!deleted) throw new ValidationError('Статтю не знайдено');
+    const article = await articleRepo.findById(id);
+    if (!article) throw new ValidationError('Статтю не знайдено');
+
+    await Service.deleteMany({ relatedArticles: article._id });
+
+    await articleRepo.deleteById(id);
 
     return { ok: true };
   },

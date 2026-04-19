@@ -16,9 +16,11 @@ const categorySchema = new Schema(
       trim: true,
       index: true,
     },
-    src: {
-      type: [String],
-      required: true,
+    icon: {
+      type: String,
+      required: false,
+      default: 'civil',
+      trim: true,
     },
   },
   { versionKey: false, timestamps: true }
