@@ -26,7 +26,6 @@ const customNames: Record<string, string> = {
   reviews: 'Відгуки',
   slides: 'Слайди',
   'page-settings': 'Налаштування сторінок',
-  'suprovid-pry-rozluchenni': 'Супровід при розлученні',
 };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -46,23 +45,27 @@ export default function Breadcrumbs() {
   );
 
   const last = segments[segments.length - 1] ?? '';
-  const isBlogSlug = segments[0] === 'blog' && segments.length >= 2;
+  const isDynamicSlug =
+    (segments[0] === 'blog' || segments[0] === 'services') &&
+    segments.length >= 2;
 
   useEffect(() => {
-    if (!isBlogSlug || !last) return;
+    if (!isDynamicSlug || !last) return;
     if (titleBySlug[last]) return;
 
     const controller = new AbortController();
 
     const fetchTitle = async () => {
       try {
-        const res = await fetch(
-          `/api/v1/articles/title/${encodeURIComponent(last)}`,
-          {
-            cache: 'force-cache',
-            signal: controller.signal,
-          }
-        );
+        const base =
+          segments[0] === 'blog'
+            ? '/api/v1/articles/title'
+            : '/api/v1/services/title';
+
+        const res = await fetch(`${base}/${encodeURIComponent(last)}`, {
+          cache: 'force-cache',
+          signal: controller.signal,
+        });
 
         if (!res.ok) return;
 
@@ -80,7 +83,7 @@ export default function Breadcrumbs() {
     fetchTitle();
 
     return () => controller.abort();
-  }, [isBlogSlug, titleBySlug, last]);
+  }, [isDynamicSlug, titleBySlug, last, segments]);
 
   const crumbs = useMemo(() => {
     return segments.map((segment, idx) => {
@@ -89,14 +92,13 @@ export default function Breadcrumbs() {
 
       let name = customNames[segment] || capitalize(segment.replace(/-/g, ' '));
 
-      // ✅ если это последняя крошка в /blog/[slug] и есть title — подменяем
-      if (isLast && isBlogSlug) {
+      if (isLast && isDynamicSlug) {
         name = titleBySlug[segment] ?? name;
       }
 
       return { name, href };
     });
-  }, [segments, isBlogSlug, titleBySlug]);
+  }, [segments, isDynamicSlug, titleBySlug]);
 
   return (
     <nav aria-label="breadcrumbs" className="mb-4 text-sm text-gray-600">

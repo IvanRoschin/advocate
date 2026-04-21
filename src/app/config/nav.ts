@@ -1,11 +1,12 @@
 import { signOut } from 'next-auth/react';
-import type { IconType } from 'react-icons';
 
 import { routes } from '@/app/config/routes';
 import { useUserStore } from '@/app/store/user.store';
 import { iconLibrary, menuText } from '@/resources';
 
-export type NavScope = 'public' | 'admin' | 'client' | 'manager';
+import type { IconType } from 'react-icons';
+
+export type NavScope = 'public' | 'admin' | 'client' | 'manager' | 'mobile';
 
 type BaseNavItem = {
   key: string;
@@ -46,6 +47,41 @@ export const PUBLIC_NAV_ITEMS: readonly NavItem[] = [
     label: 'Практики',
     Icon: iconLibrary.practices,
     startsWith: true,
+  },
+  {
+    key: 'services',
+    href: routes.public.services,
+    label: 'Послуги',
+    Icon: iconLibrary.services,
+    startsWith: true,
+  },
+  {
+    key: 'blog',
+    href: routes.public.blog,
+    label: 'Блог',
+    Icon: iconLibrary.blog,
+    startsWith: true,
+  },
+  {
+    key: 'payments',
+    href: routes.public.payments,
+    label: 'Оплата',
+    Icon: iconLibrary.payments,
+    startsWith: true,
+  },
+  {
+    key: 'contact',
+    href: routes.public.contact,
+    label: 'Контакти',
+    Icon: iconLibrary.contact,
+  },
+];
+export const PUBLIC_NAV_MOBILE_ITEMS: readonly NavItem[] = [
+  {
+    key: 'home',
+    href: routes.public.home,
+    label: 'Головна',
+    Icon: iconLibrary.home,
   },
   {
     key: 'services',
@@ -285,6 +321,7 @@ export const NAV_ITEMS_BY_SCOPE: Record<NavScope, readonly NavItem[]> = {
   admin: ADMIN_NAV_ITEMS,
   client: CLIENT_NAV_ITEMS,
   manager: MANAGER_NAV_ITEMS,
+  mobile: PUBLIC_NAV_MOBILE_ITEMS,
 };
 
 export const navCta = {
