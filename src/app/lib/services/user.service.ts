@@ -17,6 +17,7 @@ import {
   UpdateUserDTO,
 } from '@/app/types';
 import { userRepo } from '@/lib/repositories/user.repo';
+
 import { sendEmail } from '../server/mail/emailService';
 import { dbConnect } from '../server/mongoose';
 
@@ -26,6 +27,12 @@ export const userService = {
 
     const users = await userRepo.findAll();
     return users.map(mapUserToResponse);
+  },
+
+  async getAdminsAndManagers() {
+    await dbConnect();
+
+    return userRepo.findAdminsAndManagers();
   },
 
   async getById(id: string) {
