@@ -1,5 +1,6 @@
 import { DesktopHeader } from './DesktopHeader';
 import { MobileHeader } from './MobileHeader';
+
 import type { NavScope } from './nav.shared';
 
 export type HeaderPublicAuthState = {
@@ -33,7 +34,7 @@ const HeaderClient = async ({
       <div className="xl:hidden">
         <div className="mx-auto w-full max-w-6xl px-3">
           <MobileHeader
-            scope={scope}
+            scope="mobile"
             showTime={showTime}
             timeZone={timeZone}
             showThemeToggle={showThemeToggle}

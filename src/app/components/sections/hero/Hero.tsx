@@ -10,12 +10,6 @@ type HeroProps = {
   slides: SlideResponseDTO[];
 };
 
-// const slides: CarouselItem[] = [
-//   { src: '/images/bg/hero_bg.webp', alt: 'Hero background 1' },
-//   { src: '/images/bg/hero_bg_2.webp', alt: 'Hero background 2' },
-//   { src: '/images/bg/hero_bg_3.webp', alt: 'Hero background 3' },
-// ];
-
 const Hero = ({ slides }: HeroProps) => {
   const phoneLink =
     social.find(item => item.icon === 'phone' && item.essential && item.link)
@@ -30,7 +24,7 @@ const Hero = ({ slides }: HeroProps) => {
           {heroSection.header.uptitle}
         </p>
 
-        <div className="after:bg-accent relative mb-6 after:block after:h-px after:w-40 after:content-['']" />
+        <div className="relative mb-6 after:block after:h-px after:w-40 after:bg-white after:content-['']" />
 
         <h1 className="text-hero-title mb-4 text-3xl leading-tight font-bold md:text-5xl">
           {heroSection.header.title}
