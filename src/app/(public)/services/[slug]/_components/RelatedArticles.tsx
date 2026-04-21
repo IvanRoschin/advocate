@@ -1,10 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
+
+import { AppLink } from '@/app/components';
 
 import type { ArticlePreviewDTO } from '@/app/types';
-
 type Props = {
   articles: ArticlePreviewDTO[];
 };
@@ -25,9 +25,9 @@ export default function RelatedArticles({ articles }: Props) {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {articles.map(article => (
-          <Link
+          <AppLink
             key={article.id}
-            href={`/articles/${article.slug}`}
+            href={`/blog/${article.slug}`}
             className="border-border bg-card group rounded-2xl border transition hover:-translate-y-0.5 hover:shadow-md"
           >
             {article.src?.[0] && (
@@ -50,7 +50,7 @@ export default function RelatedArticles({ articles }: Props) {
                 {article.summary}
               </p>
             </div>
-          </Link>
+          </AppLink>
         ))}
       </div>
     </section>

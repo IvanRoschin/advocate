@@ -1,6 +1,6 @@
 import { ClientSession } from 'mongoose';
 
-import { CreateUserRequestDTO, UpdateUserDTO } from '@/app/types';
+import { CreateUserRequestDTO, UpdateUserDTO, UserRole } from '@/app/types';
 import { User } from '@/models';
 import { dbConnect } from '../server/mongoose';
 
@@ -10,6 +10,14 @@ export const userRepo = {
 
     return User.find()
       .select('_id name surname email phone role isActive createdAt')
+      .lean();
+  },
+
+  async findAdminsAndManagers() {
+    return User.find({
+      role: { $in: [UserRole.ADMIN, UserRole.MANAGER] },
+    })
+      .select('_id name role')
       .lean();
   },
 
