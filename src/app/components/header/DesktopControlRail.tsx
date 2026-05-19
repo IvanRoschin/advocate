@@ -29,7 +29,7 @@ export const DesktopControlRail = ({
         className
       )}
     >
-      <div className="scrollbar-none min-w-0 flex-1 overflow-x-auto">
+      <div className="min-w-0 flex-1 scrollbar-none overflow-x-auto">
         <NavDesktopList
           scope={scope}
           showLabelsFrom="xl"
