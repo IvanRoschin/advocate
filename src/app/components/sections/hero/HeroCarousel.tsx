@@ -11,6 +11,7 @@ import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { cn } from '@/lib';
 
 import type { SlideResponseDTO } from '@/app/types';
+
 type HeroCarouselProps = {
   items: SlideResponseDTO[];
   autoplay?: boolean;
@@ -35,17 +36,16 @@ export function HeroCarousel({
   const safeItems = React.useMemo(() => (items ?? []).filter(Boolean), [items]);
   const count = safeItems.length;
 
+  // ✅ initial index only on first render
   const [index, setIndex] = React.useState(() => {
     if (!count) return 0;
     return Math.max(0, Math.min(initialIndex, count - 1));
   });
 
-  React.useEffect(() => {
-    if (!count) return;
-    setIndex(i => Math.max(0, Math.min(i, count - 1)));
-  }, [count]);
-
   const [paused, setPaused] = React.useState(false);
+
+  // ✅ derive safe index instead of setState in effect
+  const safeIndex = count ? Math.max(0, Math.min(index, count - 1)) : 0;
 
   const go = React.useCallback(
     (nextIdx: number) => {
@@ -56,10 +56,15 @@ export function HeroCarousel({
     [count]
   );
 
-  const next = React.useCallback(() => go(index + 1), [go, index]);
-  const prev = React.useCallback(() => go(index - 1), [go, index]);
+  const next = React.useCallback(() => {
+    go(safeIndex + 1);
+  }, [go, safeIndex]);
 
-  // keyboard navigation
+  const prev = React.useCallback(() => {
+    go(safeIndex - 1);
+  }, [go, safeIndex]);
+
+  // Keyboard navigation
   React.useEffect(() => {
     if (count <= 1) return;
 
@@ -69,10 +74,13 @@ export function HeroCarousel({
     };
 
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+
+    return () => {
+      window.removeEventListener('keydown', onKey);
+    };
   }, [count, next, prev]);
 
-  // autoplay
+  // Autoplay
   React.useEffect(() => {
     if (!autoplay || count <= 1 || paused) return;
 
@@ -80,7 +88,9 @@ export function HeroCarousel({
       setIndex(i => (i + 1) % count);
     }, intervalMs);
 
-    return () => window.clearInterval(id);
+    return () => {
+      window.clearInterval(id);
+    };
   }, [autoplay, count, intervalMs, paused]);
 
   const pauseHandlers = pauseOnHover
@@ -92,16 +102,19 @@ export function HeroCarousel({
       }
     : undefined;
 
-  const current = count ? safeItems[index] : null;
+  const current = count ? safeItems[safeIndex] : null;
 
-  // 🔥 normalize current src
-  // const currentSrc = getCloudinarySrc( current?.src?.[0] );
+  // Normalize current src
+  const publicId = current?.src?.[0]
+    ? getCloudinarySrc(current.src[0])
+    : undefined;
 
-  const publicId = current?.src ? getCloudinarySrc(current?.src[0]) : undefined;
+  // Preload next slide
+  const nextIndex = count > 1 ? (safeIndex + 1) % count : 0;
+  const nextSrc = safeItems[nextIndex]?.src?.[0]
+    ? getCloudinarySrc(safeItems[nextIndex].src[0])
+    : undefined;
 
-  // 🔥 preload next slide
-  const nextIndex = count > 1 ? (index + 1) % count : 0;
-  const nextSrc = getCloudinarySrc(safeItems[nextIndex]?.src?.[0]);
   const variant = imageVariants.hero;
 
   return (
@@ -134,23 +147,12 @@ export function HeroCarousel({
               sizes={variant.sizes}
               className="object-cover"
             />
-            {/* <NextImage
-              useSkeleton
-              loader={cloudinaryLoader}
-              src={currentSrc}
-              alt={current.title}
-              fill
-              priority={index === 0}
-              sizes="100vw"
-              className="object-cover"
-              fetchPriority="high"
-            /> */}
           </motion.div>
         ) : null}
       </AnimatePresence>
 
-      {/* arrows */}
-      {showArrows && count > 1 ? (
+      {/* Arrows */}
+      {showArrows && count > 1 && (
         <>
           <button
             type="button"
@@ -176,14 +178,14 @@ export function HeroCarousel({
             <FiChevronRight size={20} />
           </button>
         </>
-      ) : null}
+      )}
 
-      {/* progress bars */}
-      {showBars && count > 1 ? (
+      {/* Progress bars */}
+      {showBars && count > 1 && (
         <div className="pointer-events-auto absolute top-6 right-6 z-50">
           <div className="flex items-center gap-2">
             {safeItems.map((it, i) => {
-              const active = i === index;
+              const active = i === safeIndex;
 
               return (
                 <button
@@ -210,7 +212,7 @@ export function HeroCarousel({
             })}
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

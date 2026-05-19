@@ -2,13 +2,12 @@
 
 import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
-import { ApiResponse } from '@/app/lib/server/ApiError';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
 import { useThemeStore } from '@/app/store/theme.store';
 import {
@@ -26,6 +25,8 @@ import type {
   PublicLeadFormValues,
 } from '@/app/types';
 import type { TurnstileInstance } from '@marsidev/react-turnstile';
+
+import type { ApiResponse } from '@/app/lib/server/ApiError';
 interface Props {
   onSubmit?: (values: LeadAdminFormSubmitValues) => Promise<void> | void;
   onClose?: () => void;
@@ -93,6 +94,8 @@ export default function LeadForm({
   source,
 }: Props) {
   const [isConverting, setIsConverting] = useState(false);
+  const [isConvertedOptimistic, setIsConvertedOptimistic] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const isAdminMode = mode === 'create' || mode === 'edit';
   const isEditMode = mode === 'edit';
@@ -107,9 +110,6 @@ export default function LeadForm({
   const shouldShowMessage =
     isAdminMode || (isPublicMode && publicVariant === 'contacts');
 
-  // const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-  // const isCaptchaConfigured = Boolean(siteKey);
-
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
 
@@ -117,16 +117,9 @@ export default function LeadForm({
 
   const turnstileRef = useRef<TurnstileInstance | null>(null);
 
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const isCaptchaConfigured = Boolean(siteKey);
 
-  // const { containerRef, captchaToken, isRendered, resetCaptcha } =
-  //   useRecaptchaWidget({
-  //     siteKey,
-  //     theme: theme === 'dark' ? 'dark' : 'light',
-  //   });
   const validationSchema = isAdminMode
     ? adminLeadSubmitSchema
     : publicVariant === 'contacts'
@@ -150,24 +143,20 @@ export default function LeadForm({
     [initialValues, isAdminMode]
   );
 
-  const [isConvertedLocal, setIsConvertedLocal] = useState(initialConverted);
-
-  useEffect(() => {
-    setIsConvertedLocal(initialConverted);
-  }, [initialConverted]);
+  const isConverted = initialConverted || isConvertedOptimistic;
 
   const canConvertToClient =
     isEditMode && typeof onConvertToClient === 'function';
 
   const handleConvertSwitch = async (checked: boolean) => {
-    if (!checked || !canConvertToClient || isConvertedLocal || isConverting) {
+    if (!checked || !canConvertToClient || isConverted || isConverting) {
       return;
     }
 
     try {
       setIsConverting(true);
       await onConvertToClient?.();
-      setIsConvertedLocal(true);
+      setIsConvertedOptimistic(true);
       toast.success('Ліда успішно конвертовано в клієнта');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Помилка конвертації');
@@ -231,7 +220,7 @@ export default function LeadForm({
 
   return (
     <div className="text-primary w-full">
-      {(isEditMode || isAdminMode) && (
+      {isAdminMode && (
         <div className="mb-4">
           <h2 className="text-primary text-xl font-semibold">
             {isEditMode ? 'Редагувати лід' : 'Додати нового ліда'}
@@ -288,9 +277,6 @@ export default function LeadForm({
 
           const showDebugHint =
             isAdminMode && submitCount > 0 && Object.keys(errors).length > 0;
-
-          const canConvertToClient =
-            isEditMode && typeof onConvertToClient === 'function';
 
           return (
             <Form className="flex max-h-[85vh] w-full flex-col overflow-hidden">
@@ -379,7 +365,7 @@ export default function LeadForm({
                           </select>
                         </label>
 
-                        {isEditMode ? (
+                        {isEditMode && (
                           <div className={panelClassName}>
                             <div className="mb-3">
                               <div className="text-primary text-sm font-medium">
@@ -398,14 +384,14 @@ export default function LeadForm({
                               id="convert-lead-to-client"
                               label="Створити клієнта з цього ліда"
                               description={
-                                isConvertedLocal
+                                isConverted
                                   ? 'Лід уже конвертовано. Повторна конвертація недоступна.'
                                   : 'Після увімкнення буде створено клієнта, а лід отримає звʼязок з clientId.'
                               }
                               labels={['Не конвертовано', 'Конвертовано']}
-                              checked={isConvertedLocal}
+                              checked={isConverted}
                               disabled={
-                                isConvertedLocal ||
+                                isConverted ||
                                 isConverting ||
                                 !canConvertToClient
                               }
@@ -416,13 +402,13 @@ export default function LeadForm({
                               labelPosition="top"
                             />
 
-                            {initialValues?.clientId ? (
+                            {initialValues?.clientId && (
                               <div className="text-secondary mt-3 text-xs break-all">
                                 Client ID: {initialValues.clientId}
                               </div>
-                            ) : null}
+                            )}
                           </div>
-                        ) : null}
+                        )}
                       </div>
 
                       <div className="mt-4">
@@ -513,7 +499,7 @@ export default function LeadForm({
                         adminLeadFormSchema
                       </code>
                       є поле, якого немає у видимій формі, або enum статусів не
-                      збігається з значеннями select.
+                      збігається зі значеннями select.
                     </div>
                   )}
                 </div>
