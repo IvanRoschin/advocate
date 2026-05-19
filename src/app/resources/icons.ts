@@ -53,6 +53,7 @@ import {
   FiSun,
   FiUser,
 } from 'react-icons/fi';
+import { GoLaw } from 'react-icons/go';
 import { GrBusinessService } from 'react-icons/gr';
 import {
   HiArrowRight,
@@ -84,6 +85,7 @@ import {
 } from 'react-icons/si';
 
 export const iconLibrary = {
+  attorney: GoLaw,
   arrowUpRight: HiArrowUpRight,
   arrowRight: HiArrowRight,
   email: HiEnvelope,

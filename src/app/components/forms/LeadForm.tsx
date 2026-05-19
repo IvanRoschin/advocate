@@ -2,12 +2,11 @@
 
 import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
-import { useRecaptchaWidget } from '@/app/hooks/useRecaptchaWidget';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { ApiResponse } from '@/app/lib/server/ApiError';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
@@ -18,6 +17,7 @@ import {
   publicLeadHomeSchema,
 } from '@/app/types';
 import { Input, Switcher, Textarea } from '@/components';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 import type {
   AdminLeadFormValues,
@@ -25,6 +25,7 @@ import type {
   LeadResponseDTO,
   PublicLeadFormValues,
 } from '@/app/types';
+import type { TurnstileInstance } from '@marsidev/react-turnstile';
 interface Props {
   onSubmit?: (values: LeadAdminFormSubmitValues) => Promise<void> | void;
   onClose?: () => void;
@@ -106,19 +107,26 @@ export default function LeadForm({
   const shouldShowMessage =
     isAdminMode || (isPublicMode && publicVariant === 'contacts');
 
-  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-  const isCaptchaConfigured = Boolean(siteKey);
+  // const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  // const isCaptchaConfigured = Boolean(siteKey);
 
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
 
   const theme = useThemeStore(state => state.theme);
 
-  const { containerRef, captchaToken, isRendered, resetCaptcha } =
-    useRecaptchaWidget({
-      siteKey,
-      theme: theme === 'dark' ? 'dark' : 'light',
-    });
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
+
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const isCaptchaConfigured = Boolean(siteKey);
+
+  // const { containerRef, captchaToken, isRendered, resetCaptcha } =
+  //   useRecaptchaWidget({
+  //     siteKey,
+  //     theme: theme === 'dark' ? 'dark' : 'light',
+  //   });
   const validationSchema = isAdminMode
     ? adminLeadSubmitSchema
     : publicVariant === 'contacts'
@@ -175,12 +183,12 @@ export default function LeadForm({
     start();
 
     if (shouldUseCaptcha && !isCaptchaConfigured) {
-      toast.error('reCAPTCHA не налаштована');
+      toast.error('Cloudflare Turnstile не налаштований');
       done();
       return;
     }
 
-    if (shouldUseCaptcha && !captchaToken) {
+    if (shouldUseCaptcha && !turnstileToken) {
       toast.error('Будь ласка, підтвердіть, що ви не робот');
       done();
       return;
@@ -194,7 +202,7 @@ export default function LeadForm({
         name: values.name.trim(),
         email: values.email.trim(),
         phone: values.phone.trim(),
-        recaptchaToken: captchaToken,
+        turnstileToken,
         ...(normalizedMessage ? { message: normalizedMessage } : {}),
       };
 
@@ -208,9 +216,14 @@ export default function LeadForm({
 
       toast.success('Ваша заявка успішно надіслана!');
       resetForm();
-      resetCaptcha();
+
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Помилка створення');
+
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
     } finally {
       done();
     }
@@ -268,7 +281,7 @@ export default function LeadForm({
       >
         {({ isSubmitting, values, setFieldValue, submitCount, errors }) => {
           const publicCaptchaBlocked =
-            isPublicMode && shouldUseCaptcha && !isRendered;
+            isPublicMode && shouldUseCaptcha && !turnstileToken;
 
           const isSubmitDisabled =
             isSubmitting || isConverting || publicCaptchaBlocked;
@@ -456,20 +469,40 @@ export default function LeadForm({
                     />
                   )}
 
-                  {shouldUseCaptcha && (
+                  {shouldUseCaptcha && siteKey && (
                     <motion.section
                       {...fieldMotion(0.25)}
                       className={`${cardClassName} p-4 sm:p-5`}
                     >
-                      <div className="flex items-center justify-center">
-                        <div ref={containerRef} />
+                      <div className="flex justify-center">
+                        <Turnstile
+                          ref={turnstileRef}
+                          siteKey={siteKey}
+                          options={{
+                            theme: theme === 'dark' ? 'dark' : 'light',
+                            size: 'normal',
+                            language: 'uk',
+                          }}
+                          onSuccess={token => {
+                            setTurnstileToken(token);
+                          }}
+                          onExpire={() => {
+                            setTurnstileToken(null);
+                          }}
+                          onError={() => {
+                            setTurnstileToken(null);
+                            toast.error(
+                              'Помилка перевірки Cloudflare Turnstile'
+                            );
+                          }}
+                        />
                       </div>
 
-                      {!isRendered ? (
+                      {!turnstileToken && (
                         <p className="text-secondary mt-3 text-center text-sm">
-                          Завантаження перевірки безпеки...
+                          Підтвердіть, що ви не робот.
                         </p>
-                      ) : null}
+                      )}
                     </motion.section>
                   )}
 
