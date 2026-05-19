@@ -54,7 +54,7 @@ const Input = memo(function Input({
         max={max}
         step={step}
         inputMode={inputMode}
-        className={`peer input-field w-full rounded-xl px-4 pt-6 pb-2 transition-all ${
+        className={`peer input-field w-full rounded-xl px-4 pt-8 pb-2 transition-all ${
           prefixIcon ? 'pl-10' : 'pl-4'
         } ${hasError ? 'border-red-500' : ''} ${
           disabled ? 'cursor-not-allowed opacity-60' : ''
