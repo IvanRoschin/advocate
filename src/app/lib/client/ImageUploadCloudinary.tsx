@@ -37,11 +37,9 @@ const ImageUploadCloudinary: React.FC<ImageUploadCloudinaryProps> = ({
   const handleUpload = useCallback(
     (url: string) => {
       if (!url) return;
-
       const nextValues = multiple
         ? Array.from(new Set([...previews, url]))
         : [url];
-
       setFieldValue(fieldName, nextValues);
       unlockPageScroll();
     },
@@ -59,38 +57,24 @@ const ImageUploadCloudinary: React.FC<ImageUploadCloudinaryProps> = ({
   return (
     <div>
       <CldUploadWidget
-        options={{
-          multiple,
-          uploadPreset,
-        }}
+        uploadPreset={uploadPreset}
+        options={{ multiple }}
         onSuccess={result => {
           const info = result?.info as CloudinaryUploadWidgetInfo | string;
-          // const value =
-          //   typeof info === 'string'
-          //     ? info
-          //     : (info?.public_id ?? info?.secure_url ?? '');
-
           const url =
             typeof info === 'string'
               ? info
               : (info?.secure_url ?? info?.url ?? '');
-
-          if (url) {
-            handleUpload(url);
-          } else {
-            unlockPageScroll();
-          }
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          url ? handleUpload(url) : unlockPageScroll();
         }}
-        onError={() => {
-          unlockPageScroll();
-        }}
-        onClose={() => {
-          unlockPageScroll();
-        }}
+        onError={unlockPageScroll}
+        onClose={unlockPageScroll}
       >
         {({ open }) => (
           <button
             type="button"
+            disabled={!open}
             onClick={() => open?.()}
             className="relative flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed p-4 text-neutral-600 transition hover:opacity-80"
           >
