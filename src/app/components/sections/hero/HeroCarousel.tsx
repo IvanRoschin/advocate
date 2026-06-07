@@ -6,7 +6,6 @@ import * as React from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 import { imageVariants } from '@/app/config/imageVariants';
-import { cloudinaryLoader } from '@/app/lib/cloudinary/cloudinaryLoader';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { cn } from '@/lib';
 
@@ -109,27 +108,10 @@ export function HeroCarousel({
     ? getCloudinarySrc(current.src[0])
     : undefined;
 
-  // Preload next slide
-  const nextIndex = count > 1 ? (safeIndex + 1) % count : 0;
-  const nextSrc = safeItems[nextIndex]?.src?.[0]
-    ? getCloudinarySrc(safeItems[nextIndex].src[0])
-    : undefined;
-
   const variant = imageVariants.hero;
 
   return (
     <div className={cn('absolute inset-0', className)} {...pauseHandlers}>
-      {nextSrc ? (
-        <link
-          rel="preload"
-          as="image"
-          href={cloudinaryLoader({
-            src: nextSrc,
-            width: 1200,
-          })}
-        />
-      ) : null}
-
       <AnimatePresence mode="wait">
         {current && publicId ? (
           <motion.div

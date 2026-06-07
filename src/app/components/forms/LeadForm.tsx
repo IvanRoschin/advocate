@@ -280,7 +280,7 @@ export default function LeadForm({
 
           return (
             <Form className="flex max-h-[85vh] w-full flex-col overflow-hidden">
-              <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+              <div className="min-h-0 flex-1 pr-1">
                 <div className="space-y-3">
                   <motion.section
                     {...fieldMotion(0.1)}
