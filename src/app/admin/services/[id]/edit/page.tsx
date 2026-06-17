@@ -16,13 +16,13 @@ export default async function EditServicePage({
 
   const [serviceRaw, articleRaw] = await Promise.all([
     serviceService.getById(id),
-    articleService.getAll(),
+    articleService.getPublicList(),
   ]);
 
   const service = mapServiceToResponse(serviceRaw);
 
-  const articles = articleRaw.map(a => ({
-    id: String(a._id ?? a.id),
+  const articles = articleRaw.items.map(a => ({
+    id: String(a.id),
     title: a.title,
   }));
 

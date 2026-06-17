@@ -14,8 +14,8 @@ export function ArticleListPreview({
   baseHref = '/blog',
   className,
 }: {
-  items:      ArticleListItemDto[];
-  baseHref?:  string;
+  items: ArticleListItemDto[];
+  baseHref?: string;
   className?: string;
 }) {
   const variant = imageVariants.card;
@@ -23,7 +23,7 @@ export function ArticleListPreview({
   return (
     <div className={cn('grid gap-4', className)}>
       {items.map((a, index) => {
-        const href     = `${baseHref}/${a.slug || a.id}`;
+        const href = `${baseHref}/${a.slug || a.id}`;
         const publicId = a.src ? getCloudinarySrc(a.src) : undefined;
 
         return (
@@ -93,7 +93,11 @@ export function ArticleListPreview({
                             <span className="sr-only">Tags</span>
                           </span>
                           {a.tags.slice(0, 4).map(t => (
-                            <Badge key={t} variant="outline" className="text-xs">
+                            <Badge
+                              key={t}
+                              variant="outline"
+                              className="text-xs"
+                            >
                               {t}
                             </Badge>
                           ))}

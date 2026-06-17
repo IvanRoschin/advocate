@@ -14,7 +14,7 @@ export default async function ReviewCreatePage() {
     label: service.title,
   }));
 
-  const articleOptions = articles.map(article => ({
+  const articleOptions = articles.items.map(article => ({
     value: article.id,
     label: article.title,
   }));
