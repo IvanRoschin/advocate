@@ -3,6 +3,7 @@ export { default as Breadcrumbs } from '@/components/common/Breadcrumbs';
 export { default as DeleteConfirmation } from '@/components/common/DeleteConfirmation';
 export { default as EmptyState } from '@/components/common/EmptyState';
 export { default as Heading } from '@/components/common/Heading';
+export { InfiniteScroll } from '@/components/common/InfiniteScroll';
 export { default as Loader } from '@/components/common/Loader';
 export { default as Modal } from '@/components/common/Modal';
 export { default as ModalNotification } from '@/components/common/ModalNotification';

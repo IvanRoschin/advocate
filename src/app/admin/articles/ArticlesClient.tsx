@@ -4,6 +4,10 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
+import {
+  InfiniteScroll,
+  PageResult,
+} from '@/app/components/common/InfiniteScroll';
 import { apiUrl } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -102,6 +106,21 @@ export default function ArticlesClient({
     [router]
   );
 
+  const getArticlesPage = async (
+    page: number
+  ): Promise<PageResult<ArticleResponseDTO>> => {
+    const response = await fetch(
+      apiUrl(`/api/admin/articles?page=${page}&limit=5`)
+    );
+    const json = (await response.json()) as {
+      ok: boolean;
+      data: ArticleResponseDTO[];
+      meta: { page: number; limit: number; hasMore: boolean };
+    };
+
+    return { data: json.data, hasMore: json.meta.hasMore };
+  };
+
   const handleCreate = useCallback(() => {
     router.push('/admin/articles/new');
   }, [router]);
@@ -161,7 +180,39 @@ export default function ArticlesClient({
             className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
         </AdminTableToolbar>
-
+        <InfiniteScroll<ArticleResponseDTO>
+          initialData={initialArticles}
+          loadMore={getArticlesPage}
+          emptyState={
+            <EmptyState
+              title="Статті відсутні"
+              subtitle="Додайте першу статтю"
+              actionLabel="Додати нову статтю"
+              actionOnClick={handleCreate}
+            />
+          }
+          endMessage={<p className="subtitle">Усі статті завантажено</p>}
+          renderContent={articles => (
+            <AdminTable
+              data={articles}
+              columns={columns}
+              isLoading={false}
+              emptyMessage="Статей поки немає"
+              mobileRender={article => (
+                <ArticleMobileCard
+                  row={article}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  authorName={authorNameById.get(article.authorId) ?? '—'}
+                  categoryTitle={
+                    categoryTitleById.get(article.categoryId) ?? '—'
+                  }
+                />
+              )}
+            />
+          )}
+        />
+        {/* 
         <AdminTable
           data={articles}
           columns={columns}
@@ -176,7 +227,7 @@ export default function ArticlesClient({
               categoryTitle={categoryTitleById.get(article.categoryId) ?? '—'}
             />
           )}
-        />
+        /> */}
       </AdminPageContainer>
 
       {renderDeleteModal}
