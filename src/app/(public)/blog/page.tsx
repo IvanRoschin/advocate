@@ -13,7 +13,7 @@ type BlogPageProps = {
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const { category } = await searchParams;
 
-  const [items, recent, categories] = await Promise.all([
+  const [{ items, hasMore }, recent, categories] = await Promise.all([
     articleService.getPublicList({ categorySlug: category }),
     articleService.getRecentPublic(5),
     articleService.getPublicCategoriesWithCounts(),
@@ -21,7 +21,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   const sectionProps: BlogSectionProps = {
     category,
-    items,
+    initialItems: items,
+    hasMore,
     recent,
     categories,
   };

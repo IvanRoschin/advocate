@@ -35,10 +35,12 @@ export default async function ReviewFormContainer(props: Props) {
   }));
 
   const articles = await articleService.getPublicList({ limit: 100 });
-  const articleOptions: ReviewTargetOptionDto[] = articles.map(article => ({
-    value: article.id,
-    label: article.title,
-  }));
+  const articleOptions: ReviewTargetOptionDto[] = articles.items.map(
+    article => ({
+      value: article.id,
+      label: article.title,
+    })
+  );
 
   return (
     <ReviewForm

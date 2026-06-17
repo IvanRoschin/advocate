@@ -18,7 +18,7 @@ import type {
 } from '@/app/types';
 
 /** Admin: model/lean -> ArticleResponseDTO */
-type ArticleLike = {
+export type ArticleLike = {
   _id: Types.ObjectId | string;
   slug: string;
   status: ArticleResponseDTO['status'];

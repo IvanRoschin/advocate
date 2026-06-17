@@ -1,31 +1,28 @@
 import type { ReactNode } from 'react';
 
 import Footer from '@/app/components/footer/Footer';
+import { articleService } from '@/app/lib/services/article.service';
 import { blog } from '@/app/resources/content';
 import type { BlogSectionKey } from '@/app/resources/content/pages/blog.layout';
+import { ArticleListItemDto } from '@/app/types';
 import { Header, ScrollToTopButton, Socials } from '@/components';
-import { ArticleListPreview } from './ArticleListPreview';
+import { BlogArticlesFeed } from './BlogArticlesFeed';
 import BlogAside from './BlogAside';
+/* --------------------------------- Types ---------------------------------- */
+
 export type BlogSectionProps = {
   category?: string;
-  items: Awaited<
-    ReturnType<
-      typeof import('@/app/lib/services/article.service').articleService.getPublicList
-    >
-  >;
-  recent: Awaited<
-    ReturnType<
-      typeof import('@/app/lib/services/article.service').articleService.getRecentPublic
-    >
-  >;
+  initialItems: ArticleListItemDto[];
+  hasMore: boolean;
+  recent: Awaited<ReturnType<typeof articleService.getRecentPublic>>;
   categories: Awaited<
-    ReturnType<
-      typeof import('@/app/lib/services/article.service').articleService.getPublicCategoriesWithCounts
-    >
+    ReturnType<typeof articleService.getPublicCategoriesWithCounts>
   >;
 };
 
 export type BlogSectionComponent = (props: BlogSectionProps) => ReactNode;
+
+/* -------------------------------- Sections -------------------------------- */
 
 const HeroSection: BlogSectionComponent = () => (
   <section className="container pt-10 lg:pt-14">
@@ -33,11 +30,9 @@ const HeroSection: BlogSectionComponent = () => (
       <p className="text-accent mb-2 text-sm font-semibold tracking-[0.18em] uppercase">
         {blog.eyebrow}
       </p>
-
       <h1 className="title-app text-accent text-3xl font-semibold tracking-tight lg:text-4xl">
         {blog.heading}
       </h1>
-
       <p className="text-app mt-4 text-base leading-7">{blog.lead}</p>
     </div>
   </section>
@@ -57,20 +52,20 @@ const FiltersSection: BlogSectionComponent = ({
   </aside>
 );
 
-const ArticlesSection: BlogSectionComponent = ({ items }) => (
+const ArticlesSection: BlogSectionComponent = ({ initialItems, hasMore }) => (
   <section className="min-w-0">
-    <ArticleListPreview items={items} baseHref={blog.path} />
+    <BlogArticlesFeed initialItems={initialItems} hasMore={hasMore} />
   </section>
 );
 
 const PaginationSection: BlogSectionComponent = () => null;
-
 const SubscribeSection: BlogSectionComponent = () => null;
-
 const SocialsSection: BlogSectionComponent = () => <Socials />;
 const HeaderSection: BlogSectionComponent = () => <Header />;
 const FooterSection: BlogSectionComponent = () => <Footer />;
 const ScrollToTopSection: BlogSectionComponent = () => <ScrollToTopButton />;
+
+/* ------------------------------ Registry ---------------------------------- */
 
 export const BLOG_SECTIONS: Record<BlogSectionKey, BlogSectionComponent> = {
   socials: SocialsSection,
