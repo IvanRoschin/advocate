@@ -1,16 +1,27 @@
 import { NextResponse } from 'next/server';
 
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { articleService } from '@/app/lib/services';
+import { articleService } from '@/app/lib/services/article.service';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    await dbConnect();
+    const { searchParams } = new URL(req.url);
 
-    const articles = await articleService.getPublicList();
+    const page = Math.max(1, Number(searchParams.get('page') ?? 1));
+    const limit = Math.max(1, Number(searchParams.get('limit') ?? 5));
+    const categorySlug = searchParams.get('category') ?? undefined;
 
-    return NextResponse.json({ ok: true, data: articles });
+    const result = await articleService.loadMorePublic({
+      page,
+      limit,
+      categorySlug,
+    });
+
+    return NextResponse.json({
+      ok: true,
+      data: result.data,
+      meta: { page, limit, hasMore: result.hasMore },
+    });
   } catch (err) {
     return errorToResponse(err);
   }

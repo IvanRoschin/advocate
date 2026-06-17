@@ -1,159 +1,97 @@
-// 'use client';
+'use client';
 
-// import { useCallback, useEffect, useMemo, useState } from 'react';
-// import { useInView } from 'react-intersection-observer';
-// import { TailSpin } from 'react-loader-spinner';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { TailSpin } from 'react-loader-spinner';
 
-// import { getAllGoodsAction } from '@/actions/goods';
-// import { GoodsSection } from '@/app/(admin)/components';
-// import { useAppStore } from '@/app/store/appStore';
-// import { IGoodUI } from '@/types/IGood';
-// import { UserRole } from '@/types/IUser';
-// import { ISearchParams } from '@/types/searchParams';
+export interface PageResult<T> {
+  data: T[];
+  hasMore: boolean;
+}
 
-// import EmptyState from './EmptyState';
+interface InfiniteScrollProps<T> {
+  initialData: T[];
+  loadMore: (page: number) => Promise<PageResult<T>>;
+  renderContent: (items: T[]) => ReactNode;
+  emptyState?: ReactNode;
+  endMessage?: ReactNode;
+}
 
-// interface InfiniteScrollProps {
-//   initialGoods: IGoodUI[];
-//   searchParams: ISearchParams;
-//   role: UserRole;
-// }
+export function InfiniteScroll<T>({
+  initialData,
+  loadMore,
+  renderContent,
+  emptyState,
+  endMessage,
+}: InfiniteScrollProps<T>) {
+  const [items, setItems] = useState<T[]>(initialData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [allLoaded, setAllLoaded] = useState(false);
 
-// export default function InfiniteScroll({
-//   initialGoods,
-//   searchParams,
-//   role,
-// }: InfiniteScrollProps) {
-//   const [goods, setGoods] = useState<IGoodUI[]>(initialGoods || []);
-//   const [pagesLoaded, setPagesLoaded] = useState(1);
-//   const [allGoodsLoaded, setAllGoodsLoaded] = useState(false);
-//   const [isFetchingMore, setIsFetchingMore] = useState(false);
-//   const [firstLoadDone, setFirstLoadDone] = useState(false);
-//   const { filters } = useAppStore();
+  const pageRef = useRef(1);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
-//   const { ref, inView } = useInView({ threshold: 0.5 });
+  const isLoadingRef = useRef(false);
 
-//   // Подписка на фильтры
-//   const minPrice = filters.minPrice;
-//   const maxPrice = filters.maxPrice;
-//   const selectedBrands = filters.selectedBrands;
-//   const selectedCategory = filters.selectedCategory;
-//   const sort = filters.sort;
+  const handleLoadMore = useCallback(async () => {
+    if (isLoadingRef.current || allLoaded) return;
 
-//   // Массив _id брендов для фильтрации
-//   const brandIds = useMemo(
-//     () => selectedBrands?.map(b => b.value).filter(Boolean) ?? [],
-//     [selectedBrands]
-//   );
+    isLoadingRef.current = true;
+    setIsLoading(true);
 
-//   const sortParam = sort === 'asc' || sort === 'desc' ? sort : '';
+    try {
+      const nextPage = pageRef.current + 1;
+      const result = await loadMore(nextPage);
 
-//   // ===== Фильтрация при изменении фильтров =====
-//   useEffect(() => {
-//     const fetchInitialGoods = async () => {
-//       setIsFetchingMore(true);
+      if (!result.hasMore || result.data.length === 0) {
+        setAllLoaded(true);
+      }
 
-//       const filteredGoods = await getAllGoodsAction({
-//         ...searchParams,
-//         page: '1',
-//         low: minPrice ?? null,
-//         high: maxPrice ?? null,
-//         brands: brandIds,
-//         category: selectedCategory ?? '',
-//         sort: sortParam,
-//       });
+      if (result.data.length > 0) {
+        pageRef.current = nextPage;
+        setItems(prev => [...prev, ...result.data]);
+      }
+    } finally {
+      isLoadingRef.current = false;
+      setIsLoading(false);
+    }
+  }, [allLoaded, loadMore]);
 
-//       if (filteredGoods?.goods?.length) {
-//         setGoods(filteredGoods.goods);
-//         setPagesLoaded(1);
-//         setAllGoodsLoaded(false);
-//       } else {
-//         setGoods([]);
-//         setAllGoodsLoaded(true);
-//       }
+  const sentinelRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      observerRef.current?.disconnect();
+      if (!node || allLoaded) return;
 
-//       setIsFetchingMore(false);
-//       setFirstLoadDone(true);
-//     };
+      observerRef.current = new IntersectionObserver(
+        entries => {
+          if (entries[0]?.isIntersecting) void handleLoadMore();
+        },
+        { threshold: 0.2 }
+      );
+      observerRef.current.observe(node);
+    },
+    [handleLoadMore, allLoaded]
+  );
 
-//     const handler = setTimeout(fetchInitialGoods, 300);
+  useEffect(() => () => observerRef.current?.disconnect(), []);
 
-//     return () => clearTimeout(handler);
-//   }, [minPrice, maxPrice, brandIds, sortParam, selectedCategory, searchParams]);
+  if (items.length === 0) return <>{emptyState}</>;
 
-//   // ===== Подгрузка следующих страниц =====
-//   const loadMoreGoods = useCallback(async () => {
-//     if (isFetchingMore || allGoodsLoaded) return;
-//     setIsFetchingMore(true);
-
-//     const nextPage = pagesLoaded + 1;
-//     const newGoods = await getAllGoodsAction({
-//       ...searchParams,
-//       page: nextPage.toString(),
-//       low: minPrice ?? null,
-//       high: maxPrice ?? null,
-//       brands: brandIds,
-//       category: selectedCategory ?? '',
-//       sort: sortParam,
-//     });
-
-//     if (newGoods?.goods?.length > 0) {
-//       setGoods(prev => [...prev, ...newGoods.goods]);
-//       setPagesLoaded(nextPage);
-//     } else {
-//       setAllGoodsLoaded(true);
-//     }
-
-//     setIsFetchingMore(false);
-//   }, [
-//     brandIds,
-//     selectedCategory,
-//     minPrice,
-//     maxPrice,
-//     sortParam,
-//     isFetchingMore,
-//     allGoodsLoaded,
-//     pagesLoaded,
-//     searchParams,
-//   ]);
-
-//   // Автоподгрузка при скролле
-//   useEffect(() => {
-//     if (inView && !allGoodsLoaded && !isFetchingMore) {
-//       loadMoreGoods();
-//     }
-//   }, [inView, allGoodsLoaded, isFetchingMore, loadMoreGoods]);
-
-//   return (
-//     <>
-//       <section>
-//         <GoodsSection
-//           goods={goods}
-//           role={role}
-//           searchParams={searchParams}
-//           isLoading={isFetchingMore}
-//           firstLoadDone={firstLoadDone}
-//         />
-//       </section>
-
-//       <section className="flex flex-col items-center justify-center py-10 gap-4">
-//         {isFetchingMore ? (
-//           <div className="flex items-center justify-center py-10">
-//             <TailSpin
-//               visible={true}
-//               height="40"
-//               width="40"
-//               color="#ea580c"
-//               ariaLabel="tail-spin-loading"
-//               radius="1"
-//             />
-//           </div>
-//         ) : !firstLoadDone ? null : goods.length === 0 ? (
-//           <EmptyState showReset goHomeAfterReset />
-//         ) : allGoodsLoaded ? (
-//           <p className="subtitle text-center">Це всі 🤷‍♂️ наявні Товари 🛒</p>
-//         ) : null}
-//       </section>
-//     </>
-//   );
-// }
+  return (
+    <>
+      {renderContent(items)}
+      {!allLoaded && <div ref={sentinelRef} className="h-10 w-full" />}
+      <div className="flex justify-center py-6">
+        {isLoading && (
+          <TailSpin
+            visible
+            height={40}
+            width={40}
+            color="#ea580c"
+            ariaLabel="loading"
+          />
+        )}
+        {!isLoading && allLoaded && endMessage}
+      </div>
+    </>
+  );
+}

@@ -5,12 +5,20 @@ import { dbConnect } from '@/app/lib/server/mongoose';
 import { articleService } from '@/app/lib/services/article.service';
 import { CreateArticleRequestDTO, createArticleSchema } from '@/app/types';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     await dbConnect();
+    const { searchParams } = new URL(req.url);
+    const page = Number(searchParams.get('page') ?? 1);
+    const limit = Number(searchParams.get('limit') ?? 5);
 
-    const articles = await articleService.getAll();
-    return NextResponse.json({ ok: true, data: articles });
+    const result = await articleService.getAllPaginated({ page, limit });
+
+    return NextResponse.json({
+      ok: true,
+      data: result.items,
+      meta: { page, limit, hasMore: result.hasMore },
+    });
   } catch (err) {
     return errorToResponse(err);
   }

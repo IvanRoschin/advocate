@@ -1,5 +1,3 @@
-'use client';
-
 import { Calendar, Tag } from 'lucide-react';
 import { CldImage } from 'next-cloudinary';
 import Link from 'next/link';
@@ -7,27 +5,17 @@ import Link from 'next/link';
 import { imageVariants } from '@/app/config/imageVariants';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { cn, formatDate } from '@/app/lib/utils';
+import { ArticleListItemDto } from '@/app/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-
-export type ArticleListItem = {
-  id: string;
-  slug: string;
-  title: string;
-  summary: string;
-  publishedAt?: string;
-  tags: string[];
-  src?: string;
-  category?: { id: string; title: string; slug: string };
-};
 
 export function ArticleListPreview({
   items,
   baseHref = '/blog',
   className,
 }: {
-  items: ArticleListItem[];
-  baseHref?: string;
+  items:      ArticleListItemDto[];
+  baseHref?:  string;
   className?: string;
 }) {
   const variant = imageVariants.card;
@@ -35,8 +23,9 @@ export function ArticleListPreview({
   return (
     <div className={cn('grid gap-4', className)}>
       {items.map((a, index) => {
-        const href = `${baseHref}/${a.slug || a.id}`;
+        const href     = `${baseHref}/${a.slug || a.id}`;
         const publicId = a.src ? getCloudinarySrc(a.src) : undefined;
+
         return (
           <Link
             key={`${a.id}-${index}`}
@@ -45,7 +34,6 @@ export function ArticleListPreview({
             prefetch={false}
           >
             <Card className="border-border bg-card text-card-foreground overflow-hidden transition-all hover:-translate-y-px hover:shadow-lg">
-              {' '}
               <CardContent className="p-0">
                 <div className="flex flex-col gap-0 sm:flex-row">
                   {/* Cover */}
@@ -97,7 +85,6 @@ export function ArticleListPreview({
                       {a.summary}
                     </p>
 
-                    {/* Tags */}
                     <div className="mt-1 flex flex-wrap items-center gap-2">
                       {a.tags?.length ? (
                         <>
@@ -106,11 +93,7 @@ export function ArticleListPreview({
                             <span className="sr-only">Tags</span>
                           </span>
                           {a.tags.slice(0, 4).map(t => (
-                            <Badge
-                              key={t}
-                              variant="outline"
-                              className="text-xs"
-                            >
+                            <Badge key={t} variant="outline" className="text-xs">
                               {t}
                             </Badge>
                           ))}

@@ -1,18 +1,17 @@
 import { articleService } from '@/app/lib/services/article.service';
 import { categoryService } from '@/app/lib/services/category.service';
 import { userService } from '@/app/lib/services/user.service';
-import { ArticleResponseDTO, mapArticleToResponse } from '@/app/types';
 import ArticlesClient from './ArticlesClient';
 
 export const dynamic = 'force-dynamic';
 
 const ArticlesPage = async () => {
   const [articlesRaw, usersRaw, categoriesRaw] = await Promise.all([
-    articleService.getAll(),
+    articleService.getAllPaginated({ page: 1, limit: 5 }),
     userService.getAll(),
     categoryService.getAll(),
   ]);
-  const articles: ArticleResponseDTO[] = articlesRaw.map(mapArticleToResponse);
+
   const users = usersRaw.map(u => ({
     id: String(u._id ?? u._id),
     name: u.name,
@@ -24,7 +23,7 @@ const ArticlesPage = async () => {
 
   return (
     <ArticlesClient
-      initialArticles={articles}
+      initialArticles={articlesRaw.items}
       users={users}
       categories={categories}
     />
