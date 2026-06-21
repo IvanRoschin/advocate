@@ -1,15 +1,18 @@
 import { routes } from '@/app/config/routes';
-import { sendEmail } from '@/app/lib';
-import { userRepo } from '@/app/lib/repositories/user.repo';
-import { ValidationError } from '@/app/lib/server/errors/httpErrors';
-import { tokenService } from '@/app/lib/services/token.service';
-import { EmailTemplateType } from '@/app/templates/email';
+import { EmailTemplateType } from '@/app/templates/email/types';
 import { TokenType } from '@/app/types';
-
+import { userRepo } from '../repositories';
+import { env } from '../server/env/serverEnv';
+import { ValidationError } from '../server/errors/httpErrors';
+import { sendEmail } from '../server/mail/emailService';
+import { dbConnect } from '../server/mongoose';
+import { tokenService } from './token.service';
 import { userService } from './user.service';
 
 export const authService = {
   async requestPasswordReset(email: string) {
+    await dbConnect();
+
     const normalizedEmail = email.trim().toLowerCase();
 
     const user = await userRepo.findByEmail(normalizedEmail);
@@ -18,7 +21,7 @@ export const authService = {
       return {
         ok: false,
         code: 'USER_NOT_FOUND',
-        message: 'Користувача з таким email не знайдено.',
+        message: 'Користувача не знайдено.',
       };
     }
 
@@ -28,37 +31,31 @@ export const authService = {
       email: user.email,
     });
 
-    const baseUrl = process.env.NEXT_PUBLIC_URL || process.env.NEXTAUTH_URL;
-
-    if (!baseUrl) {
-      throw new ValidationError('Не налаштовано базовий URL застосунку');
-    }
-
-    const resetPasswordUrl = `${baseUrl}${routes.public.auth.restorePassword}?token=${tokenDoc.token}`;
+    const resetUrl = `${env.baseUrl}${routes.public.auth.restorePassword}?token=${tokenDoc.token}`;
 
     await sendEmail({
       to: user.email,
       type: EmailTemplateType.RESET_PASSWORD,
       props: {
         name: user.name,
-        resetLink: resetPasswordUrl,
+        resetLink: resetUrl,
       },
     });
 
     return {
       ok: true,
       code: 'EMAIL_SENT',
-      message: 'Інструкції для відновлення пароля надіслано на email.',
+      message: 'Лист відправлено.',
     };
   },
 
-  async resetPassword(tokenValue: string, newPassword: string) {
-    const token = await tokenService.verify(
-      tokenValue,
-      TokenType.RESET_PASSWORD
-    );
+  async resetPassword(token: string, newPassword: string) {
+    await dbConnect();
 
-    const user = await userRepo.findById(token.userId.toString());
+    const tokenDoc = await tokenService.verify(token, TokenType.RESET_PASSWORD);
+
+    const user = await userRepo.findById(tokenDoc.userId.toString());
+
     if (!user) {
       throw new ValidationError('Користувача не знайдено');
     }
@@ -67,7 +64,7 @@ export const authService = {
       password: newPassword,
     });
 
-    await tokenService.markUsed(token);
+    await tokenService.markUsed(tokenDoc);
 
     return {
       ok: true,

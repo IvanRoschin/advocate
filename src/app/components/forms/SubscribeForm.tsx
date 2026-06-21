@@ -7,12 +7,12 @@ import { toast } from 'sonner';
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
 import subscriberSchema from '@/app/helpers/validationSchemas/subscriber.schema';
+import { env } from '@/app/lib/server/env/serverEnv';
 import { useThemeStore } from '@/app/store/theme.store';
 import { Input } from '@/components';
 import { Turnstile } from '@marsidev/react-turnstile';
 
 import type { TurnstileInstance } from '@marsidev/react-turnstile';
-
 type Props = {
   variant?: 'default' | 'aside';
 };
@@ -22,7 +22,7 @@ const SubscribeForm = ({ variant = 'default' }: Props) => {
 
   const theme = useThemeStore(state => state.theme);
 
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const siteKey = env.cloudflare.turnstileSiteKey;
   const isCaptchaConfigured = Boolean(siteKey);
 
   const turnstileRef = useRef<TurnstileInstance | null>(null);

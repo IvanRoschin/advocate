@@ -1,22 +1,20 @@
+import { env } from '../server/env/serverEnv';
+
 export const uploadCloudinary = async (file: File) => {
   if (!file) {
     return;
   }
+  const cloudName = env.cloudinary.cloudName;
   const data = new FormData();
+
   data.append('file', file);
-  data.append(
-    'upload_preset',
-    process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? ''
-  );
-  data.append(
-    'cloud_name',
-    process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? ''
-  );
+  data.append('upload_preset', env.cloudinary.uploadPreset ?? '');
+  data.append('cloud_name', cloudName ?? '');
   data.append('folder', 'Cloudinary-React');
 
   try {
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
       {
         method: 'POST',
         body: data,

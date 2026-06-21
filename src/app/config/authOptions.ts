@@ -5,6 +5,7 @@ import GoogleProvider from 'next-auth/providers/google';
 
 import User from '@/models/User';
 import { resolveActiveClientAccess } from '../lib/auth/resolveActiveClientAccess';
+import { env } from '../lib/server/env/serverEnv';
 import { dbConnect } from '../lib/server/mongoose';
 import { routes } from './routes';
 declare module 'next-auth' {
@@ -149,8 +150,8 @@ export const authOptions: NextAuthOptions = {
     }),
 
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: env.google.clientId,
+      clientSecret: env.google.clientSecret,
 
       async profile(profile) {
         await dbConnect();

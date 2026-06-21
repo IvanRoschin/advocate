@@ -1,12 +1,5 @@
 import 'server-only';
-
-function required(name: string, value: string | undefined): string {
-  if (!value) {
-    throw new Error(`Missing required env: ${name}`);
-  }
-
-  return value;
-}
+import { env } from '../server/env/serverEnv';
 
 function normalizeDomain(input: string): string {
   try {
@@ -17,24 +10,16 @@ function normalizeDomain(input: string): string {
 }
 
 export function getWayForPayConfig() {
-  const publicUrl = required('NEXT_PUBLIC_URL', process.env.NEXT_PUBLIC_URL);
+  const publicUrl = env.baseUrl;
 
   return {
-    merchantAccount: required(
-      'WAYFORPAY_MERCHANT_ACCOUNT',
-      process.env.WAYFORPAY_MERCHANT_ACCOUNT
-    ),
-    secretKey: required(
-      'WAYFORPAY_SECRET_KEY',
-      process.env.WAYFORPAY_SECRET_KEY
-    ),
-    apiUrl: process.env.WAYFORPAY_API_URL || 'https://api.wayforpay.com/api',
+    merchantAccount: env.wayforpay.merchantAccount,
+    secretKey: env.wayforpay.secretKey,
+    apiUrl: env.wayforpay.url || 'https://api.wayforpay.com/api',
     publicUrl,
     merchantDomainName: normalizeDomain(
-      process.env.WAYFORPAY_MERCHANT_DOMAIN || publicUrl
+      env.wayforpay.merchantDomain || publicUrl
     ),
-    serviceUrl:
-      process.env.WAYFORPAY_SERVICE_URL ||
-      `${publicUrl}/api/wayforpay/callback`,
+    serviceUrl: env.wayforpay.url || `${publicUrl}/api/wayforpay/callback`,
   } as const;
 }

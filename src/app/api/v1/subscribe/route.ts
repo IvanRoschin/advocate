@@ -3,21 +3,21 @@ import { NextResponse } from 'next/server';
 import { validate } from '@/app/helpers/validate';
 import { subscriberSchema } from '@/app/helpers/validationSchemas/index';
 import { sendEmail } from '@/app/lib';
-import type { ApiResponse } from '@/app/lib/server/ApiError';
+import { env } from '@/app/lib/server/env/serverEnv';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import { dbConnect } from '@/app/lib/server/mongoose';
 import { sendTelegramMessage } from '@/app/lib/server/sendTelegram';
 import { Subscriber } from '@/app/models/index';
 import { EmailTemplateType } from '@/app/templates/email';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'advocate.roschin@gmail.com';
 
+import type { ApiResponse } from '@/app/lib/server/ApiError';
 async function verifyRecaptcha(token: string) {
-  if (!process.env.RECAPTCHA_SECRET) return; // пропускаем если нет ключа
+  if (!env.cloudflare.turnstileSecretKey) return; // пропускаем если нет ключа
   const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `secret=${process.env.RECAPTCHA_SECRET}&response=${token}`,
+    body: `secret=${env.cloudflare.turnstileSecretKey}&response=${token}`,
   });
   const data = await res.json();
   if (!data.success) throw new ValidationError('Captcha failed');
@@ -65,7 +65,7 @@ export async function POST(req: Request) {
 
     // ✉️ Отправка уведомления админу
     await sendEmail({
-      to: ADMIN_EMAIL,
+      to: env.advocateEmail,
       type: EmailTemplateType.SUBSCRIBER_ADMIN,
       props: {
         email: data.email,

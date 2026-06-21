@@ -1,14 +1,6 @@
+import { env } from '../server/env/serverEnv';
+
 const CLOUDINARY_WIDTHS = [320, 480, 640, 768, 1024, 1280, 1600];
-
-const getCloudName = () => {
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-
-  if (!cloudName) {
-    throw new Error('Missing NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME');
-  }
-
-  return cloudName;
-};
 
 export const buildCloudinaryUrl = (
   publicId: string,
@@ -17,7 +9,7 @@ export const buildCloudinaryUrl = (
     quality?: number | 'auto';
   }
 ) => {
-  const cloudName = getCloudName();
+  const cloudName = env.cloudinary.cloudName;
 
   const width = opts?.width ?? 1200;
   const quality = opts?.quality ?? 'auto';
