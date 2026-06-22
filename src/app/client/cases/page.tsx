@@ -1,4 +1,5 @@
 import { clientCabinetService } from '@/app/lib/services/client-access.service';
+
 import ClientCasesPageClient from './_components/ClientCasesPageClient';
 
 export default async function ClientCasesPage() {

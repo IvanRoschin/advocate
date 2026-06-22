@@ -1,16 +1,14 @@
-import { serviceService } from '@/app/lib/services';
+import { getServicesPublicList } from '@/app/actions';
 import { categoryService } from '@/app/lib/services/category.service';
 import { userService } from '@/app/lib/services/user.service';
 
 import ArticleEditorClient from '../_components/ArticleEditorClient';
 
-export const dynamic = 'force-dynamic';
-
 export default async function NewArticlePage() {
   const [usersRaw, categoriesRaw, servivesRaw] = await Promise.all([
     userService.getAdminsAndManagers(),
     categoryService.getAll(),
-    serviceService.getAll(),
+    getServicesPublicList({ limit: 20 }),
   ]);
 
   const users = usersRaw.map(u => ({
@@ -22,7 +20,7 @@ export default async function NewArticlePage() {
     title: c.title,
   }));
   const services = servivesRaw.map(s => ({
-    id: String(s._id ?? s.id),
+    id: String(s.id),
     title: s.title,
   }));
 

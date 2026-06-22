@@ -1,7 +1,10 @@
+import 'server-only';
+
 import { ClientSession } from 'mongoose';
 
-import { Lead } from '@/models';
 import { mapLeadToResponse } from '@/app/types';
+import { Lead } from '@/models';
+
 import type {
   CreateLeadDTO,
   LeadResponseDTO,

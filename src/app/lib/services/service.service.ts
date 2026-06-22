@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { Types } from 'mongoose';
 import slugify from 'slugify';
 
@@ -13,6 +15,7 @@ import {
   ServicePublicPageDto,
   UpdateServiceDTO,
 } from '@/app/types';
+
 import { dbConnect } from '../server/mongoose';
 
 const makeSlug = (input: string) =>

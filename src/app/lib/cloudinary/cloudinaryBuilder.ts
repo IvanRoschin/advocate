@@ -11,6 +11,10 @@ export const buildCloudinaryUrl = (
 ) => {
   const cloudName = env.cloudinary.cloudName;
 
+  if (!cloudName) {
+    throw new Error('NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME missing');
+  }
+
   const width = opts?.width ?? 1200;
   const quality = opts?.quality ?? 'auto';
 

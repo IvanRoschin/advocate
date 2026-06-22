@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { Types } from 'mongoose';
 
 import { reviewRepo } from '@/app/lib/repositories/review.repo';
@@ -8,6 +10,7 @@ import {
   ReviewTargetType,
   UpdateReviewDTO,
 } from '@/app/types';
+
 import { dbConnect } from '../server/mongoose';
 
 const assertObjectId = (id: string, fieldName = 'id') => {

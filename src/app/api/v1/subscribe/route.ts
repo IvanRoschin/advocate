@@ -63,6 +63,10 @@ export async function POST(req: Request) {
       },
     }).catch(console.error);
 
+    if (!env.advocateEmail) {
+      throw new Error('NEXT_PUBLIC_ADVOCATE_EMAIL missing');
+    }
+
     // ✉️ Отправка уведомления админу
     await sendEmail({
       to: env.advocateEmail,

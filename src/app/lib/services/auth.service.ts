@@ -1,6 +1,9 @@
+import 'server-only';
+
 import { routes } from '@/app/config/routes';
 import { EmailTemplateType } from '@/app/templates/email/types';
 import { TokenType } from '@/app/types';
+
 import { userRepo } from '../repositories';
 import { env } from '../server/env/serverEnv';
 import { ValidationError } from '../server/errors/httpErrors';

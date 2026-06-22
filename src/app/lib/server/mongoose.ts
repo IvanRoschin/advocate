@@ -1,3 +1,5 @@
+import 'server-only';
+
 import mongoose from 'mongoose';
 
 import { env } from './env/serverEnv';
@@ -16,9 +18,19 @@ const cached =
 
 export async function dbConnect() {
   if (cached.conn) return cached.conn;
+  const uri = env.mongoUri;
+
+  if (!uri) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('MONGODB_URI missing');
+    }
+
+    console.warn('MONGODB_URI missing - skipping DB connection in dev/build');
+    return null;
+  }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(env.mongoUri, {
+    cached.promise = mongoose.connect(uri, {
       dbName: 'advocate',
     });
   }

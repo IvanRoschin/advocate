@@ -1,3 +1,5 @@
+import 'server-only';
+
 import bcrypt from 'bcryptjs';
 
 import { baseUrl, routes } from '@/app/config/routes';

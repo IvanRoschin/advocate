@@ -1,4 +1,7 @@
+import 'server-only';
+
 import PageSettings from '@/app/models/PageSettings';
+
 import type { UpdatePageSettingsDTO } from '@/app/types';
 
 export const pageSettingsRepo = {

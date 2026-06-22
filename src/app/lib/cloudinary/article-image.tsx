@@ -9,6 +9,10 @@ import { env } from '../server/env/serverEnv';
 
 const cloudName = env.cloudinary.cloudName;
 
+if (!cloudName) {
+  throw new Error('NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME missing');
+}
+
 const cld = new Cloudinary({
   cloud: { cloudName },
 });

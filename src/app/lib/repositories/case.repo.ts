@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { ClientSession } from 'mongoose';
 
 import Case from '@/app/models/Case';

@@ -6,7 +6,6 @@ import type {
   WayForPayCreateInvoiceRequest,
   WayForPayCreateInvoiceResponse,
 } from './types';
-
 function assertValidInput(input: CreateWayForPayInvoiceInput): void {
   if (!input.orderReference.trim()) {
     throw new Error('orderReference is required');

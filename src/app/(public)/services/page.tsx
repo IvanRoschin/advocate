@@ -1,15 +1,14 @@
 import type { Metadata } from 'next';
 
+import { getServicesPublicList } from '@/app/actions';
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
 import { renderLayout } from '@/app/lib/layouts/renderLayout';
-import { serviceService } from '@/app/lib/services/service.service';
 import { servicesLayout } from '@/app/resources/content/pages/services.layout';
+
 import {
   SERVICES_SECTIONS,
   ServicesSectionProps,
 } from './_components/services.sections';
-
-export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Послуги адвоката | Іван Рощин',
@@ -20,7 +19,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function ServicesPage() {
-  const services = await serviceService.getPublicList();
+  const services = await getServicesPublicList({ limit: 20 });
 
   const sectionProps: ServicesSectionProps = {
     services,

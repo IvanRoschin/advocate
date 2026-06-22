@@ -1,3 +1,5 @@
+import 'server-only';
+
 import ClientAccess from '@/app/models/ClientAccess';
 
 export const clientAccessRepo = {

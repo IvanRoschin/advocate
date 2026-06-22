@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { Types } from 'mongoose';
 import slugify from 'slugify';
 
@@ -17,6 +19,7 @@ import {
   mapPublicRowToListItem,
   UpdateArticleDTO,
 } from '@/app/types';
+
 import { dbConnect } from '../server/mongoose';
 
 /* -------------------------------- Types ----------------------------------- */

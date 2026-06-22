@@ -1,5 +1,5 @@
+import 'server-only';
 import Review from '@/app/models/Review';
-
 import type { CreateReviewRequestDTO, ReviewTargetType } from '@/app/types';
 
 type FindApprovedByTargetParams =

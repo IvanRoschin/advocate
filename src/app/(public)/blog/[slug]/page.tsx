@@ -1,13 +1,16 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import {
+  getApprovedReviewsByTarget,
+  getArticleBySlug,
+  getRelatedArticlesByCategory,
+} from '@/app/actions';
 import { ServiceReviewForm } from '@/app/components';
 import { baseUrl } from '@/app/config/routes';
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
 import { renderLayout } from '@/app/lib/layouts/renderLayout';
-import { articleService } from '@/app/lib/services/article.service';
 import { pageSettingsService } from '@/app/lib/services/page-settings.service';
-import { reviewService } from '@/app/lib/services/review.service';
 import { parseArticleContent } from '@/lib/toc/parseArticleContent';
 
 import {
@@ -26,7 +29,7 @@ export async function generateMetadata({
 }: BlogArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
 
-  const article = await articleService.getPublicBySlug(slug);
+  const article = await getArticleBySlug(slug);
   const cover = article.src?.[0];
   const isDraft = article.status === 'draft' || !article.publishedAt;
 
@@ -52,10 +55,10 @@ export default async function BlogArticlePage({
 }: BlogArticlePageProps) {
   const { slug } = await params;
 
-  let article: Awaited<ReturnType<typeof articleService.getPublicBySlug>>;
+  let article: Awaited<ReturnType<typeof getArticleBySlug>>;
 
   try {
-    article = await articleService.getPublicBySlug(slug);
+    article = await getArticleBySlug(slug);
   } catch {
     notFound();
   }
@@ -67,7 +70,7 @@ export default async function BlogArticlePage({
   const { html, toc } = parseArticleContent(article.content);
 
   const related = article.category?.id
-    ? await articleService.getRelatedPublicByCategory({
+    ? await getRelatedArticlesByCategory({
         categoryId: article.category.id,
         excludeSlug: article.slug,
         limit: 6,
@@ -91,7 +94,7 @@ export default async function BlogArticlePage({
     keywords: article.tags?.length ? article.tags.join(', ') : undefined,
   };
 
-  const reviews = await reviewService.getApprovedByTarget({
+  const reviews = await getApprovedReviewsByTarget({
     targetType: 'article',
     targetId: article.id,
   });

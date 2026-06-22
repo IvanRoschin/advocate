@@ -1,7 +1,10 @@
+import 'server-only';
+
 import { ClientSession } from 'mongoose';
 
 import { CreateUserRequestDTO, UpdateUserDTO, UserRole } from '@/app/types';
 import { User } from '@/models';
+
 import { dbConnect } from '../server/mongoose';
 
 export const userRepo = {

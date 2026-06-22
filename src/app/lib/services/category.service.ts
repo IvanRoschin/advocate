@@ -1,3 +1,5 @@
+import 'server-only';
+
 import slugify from 'slugify';
 
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
@@ -9,6 +11,7 @@ import {
   UpdateCategoryDTO,
 } from '@/app/types';
 import { categoryRepo } from '@/lib/repositories/category.repo';
+
 import { dbConnect } from '../server/mongoose';
 
 export const categoryService = {

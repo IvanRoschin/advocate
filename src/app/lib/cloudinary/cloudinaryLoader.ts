@@ -11,6 +11,10 @@ export const cloudinaryLoader = ({
 }) => {
   const cloudName = env.cloudinary.cloudName;
 
+  if (!cloudName) {
+    throw new Error('NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME missing');
+  }
+
   const q = quality || 'auto';
 
   const safeWidth = Math.min(width, 1600);

@@ -1,10 +1,11 @@
-import { articleService } from '@/app/lib/services/article.service';
-import { reviewService } from '@/app/lib/services/review.service';
-import { serviceService } from '@/app/lib/services/service.service';
+import {
+  getArticlesPublicList,
+  getReviewById,
+  getServicesPublicList,
+} from '@/app/actions';
 import { REVIEW_PAGE_OPTIONS, ReviewTargetOptionDto } from '@/app/types';
-import ReviewEditorClient from '../../_components/ReviewEditorClient';
 
-export const dynamic = 'force-dynamic';
+import ReviewEditorClient from '../../_components/ReviewEditorClient';
 
 type EditReviewPageProps = {
   params: Promise<{ id: string }>;
@@ -14,9 +15,9 @@ export default async function EditReviewPage({ params }: EditReviewPageProps) {
   const { id } = await params;
 
   const [review, services, articles] = await Promise.all([
-    reviewService.getById(id),
-    serviceService.getPublicList({ limit: 50 }),
-    articleService.getPublicList({ limit: 50 }),
+    getReviewById(id),
+    getServicesPublicList({ limit: 20 }),
+    getArticlesPublicList({ limit: 50 }),
   ]);
 
   const serviceOptions: ReviewTargetOptionDto[] = services.map(service => ({

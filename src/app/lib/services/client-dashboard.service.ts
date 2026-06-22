@@ -1,7 +1,10 @@
+import 'server-only';
+
 import { caseRepo } from '@/app/lib/repositories/case.repo';
 import { clientRepo } from '@/app/lib/repositories/client.repo';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import { dbConnect } from '@/app/lib/server/mongoose';
+
 import type { ClientDashboardOverviewDto } from '@/app/types';
 
 const toIsoString = (value?: Date | string | null): string | undefined => {

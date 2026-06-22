@@ -1,4 +1,4 @@
-import { ClientSession } from 'mongoose';
+import 'server-only';
 
 import { Client } from '@/app/models';
 import {
@@ -8,76 +8,51 @@ import {
   UpdateClientDTO,
 } from '@/app/types';
 
-export type ClientRow = {
-  _id: import('mongoose').Types.ObjectId;
-  type: 'individual' | 'company';
-  status: 'active' | 'inactive';
-  fullName: string;
-  email: string;
-  phone: string;
-  companyName: string;
-  taxId: string;
-  address: string;
-  notes: string;
-  sourceLeadId?: import('mongoose').Types.ObjectId | null;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
+/*                                READ OPERATIONS                             */
+/* -------------------------------------------------------------------------- */
 
-export const clientRepo = {
-  async findAll(): Promise<ClientResponseDTO[]> {
-    const clients = await Client.find().sort({ createdAt: -1 });
-    return clients.map(mapClientToResponse);
-  },
+export async function findAllClients(): Promise<ClientResponseDTO[]> {
+  const clients = await Client.find().sort({ createdAt: -1 });
+  return clients.map(mapClientToResponse);
+}
 
-  async findById(id: string): Promise<ClientResponseDTO | null> {
-    const client = await Client.findById(id);
+export async function findClientById(
+  id: string
+): Promise<ClientResponseDTO | null> {
+  const client = await Client.findById(id);
+  return client ? mapClientToResponse(client) : null;
+}
 
-    return client ? mapClientToResponse(client) : null;
-  },
+/* -------------------------------------------------------------------------- */
+/*                               WRITE OPERATIONS                             */
+/* -------------------------------------------------------------------------- */
 
-  async create(
-    data: CreateClientDTO,
-    session?: ClientSession
-  ): Promise<ClientResponseDTO> {
-    return Client.create([data], { session }).then(([doc]) => doc);
-  },
+export async function createClient(
+  data: CreateClientDTO
+): Promise<ClientResponseDTO> {
+  const [doc] = await Client.create([data]);
+  return mapClientToResponse(doc);
+}
 
-  async update(
-    id: string,
-    data: UpdateClientDTO
-  ): Promise<ClientResponseDTO | null> {
-    const client = await Client.findByIdAndUpdate(
-      id,
-      {
-        $set: {
-          ...data,
-          ...(data.email ? { email: data.email.toLowerCase().trim() } : {}),
-        },
+export async function updateClient(
+  id: string,
+  data: UpdateClientDTO
+): Promise<ClientResponseDTO | null> {
+  const client = await Client.findByIdAndUpdate(
+    id,
+    {
+      $set: {
+        ...data,
+        ...(data.email ? { email: data.email.toLowerCase().trim() } : {}),
       },
-      { new: true }
-    );
+    },
+    { new: true }
+  );
 
-    return client ? mapClientToResponse(client) : null;
-  },
+  return client ? mapClientToResponse(client) : null;
+}
 
-  updateProfileById(
-    id: string,
-    data: {
-      fullName: string;
-      email: string;
-      phone: string;
-      address: string;
-      companyName: string;
-      type: 'individual' | 'company';
-    }
-  ) {
-    return Client.findByIdAndUpdate(id, data, {
-      new: true,
-    });
-  },
-
-  delete(id: string) {
-    return Client.findByIdAndDelete(id).lean();
-  },
-};
+export async function deleteClient(id: string) {
+  const deleted = await Client.findByIdAndDelete(id);
+  return deleted ? deleted._id.toString() : null;
+}

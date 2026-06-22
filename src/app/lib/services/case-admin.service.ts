@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { Types } from 'mongoose';
 
 import { clientRepo } from '@/app/lib/repositories';

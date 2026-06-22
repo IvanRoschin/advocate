@@ -1,3 +1,5 @@
+import 'server-only';
+
 import bcrypt from 'bcryptjs';
 import mongoose, { ClientSession, Types } from 'mongoose';
 
@@ -29,6 +31,7 @@ import Client from '@/models/Client';
 import ClientAccess from '@/models/ClientAccess';
 import Lead from '@/models/Lead';
 import User from '@/models/User';
+
 import { tokenService } from './token.service';
 
 type ClientAccessRole = 'owner' | 'manager' | 'viewer';

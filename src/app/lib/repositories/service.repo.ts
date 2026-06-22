@@ -1,4 +1,7 @@
+import 'server-only';
+
 import Service from '@/app/models/Service';
+
 import type {
   CreateServiceRequestDTO,
   ServiceLayoutNode,

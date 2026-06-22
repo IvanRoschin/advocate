@@ -1,3 +1,5 @@
+import 'server-only';
+
 import Slide from '@/app/models/Slide';
 
 import type { CreateSlideDTO, UpdateSlideDTO } from '@/app/types';

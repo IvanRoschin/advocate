@@ -1,10 +1,10 @@
-import { reviewService } from '@/app/lib/services/review.service';
+import { getAllReviews } from '@/app/actions';
 import { ReviewResponseDTO } from '@/app/types';
 
 import ReviewsClient from './ReviewsClient';
 
 const ReviewsPage = async () => {
-  const reviews: ReviewResponseDTO[] = await reviewService.getAll();
+  const reviews: ReviewResponseDTO[] = await getAllReviews();
 
   return <ReviewsClient initialReviews={reviews} />;
 };

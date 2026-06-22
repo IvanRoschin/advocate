@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { dbConnect } from '@/app/lib/server/mongoose';
 import Client from '@/models/Client';
 import ClientAccess from '@/models/ClientAccess';

@@ -1,8 +1,11 @@
+import 'server-only';
+
 import { pageSettingsRepo } from '@/app/lib/repositories/page-settings.repo';
 import { dbConnect } from '@/app/lib/server/mongoose';
 import { defaultArticleLayout } from '@/app/resources/content/pages/article.layout';
 import { defaultHomeLayout } from '@/app/resources/content/pages/home.layout';
 import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
+
 import type {
   ArticleLayoutNode,
   HomeLayoutNode,

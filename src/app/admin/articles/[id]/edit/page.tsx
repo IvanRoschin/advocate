@@ -1,12 +1,9 @@
-import { serviceService } from '@/app/lib/services';
-import { articleService } from '@/app/lib/services/article.service';
+import { getArticleById, getServicesPublicList } from '@/app/actions';
 import { categoryService } from '@/app/lib/services/category.service';
 import { userService } from '@/app/lib/services/user.service';
 import { mapArticleToResponse } from '@/app/types';
 
 import ArticleEditorClient from '../../_components/ArticleEditorClient';
-
-export const dynamic = 'force-dynamic';
 
 export default async function EditArticlePage({
   params,
@@ -16,10 +13,10 @@ export default async function EditArticlePage({
   const { id } = await params;
 
   const [articleRaw, usersRaw, categoriesRaw, serviceRaw] = await Promise.all([
-    articleService.getById(id),
+    getArticleById(id),
     userService.getAll(),
     categoryService.getAll(),
-    serviceService.getAll(),
+    getServicesPublicList({ limit: 20 }),
   ]);
 
   const article = mapArticleToResponse(articleRaw);
@@ -29,11 +26,11 @@ export default async function EditArticlePage({
     name: u.name,
   }));
   const categories = categoriesRaw.map(c => ({
-    id: String(c._id ?? c.id),
+    id: String(c.id),
     title: c.title,
   }));
   const services = serviceRaw.map(s => ({
-    id: String(s._id ?? s.id),
+    id: String(s.id),
     title: s.title,
   }));
 

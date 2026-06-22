@@ -1,10 +1,10 @@
-import { serviceService } from '@/app/lib/services/service.service';
+import { getAllServices } from '@/app/actions';
 import { mapServiceToResponse, ServiceResponseDTO } from '@/app/types';
 
 import ServicesClient from './ServicesClient';
 
 const ServicesPage = async () => {
-  const servicesRaw = await serviceService.getAll();
+  const servicesRaw = await getAllServices();
 
   const services: ServiceResponseDTO[] = servicesRaw.map(mapServiceToResponse);
 

@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { Types } from 'mongoose';
 import { ValidationError } from 'yup';
 
@@ -9,6 +11,7 @@ import {
   normalizeClientData,
   UpdateClientDTO,
 } from '@/app/types';
+
 import { dbConnect } from '../server/mongoose';
 
 const assertObjectId = (id: string) => {

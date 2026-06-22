@@ -1,12 +1,13 @@
+import { getArticlesPublicList, getServicesPublicList } from '@/app/actions';
 import { ReviewForm } from '@/app/components';
-import { articleService } from '@/app/lib/services/article.service';
-import { serviceService } from '@/app/lib/services/service.service';
 import {
   CreateReviewRequestDTO,
   REVIEW_PAGE_OPTIONS,
   ReviewTargetOptionDto,
   UpdateReviewDTO,
 } from '@/app/types';
+
+export const revalidate = 60;
 
 type BaseProps = {
   onClose: () => void;
@@ -27,14 +28,14 @@ type EditModeProps = BaseProps & {
 type Props = CreateModeProps | EditModeProps;
 
 export default async function ReviewFormContainer(props: Props) {
-  const services = await serviceService.getPublicList({ limit: 100 });
+  const services = await getServicesPublicList({ limit: 20 });
 
   const serviceOptions: ReviewTargetOptionDto[] = services.map(service => ({
     value: service.id,
     label: service.title,
   }));
 
-  const articles = await articleService.getPublicList({ limit: 100 });
+  const articles = await getArticlesPublicList({ limit: 50 });
   const articleOptions: ReviewTargetOptionDto[] = articles.items.map(
     article => ({
       value: article.id,

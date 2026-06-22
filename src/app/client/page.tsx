@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { routes } from '@/app/config/routes';
 import { authOptions } from '@/config';
 import { clientDashboardService } from '@/lib/services/client-dashboard.service';
+
 import ClientPage from './ClientPage';
 
 export default async function ClientDashboardPage() {

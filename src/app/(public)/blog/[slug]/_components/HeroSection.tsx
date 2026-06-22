@@ -12,9 +12,7 @@ import { TocItem } from './ArticleToc';
 import ArticleToc from './ArticleToc.client.tsx';
 
 type ArticlePageDto = Awaited<
-  ReturnType<
-    typeof import('@/app/lib/services/article.service').articleService.getPublicBySlug
-  >
+  ReturnType<typeof import('@/app/actions/article.actions').getArticleBySlug>
 >;
 
 export type BlogArticleSectionProps = {

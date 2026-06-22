@@ -1,13 +1,12 @@
-import { articleService } from '@/app/lib/services/article.service';
+import { getArticlesAdminPaginated } from '@/app/actions/article.actions';
 import { categoryService } from '@/app/lib/services/category.service';
 import { userService } from '@/app/lib/services/user.service';
-import ArticlesClient from './ArticlesClient';
 
-export const dynamic = 'force-dynamic';
+import ArticlesClient from './ArticlesClient';
 
 const ArticlesPage = async () => {
   const [articlesRaw, usersRaw, categoriesRaw] = await Promise.all([
-    articleService.getAllPaginated({ page: 1, limit: 5 }),
+    getArticlesAdminPaginated({ page: 1, limit: 5 }),
     userService.getAll(),
     categoryService.getAll(),
   ]);

@@ -1,13 +1,16 @@
 import Link from 'next/link';
 
+import { getServicesPublicList } from '@/app/actions';
 import Btn from '@/app/components/ui/button/Btn';
 import { routes } from '@/app/config/routes';
-import { serviceService } from '@/app/lib/services/service.service';
 import { practicesSection } from '@/app/resources';
+
 import PracticesCard from './PracticesCard';
 
+export const revalidate = 60;
+
 export default async function Practices() {
-  const services = await serviceService.getPublicList({ limit: 4 });
+  const services = await getServicesPublicList({ limit: 4 });
 
   return (
     <section

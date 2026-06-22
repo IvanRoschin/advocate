@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { dbConnect } from '@/app/lib/server/mongoose';
 import { TokenType } from '@/app/types';
 import Token, { TokenDB, TokenDocument } from '@/models/Token';

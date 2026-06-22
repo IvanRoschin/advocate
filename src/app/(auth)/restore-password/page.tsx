@@ -1,7 +1,6 @@
 import { RestorePasswordForm } from '@/app/components';
 import { tokenService } from '@/app/lib/services/token.service';
 import { TokenType } from '@/app/types';
-
 import AuthCard from '../_components/AuthCard';
 import AuthStatusBadge from '../_components/AuthStatusBadge';
 

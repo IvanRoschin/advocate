@@ -1,23 +1,26 @@
 import type { ReactNode } from 'react';
 
+import {
+  getArticleCategoriesWithCounts,
+  getRecentArticlesPublic,
+} from '@/app/actions/article.actions';
 import Footer from '@/app/components/footer/Footer';
-import { articleService } from '@/app/lib/services/article.service';
 import { blog } from '@/app/resources/content';
-import type { BlogSectionKey } from '@/app/resources/content/pages/blog.layout';
 import { ArticleListItemDto } from '@/app/types';
 import { Header, ScrollToTopButton, Socials } from '@/components';
+
 import { BlogArticlesFeed } from './BlogArticlesFeed';
 import BlogAside from './BlogAside';
+
+import type { BlogSectionKey } from '@/app/resources/content/pages/blog.layout';
 /* --------------------------------- Types ---------------------------------- */
 
 export type BlogSectionProps = {
   category?: string;
   initialItems: ArticleListItemDto[];
   hasMore: boolean;
-  recent: Awaited<ReturnType<typeof articleService.getRecentPublic>>;
-  categories: Awaited<
-    ReturnType<typeof articleService.getPublicCategoriesWithCounts>
-  >;
+  recent: Awaited<ReturnType<typeof getRecentArticlesPublic>>;
+  categories: Awaited<ReturnType<typeof getArticleCategoriesWithCounts>>;
 };
 
 export type BlogSectionComponent = (props: BlogSectionProps) => ReactNode;
