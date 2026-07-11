@@ -1,10 +1,38 @@
+import crypto from 'crypto';
+import { Types } from 'mongoose';
+
+import { CreateTokenDTO, mapUserToResponse, TokenType } from '@/app/types';
 import Token, { TokenDB, TokenDocument } from '@/models/Token';
-import { mapUserToResponse, TokenType } from '@/app/types';
+
+import { ensureUserClient } from '../auth/ensureClientAccess';
 import { userRepo } from './user.repo';
 
+function generateTokenString(bytes = 32) {
+  return crypto.randomBytes(bytes).toString('hex');
+}
+
+const TTL_SECONDS_BY_TYPE: Record<TokenType, number> = {
+  [TokenType.REFRESH]: 60 * 60 * 24 * 30,
+  [TokenType.VERIFICATION]: 60 * 60 * 24,
+  [TokenType.RESET_PASSWORD]: 60 * 60 * 2,
+  [TokenType.EMAIL_CHANGE]: 60 * 60,
+  [TokenType.PASSWORD_RESTORE]: 60 * 60,
+};
+
 export const tokenRepo = {
-  async create(data: Partial<TokenDocument>) {
-    return Token.create(data);
+  async create<T extends TokenType>(data: CreateTokenDTO<T>) {
+    const type = data.type ?? TokenType.REFRESH;
+    const ttl = data.ttlSeconds ?? TTL_SECONDS_BY_TYPE[type];
+
+    return Token.create({
+      userId: new Types.ObjectId(data.userId),
+      token: generateTokenString(),
+      type,
+      email: data.email,
+      meta: data.meta,
+      used: false,
+      expiresAt: new Date(Date.now() + ttl * 1000),
+    });
   },
 
   async findValid(token: string, type?: TokenType) {
@@ -27,7 +55,9 @@ export const tokenRepo = {
   },
 
   async markUsed(tokenDoc: TokenDocument) {
+    if (tokenDoc.used) return;
     tokenDoc.used = true;
+    tokenDoc.meta = undefined;
     await tokenDoc.save();
   },
 
@@ -60,7 +90,7 @@ export const tokenRepo = {
 
     await this.markUsed(token);
 
-    return user;
+    return mapUserToResponse(user);
   },
 
   async activateAccount(token: TokenDocument) {
@@ -77,6 +107,8 @@ export const tokenRepo = {
     await user.save();
 
     await this.markUsed(token);
+
+    await ensureUserClient(user);
 
     return mapUserToResponse(user);
   },

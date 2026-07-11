@@ -1,18 +1,16 @@
 import 'server-only';
 
 import { tokenRepo } from '@/app/lib/repositories/token.repo';
-import { TokenType } from '@/app/types';
+import { CreateTokenDTO, TokenType, UserResponseDTO } from '@/app/types';
 import { ValidationError } from '@/lib/server/errors';
 
+import { TokenDocument } from '../models/Token';
 import { createAction } from './createAction';
 
-import type { TokenDocument } from '@/models/Token';
 export const tokenActions = {
-  create: createAction<Partial<TokenDocument>, TokenDocument>(
-    async ({ args }) => {
-      return tokenRepo.create(args);
-    }
-  ),
+  create: createAction<CreateTokenDTO, TokenDocument>(async ({ args }) => {
+    return tokenRepo.create(args);
+  }),
 
   findValid: createAction<
     { token: string; type?: TokenType },
@@ -37,13 +35,13 @@ export const tokenActions = {
     await tokenRepo.markUsed(tokenDoc);
   }),
 
-  changeEmail: createAction<TokenDocument, void>(async ({ args: tokenDoc }) => {
-    await tokenRepo.changeEmail(tokenDoc);
-  }),
+  changeEmail: createAction<TokenDocument, UserResponseDTO>(
+    async ({ args: tokenDoc }) => tokenRepo.changeEmail(tokenDoc)
+  ),
 
-  activateAccount: createAction<TokenDocument, void>(
+  activateAccount: createAction<TokenDocument, UserResponseDTO>(
     async ({ args: tokenDoc }) => {
-      await tokenRepo.activateAccount(tokenDoc);
+      return tokenRepo.activateAccount(tokenDoc);
     }
   ),
 };

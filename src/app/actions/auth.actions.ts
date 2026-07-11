@@ -9,6 +9,7 @@ import { sendEmail } from '@/app/lib/server/mail/emailService';
 import { EmailTemplateType } from '@/app/templates/email/types';
 import { TokenType } from '@/app/types';
 
+import { toIdString } from '../lib/mappers/_utils';
 import { createAction } from './createAction';
 
 type RequestResetInput = { email: string };
@@ -19,16 +20,11 @@ type RequestResetResult =
 type ResetPasswordInput = { token: string; newPassword: string };
 type ResetPasswordResult = { ok: true; message: string };
 
-/* =========================================================
-   REQUEST PASSWORD RESET
-   ======================================================== */
-
 export const requestPasswordReset = createAction<
   RequestResetInput,
   RequestResetResult
 >(async ({ args }) => {
   const normalizedEmail = args.email.trim().toLowerCase();
-
   const user = await userRepo.findByEmail(normalizedEmail);
 
   if (!user) {
@@ -40,7 +36,7 @@ export const requestPasswordReset = createAction<
   }
 
   const tokenDoc = await tokenRepo.create({
-    userId: user._id,
+    userId: toIdString(user._id),
     type: TokenType.RESET_PASSWORD,
     email: user.email,
   });
@@ -50,10 +46,7 @@ export const requestPasswordReset = createAction<
   await sendEmail({
     to: user.email,
     type: EmailTemplateType.RESET_PASSWORD,
-    props: {
-      name: user.name,
-      resetLink: resetUrl,
-    },
+    props: { name: user.name, resetLink: resetUrl },
   });
 
   return {
@@ -62,10 +55,6 @@ export const requestPasswordReset = createAction<
     message: 'Лист відправлено.',
   };
 });
-
-/* =========================================================
-   RESET PASSWORD
-   ======================================================== */
 
 export const resetPassword = createAction<
   ResetPasswordInput,
@@ -91,8 +80,5 @@ export const resetPassword = createAction<
 
   await tokenRepo.markUsed(tokenDoc);
 
-  return {
-    ok: true,
-    message: 'Пароль успішно змінено.',
-  };
+  return { ok: true, message: 'Пароль успішно змінено.' };
 });

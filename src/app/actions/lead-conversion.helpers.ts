@@ -159,7 +159,7 @@ async function resolveClientAccountUser(
         _id: userByEmail._id,
         name: userByEmail.name,
         email: userByEmail.email,
-        phone: userByEmail.phone,
+        phone: userByEmail.phone || undefined,
         role: userByEmail.role,
         isActive: userByEmail.isActive,
       },
@@ -178,7 +178,7 @@ async function resolveClientAccountUser(
       _id: resolvedUser._id,
       name: resolvedUser.name,
       email: resolvedUser.email,
-      phone: resolvedUser.phone,
+      phone: resolvedUser.phone || undefined,
       role: resolvedUser.role,
       isActive: resolvedUser.isActive,
     },
@@ -349,7 +349,7 @@ async function createVerificationTokenIfNeeded(params: {
   if (isActive) return undefined;
 
   const verificationToken = await tokenActions.create({
-    userId: new Types.ObjectId(userId),
+    userId,
     email,
     type: TokenType.VERIFICATION,
   });

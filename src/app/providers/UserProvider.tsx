@@ -20,7 +20,6 @@ export default function UserProvider({
         id: session.user.id,
         role: session.user.role ?? '',
         phone: session.user.phone ?? '',
-        surname: session.user.surname ?? '',
         name: session.user.name ?? null,
         email: session.user.email ?? null,
         image: session.user.image ?? null,
