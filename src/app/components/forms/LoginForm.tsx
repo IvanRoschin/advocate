@@ -65,6 +65,12 @@ const LoginForm = () => {
           return;
         }
 
+        if (callback?.error === 'AUTH_USER_NOT_FOUND') {
+          const email = encodeURIComponent(values.email.trim());
+          router.replace(`${routes.public.auth.noAccount}?email=${email}`);
+          return;
+        }
+
         toast.error(resolveAuthErrorMessage(callback?.error));
         return;
       }
@@ -190,6 +196,15 @@ const LoginForm = () => {
           className="nav font-medium hover:text-gray-500"
         >
           Відновити
+        </Link>
+      </p>
+      <p className="mt-2 text-center text-sm text-gray-500">
+        Немає кабінету?{' '}
+        <Link
+          href={routes.public.auth.register}
+          className="nav font-medium hover:text-gray-500"
+        >
+          Зареєструватися
         </Link>
       </p>
     </motion.div>

@@ -19,7 +19,9 @@ export const routes = {
 
     auth: {
       verifyEmail: '/verify-email',
+      register: '/register',
       signIn: '/signin',
+      noAccount: '/no-account',
       forgotPassword: '/forgot-password',
       restorePassword: '/restore-password',
     },

@@ -10,7 +10,6 @@ export default function AuthStatusBadge({ label, tone = 'accent' }: Props) {
       : tone === 'neutral'
         ? 'bg-foreground/8 text-foreground/80'
         : 'bg-accent/10 text-accent';
-
   return (
     <div
       className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${toneClass}`}
