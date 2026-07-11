@@ -2,10 +2,9 @@ import crypto from 'crypto';
 import { Types } from 'mongoose';
 
 import { CreateTokenDTO, mapUserToResponse, TokenType } from '@/app/types';
-import Client from '@/models/Client';
-import ClientAccess from '@/models/ClientAccess';
 import Token, { TokenDB, TokenDocument } from '@/models/Token';
 
+import { ensureUserClient } from '../auth/ensureClientAccess';
 import { userRepo } from './user.repo';
 
 function generateTokenString(bytes = 32) {
@@ -91,7 +90,7 @@ export const tokenRepo = {
 
     await this.markUsed(token);
 
-    return user;
+    return mapUserToResponse(user);
   },
 
   async activateAccount(token: TokenDocument) {
@@ -109,22 +108,7 @@ export const tokenRepo = {
 
     await this.markUsed(token);
 
-    const hasAccess = await ClientAccess.exists({ userId: user._id });
-
-    if (!hasAccess) {
-      const client = await Client.create({
-        type: 'individual',
-        fullName: user.name,
-        email: user.email,
-        phone: user.phone,
-      });
-
-      await ClientAccess.create({
-        userId: user._id,
-        clientId: client._id,
-        accessRole: 'owner',
-      });
-    }
+    await ensureUserClient(user);
 
     return mapUserToResponse(user);
   },

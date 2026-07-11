@@ -42,12 +42,7 @@ export default function ResendVerificationButton() {
   };
 
   return (
-    <Btn
-      type="button"
-      onClick={handleResend}
-      disabled={loading}
-      className="bg-accent text-accent-foreground hover:bg-accent/90 rounded-xl px-5 py-3 font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
-    >
+    <Btn type="button" onClick={handleResend} disabled={loading}>
       {loading ? 'Надсилання...' : 'Надіслати повторно'}
     </Btn>
   );

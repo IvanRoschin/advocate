@@ -100,7 +100,7 @@ const LoginForm = () => {
       setIsLoading(true);
 
       await signIn('google', {
-        callbackUrl: '/auth/redirect',
+        callbackUrl: '/client',
       });
     } catch (error) {
       console.error('Google sign-in error:', error);

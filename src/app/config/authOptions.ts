@@ -5,8 +5,10 @@ import GoogleProvider from 'next-auth/providers/google';
 import { Provider } from 'next-auth/providers/index';
 
 import User from '@/models/User';
+import { ensureUserClient } from '../lib/auth/ensureClientAccess';
 import { resolveActiveClientAccess } from '../lib/auth/resolveActiveClientAccess';
 import { dbConnect } from '../lib/server/mongoose';
+import { UserRole } from '../types';
 import { routes } from './routes';
 declare module 'next-auth' {
   interface Session {
@@ -15,7 +17,6 @@ declare module 'next-auth' {
       role: string;
       email: string;
       phone: string;
-      surname: string;
       isActive: boolean;
       activeClientId?: string;
       clientAccessRole?: 'owner' | 'manager' | 'viewer';
@@ -26,7 +27,6 @@ declare module 'next-auth' {
     id: string;
     role?: string;
     phone?: string;
-    surname?: string;
     name?: string | null;
     email?: string | null;
     isActive?: boolean;
@@ -84,7 +84,6 @@ async function loadUserSessionContext(userId: string) {
     email: dbUser.email || '',
     role: dbUser.role,
     phone: dbUser.phone || '',
-    surname: dbUser.surname || '',
     isActive: dbUser.isActive ?? false,
     activeClientId: accessContext.activeClientId,
     clientAccessRole: accessContext.clientAccessRole,
@@ -129,8 +128,7 @@ const providers: Provider[] = [
         id: user._id.toString(),
         name: user.name,
         email: user.email,
-        phone: user.phone,
-        surname: user.surname || '',
+        phone: user.phone ?? undefined,
         role: user.role,
         isActive: user.isActive,
       };
@@ -158,21 +156,22 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           } else {
             user = await User.create({
               name: profile.given_name,
-              surname: profile.family_name || '',
               email: profile.email?.toLowerCase(),
               googleId: profile.sub,
+              isActive: true,
               phone: '',
-              role: 'client',
+              role: UserRole.CLIENT,
             });
           }
         }
 
+        await ensureUserClient(user);
+
         return {
           id: user._id.toString(),
           name: user.name,
-          surname: user.surname,
           email: user.email,
-          phone: user.phone,
+          phone: user.phone ?? undefined,
           role: user.role,
           isActive: user.isActive,
         };
@@ -240,7 +239,6 @@ export const authOptions: NextAuthOptions = {
         id: token.id,
         role: token.role || '',
         phone: token.phone || '',
-        surname: token.surname || '',
         name: token.name ?? null,
         email: token.email ?? '',
         isActive: token.isActive ?? false,
