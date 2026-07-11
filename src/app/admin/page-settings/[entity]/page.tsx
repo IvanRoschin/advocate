@@ -1,5 +1,5 @@
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { pageSettingsService } from '@/app/lib/services/page-settings.service';
+import { pageSettingsActions } from '@/app/actions/page-settings.actions';
+
 import PageSettingsClient from '../_components/PageSettingsClient';
 
 type PageProps = {
@@ -7,10 +7,19 @@ type PageProps = {
 };
 
 export default async function PageSettingsEntityPage({ params }: PageProps) {
-  await dbConnect();
-
   const { entity } = await params;
-  const settings = await pageSettingsService.getByEntity(entity);
+  const layout = await pageSettingsActions.getLayout(entity);
 
-  return <PageSettingsClient initialSettings={settings} />;
+  if (!layout) {
+    throw new Error('Layout not found');
+  }
+
+  return (
+    <PageSettingsClient
+      initialSettings={{
+        entity,
+        layout,
+      }}
+    />
+  );
 }

@@ -1,12 +1,9 @@
-import { getAdminDashboard } from '@/actions';
-
-import { dbConnect } from '../lib/server/mongoose';
+import { adminDashboardActions } from '../actions/admin-dashboard.actions';
 import AdminStatGroup from './_components/AdminStatGroup';
 import { groupAdminStats } from './_lib/group-admin-stats';
 
 export default async function AdminPage() {
-  await dbConnect();
-  const { stats } = await getAdminDashboard();
+  const { stats } = await adminDashboardActions.getCounters();
   const sections = groupAdminStats(stats);
 
   return (

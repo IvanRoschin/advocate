@@ -76,6 +76,7 @@ export const routes = {
     crm: {
       leads: '/admin/leads',
       clients: '/admin/clients',
+      subscribers: '/admin/subscribers',
     },
 
     finance: {

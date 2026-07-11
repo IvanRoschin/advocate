@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { pageSettingsActions } from '@/app/actions/page-settings.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
-import { pageSettingsService } from '@/app/lib/services/page-settings.service';
-import type { UpdatePageSettingsDTO } from '@/app/types';
 import { normalizePageLayout, updatePageSettingsSchema } from '@/app/types';
+
+import type { UpdatePageSettingsDTO } from '@/app/types';
 type PageSettingsEntity = UpdatePageSettingsDTO['entity'];
 
 const isPageSettingsEntity = (value: string): value is PageSettingsEntity =>
@@ -26,7 +27,7 @@ export async function GET(
     const { entity } = await params;
     const safeEntity = assertPageSettingsEntity(entity);
 
-    const data = await pageSettingsService.getByEntity(safeEntity);
+    const data = await pageSettingsActions.getLayout(safeEntity);
 
     return NextResponse.json({ ok: true, data });
   } catch (err) {
@@ -56,7 +57,7 @@ export async function PUT(
       layout: normalizePageLayout(validated.layout),
     };
 
-    const saved = await pageSettingsService.update(data);
+    const saved = await pageSettingsActions.updateLayout(data);
 
     return NextResponse.json({ ok: true, data: saved });
   } catch (err) {

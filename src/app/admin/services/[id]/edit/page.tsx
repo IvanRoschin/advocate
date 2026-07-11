@@ -1,5 +1,5 @@
-import { getArticlesPublicList, getServiceById } from '@/app/actions';
-import { mapServiceToResponse } from '@/app/types';
+import { articleActions } from '@/app/actions/article.actions';
+import { serviceActions } from '@/app/actions/service.actions';
 
 import ServiceEditorClient from '../../_components/ServiceEditorClient';
 
@@ -12,15 +12,13 @@ export default async function EditServicePage({
 }: EditServicePageProps) {
   const { id } = await params;
 
-  const [serviceRaw, articleRaw] = await Promise.all([
-    getServiceById(id),
-    getArticlesPublicList({ limit: 50 }),
+  const [service, articleRaw] = await Promise.all([
+    serviceActions.getById(id),
+    articleActions.getAll({ limit: 50 }),
   ]);
 
-  const service = mapServiceToResponse(serviceRaw);
-
   const articles = articleRaw.items.map(a => ({
-    id: String(a.id),
+    id: String(a._id),
     title: a.title,
   }));
 

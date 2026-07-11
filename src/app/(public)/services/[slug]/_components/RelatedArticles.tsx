@@ -1,16 +1,19 @@
 'use client';
 
-import Image from 'next/image';
+import { CldImage } from 'next-cloudinary';
 
-import { AppLink } from '@/app/components';
+import { AppLink, NextImage } from '@/app/components';
+import { imageVariants } from '@/app/config/imageVariants';
 
-import type { ArticlePreviewDTO } from '@/app/types';
+import type { ArticleListItemDto } from '@/app/types';
 type Props = {
-  articles: ArticlePreviewDTO[];
+  articles: ArticleListItemDto[];
 };
 
 export default function RelatedArticles({ articles }: Props) {
   if (!articles) return null;
+
+  const variant = imageVariants.hero;
 
   return (
     <section className="container py-10 lg:py-14">
@@ -32,10 +35,14 @@ export default function RelatedArticles({ articles }: Props) {
           >
             {article.src?.[0] && (
               <div className="relative h-40 w-full overflow-hidden rounded-t-2xl">
-                <Image
+                <NextImage
+                  as={CldImage}
                   src={article.src[0]}
                   alt={article.title}
                   fill
+                  sizes={variant.sizes}
+                  useSkeleton
+                  preload
                   className="object-cover transition group-hover:scale-105"
                 />
               </div>

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { leadActions } from '@/app/actions/lead.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { leadService } from '@/app/lib/services/lead.service';
 import { adminLeadSubmitSchema, UpdateLeadDTO } from '@/app/types';
 
 type RouteContext = {
@@ -11,7 +11,7 @@ type RouteContext = {
 export async function GET(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
-    const lead = await leadService.getById(id);
+    const lead = await leadActions.getById(id);
 
     return NextResponse.json({ ok: true, data: lead });
   } catch (err) {
@@ -35,7 +35,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       )
     ) as UpdateLeadDTO;
 
-    const lead = await leadService.update(id, data);
+    const lead = await leadActions.update(id, data);
 
     return NextResponse.json({ ok: true, data: lead });
   } catch (err) {
@@ -46,7 +46,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 export async function DELETE(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
-    const result = await leadService.delete(id);
+    const result = await leadActions.delete(id);
 
     return NextResponse.json({ ok: true, data: result });
   } catch (err) {

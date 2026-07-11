@@ -1,10 +1,12 @@
-import { userService } from '@/app/lib/services/user.service';
+import { userActions } from '@/app/actions/user.actions';
 import { UserResponseDTO } from '@/app/types';
 
 import UsersClient from './UsersClient';
 
 const UsersPage = async () => {
-  const users: UserResponseDTO[] = await userService.getAll();
+  const usersRow = await userActions.getAll();
+
+  const users: UserResponseDTO[] = usersRow.items;
 
   return <UsersClient initialUsers={users} />;
 };

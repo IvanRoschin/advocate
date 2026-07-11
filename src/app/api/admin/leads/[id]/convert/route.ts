@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { leadActions, leadAdminActions } from '@/app/actions/lead.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { leadService } from '@/app/lib/services/lead.service';
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -11,7 +11,7 @@ export async function POST(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
 
-    const result = await leadService.convertToClient(id);
+    const result = await leadAdminActions.convertToClient(id);
 
     return NextResponse.json({
       ok: true,

@@ -2,29 +2,27 @@ import type { ReactNode } from 'react';
 
 import { Header } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
-
-import { ArticleListPreview } from '../../_components/ArticleListPreview';
-import { ShareSection } from '../../_components/ShareSection';
+import type {
+  ArticlePublicPageDto,
+  ArticleSectionKey,
+  ReviewResponseDTO,
+} from '@/app/types';
+import ReviewsSection from './ReviewsSection.client';
 import ArticleContent from './ArticleContent';
 import ArticleServiceLink from './ArticleServiceLink';
 import { TocItem } from './ArticleToc';
 import ArticleToc from './ArticleToc.client.tsx';
 import { HeroSection } from './HeroSection';
-import ReviewsSection from './ReviewsSection.client';
-
-import type { ArticleSectionKey, ReviewResponseDTO } from '@/app/types';
+import { ArticleListPreview } from '../../_components/ArticleListPreview';
+import { ShareSection } from '../../_components/ShareSection';
 type RelatedArticle = Awaited<
   ReturnType<
-    typeof import('@/app/actions/article.actions').getRelatedArticlesByCategory
+    typeof import('@/app/actions/article.actions').articlePublicActions.related
   >
 >[number];
 
-export type ArticlePageDto = Awaited<
-  ReturnType<typeof import('@/app/actions/article.actions').getArticleBySlug>
->;
-
 export type BlogArticleSectionProps = {
-  article: ArticlePageDto;
+  article: ArticlePublicPageDto;
   html: string;
   minutes: number;
   toc: TocItem[];

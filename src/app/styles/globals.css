@@ -44,6 +44,13 @@ body {
 }
 
 @theme inline {
+  --font-sans: var(--font-manrope);
+  --font-eukraine: var(--font-eukraine);
+  --font-eukrainehead: var(--font-eukrainehead);
+  --font-sacramento: var(--font-sacramento);
+  --font-mono: var(--font-geist-mono);
+  --font-geist-sans: var(--font-geist-sans);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

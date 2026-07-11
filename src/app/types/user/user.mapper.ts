@@ -1,15 +1,25 @@
-import mongoose from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
-import { User } from '@/models';
+import { toIsoString } from '@/app/lib/mappers/_utils';
 import { CreateUserRequestDTO, UserResponseDTO } from '@/types';
+import { UserRole } from './user.enums';
 
-export function mapUserToResponse(
-  user: typeof User extends infer T
-    ? T extends mongoose.Model<infer U>
-      ? U
-      : never
-    : never
-): UserResponseDTO {
+export type UserEntity = {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  password?: string;
+  role: UserRole;
+  googleId?: string;
+  isActive: boolean;
+  createdAt: Date | string | null;
+  updatedAt: Date | string | null;
+};
+
+export type UserLean = HydratedDocument<UserEntity>;
+
+export function mapUserToResponse(user: UserLean): UserResponseDTO {
   return {
     _id: user._id.toString(),
     name: user.name,
@@ -17,8 +27,8 @@ export function mapUserToResponse(
     phone: user.phone,
     role: user.role,
     isActive: user.isActive,
-    createdAt: user.createdAt?.toISOString(),
-    updatedAt: user.updatedAt?.toISOString(),
+    createdAt: toIsoString(user.createdAt),
+    updatedAt: toIsoString(user.updatedAt),
   };
 }
 

@@ -1,8 +1,9 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 import { IconName } from '@/app/resources';
 import { Category } from '@/models';
 
+import { BlogCategoryItemDto } from '../article';
 import { CategoryResponseDTO } from './category.dto';
 
 export function mapCategoryToResponse(
@@ -28,5 +29,23 @@ export function mapCreateRequestToCategory(dto: CategoryResponseDTO) {
     title: dto.title,
     slug: dto.slug,
     src: dto.icon as IconName,
+  };
+}
+
+export type CategoryCountRow = {
+  categoryId: Types.ObjectId;
+  title: string;
+  slug: string;
+  count: number;
+};
+
+export function mapCategoryCountToBlogItem(
+  row: CategoryCountRow
+): BlogCategoryItemDto {
+  return {
+    id: row.categoryId.toString(),
+    title: row.title,
+    slug: row.slug,
+    count: row.count,
   };
 }

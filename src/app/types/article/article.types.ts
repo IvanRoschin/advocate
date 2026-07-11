@@ -70,13 +70,6 @@ export type ArticleRecentRow = {
   publishedAt?: Date;
 };
 
-export type CategoryCountRow = {
-  categoryId: Types.ObjectId;
-  title: string;
-  slug: string;
-  count: number;
-};
-
 export type ArticleAdminRow = {
   _id: Types.ObjectId;
 

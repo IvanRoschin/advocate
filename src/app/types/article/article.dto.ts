@@ -34,23 +34,6 @@ export type ArticleLayoutNodeInput =
   | ArticleSectionLayoutInput
   | ArticleGroupLayoutInput;
 
-export type ArticleLayoutNode =
-  | {
-      type: 'section';
-      key: ArticleSectionKey;
-      display: boolean;
-    }
-  | {
-      type: 'group';
-      key: string;
-      display: boolean;
-      wrapperClassName?: string;
-      items: Array<{
-        key: ArticleSectionKey;
-        display: boolean;
-      }>;
-    };
-
 export type ArticleLanguage = 'uk' | 'ru' | 'en';
 
 export type CoverImageDto = string[];
@@ -196,14 +179,14 @@ export type BlogCategoryItemDto = {
   id: string;
   title: string;
   slug: string;
-  count: number; // сколько published статей
+  count: number;
 };
 
 export type BlogRecentPostItemDto = {
   id: string;
   slug: string;
   title: string;
-  publishedAt?: string;
+  publishedAt?: Date;
 };
 
 export type ArticlePreviewDTO = {

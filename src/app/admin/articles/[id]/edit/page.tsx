@@ -1,6 +1,7 @@
-import { getArticleById, getServicesPublicList } from '@/app/actions';
-import { categoryService } from '@/app/lib/services/category.service';
-import { userService } from '@/app/lib/services/user.service';
+import { articleActions } from '@/app/actions/article.actions';
+import { categoryActions } from '@/app/actions/category.actions';
+import { servicePublicActions } from '@/app/actions/service.actions';
+import { userActions } from '@/app/actions/user.actions';
 import { mapArticleToResponse } from '@/app/types';
 
 import ArticleEditorClient from '../../_components/ArticleEditorClient';
@@ -13,23 +14,23 @@ export default async function EditArticlePage({
   const { id } = await params;
 
   const [articleRaw, usersRaw, categoriesRaw, serviceRaw] = await Promise.all([
-    getArticleById(id),
-    userService.getAll(),
-    categoryService.getAll(),
-    getServicesPublicList({ limit: 20 }),
+    articleActions.getById(id),
+    userActions.getAll(),
+    categoryActions.getAll(),
+    servicePublicActions.list({ limit: 20 }),
   ]);
 
   const article = mapArticleToResponse(articleRaw);
 
-  const users = usersRaw.map(u => ({
+  const users = usersRaw.items.map(u => ({
     id: String(u._id ?? u._id),
     name: u.name,
   }));
-  const categories = categoriesRaw.map(c => ({
-    id: String(c.id),
+  const categories = categoriesRaw.items.map(c => ({
+    id: String(c._id),
     title: c.title,
   }));
-  const services = serviceRaw.map(s => ({
+  const services = serviceRaw.items.map(s => ({
     id: String(s.id),
     title: s.title,
   }));

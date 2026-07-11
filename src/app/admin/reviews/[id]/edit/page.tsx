@@ -1,8 +1,6 @@
-import {
-  getArticlesPublicList,
-  getReviewById,
-  getServicesPublicList,
-} from '@/app/actions';
+import { articleActions } from '@/app/actions/article.actions';
+import { reviewActions } from '@/app/actions/review.actions';
+import { serviceActions } from '@/app/actions/service.actions';
 import { REVIEW_PAGE_OPTIONS, ReviewTargetOptionDto } from '@/app/types';
 
 import ReviewEditorClient from '../../_components/ReviewEditorClient';
@@ -15,19 +13,21 @@ export default async function EditReviewPage({ params }: EditReviewPageProps) {
   const { id } = await params;
 
   const [review, services, articles] = await Promise.all([
-    getReviewById(id),
-    getServicesPublicList({ limit: 20 }),
-    getArticlesPublicList({ limit: 50 }),
+    reviewActions.getById(id),
+    serviceActions.getAll({ limit: 20 }),
+    articleActions.getAll({ limit: 20 }),
   ]);
 
-  const serviceOptions: ReviewTargetOptionDto[] = services.map(service => ({
-    value: service.id,
-    label: service.title,
-  }));
+  const serviceOptions: ReviewTargetOptionDto[] = services.items.map(
+    service => ({
+      value: service._id,
+      label: service.title,
+    })
+  );
 
   const articleOptions: ReviewTargetOptionDto[] = articles.items.map(
     article => ({
-      value: article.id,
+      value: article._id,
       label: article.title,
     })
   );

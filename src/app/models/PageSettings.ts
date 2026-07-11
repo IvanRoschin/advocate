@@ -34,7 +34,7 @@ const PageSettingsSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      enum: ['article', 'service'],
+      enum: ['article', 'service', 'home'],
       index: true,
     },
 

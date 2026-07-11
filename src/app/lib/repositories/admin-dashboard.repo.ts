@@ -1,5 +1,4 @@
-import 'server-only';
-
+import { AdminDashboardCountersDTO } from '@/app/types';
 import {
   Article,
   Category,
@@ -13,7 +12,6 @@ import {
   User,
 } from '@/models';
 
-import type { AdminDashboardCountersDTO } from '@/app/types';
 export const adminDashboardRepo = {
   async getCounters(): Promise<AdminDashboardCountersDTO> {
     const [

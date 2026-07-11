@@ -25,8 +25,8 @@ export type UserResponseDTO = {
 
   googleId?: string;
 
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type UpdateUserDTO = Partial<CreateUserRequestDTO>;

@@ -1,10 +1,11 @@
-import { getApprovedReviewsByTarget } from './actions';
+import { pageSettingsActions } from './actions/page-settings.actions';
+import { reviewPublicActions } from './actions/review.actions';
+import { slidePublicActions } from './actions/slide.actions';
 import { buildOgImageUrl, generateMetadata } from './helpers';
 import { HOME_SECTIONS, HomeSectionProps } from './home.sections';
-import { renderLayout } from './lib/layouts/renderLayout';
-import { pageSettingsService } from './lib/services/page-settings.service';
-import { slideService } from './lib/services/slide.service';
+import { LayoutNode, renderLayout } from './lib/layouts/renderLayout';
 import { home, person } from './resources/content';
+import { HomeSectionKey } from './resources/content/pages/home.layout';
 
 export const metadata = generateMetadata({
   title: home.title,
@@ -18,19 +19,22 @@ export const metadata = generateMetadata({
 });
 
 export default async function Home() {
-  const reviews = await getApprovedReviewsByTarget({
+  const reviewsRaw = await reviewPublicActions.list({
     targetType: 'page',
     pageKey: 'home',
     limit: 4,
   });
+  const reviews = reviewsRaw.items;
 
-  const slides = await slideService.getActiveSlides();
+  const slides = await slidePublicActions.active();
 
   const sectionProps: HomeSectionProps = {
     reviews,
     slides,
   };
-  const layout = await pageSettingsService.getHomeLayout();
+  const layout = (await pageSettingsActions.getLayout(
+    'home'
+  )) as LayoutNode<HomeSectionKey>[];
 
   return (
     <main className="relative">

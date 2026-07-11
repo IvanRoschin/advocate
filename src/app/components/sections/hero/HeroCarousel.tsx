@@ -9,8 +9,9 @@ import { imageVariants } from '@/app/config/imageVariants';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { cn } from '@/lib';
 
-import type { SlideResponseDTO } from '@/app/types';
+import { NextImage } from '../../common';
 
+import type { SlideResponseDTO } from '@/app/types';
 type HeroCarouselProps = {
   items: SlideResponseDTO[];
   autoplay?: boolean;
@@ -108,7 +109,7 @@ export function HeroCarousel({
     ? getCloudinarySrc(current.src[0])
     : undefined;
 
-  const variant = imageVariants.hero;
+  const variant = imageVariants.card;
 
   return (
     <div className={cn('absolute inset-0', className)} {...pauseHandlers}>
@@ -122,11 +123,14 @@ export function HeroCarousel({
             transition={{ duration: 0.45, ease: 'easeOut' }}
             className="absolute inset-0"
           >
-            <CldImage
+            <NextImage
+              as={CldImage}
               src={publicId}
               alt={current.title}
               fill
               sizes={variant.sizes}
+              useSkeleton
+              preload={safeIndex === 0}
               className="object-cover"
             />
           </motion.div>

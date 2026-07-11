@@ -1,3 +1,5 @@
+import { toIdString, toIsoString } from '@/app/lib/mappers/_utils';
+
 import type { CaseRow } from '@/app/lib/repositories/case.repo';
 import type {
   ClientDashboardCaseDto,
@@ -6,21 +8,10 @@ import type {
   ClientResponseDTO,
 } from '@/app/types';
 
-const toIsoString = (value?: Date | string | null): string | undefined => {
-  if (!value) return undefined;
-
-  if (value instanceof Date) {
-    return value.toISOString();
-  }
-
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
-};
-
 export const mapClientToDashboardClientDto = (
   client: ClientResponseDTO
 ): ClientDashboardClientDto => ({
-  id: client.id,
+  id: toIdString(client.id),
   type: client.type,
   status: client.status,
   fullName: client.fullName,
@@ -34,7 +25,7 @@ export const mapClientToDashboardClientDto = (
 export const mapCaseRowToDashboardCaseDto = (
   row: CaseRow
 ): ClientDashboardCaseDto => ({
-  id: row._id.toString(),
+  id: toIdString(row._id),
   title: row.title,
   description: row.description ?? '',
   status: row.status,

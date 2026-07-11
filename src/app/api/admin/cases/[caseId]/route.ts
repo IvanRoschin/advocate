@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { caseActions } from '@/app/actions/case-admin.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { caseAdminService } from '@/app/lib/services/case-admin.service';
 import { UpdateCaseDTO, updateCaseSchema } from '@/app/types';
 
 type RouteContext = {
@@ -24,7 +24,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       )
     ) as UpdateCaseDTO;
 
-    const updated = await caseAdminService.update(caseId, data);
+    const updated = await caseActions.update(caseId, data);
 
     return NextResponse.json({ ok: true, data: updated });
   } catch (err) {
@@ -35,7 +35,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 export async function DELETE(_: Request, { params }: RouteContext) {
   try {
     const { caseId } = await params;
-    const data = await caseAdminService.delete(caseId);
+    const data = await caseActions.delete(caseId);
 
     return NextResponse.json({ ok: true, data });
   } catch (err) {

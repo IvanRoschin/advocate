@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 import { useAuthFeedback } from '@/app/(auth)/_components/AuthFeedbackProvider';
-import { requestPasswordReset } from '@/app/actions';
+import { requestPasswordReset } from '@/app/actions/auth.actions';
 import { Btn, Input } from '@/components';
 
 interface InitialStateType {
@@ -44,9 +44,9 @@ const ForgotPasswordForm = () => {
     try {
       setIsLoading(true);
 
-      const res: ForgotPasswordResponse = await requestPasswordReset(
-        values.email
-      );
+      const res: ForgotPasswordResponse = await requestPasswordReset({
+        email: values.email,
+      });
 
       if (res.ok) {
         resetForm();

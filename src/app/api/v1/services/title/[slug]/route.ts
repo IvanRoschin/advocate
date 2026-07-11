@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { serviceService } from '@/app/lib/services';
+import { servicePublicActions } from '@/app/actions/service.actions';
 
 export async function GET(
   _req: Request,
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   const { slug } = await params;
 
-  const service = await serviceService.getPublicBySlug(slug);
+  const service = await servicePublicActions.findPublishedBySlug({ slug });
 
   return NextResponse.json({
     title: service.title,

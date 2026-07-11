@@ -1,16 +1,17 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { iconLibrary } from '@/app/resources';
-import type { ArticleResponseDTO, ArticleStatus } from '@/app/types';
+import { ArticleResponseDTO, ArticleStatus } from '@/app/types';
 import { Btn } from '@/components';
 import { Badge } from '@/components/ui/badge';
+
 import { Center } from '../_components/table/Center';
 import { SortableHeader } from '../_components/table/SortableHeader';
+
 type ColumnActions = {
   onEdit: (article: ArticleResponseDTO) => void;
   onDelete: (article: ArticleResponseDTO) => void;
 
-  // ✅ мапы для отображения вместо ID
   authorNameById: Map<string, string>;
   categoryTitleById: Map<string, string>;
 };

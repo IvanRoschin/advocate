@@ -110,6 +110,16 @@ export const mapAdminDashboardToResponse = (
       trend: 55,
       href: routes.admin.ui.pageSettings,
     },
+    {
+      key: 'subscribers',
+      title: 'Підписники',
+      value: counters.subscribers,
+      formattedValue: formatCount(counters.subscribers),
+      icon: 'subscribers', // ⚠️ перевір, що такий IconName існує в мапі іконок
+      color: 'bg-cyan-500',
+      trend: 55,
+      href: routes.admin.crm.subscribers, // ⚠️ підстав реальний шлях, якщо називається інакше
+    },
   ];
 
   return { stats };

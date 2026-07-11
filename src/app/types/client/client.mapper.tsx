@@ -1,5 +1,6 @@
 import type { Types } from 'mongoose';
 
+import { toIdString, toIsoString } from '@/app/lib/mappers/_utils';
 import type {
   ClientProfileDto,
   ClientResponseDTO,
@@ -20,22 +21,6 @@ type ClientLike = {
   sourceLeadId?: Types.ObjectId | string | null;
   createdAt?: Date | string | null;
   updatedAt?: Date | string | null;
-};
-
-const toIdString = (value?: Types.ObjectId | string | null): string | null => {
-  if (!value) return null;
-  return typeof value === 'string' ? value : value.toString();
-};
-
-const toIsoString = (value?: Date | string | null): string | undefined => {
-  if (!value) return undefined;
-
-  if (value instanceof Date) {
-    return value.toISOString();
-  }
-
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
 };
 
 export function mapClientToResponse(client: ClientLike): ClientResponseDTO {

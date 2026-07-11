@@ -30,7 +30,8 @@ export interface AdminDashboardStatDTO {
     | 'leads'
     | 'reviews'
     | 'slides'
-    | 'pageSettings';
+    | 'pageSettings'
+    | 'subscribers';
   title: string;
   value: number;
   formattedValue: string;

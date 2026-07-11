@@ -8,10 +8,13 @@ import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { Breadcrumbs, Btn, Switcher } from '@/components';
 
-import type { PageLayoutNode, PageSettingsResponseDTO } from '@/app/types';
+import type { PageLayoutNode } from '@/app/types';
 
 type Props = {
-  initialSettings: PageSettingsResponseDTO;
+  initialSettings: {
+    entity: 'article' | 'service' | 'home';
+    layout: PageLayoutNode[];
+  };
 };
 
 const ENTITY_META = {
@@ -110,6 +113,7 @@ export default function PageSettingsClient({ initialSettings }: Props) {
   const [isSaving, setIsSaving] = useState(false);
 
   const entityMeta = ENTITY_META[initialSettings.entity];
+
   const isDirty = useMemo(
     () => !layoutsEqual(layout, initialSettings.layout),
     [layout, initialSettings.layout]

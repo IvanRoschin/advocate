@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 import { useAuthFeedback } from '@/app/(auth)/_components/AuthFeedbackProvider';
-import { resetPassword } from '@/app/actions';
+import { resetPassword } from '@/app/actions/auth.actions';
 import { routes } from '@/app/config/routes';
 import { Btn, Input } from '@/components';
 
@@ -49,10 +49,10 @@ const RestorePasswordForm = ({ token }: Props) => {
     try {
       setIsLoading(true);
 
-      const res: RestorePasswordResponse = await resetPassword(
+      const res: RestorePasswordResponse = await resetPassword({
         token,
-        values.password
-      );
+        newPassword: values.password,
+      });
 
       if (res.ok) {
         resetForm();

@@ -1,62 +1,47 @@
-import 'server-only';
-
 import { ClientSession } from 'mongoose';
 
-import { mapLeadToResponse } from '@/app/types';
+import type { CreateLeadDTO, UpdateLeadDTO } from '@/app/types';
 import { Lead } from '@/models';
+import { createQuery } from './queryFactory';
 
-import type {
-  CreateLeadDTO,
-  LeadResponseDTO,
-  UpdateLeadDTO,
-} from '@/app/types';
-export const leadRepository = {
-  async findAll(): Promise<LeadResponseDTO[]> {
-    const leads = await Lead.find().sort({ createdAt: -1 });
-    return leads.map(mapLeadToResponse);
+const leadQuery = createQuery(Lead);
+
+export const leadRepo = {
+  async findAll() {
+    return Lead.find().sort({ createdAt: -1 });
   },
 
-  async findById(id: string): Promise<LeadResponseDTO | null> {
-    const lead = await Lead.findById(id);
-    return lead ? mapLeadToResponse(lead) : null;
+  async findAllPaginated(page: number, limit: number) {
+    return leadQuery()
+      .sortBy({ createdAt: -1 })
+      .paginate(page, limit)
+      .execWithCount();
   },
 
-  async create(data: CreateLeadDTO): Promise<LeadResponseDTO> {
-    const lead = await Lead.create({
+  async findById(id: string) {
+    return Lead.findById(id);
+  },
+
+  async create(data: CreateLeadDTO) {
+    return Lead.create({
       name: data.name,
       email: data.email,
       phone: data.phone,
       message: data.message ?? '',
       source: data.source,
     });
-
-    return mapLeadToResponse(lead);
   },
 
-  async update(
-    id: string,
-    data: UpdateLeadDTO
-  ): Promise<LeadResponseDTO | null> {
-    const lead = await Lead.findByIdAndUpdate(
+  async update(id: string, data: UpdateLeadDTO) {
+    return Lead.findByIdAndUpdate(
       id,
-      {
-        ...data,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
+      { ...data },
+      { new: true, runValidators: true }
     );
-
-    return lead ? mapLeadToResponse(lead) : null;
   },
 
-  async delete(
-    id: string,
-    session?: ClientSession
-  ): Promise<LeadResponseDTO | null> {
-    const lead = await Lead.findByIdAndDelete(id, { session });
-    return lead ? mapLeadToResponse(lead) : null;
+  async deleteById(id: string, session?: ClientSession) {
+    return Lead.findByIdAndDelete(id, { session });
   },
 
   async findEntityById(id: string) {
@@ -68,9 +53,6 @@ export const leadRepository = {
     data: Record<string, unknown>,
     session?: ClientSession
   ) {
-    return Lead.findByIdAndUpdate(id, data, {
-      new: true,
-      session,
-    });
+    return Lead.findByIdAndUpdate(id, data, { new: true, session });
   },
 };

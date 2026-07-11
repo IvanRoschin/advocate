@@ -1,13 +1,14 @@
-'use server';
-
-import { adminDashboardRepo } from '@/app/lib/repositories/admin-dashboard.repo';
 import {
   AdminDashboardResponseDTO,
   mapAdminDashboardToResponse,
 } from '@/app/types';
 
-export async function getAdminDashboard(): Promise<AdminDashboardResponseDTO> {
-  const counters = await adminDashboardRepo.getCounters();
+import { adminDashboardRepo } from '../lib/repositories/admin-dashboard.repo';
+import { createAction } from './createAction';
 
-  return mapAdminDashboardToResponse(counters);
-}
+export const adminDashboardActions = {
+  getCounters: createAction<void, AdminDashboardResponseDTO>(async () => {
+    const counters = await adminDashboardRepo.getCounters();
+    return mapAdminDashboardToResponse(counters);
+  }),
+};

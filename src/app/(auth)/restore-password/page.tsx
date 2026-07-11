@@ -1,6 +1,7 @@
+import { tokenActions } from '@/app/actions/token.actions';
 import { RestorePasswordForm } from '@/app/components';
-import { tokenService } from '@/app/lib/services/token.service';
 import { TokenType } from '@/app/types';
+
 import AuthCard from '../_components/AuthCard';
 import AuthStatusBadge from '../_components/AuthStatusBadge';
 
@@ -21,7 +22,7 @@ export default async function RestorePasswordPage({ searchParams }: Props) {
     errorMessage = 'Посилання недійсне або відсутній токен.';
   } else {
     try {
-      await tokenService.verify(token, TokenType.RESET_PASSWORD);
+      await tokenActions.verify({ token, type: TokenType.RESET_PASSWORD });
       isValid = true;
     } catch {
       errorMessage =

@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 
-import { getServicesPublicList } from '@/app/actions';
+import { servicePublicActions } from '@/app/actions/service.actions';
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
 import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import { servicesLayout } from '@/app/resources/content/pages/services.layout';
-
 import {
   SERVICES_SECTIONS,
   ServicesSectionProps,
@@ -19,7 +18,8 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function ServicesPage() {
-  const services = await getServicesPublicList({ limit: 20 });
+  const servicesRow = await servicePublicActions.list({ limit: 20 });
+  const services = servicesRow.items;
 
   const sectionProps: ServicesSectionProps = {
     services,

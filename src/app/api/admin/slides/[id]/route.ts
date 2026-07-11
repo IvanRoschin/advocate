@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { slideActions } from '@/app/actions/slide.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { slideService } from '@/app/lib/services/slide.service';
 import { UpdateSlideDTO, updateSlideSchema } from '@/app/types';
 
 type RouteContext = {
@@ -11,10 +10,9 @@ type RouteContext = {
 
 export async function GET(_: Request, { params }: RouteContext) {
   try {
-    await dbConnect();
     const { id } = await params;
 
-    const slide = await slideService.getById(id);
+    const slide = await slideActions.getById(id);
 
     if (!slide) {
       return NextResponse.json({ message: 'Slide not found' }, { status: 404 });
@@ -28,7 +26,6 @@ export async function GET(_: Request, { params }: RouteContext) {
 
 export async function PATCH(req: Request, { params }: RouteContext) {
   try {
-    await dbConnect();
     const { id } = await params;
     const body = await req.json();
 
@@ -43,7 +40,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       )
     ) as UpdateSlideDTO;
 
-    const slide = await slideService.update(id, data);
+    const slide = await slideActions.update(id, data);
 
     if (!slide) {
       return NextResponse.json({ message: 'Slide not found' }, { status: 404 });
@@ -57,10 +54,9 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 
 export async function DELETE(_: Request, { params }: RouteContext) {
   try {
-    await dbConnect();
     const { id } = await params;
 
-    const result = await slideService.delete(id);
+    const result = await slideActions.delete(id);
 
     if (!result) {
       return NextResponse.json({ message: 'Slide not found' }, { status: 404 });

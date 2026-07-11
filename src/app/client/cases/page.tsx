@@ -1,9 +1,9 @@
-import { clientCabinetService } from '@/app/lib/services/client-access.service';
+import { clientAccessActions } from '@/app/actions/client-access.actions';
 
 import ClientCasesPageClient from './_components/ClientCasesPageClient';
 
 export default async function ClientCasesPage() {
-  const overview = await clientCabinetService.getMyOverview();
+  const overview = await clientAccessActions.getMyOverview();
 
   return <ClientCasesPageClient initialCases={overview.cases} />;
 }

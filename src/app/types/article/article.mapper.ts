@@ -1,20 +1,22 @@
-import type {
-  ArticleLike,
-  ArticlePublicFullRow,
-  ArticlePublicRow,
-} from '@/types';
-import type {
-  ArticleListItemDto,
-  ArticlePreviewDTO,
-  ArticlePublicPageDto,
-  ArticleResponseDTO,
-} from '@/app/types';
 import {
   firstImage,
   stringArray,
   toIdString,
   toIsoString,
 } from '@/app/lib/mappers/_utils';
+import type {
+  ArticleListItemDto,
+  ArticlePreviewDTO,
+  ArticlePublicPageDto,
+  ArticleRecentRow,
+  ArticleResponseDTO,
+  BlogRecentPostItemDto,
+} from '@/app/types';
+import type {
+  ArticleLike,
+  ArticlePublicFullRow,
+  ArticlePublicRow,
+} from '@/types';
 
 /* ======================================================================== */
 /* ADMIN                                                                    */
@@ -176,3 +178,14 @@ export const mapArticleToPreviewDTO = (
   src: stringArray(article.src),
   publishedAt: toIsoString(article.publishedAt),
 });
+
+export function mapRecentRowToBlogItem(
+  row: ArticleRecentRow
+): BlogRecentPostItemDto {
+  return {
+    id: row._id.toString(),
+    slug: row.slug,
+    title: row.title,
+    publishedAt: row.publishedAt ?? undefined,
+  };
+}

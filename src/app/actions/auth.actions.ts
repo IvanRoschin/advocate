@@ -1,27 +1,36 @@
 'use server';
 
 import { routes } from '@/app/config/routes';
+import { tokenRepo } from '@/app/lib/repositories/token.repo';
 import { userRepo } from '@/app/lib/repositories/user.repo';
 import { env } from '@/app/lib/server/env/serverEnv';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import { sendEmail } from '@/app/lib/server/mail/emailService';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { tokenService } from '@/app/lib/services/token.service';
 import { EmailTemplateType } from '@/app/templates/email/types';
 import { TokenType } from '@/app/types';
 
+import { createAction } from './createAction';
+
+type RequestResetInput = { email: string };
+type RequestResetResult =
+  | { ok: true; code: 'EMAIL_SENT'; message: string }
+  | { ok: false; code: 'USER_NOT_FOUND'; message: string };
+
+type ResetPasswordInput = { token: string; newPassword: string };
+type ResetPasswordResult = { ok: true; message: string };
+
 /* =========================================================
    REQUEST PASSWORD RESET
-   ========================================================= */
+   ======================================================== */
 
-export async function requestPasswordReset(email: string) {
-  await dbConnect();
-
-  const normalizedEmail = email.trim().toLowerCase();
+export const requestPasswordReset = createAction<
+  RequestResetInput,
+  RequestResetResult
+>(async ({ args }) => {
+  const normalizedEmail = args.email.trim().toLowerCase();
 
   const user = await userRepo.findByEmail(normalizedEmail);
 
-  // ⚠️ intentionally non-verbose for security reasons
   if (!user) {
     return {
       ok: false,
@@ -30,15 +39,13 @@ export async function requestPasswordReset(email: string) {
     };
   }
 
-  const tokenDoc = await tokenService.create({
-    userId: user._id.toString(),
+  const tokenDoc = await tokenRepo.create({
+    userId: user._id,
     type: TokenType.RESET_PASSWORD,
     email: user.email,
   });
 
-  const resetUrl = `${env.baseUrl}${
-    routes.public.auth.restorePassword
-  }?token=${tokenDoc.token}`;
+  const resetUrl = `${env.baseUrl}${routes.public.auth.restorePassword}?token=${tokenDoc.token}`;
 
   await sendEmail({
     to: user.email,
@@ -54,31 +61,38 @@ export async function requestPasswordReset(email: string) {
     code: 'EMAIL_SENT' as const,
     message: 'Лист відправлено.',
   };
-}
+});
 
 /* =========================================================
    RESET PASSWORD
-   ========================================================= */
+   ======================================================== */
 
-export async function resetPassword(token: string, newPassword: string) {
-  await dbConnect();
+export const resetPassword = createAction<
+  ResetPasswordInput,
+  ResetPasswordResult
+>(async ({ args }) => {
+  const tokenDoc = await tokenRepo.findValid(
+    args.token,
+    TokenType.RESET_PASSWORD
+  );
 
-  const tokenDoc = await tokenService.verify(token, TokenType.RESET_PASSWORD);
+  if (!tokenDoc) {
+    throw new ValidationError('Токен недійсний або застарів.');
+  }
 
   const user = await userRepo.findById(tokenDoc.userId.toString());
 
   if (!user) {
-    throw new ValidationError('Користувача не знайдено');
+    throw new ValidationError('Користувача не знайдено.');
   }
 
-  // ⚠️ intentionally delegated to repo/service boundary
-  user.password = newPassword;
+  user.password = args.newPassword;
   await user.save();
 
-  await tokenService.markUsed(tokenDoc);
+  await tokenRepo.markUsed(tokenDoc);
 
   return {
     ok: true,
     message: 'Пароль успішно змінено.',
   };
-}
+});
