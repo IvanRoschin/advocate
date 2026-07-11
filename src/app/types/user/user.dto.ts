@@ -35,7 +35,6 @@ export type SessionUserDTO = {
   id: string;
   role: string;
   phone: string;
-  surname: string;
   name?: string | null;
   email?: string | null;
   image?: string | null;
