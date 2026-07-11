@@ -1,12 +1,9 @@
 import { NextResponse } from 'next/server';
 
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { authService } from '@/app/lib/services/auth.service';
+import { requestPasswordReset } from '@/app/actions/auth.actions';
 
 export async function POST(req: Request) {
   try {
-    await dbConnect();
-
     const body = (await req.json()) as { email?: string };
     const email = body?.email?.trim();
 
@@ -21,7 +18,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await authService.requestPasswordReset(email);
+    const result = await requestPasswordReset({ email });
 
     return NextResponse.json(result, {
       status: result.ok ? 200 : 404,

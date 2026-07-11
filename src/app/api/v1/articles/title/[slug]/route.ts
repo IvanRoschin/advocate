@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { articleService } from '@/app/lib/services/article.service';
+import { articlePublicActions } from '@/app/actions/article.actions';
 
 export async function GET(
   _req: Request,
@@ -8,8 +8,11 @@ export async function GET(
 ) {
   const { slug } = await params;
 
-  const article = await articleService.getPublicBySlug(slug);
+  const article = await articlePublicActions.findBySlug(slug);
 
+  if (!article) {
+    throw new Error('Article not found');
+  }
   return NextResponse.json({
     title: article.title,
     slug: article.slug,

@@ -1,16 +1,19 @@
-import type { ArticleLayoutNode } from '@/app/types';
+import { LayoutNode } from '@/app/lib/layouts/renderLayout';
 
-export const defaultArticleLayout: ArticleLayoutNode[] = [
-  {
-    type: 'section',
-    key: 'header',
-    display: true,
-  },
-  {
-    type: 'section',
-    key: 'hero',
-    display: true,
-  },
+export type ArticleSectionKey =
+  | 'header'
+  | 'hero'
+  | 'content'
+  | 'share'
+  | 'related'
+  | 'toc'
+  | 'reviews'
+  | 'serviceLink'
+  | 'footer';
+
+export const defaultArticleLayout: LayoutNode<ArticleSectionKey>[] = [
+  { type: 'section', key: 'header', display: true },
+  { type: 'section', key: 'hero', display: true },
   {
     type: 'group',
     key: 'articleMainContent',
@@ -25,9 +28,5 @@ export const defaultArticleLayout: ArticleLayoutNode[] = [
       { key: 'serviceLink', display: true },
     ],
   },
-  {
-    type: 'section',
-    key: 'footer',
-    display: true,
-  },
+  { type: 'section', key: 'footer', display: true },
 ];

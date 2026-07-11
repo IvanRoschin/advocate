@@ -238,7 +238,7 @@ const contact: ContactContent = {
   ],
 
   mapEmbedUrl:
-    'https://www.google.com/maps/d/embed?mid=1jxiKyVm9tBik41i5K1Ecu3XxK3i3yBw&ehbc=2E312F',
+    'https://www.google.com/maps/d/u/2/embed?mid=1jxiKyVm9tBik41i5K1Ecu3XxK3i3yBw&ehbc=2E312F',
 
   seo: {
     title: 'Контакти',

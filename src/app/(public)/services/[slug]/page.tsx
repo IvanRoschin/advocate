@@ -1,9 +1,9 @@
+import { articlePublicActions } from '@/app/actions/article.actions';
+import { pageSettingsActions } from '@/app/actions/page-settings.actions';
+import { reviewPublicActions } from '@/app/actions/review.actions';
+import { servicePublicActions } from '@/app/actions/service.actions';
 import { ServiceReviewForm } from '@/app/components';
-import { renderLayout } from '@/app/lib/layouts/renderLayout';
-import { articleService } from '@/app/lib/services';
-import { pageSettingsService } from '@/app/lib/services/page-settings.service';
-import { reviewService } from '@/app/lib/services/review.service';
-import { serviceService } from '@/app/lib/services/service.service';
+import { LayoutNode, renderLayout } from '@/app/lib/layouts/renderLayout';
 import { ServiceSectionKey } from '@/app/types';
 
 import {
@@ -18,23 +18,32 @@ type ServicePageProps = {
 export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params;
 
-  const service = await serviceService.getPublicBySlug(slug);
-
-  const articles = await articleService.getRelatedArticles(service.id);
-
-  const reviews = await reviewService.getApprovedByTarget({
-    targetType: 'service',
-    targetId: service.id,
+  const service = await servicePublicActions.findPublishedBySlug({
+    slug,
   });
+
+  const [articles, reviews, rawLayout] = await Promise.all([
+    articlePublicActions.list({
+      categorySlug: slug,
+      limit: 10,
+    }),
+
+    reviewPublicActions.list({
+      targetType: 'service',
+      targetId: service.id,
+    }),
+
+    pageSettingsActions.getLayout('service'),
+  ]);
+
+  const layout = (rawLayout ?? []) as readonly LayoutNode<ServiceSectionKey>[];
 
   const sectionProps: ServiceSectionProps = {
     service,
-    articles,
-    reviews,
+    articles: articles.items,
+    reviews: reviews.items,
     reviewForm: <ServiceReviewForm serviceId={service.id} />,
   };
-
-  const layout = await pageSettingsService.getServiceLayout();
 
   return (
     <main className="bg-background text-foreground min-h-screen">

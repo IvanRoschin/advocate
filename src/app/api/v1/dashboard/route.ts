@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { clientDashboardActions } from '@/app/actions/client-dashboard.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { clientDashboardService } from '@/app/lib/services/client-dashboard.service';
 
 export async function GET(req: NextRequest) {
   try {
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const data = await clientDashboardService.getByClientId(clientId);
+    const data = await clientDashboardActions.getByClientId({ clientId });
 
     return NextResponse.json({ ok: true, data });
   } catch (err) {

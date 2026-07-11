@@ -20,7 +20,11 @@ export const adminDashboardGroups: AdminDashboardGroup[] = [
     key: 'crm',
     title: 'CRM',
     description: 'Ліди, клієнти та робота з зверненнями.',
-    routes: [routes.admin.crm.leads, routes.admin.crm.clients],
+    routes: [
+      routes.admin.crm.leads,
+      routes.admin.crm.subscribers,
+      routes.admin.crm.clients,
+    ],
   },
   {
     key: 'content',

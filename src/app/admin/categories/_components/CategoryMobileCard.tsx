@@ -1,4 +1,5 @@
-import type { CategoryResponseDTO } from '@/app/types';
+import { CategoryResponseDTO } from '@/app/types/category';
+
 import { AdminCardField } from '../../_components/table/AdminCardField';
 import AdminTableCard from '../../_components/table/AdminTableCard';
 import { CardActions } from '../../_components/ui/CardActions';

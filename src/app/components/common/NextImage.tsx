@@ -1,37 +1,57 @@
 'use client';
 
-import Image, { ImageProps } from 'next/image';
+import Image from 'next/image';
 import * as React from 'react';
 
 import { Skeleton } from '@/components/common';
 import { cn } from '@/lib';
 
-type BaseProps = Omit<ImageProps, 'alt' | 'fill' | 'width' | 'height'> & {
+type NextImageSrc = React.ComponentProps<typeof Image>['src'];
+
+type CommonImageProps = {
+  src: NextImageSrc;
+  alt: string;
+  className?: string;
+  onLoad?: (event: React.SyntheticEvent<HTMLImageElement>) => void;
+};
+
+type BaseProps<TProps extends CommonImageProps> = Omit<
+  TProps,
+  'alt' | 'src' | 'fill' | 'width' | 'height' | 'onLoad' | 'className'
+> & {
+  as?: React.ComponentType<TProps>;
+  src: TProps['src'];
   alt: string;
   useSkeleton?: boolean;
   wrapperClassName?: string;
   className?: string;
+  onLoad?: (event: React.SyntheticEvent<HTMLImageElement>) => void;
   classNames?: {
     image?: string;
     wrapper?: string;
   };
 };
 
-type FillProps = BaseProps & {
+type FillProps<TProps extends CommonImageProps> = BaseProps<TProps> & {
   fill: true;
   width?: never;
   height?: never;
 };
 
-type FixedSizeProps = BaseProps & {
+type FixedSizeProps<TProps extends CommonImageProps> = BaseProps<TProps> & {
   fill?: false | undefined;
   width: number;
   height: number;
 };
 
-type NextImageProps = FillProps | FixedSizeProps;
+type NextImageProps<TProps extends CommonImageProps> =
+  | FillProps<TProps>
+  | FixedSizeProps<TProps>;
 
-export default function NextImage({
+export default function NextImage<
+  TProps extends CommonImageProps = React.ComponentProps<typeof Image>,
+>({
+  as,
   useSkeleton = false,
   src,
   alt,
@@ -40,14 +60,18 @@ export default function NextImage({
   classNames,
   onLoad,
   ...props
-}: NextImageProps) {
+}: NextImageProps<TProps>) {
   const [isLoading, setIsLoading] = React.useState(useSkeleton);
+
+  const ImageComponent = (as ?? Image) as React.ComponentType<
+    CommonImageProps & Record<string, unknown>
+  >;
 
   const isFill = 'fill' in props && props.fill === true;
 
   const style =
     !isFill && 'width' in props && 'height' in props
-      ? { width: props.width, height: props.height }
+      ? { width: props.width as number, height: props.height as number }
       : undefined;
 
   return (
@@ -64,17 +88,17 @@ export default function NextImage({
         <Skeleton className="absolute inset-0 z-0 h-full w-full animate-pulse rounded-md" />
       )}
 
-      <Image
+      <ImageComponent
+        {...(props as unknown as TProps)}
         src={src}
         alt={alt}
-        {...props}
         className={cn(
           'transition-opacity duration-500',
           isLoading ? 'opacity-0' : 'opacity-100',
           classNames?.image,
           className
         )}
-        onLoad={event => {
+        onLoad={(event: React.SyntheticEvent<HTMLImageElement>) => {
           if (useSkeleton) setIsLoading(false);
           onLoad?.(event);
         }}

@@ -1,4 +1,37 @@
 @layer utilities {
+  /* ===== Accordion ===== */
+  .faq-item > summary {
+    list-style: none;
+  }
+  .faq-item > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* примусово рендерити вміст навіть коли <details> закритий —
+     інакше браузер ставить display:none і transition не встигає зіграти */
+  .faq-item > *:not(summary) {
+    display: grid;
+  }
+
+  .faq-item > .faq-panel {
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    transition: grid-template-rows 0.3s ease;
+  }
+  .faq-item[open] > .faq-panel {
+    grid-template-rows: 1fr;
+  }
+  .faq-item > .faq-panel > p {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-item > .faq-panel {
+      transition: none;
+    }
+  }
+
   /* ===== Sections ===== */
 
   .section {

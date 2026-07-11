@@ -2,6 +2,7 @@ import { DefaultSession, DefaultUser, NextAuthOptions } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import { Provider } from 'next-auth/providers/index';
 
 import User from '@/models/User';
 import { resolveActiveClientAccess } from '../lib/auth/resolveActiveClientAccess';
@@ -90,67 +91,58 @@ async function loadUserSessionContext(userId: string) {
   };
 }
 
-export const authOptions: NextAuthOptions = {
-  pages: {
-    signIn: routes.public.auth.signIn,
-  },
+const providers: Provider[] = [
+  Credentials({
+    name: 'credentials',
+    credentials: {
+      email: { label: 'Email', type: 'text' },
+      password: { label: 'Password', type: 'password' },
+    },
 
-  session: {
-    strategy: 'jwt',
-  },
+    async authorize(credentials) {
+      const email = credentials?.email?.trim().toLowerCase();
+      const password = credentials?.password;
 
-  providers: [
-    Credentials({
-      name: 'credentials',
+      if (!email || !password) {
+        throw new Error(AUTH_ERROR_CODES.MISSING_CREDENTIALS);
+      }
 
-      credentials: {
-        email: { label: 'Email', type: 'text' },
-        password: { label: 'Password', type: 'password' },
-      },
+      await dbConnect();
 
-      async authorize(credentials) {
-        const email = credentials?.email?.trim().toLowerCase();
-        const password = credentials?.password;
+      const user = await User.findOne({ email });
 
-        if (!email || !password) {
-          throw new Error(AUTH_ERROR_CODES.MISSING_CREDENTIALS);
-        }
+      if (!user) {
+        throw new Error(AUTH_ERROR_CODES.USER_NOT_FOUND);
+      }
 
-        await dbConnect();
+      if (!user.isActive) {
+        throw new Error(AUTH_ERROR_CODES.USER_NOT_ACTIVATED);
+      }
 
-        const user = await User.findOne({ email });
+      const isCorrect = await user.comparePassword(password);
 
-        if (!user) {
-          throw new Error(AUTH_ERROR_CODES.USER_NOT_FOUND);
-        }
+      if (!isCorrect) {
+        throw new Error(AUTH_ERROR_CODES.INVALID_PASSWORD);
+      }
 
-        const isActiveted = await user.isActive;
+      return {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        surname: user.surname || '',
+        role: user.role,
+        isActive: user.isActive,
+      };
+    },
+  }),
+];
 
-        if (!isActiveted) {
-          throw new Error(AUTH_ERROR_CODES.USER_NOT_ACTIVATED);
-        }
-
-        const isCorrect = await user.comparePassword(password);
-
-        if (!isCorrect) {
-          throw new Error(AUTH_ERROR_CODES.INVALID_PASSWORD);
-        }
-
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          surname: user.surname || '',
-          role: user.role,
-          isActive: user.isActive,
-        };
-      },
-    }),
-
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  providers.push(
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 
       async profile(profile) {
         await dbConnect();
@@ -185,8 +177,20 @@ export const authOptions: NextAuthOptions = {
           isActive: user.isActive,
         };
       },
-    }),
-  ],
+    })
+  );
+}
+
+export const authOptions: NextAuthOptions = {
+  pages: {
+    signIn: routes.public.auth.signIn,
+  },
+
+  session: {
+    strategy: 'jwt',
+  },
+
+  providers,
 
   callbacks: {
     async jwt({ token, user, trigger, session }) {

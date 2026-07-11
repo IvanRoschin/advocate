@@ -1,6 +1,5 @@
 import type {
-  PageLayoutItemInput,
-  PageLayoutNodeInput,
+  PageLayoutNode, // ← основной тип
   PageSectionKey,
 } from '@/app/types';
 
@@ -34,7 +33,7 @@ const toBoolean = (value: unknown, fallback = true): boolean =>
 
 const normalizePageLayoutItem = (
   value: unknown
-): PageLayoutItemInput | null => {
+): { key: PageSectionKey; display: boolean } | null => {
   if (!isRecord(value)) return null;
   if (!isPageSectionKey(value.key)) return null;
 
@@ -44,9 +43,7 @@ const normalizePageLayoutItem = (
   };
 };
 
-const normalizePageLayoutNode = (
-  value: unknown
-): PageLayoutNodeInput | null => {
+const normalizePageLayoutNode = (value: unknown): PageLayoutNode | null => {
   if (!isRecord(value)) return null;
 
   const type = value.type;
@@ -59,18 +56,17 @@ const normalizePageLayoutNode = (
       type: 'section',
       key: value.key,
       display,
-    };
+    } as PageLayoutNode;
   }
 
   if (type === 'group') {
     const key = toTrimmedString(value.key);
-
     if (!key) return null;
 
     const items = Array.isArray(value.items)
       ? value.items
           .map(normalizePageLayoutItem)
-          .filter((item): item is PageLayoutItemInput => item !== null)
+          .filter((item): item is NonNullable<typeof item> => item !== null)
       : [];
 
     return {
@@ -79,16 +75,16 @@ const normalizePageLayoutNode = (
       display,
       wrapperClassName: toTrimmedString(value.wrapperClassName) || undefined,
       items,
-    };
+    } as PageLayoutNode;
   }
 
   return null;
 };
 
-export const normalizePageLayout = (value: unknown): PageLayoutNodeInput[] => {
+export const normalizePageLayout = (value: unknown): PageLayoutNode[] => {
   if (!Array.isArray(value)) return [];
 
   return value
     .map(normalizePageLayoutNode)
-    .filter((node): node is PageLayoutNodeInput => node !== null);
+    .filter((node): node is PageLayoutNode => node !== null);
 };

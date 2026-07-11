@@ -1,6 +1,7 @@
+import { casePublicActions } from '@/app/actions/case-admin.actions';
+import { clientActions } from '@/app/actions/client.actions';
 import { EmptyState } from '@/app/components';
-import { caseAdminService } from '@/app/lib/services/case-admin.service';
-import { clientService } from '@/app/lib/services/client.service';
+
 import ClientEditorClient from '../../_components/ClientEditorClient';
 
 type EditClientPageProps = {
@@ -11,8 +12,8 @@ export default async function EditClientPage({ params }: EditClientPageProps) {
   const { id } = await params;
 
   const [client, cases] = await Promise.all([
-    clientService.getById(id),
-    caseAdminService.getByClientId(id),
+    clientActions.getById(id),
+    casePublicActions.getCasesByClientId(id),
   ]);
   if (!client) {
     return (

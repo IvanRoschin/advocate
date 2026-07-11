@@ -1,11 +1,13 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
-import { formatDate } from '@/app/helpers';
+import { formatDate } from '@/app/helpers/formatDate';
 import { iconLibrary } from '@/app/resources';
-import type { ClientResponseDTO } from '@/app/types';
 import { Btn } from '@/components';
+
 import { Center } from '../_components/table/Center';
 import { SortableHeader } from '../_components/table/SortableHeader';
+
+import type { ClientResponseDTO } from '@/app/types';
 type ColumnActions = {
   onEdit: (client: ClientResponseDTO) => void;
   onDelete: (client: ClientResponseDTO) => void;

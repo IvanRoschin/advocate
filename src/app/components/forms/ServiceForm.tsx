@@ -14,6 +14,7 @@ import {
   createServiceFormSchema,
   CreateServiceRequestDTO,
   ServiceFormValues,
+  ServiceLayoutNodeInput,
   ServiceSectionsDto,
   UpdateServiceDTO,
   updateServiceFormSchema,
@@ -57,6 +58,24 @@ type ArticleLike = { id?: string; _id?: string };
 export type ArticleOption = { id: string; title: string };
 /* ------------------------------------------------------------------ */
 /* Helpers ----------------------------------------------------------- */
+
+const ensureMutableArray = <T,>(
+  arr?: readonly T[] | T[] | null | undefined
+): T[] => {
+  if (!Array.isArray(arr)) return [];
+  return [...arr];
+};
+
+const ensureMutableLayout = (layout?: unknown): ServiceLayoutNodeInput[] => {
+  if (!Array.isArray(layout)) return [];
+
+  try {
+    return JSON.parse(JSON.stringify(layout)) as ServiceLayoutNodeInput[];
+  } catch {
+    console.warn('Failed to clone layout, returning empty array');
+    return [];
+  }
+};
 
 const extractArticleId = (a: string | ArticleLike): string => {
   if (typeof a === 'string') return a;
@@ -250,44 +269,46 @@ const ServiceForm = (props: Props) => {
     [isEditMode]
   );
 
-  const baseValues: ServiceFormValues = useMemo(
-    () => ({
+  const baseValues: ServiceFormValues = useMemo(() => {
+    return {
       slug: initialValues?.slug ?? '',
       status: initialValues?.status ?? 'draft',
       title: initialValues?.title ?? '',
       summary: initialValues?.summary ?? '',
-      src: initialValues?.src ?? [],
-      layout: Array.isArray(initialValues?.layout)
-        ? initialValues.layout
-        : defaultServiceLayout,
+      src: ensureMutableArray(initialValues?.src),
+
+      // Главное исправление — layout
+      layout: ensureMutableLayout(
+        initialValues?.layout ?? defaultServiceLayout
+      ),
+
       seoTitle: initialValues?.seoTitle ?? '',
       seoDescription: initialValues?.seoDescription ?? '',
 
-      relatedArticles: Array.isArray(initialValues?.relatedArticles)
-        ? initialValues.relatedArticles.map(extractArticleId)
-        : [],
+      relatedArticles: ensureMutableArray(
+        initialValues?.relatedArticles?.map(extractArticleId)
+      ),
 
       heroTitle: initialValues?.sections?.hero?.title ?? '',
       heroDescription: initialValues?.sections?.hero?.description ?? '',
-      heroSrc: Array.isArray(initialValues?.sections?.hero?.src)
-        ? initialValues.sections.hero.src
-        : [],
+      heroSrc: ensureMutableArray(initialValues?.sections?.hero?.src),
 
       benefitsTitle: initialValues?.sections?.benefits?.title ?? '',
-      benefitsItems: initialValues?.sections?.benefits?.items ?? [],
+      benefitsItems: ensureMutableArray(
+        initialValues?.sections?.benefits?.items
+      ),
 
       processTitle: initialValues?.sections?.process?.title ?? '',
-      processSteps: initialValues?.sections?.process?.steps ?? [],
+      processSteps: ensureMutableArray(initialValues?.sections?.process?.steps),
 
       faqTitle: initialValues?.sections?.faq?.title ?? '',
-      faqItems: initialValues?.sections?.faq?.items ?? [],
+      faqItems: ensureMutableArray(initialValues?.sections?.faq?.items),
 
       ctaTitle: initialValues?.sections?.cta?.title ?? '',
       ctaDescription: initialValues?.sections?.cta?.description ?? '',
       ctaButtonLabel: initialValues?.sections?.cta?.buttonLabel ?? '',
-    }),
-    [initialValues]
-  );
+    };
+  }, [initialValues]);
 
   const defaultValues: ServiceFormValues = useMemo(() => {
     if (!persist || props.mode !== 'create' || !draft) return baseValues;
@@ -295,23 +316,13 @@ const ServiceForm = (props: Props) => {
     return {
       ...baseValues,
       ...draft,
-      src: Array.isArray(draft.src) ? draft.src : baseValues.src,
-      relatedArticles: Array.isArray(draft?.relatedArticles)
-        ? draft.relatedArticles
-        : baseValues.relatedArticles,
-      layout: Array.isArray(draft.layout) ? draft.layout : baseValues.layout,
-      heroSrc: Array.isArray(draft.heroSrc)
-        ? draft.heroSrc
-        : baseValues.heroSrc,
-      benefitsItems: Array.isArray(draft.benefitsItems)
-        ? draft.benefitsItems
-        : baseValues.benefitsItems,
-      processSteps: Array.isArray(draft.processSteps)
-        ? draft.processSteps
-        : baseValues.processSteps,
-      faqItems: Array.isArray(draft.faqItems)
-        ? draft.faqItems
-        : baseValues.faqItems,
+      src: ensureMutableArray(draft.src),
+      relatedArticles: ensureMutableArray(draft.relatedArticles),
+      layout: ensureMutableLayout(draft.layout ?? baseValues.layout),
+      heroSrc: ensureMutableArray(draft.heroSrc),
+      benefitsItems: ensureMutableArray(draft.benefitsItems),
+      processSteps: ensureMutableArray(draft.processSteps),
+      faqItems: ensureMutableArray(draft.faqItems),
     };
   }, [baseValues, draft, persist, props.mode]);
 

@@ -5,20 +5,25 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 import { useAuthFeedback } from '@/app/(auth)/_components/AuthFeedbackProvider';
-import { routes } from '@/app/config/routes';
+import { requestPasswordReset } from '@/app/actions/auth.actions';
 import { Btn, Input } from '@/components';
 
 interface InitialStateType {
   email: string;
 }
 
+export const AUTH_CODES = {
+  USER_NOT_FOUND: 'USER_NOT_FOUND',
+  EMAIL_SENT: 'EMAIL_SENT',
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  EMAIL_SEND_ERROR: 'EMAIL_SEND_ERROR',
+} as const;
+
+export type AuthCode = (typeof AUTH_CODES)[keyof typeof AUTH_CODES];
+
 type ForgotPasswordResponse = {
   ok: boolean;
-  code?:
-    | 'EMAIL_SENT'
-    | 'USER_NOT_FOUND'
-    | 'VALIDATION_ERROR'
-    | 'EMAIL_SEND_ERROR';
+  code?: AuthCode;
   message: string;
 };
 
@@ -39,25 +44,17 @@ const ForgotPasswordForm = () => {
     try {
       setIsLoading(true);
 
-      const res = await fetch(routes.api.v1.auth.restorePassword, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: values.email.trim().toLowerCase(),
-        }),
+      const res: ForgotPasswordResponse = await requestPasswordReset({
+        email: values.email,
       });
 
-      const data: ForgotPasswordResponse = await res.json();
-
-      if (data.ok) {
+      if (res.ok) {
         resetForm();
       }
 
       openAuthNotification({
         title: 'Повідомлення',
-        message: data.message,
+        message: res.message,
       });
     } catch (error) {
       console.error('[FORGOT_PASSWORD_FORM_ERROR]', error);

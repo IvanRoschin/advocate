@@ -2,8 +2,8 @@ import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
+import { clientPublicActions } from '@/app/actions/client.actions';
 import { routes } from '@/app/config/routes';
-import { ensureClientAccess } from '@/app/lib/auth/ensureClientAccess';
 import { getAccountState } from '@/app/lib/auth/getAccountState';
 import { authOptions } from '@/config';
 
@@ -33,7 +33,9 @@ export default async function RepairClientAccessPage() {
     redirect(routes.public.auth.signIn);
   }
 
-  const repairResult = await ensureClientAccess(userId);
+  const repairResult = await clientPublicActions.repairClientAccessService({
+    userId,
+  });
 
   if (repairResult.ok) {
     redirect(routes.client.dashboard);

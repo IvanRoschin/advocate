@@ -1,28 +1,26 @@
-import { serviceService } from '@/app/lib/services';
-import { categoryService } from '@/app/lib/services/category.service';
-import { userService } from '@/app/lib/services/user.service';
+import { categoryActions } from '@/app/actions/category.actions';
+import { serviceActions } from '@/app/actions/service.actions';
+import { userPublicActions } from '@/app/actions/user.actions';
 
 import ArticleEditorClient from '../_components/ArticleEditorClient';
 
-export const dynamic = 'force-dynamic';
-
 export default async function NewArticlePage() {
   const [usersRaw, categoriesRaw, servivesRaw] = await Promise.all([
-    userService.getAdminsAndManagers(),
-    categoryService.getAll(),
-    serviceService.getAll(),
+    userPublicActions.adminsAndManagers(),
+    categoryActions.getAll(),
+    serviceActions.getAll({ limit: 20 }),
   ]);
 
   const users = usersRaw.map(u => ({
     id: String(u._id ?? u._id),
     name: u.name,
   }));
-  const categories = categoriesRaw.map(c => ({
-    id: String(c._id ?? c.id),
+  const categories = categoriesRaw.items.map(c => ({
+    id: String(c._id),
     title: c.title,
   }));
-  const services = servivesRaw.map(s => ({
-    id: String(s._id ?? s.id),
+  const services = servivesRaw.items.map(s => ({
+    id: String(s._id),
     title: s.title,
   }));
 

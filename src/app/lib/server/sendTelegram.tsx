@@ -1,6 +1,16 @@
+import { env } from './env/serverEnv';
+
 export async function sendTelegramMessage(message: string) {
-  const token = process.env.TELEGRAM_BOT_TOKEN!;
-  const chatId = process.env.TELEGRAM_CHAT_ID!;
+  const token = env.telegram.botToken;
+  const chatId = env.telegram.chatId;
+
+  if (!token) {
+    throw new Error('TELEGRAM_BOT_TOKEN missing');
+  }
+
+  if (!chatId) {
+    throw new Error('TELEGRAM_CHAT_ID missing');
+  }
 
   const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
@@ -11,7 +21,7 @@ export async function sendTelegramMessage(message: string) {
       body: JSON.stringify({
         chat_id: chatId,
         text: message,
-        parse_mode: 'HTML', // можно использовать <b>, <i>
+        parse_mode: 'HTML',
       }),
     });
   } catch (err) {

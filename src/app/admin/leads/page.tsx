@@ -1,11 +1,11 @@
-import { leadService } from '@/app/lib/services/lead.service';
+import { leadActions } from '@/app/actions/lead.actions';
 import { LeadResponseDTO } from '@/app/types';
+
 import LeadsClient from './LeadsClient';
 
-export const dynamic = 'force-dynamic';
-
 const LeadsPage = async () => {
-  const leads = (await leadService.getAll()) as LeadResponseDTO[];
+  const result = await leadActions.getAll();
+  const leads = result.items as LeadResponseDTO[];
 
   return <LeadsClient initialLeads={leads} />;
 };

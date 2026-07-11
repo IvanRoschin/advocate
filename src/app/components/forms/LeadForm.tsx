@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
+import { env } from '@/app/lib/server/env/serverEnv';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
 import { useThemeStore } from '@/app/store/theme.store';
 import {
@@ -117,7 +118,7 @@ export default function LeadForm({
 
   const turnstileRef = useRef<TurnstileInstance | null>(null);
 
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const siteKey = env.cloudflare.turnstileSiteKey;
   const isCaptchaConfigured = Boolean(siteKey);
 
   const validationSchema = isAdminMode

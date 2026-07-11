@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { sendTelegramMessage } from '@/app/lib';
+import { env } from '@/app/lib/server/env/serverEnv';
 import crypto from 'crypto';
 
 export const dynamic = 'force-dynamic';
@@ -28,20 +29,16 @@ type WayForPayCallbackBody = {
   paymentSystem?: string;
 };
 
-function getRequiredEnv(name: string): string {
-  const value = process.env[name];
-
-  if (!value) {
-    throw new Error(`Missing env: ${name}`);
-  }
-
-  return value;
-}
-
 function getWayForPayConfig() {
+  if (!env.wayforpay.secretKey) {
+    throw new Error('WAYFORPAY_SECRET_KEY missing');
+  }
+  if (!env.wayforpay.merchantAccount) {
+    throw new Error('WAYFORPAY_MERCHANT_ACCOUNT missing');
+  }
   return {
-    secretKey: getRequiredEnv('WAYFORPAY_SECRET_KEY'),
-    merchantAccount: getRequiredEnv('WAYFORPAY_MERCHANT_ACCOUNT'),
+    secretKey: env.wayforpay.secretKey,
+    merchantAccount: env.wayforpay.merchantAccount,
   };
 }
 

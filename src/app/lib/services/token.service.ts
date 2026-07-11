@@ -1,128 +1,130 @@
-import crypto from 'crypto';
-import { Types } from 'mongoose';
+// import 'server-only';
 
-import { tokenRepo } from '@/app/lib/repositories/token.repo';
-import { userRepo } from '@/app/lib/repositories/user.repo';
-import {
-  NotFoundError,
-  ValidationError,
-} from '@/app/lib/server/errors/httpErrors';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { TokenDocument } from '@/app/models/Token';
-import { CreateTokenDTO, mapUserToResponse, TokenType } from '@/app/types';
+// import crypto from 'crypto';
+// import { Types } from 'mongoose';
 
-export const tokenService = {
-  generateTokenString(bytes = 32) {
-    return crypto.randomBytes(bytes).toString('hex');
-  },
+// import { tokenRepo } from '@/app/lib/repositories/token.repo';
+// import { userRepo } from '@/app/lib/repositories/user.repo';
+// import {
+//   NotFoundError,
+//   ValidationError,
+// } from '@/app/lib/server/errors/httpErrors';
+// import { dbConnect } from '@/app/lib/server/mongoose';
+// import { TokenDocument } from '@/app/models/Token';
+// import { CreateTokenDTO, mapUserToResponse, TokenType } from '@/app/types';
 
-  async create<T extends TokenType>(
-    data: CreateTokenDTO<T>
-  ): Promise<TokenDocument> {
-    const token = this.generateTokenString();
+// export const tokenService = {
+//   generateTokenString(bytes = 32) {
+//     return crypto.randomBytes(bytes).toString('hex');
+//   },
 
-    const ttlDefault: Record<TokenType, number> = {
-      [TokenType.REFRESH]: 60 * 60 * 24 * 30,
-      [TokenType.VERIFICATION]: 60 * 60 * 24,
-      [TokenType.RESET_PASSWORD]: 60 * 60 * 2,
-      [TokenType.EMAIL_CHANGE]: 60 * 60,
-      [TokenType.PASSWORD_RESTORE]: 60 * 60,
-    };
+//   async create<T extends TokenType>(
+//     data: CreateTokenDTO<T>
+//   ): Promise<TokenDocument> {
+//     const token = this.generateTokenString();
 
-    const ttl = data.ttlSeconds ?? ttlDefault[data.type ?? TokenType.REFRESH];
-    const expiresAt = new Date(Date.now() + ttl * 1000);
+//     const ttlDefault: Record<TokenType, number> = {
+//       [TokenType.REFRESH]: 60 * 60 * 24 * 30,
+//       [TokenType.VERIFICATION]: 60 * 60 * 24,
+//       [TokenType.RESET_PASSWORD]: 60 * 60 * 2,
+//       [TokenType.EMAIL_CHANGE]: 60 * 60,
+//       [TokenType.PASSWORD_RESTORE]: 60 * 60,
+//     };
 
-    return tokenRepo.create({
-      userId: new Types.ObjectId(data.userId),
-      token,
-      type: data.type ?? TokenType.REFRESH,
-      email: data.email,
-      meta: data.meta,
-      used: false,
-      expiresAt,
-    });
-  },
+//     const ttl = data.ttlSeconds ?? ttlDefault[data.type ?? TokenType.REFRESH];
+//     const expiresAt = new Date(Date.now() + ttl * 1000);
 
-  async findValid<T extends TokenType>(
-    tokenValue: string,
-    type?: T
-  ): Promise<TokenDocument | null> {
-    await dbConnect();
-    return tokenRepo.findValid(tokenValue, type);
-  },
+//     return tokenRepo.create({
+//       userId: new Types.ObjectId(data.userId),
+//       token,
+//       type: data.type ?? TokenType.REFRESH,
+//       email: data.email,
+//       meta: data.meta,
+//       used: false,
+//       expiresAt,
+//     });
+//   },
 
-  async markUsed(token: TokenDocument): Promise<void> {
-    if (token.used) return;
+//   async findValid<T extends TokenType>(
+//     tokenValue: string,
+//     type?: T
+//   ): Promise<TokenDocument | null> {
+//     await dbConnect();
+//     return tokenRepo.findValid(tokenValue, type);
+//   },
 
-    token.used = true;
-    token.meta = undefined;
-    await token.save();
-  },
+//   async markUsed(token: TokenDocument): Promise<void> {
+//     if (token.used) return;
 
-  async verify<T extends TokenType>(
-    tokenValue: string,
-    type?: T
-  ): Promise<TokenDocument> {
-    const token = await this.findValid(tokenValue, type);
+//     token.used = true;
+//     token.meta = undefined;
+//     await token.save();
+//   },
 
-    if (!token) {
-      throw new ValidationError('Недійсний або використаний токен');
-    }
+//   async verify<T extends TokenType>(
+//     tokenValue: string,
+//     type?: T
+//   ): Promise<TokenDocument> {
+//     const token = await this.findValid(tokenValue, type);
 
-    return token;
-  },
+//     if (!token) {
+//       throw new ValidationError('Недійсний або використаний токен');
+//     }
 
-  async activateAccount(token: TokenDocument) {
-    await dbConnect();
+//     return token;
+//   },
 
-    if (token.type !== TokenType.VERIFICATION) {
-      throw new ValidationError('Невірний тип токена');
-    }
+//   async activateAccount(token: TokenDocument) {
+//     await dbConnect();
 
-    const user = await userRepo.findById(token.userId.toString());
-    if (!user) {
-      throw new NotFoundError('Користувача не знайдено');
-    }
+//     if (token.type !== TokenType.VERIFICATION) {
+//       throw new ValidationError('Невірний тип токена');
+//     }
 
-    user.isActive = true;
-    await user.save();
+//     const user = await userRepo.findById(token.userId.toString());
+//     if (!user) {
+//       throw new NotFoundError('Користувача не знайдено');
+//     }
 
-    await this.markUsed(token);
+//     user.isActive = true;
+//     await user.save();
 
-    return mapUserToResponse(user);
-  },
+//     await this.markUsed(token);
 
-  async changeEmail(token: TokenDocument) {
-    await dbConnect();
+//     return mapUserToResponse(user);
+//   },
 
-    if (token.type !== TokenType.EMAIL_CHANGE) {
-      throw new ValidationError('Невірний тип токена');
-    }
+//   async changeEmail(token: TokenDocument) {
+//     await dbConnect();
 
-    const newEmail = token.email;
-    if (!newEmail) {
-      throw new ValidationError('Не вказано новий email у токені');
-    }
+//     if (token.type !== TokenType.EMAIL_CHANGE) {
+//       throw new ValidationError('Невірний тип токена');
+//     }
 
-    const user = await userRepo.findById(token.userId.toString());
-    if (!user) {
-      throw new NotFoundError('Користувача не знайдено');
-    }
+//     const newEmail = token.email;
+//     if (!newEmail) {
+//       throw new ValidationError('Не вказано новий email у токені');
+//     }
 
-    const normalizedEmail = newEmail.trim().toLowerCase();
+//     const user = await userRepo.findById(token.userId.toString());
+//     if (!user) {
+//       throw new NotFoundError('Користувача не знайдено');
+//     }
 
-    if (normalizedEmail !== user.email) {
-      const exists = await userRepo.findByEmail(normalizedEmail);
-      if (exists) {
-        throw new ValidationError('Email вже використовується');
-      }
-    }
+//     const normalizedEmail = newEmail.trim().toLowerCase();
 
-    user.email = normalizedEmail;
-    await user.save();
+//     if (normalizedEmail !== user.email) {
+//       const exists = await userRepo.findByEmail(normalizedEmail);
+//       if (exists) {
+//         throw new ValidationError('Email вже використовується');
+//       }
+//     }
 
-    await this.markUsed(token);
+//     user.email = normalizedEmail;
+//     await user.save();
 
-    return mapUserToResponse(user);
-  },
-};
+//     await this.markUsed(token);
+
+//     return mapUserToResponse(user);
+//   },
+// };

@@ -7,6 +7,7 @@ import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
 import { useRecaptchaWidget } from '@/app/hooks/useRecaptchaWidget';
 import { ApiClientError } from '@/app/lib/client/apiFetch';
+import { env } from '@/app/lib/server/env/serverEnv';
 import { leadFormSchema } from '@/app/types';
 import { Checkbox, Input, Textarea } from '@/components';
 
@@ -85,7 +86,7 @@ async function submitContactForm(
 const ContactForm = () => {
   const { containerRef, captchaToken, isRendered, resetCaptcha } =
     useRecaptchaWidget({
-      siteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+      siteKey: env.cloudflare.turnstileSiteKey,
     });
 
   const handleSubmit = async (

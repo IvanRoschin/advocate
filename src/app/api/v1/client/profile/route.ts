@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 
+import { clientAccessActions } from '@/app/actions/client-access.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { clientCabinetService } from '@/app/lib/services/client-access.service';
 import { UpdateClientProfileDto, updateClientProfileSchema } from '@/app/types';
 
 export async function GET() {
   try {
-    const data = await clientCabinetService.getMyProfile();
+    const data = await clientAccessActions.getMyProfile();
 
     return NextResponse.json({ ok: true, data });
   } catch (err) {
@@ -23,9 +23,9 @@ export async function PATCH(req: Request) {
       stripUnknown: true,
     });
 
-    const data = await clientCabinetService.updateMyProfile(
-      validated as UpdateClientProfileDto
-    );
+    const data = await clientAccessActions.updateMyProfile({
+      data: validated as UpdateClientProfileDto,
+    });
 
     return NextResponse.json({ ok: true, data });
   } catch (err) {

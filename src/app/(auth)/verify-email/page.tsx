@@ -1,7 +1,7 @@
+import VerificationPageClient from './VerificationPageClient';
 import AuthCard from '../_components/AuthCard';
 import AuthStatusBadge from '../_components/AuthStatusBadge';
 import ResendVerificationButton from '../_components/ResendVerificationButton';
-import VerificationPageClient from './VerificationPageClient';
 
 export default function VerifyEmailPage() {
   return (

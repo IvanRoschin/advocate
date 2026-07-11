@@ -1,10 +1,9 @@
-import { articleService } from '@/app/lib/services/article.service';
-import { reviewService } from '@/app/lib/services/review.service';
-import { serviceService } from '@/app/lib/services/service.service';
+import { articleActions } from '@/app/actions/article.actions';
+import { reviewActions } from '@/app/actions/review.actions';
+import { serviceActions } from '@/app/actions/service.actions';
 import { REVIEW_PAGE_OPTIONS, ReviewTargetOptionDto } from '@/app/types';
-import ReviewEditorClient from '../../_components/ReviewEditorClient';
 
-export const dynamic = 'force-dynamic';
+import ReviewEditorClient from '../../_components/ReviewEditorClient';
 
 type EditReviewPageProps = {
   params: Promise<{ id: string }>;
@@ -14,19 +13,21 @@ export default async function EditReviewPage({ params }: EditReviewPageProps) {
   const { id } = await params;
 
   const [review, services, articles] = await Promise.all([
-    reviewService.getById(id),
-    serviceService.getPublicList({ limit: 50 }),
-    articleService.getPublicList({ limit: 50 }),
+    reviewActions.getById(id),
+    serviceActions.getAll({ limit: 20 }),
+    articleActions.getAll({ limit: 20 }),
   ]);
 
-  const serviceOptions: ReviewTargetOptionDto[] = services.map(service => ({
-    value: service.id,
-    label: service.title,
-  }));
+  const serviceOptions: ReviewTargetOptionDto[] = services.items.map(
+    service => ({
+      value: service._id,
+      label: service.title,
+    })
+  );
 
   const articleOptions: ReviewTargetOptionDto[] = articles.items.map(
     article => ({
-      value: article.id,
+      value: article._id,
       label: article.title,
     })
   );

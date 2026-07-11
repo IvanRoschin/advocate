@@ -1,9 +1,9 @@
-import { clientCabinetService } from '@/app/lib/services/client-access.service';
+import { clientAccessActions } from '@/app/actions/client-access.actions';
 
 import ClientProfilePageClient from './_components/ClientProfilePageClient';
 
 export default async function ClientProfilePage() {
-  const profile = await clientCabinetService.getMyProfile();
+  const profile = await clientAccessActions.getMyProfile();
 
   return <ClientProfilePageClient initialProfile={profile} />;
 }

@@ -1,8 +1,12 @@
 import PageSettings from '@/app/models/PageSettings';
-import type { UpdatePageSettingsDTO } from '@/app/types';
+
+import type {
+  PageSettingsResponseDTO,
+  UpdatePageSettingsDTO,
+} from '@/app/types';
 
 export const pageSettingsRepo = {
-  findByEntity(entity: UpdatePageSettingsDTO['entity']) {
+  findByEntity(entity: PageSettingsResponseDTO['entity']) {
     return PageSettings.findOne({ entity });
   },
 

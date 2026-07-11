@@ -19,6 +19,7 @@ export default async function RootLayout({
     <html
       lang="uk"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={` ${geistSans.variable} ${geistMono.variable} ${eUkrainehead.variable} ${eUkraine.variable} ${manrope.variable} ${sacramento.variable} `}
     >
       <body>

@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { categoryActions } from '@/app/actions/category.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { categoryService } from '@/app/lib/services/category.service';
 import { mapCategoryToResponse, UpdateCategoryDTO } from '@/app/types';
 
 /* ---------------- GET ---------------- */
@@ -12,11 +11,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await dbConnect();
-
     const { id } = await params;
 
-    const category = await categoryService.getById(id);
+    const category = await categoryActions.getById(id);
 
     return NextResponse.json({ ok: true, data: category });
   } catch (err) {
@@ -31,12 +28,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await dbConnect();
-
     const { id } = await params;
     const payload: UpdateCategoryDTO = await request.json();
 
-    const updatedCategory = await categoryService.update(id, payload);
+    const updatedCategory = await categoryActions.update(id, payload);
 
     return NextResponse.json({
       ok: true,
@@ -54,11 +49,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await dbConnect();
-
     const { id } = await params;
 
-    await categoryService.delete(id);
+    await categoryActions.delete(id);
 
     return NextResponse.json({ ok: true });
   } catch (err) {

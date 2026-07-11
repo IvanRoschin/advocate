@@ -1,7 +1,10 @@
+'use client';
+
 import { Calendar, Tag } from 'lucide-react';
 import { CldImage } from 'next-cloudinary';
 import Link from 'next/link';
 
+import { NextImage } from '@/app/components';
 import { imageVariants } from '@/app/config/imageVariants';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { cn, formatDate } from '@/app/lib/utils';
@@ -40,11 +43,14 @@ export function ArticleListPreview({
                   <div className="mt-4 flex h-44 w-full items-center justify-center sm:h-36 sm:w-56">
                     <div className="bg-muted border-border relative mx-4 h-full w-full overflow-hidden rounded-md border">
                       {publicId ? (
-                        <CldImage
+                        <NextImage
+                          as={CldImage}
                           src={publicId}
                           alt={a.title}
                           fill
                           sizes={variant.sizes}
+                          useSkeleton
+                          preload
                           className="object-cover"
                         />
                       ) : (

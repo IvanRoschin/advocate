@@ -1,5 +1,4 @@
-import { ForgotPasswordForm } from '@/app/components';
-
+import ForgotPasswordForm from '@/app/components/forms/ForgotPasswordForm';
 import AuthCard from '../_components/AuthCard';
 import AuthStatusBadge from '../_components/AuthStatusBadge';
 

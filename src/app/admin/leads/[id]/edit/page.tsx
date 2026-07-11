@@ -1,7 +1,6 @@
-import { leadService } from '@/app/lib/services/lead.service';
-import LeadEditorClient from '../../_components/LeadEditorClient';
+import { leadActions } from '@/app/actions/lead.actions';
 
-export const dynamic = 'force-dynamic';
+import LeadEditorClient from '../../_components/LeadEditorClient';
 
 type EditLeadPageProps = {
   params: Promise<{ id: string }>;
@@ -10,7 +9,7 @@ type EditLeadPageProps = {
 export default async function EditLeadPage({ params }: EditLeadPageProps) {
   const { id } = await params;
 
-  const lead = await leadService.getById(id);
+  const lead = await leadActions.getById(id);
 
   return (
     <LeadEditorClient

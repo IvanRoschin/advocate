@@ -1,4 +1,4 @@
-import type { AdminDashboardCountersDTO } from '@/app/types';
+import { AdminDashboardCountersDTO } from '@/app/types';
 import {
   Article,
   Category,

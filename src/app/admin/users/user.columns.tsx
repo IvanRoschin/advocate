@@ -1,12 +1,11 @@
-import { iconLibrary } from '@/app/resources'; // ✅ как в категориях
-import { Btn } from '@/components';
-import { Badge } from '@/components/ui/badge';
 import { ColumnDef } from '@tanstack/react-table';
 
+import { iconLibrary } from '@/app/resources'; // ✅ как в категориях
+import type { UserResponseDTO } from '@/app/types';
+import { Btn } from '@/components';
+import { Badge } from '@/components/ui/badge';
 import { Center } from '../_components/table/Center';
 import { SortableHeader } from '../_components/table/SortableHeader';
-
-import type { UserResponseDTO } from '@/app/types';
 interface ColumnActions {
   onEdit: (user: UserResponseDTO) => void;
   onDelete: (user: UserResponseDTO) => void;
@@ -72,12 +71,13 @@ export const userColumns = ({
     ),
     cell: ({ row }) => (
       <Center>
-        {new Date(row.original.createdAt).toLocaleDateString('uk-UA')}
+        {row.original.createdAt
+          ? new Date(row.original.createdAt).toLocaleDateString('uk-UA')
+          : '—'}
       </Center>
     ),
   },
 
-  // ✅ как в categoryColumns: отдельные колонки edit/delete + Center + Btn(icon)
   {
     id: 'edit',
     header: () => <Center>Редагувати</Center>,

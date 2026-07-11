@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { requestPasswordReset } from '@/app/actions/auth.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { userService } from '@/app/lib/services/user.service';
 
 export async function POST(req: Request) {
   try {
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       );
     }
 
-    await userService.resendVerificationEmail(email);
+    await requestPasswordReset({ email });
 
     return NextResponse.json({
       success: true,

@@ -5,10 +5,12 @@ import { auto as autoFormat } from '@cloudinary/url-gen/qualifiers/format';
 import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
 import { auto as autoQuality } from '@cloudinary/url-gen/qualifiers/quality';
 
-const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+import { env } from '../server/env/serverEnv';
+
+const cloudName = env.cloudinary.cloudName;
 
 if (!cloudName) {
-  throw new Error('Missing NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME');
+  throw new Error('NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME missing');
 }
 
 const cld = new Cloudinary({

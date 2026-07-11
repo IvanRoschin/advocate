@@ -3,6 +3,7 @@
 import { CldImage } from 'next-cloudinary';
 import Link from 'next/link';
 
+import { NextImage } from '@/app/components';
 import { imageVariants } from '@/app/config/imageVariants';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { ServiceListItemDto } from '@/app/types';
@@ -43,11 +44,14 @@ const ServicesList = ({ services }: ListSectionProps) => {
               >
                 <div className="relative aspect-16/10 w-full overflow-hidden">
                   {publicId ? (
-                    <CldImage
+                    <NextImage
+                      as={CldImage}
                       src={publicId}
                       alt={service.title}
                       fill
                       sizes={variant.sizes}
+                      useSkeleton
+                      preload
                       className="object-cover"
                     />
                   ) : (

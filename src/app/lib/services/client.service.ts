@@ -1,57 +1,60 @@
-import { Types } from 'mongoose';
-import { ValidationError } from 'yup';
+// import 'server-only';
 
-import { clientRepo } from '@/app/lib/repositories/client.repo';
-import {
-  ClientResponseDTO,
-  CreateClientDTO,
-  mapClientToResponse,
-  normalizeClientData,
-  UpdateClientDTO,
-} from '@/app/types';
-import { dbConnect } from '../server/mongoose';
+// import { Types } from 'mongoose';
+// import { ValidationError } from 'yup';
 
-const assertObjectId = (id: string) => {
-  if (!id || id === 'undefined' || !Types.ObjectId.isValid(id)) {
-    throw new ValidationError('Невірний id клієнта');
-  }
-};
+// import { clientRepo } from '@/app/lib/repositories/client.repo';
+// import {
+//   ClientResponseDTO,
+//   CreateClientDTO,
+//   mapClientToResponse,
+//   normalizeClientData,
+//   UpdateClientDTO,
+// } from '@/app/types';
 
-export const clientService = {
-  async getAll(): Promise<ClientResponseDTO[]> {
-    await dbConnect();
-    return clientRepo.findAll();
-  },
+// import { dbConnect } from '../server/mongoose';
 
-  async getById(id: string): Promise<ClientResponseDTO | null> {
-    await dbConnect();
-    return clientRepo.findById(id);
-  },
+// const assertObjectId = (id: string) => {
+//   if (!id || id === 'undefined' || !Types.ObjectId.isValid(id)) {
+//     throw new ValidationError('Невірний id клієнта');
+//   }
+// };
 
-  async create(payload: CreateClientDTO): Promise<ClientResponseDTO> {
-    await dbConnect();
+// export const clientService = {
+//   async getAll(): Promise<ClientResponseDTO[]> {
+//     await dbConnect();
+//     return clientRepo.findAll();
+//   },
 
-    const data = normalizeClientData(payload);
-    return clientRepo.create(data);
-  },
+//   async getById(id: string): Promise<ClientResponseDTO | null> {
+//     await dbConnect();
+//     return clientRepo.findById(id);
+//   },
 
-  async update(
-    id: string,
-    payload: UpdateClientDTO
-  ): Promise<ClientResponseDTO | null> {
-    await dbConnect();
-    return clientRepo.update(id, payload);
-  },
+//   async create(payload: CreateClientDTO): Promise<ClientResponseDTO> {
+//     await dbConnect();
 
-  async delete(id: string): Promise<ClientResponseDTO> {
-    await dbConnect();
-    assertObjectId(id);
+//     const data = normalizeClientData(payload);
+//     return clientRepo.create(data);
+//   },
 
-    const deleted = await clientRepo.delete(id);
-    if (!deleted) {
-      throw new ValidationError('Клієнта не знайдено');
-    }
+//   async update(
+//     id: string,
+//     payload: UpdateClientDTO
+//   ): Promise<ClientResponseDTO | null> {
+//     await dbConnect();
+//     return clientRepo.update(id, payload);
+//   },
 
-    return mapClientToResponse(deleted);
-  },
-};
+//   async delete(id: string): Promise<ClientResponseDTO> {
+//     await dbConnect();
+//     assertObjectId(id);
+
+//     const deleted = await clientRepo.delete(id);
+//     if (!deleted) {
+//       throw new ValidationError('Клієнта не знайдено');
+//     }
+
+//     return mapClientToResponse(deleted);
+//   },
+// };

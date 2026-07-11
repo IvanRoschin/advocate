@@ -1,7 +1,6 @@
 'use client';
 
 import { Btn, LeadForm, Modal } from '@/app/components';
-// Подставь свой реальный компонент формы
 import { useModal } from '@/app/hooks/useModal';
 
 type Props = {

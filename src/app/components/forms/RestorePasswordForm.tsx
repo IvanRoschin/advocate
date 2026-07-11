@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 
 import { useAuthFeedback } from '@/app/(auth)/_components/AuthFeedbackProvider';
+import { resetPassword } from '@/app/actions/auth.actions';
 import { routes } from '@/app/config/routes';
 import { Btn, Input } from '@/components';
 
@@ -48,25 +49,19 @@ const RestorePasswordForm = ({ token }: Props) => {
     try {
       setIsLoading(true);
 
-      const res = await fetch(routes.api.v1.auth.resetPassword, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token,
-          password: values.password,
-        }),
+      const res: RestorePasswordResponse = await resetPassword({
+        token,
+        newPassword: values.password,
       });
 
-      const data: RestorePasswordResponse = await res.json();
-
-      if (data.ok) {
+      if (res.ok) {
         resetForm();
       }
 
       openAuthNotification({
-        title: data.ok ? 'Успіх' : 'Помилка',
-        message: data.message,
-        redirectTo: data.ok ? routes.public.auth.signIn : undefined,
+        title: res.ok ? 'Успіх' : 'Помилка',
+        message: res.message,
+        redirectTo: res.ok ? routes.public.auth.signIn : undefined,
       });
     } catch (error) {
       console.error('[RESTORE_PASSWORD_FORM_ERROR]', error);

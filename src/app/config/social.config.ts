@@ -1,11 +1,12 @@
 import { Social } from '@/types/content.types';
+import { env } from '../lib/server/env/serverEnv';
 
 export const getSocials = (): Social => {
-  const phone1 = process.env.NEXT_PUBLIC_ADVOCATE_PN_1;
-  const phone2 = process.env.NEXT_PUBLIC_ADVOCATE_PN_2;
-  const email = process.env.NEXT_PUBLIC_ADVOCATE_EMAIL;
-  const facebook = process.env.NEXT_PUBLIC_FACEBOOK_URL;
-  const instagram = process.env.NEXT_PUBLIC_INSTAGRAM_URL;
+  const phone1 = env.advocatePhone1;
+  const phone2 = env.advocatePhone2;
+  const email = env.advocateEmail;
+  const facebook = env.facebookUrl;
+  const instagram = env.instagramUrl;
 
   const socials: Social = [
     email && {

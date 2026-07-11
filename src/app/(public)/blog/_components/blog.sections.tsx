@@ -1,10 +1,13 @@
 import type { ReactNode } from 'react';
 
 import Footer from '@/app/components/footer/Footer';
-import { articleService } from '@/app/lib/services/article.service';
 import { blog } from '@/app/resources/content';
 import type { BlogSectionKey } from '@/app/resources/content/pages/blog.layout';
-import { ArticleListItemDto } from '@/app/types';
+import {
+  ArticleListItemDto,
+  BlogCategoryItemDto,
+  BlogRecentPostItemDto,
+} from '@/app/types';
 import { Header, ScrollToTopButton, Socials } from '@/components';
 import { BlogArticlesFeed } from './BlogArticlesFeed';
 import BlogAside from './BlogAside';
@@ -14,10 +17,8 @@ export type BlogSectionProps = {
   category?: string;
   initialItems: ArticleListItemDto[];
   hasMore: boolean;
-  recent: Awaited<ReturnType<typeof articleService.getRecentPublic>>;
-  categories: Awaited<
-    ReturnType<typeof articleService.getPublicCategoriesWithCounts>
-  >;
+  recent: BlogRecentPostItemDto[];
+  categories: BlogCategoryItemDto[];
 };
 
 export type BlogSectionComponent = (props: BlogSectionProps) => ReactNode;
@@ -43,7 +44,7 @@ const FiltersSection: BlogSectionComponent = ({
   categories,
   category,
 }) => (
-  <aside className="border-accent min-w-0 space-y-4 pl-4 lg:sticky lg:top-24 lg:self-start lg:border-l">
+  <aside className="border-accent w-full min-w-0 shrink-0 space-y-4 pl-4 lg:sticky lg:top-24 lg:w-80 lg:self-start lg:border-l">
     <BlogAside
       recent={recent}
       categories={categories}
@@ -53,7 +54,7 @@ const FiltersSection: BlogSectionComponent = ({
 );
 
 const ArticlesSection: BlogSectionComponent = ({ initialItems, hasMore }) => (
-  <section className="min-w-0">
+  <section className="min-w-0 flex-1">
     <BlogArticlesFeed initialItems={initialItems} hasMore={hasMore} />
   </section>
 );

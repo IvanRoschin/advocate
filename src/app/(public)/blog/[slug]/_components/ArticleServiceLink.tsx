@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
+import { ArticlePublicPageDto } from '@/app/types';
 import { Btn } from '@/components';
-import { ArticlePageDto } from './article.sections';
 
 type Props = {
-  article: ArticlePageDto;
+  article: ArticlePublicPageDto;
 };
 
 export default function ArticleServiceLink({ article }: Props) {

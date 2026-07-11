@@ -1,5 +1,3 @@
-import type { Types } from 'mongoose';
-
 import {
   firstImage,
   stringArray,
@@ -7,35 +5,22 @@ import {
   toIsoString,
 } from '@/app/lib/mappers/_utils';
 import type {
-  ArticlePublicFullRow,
-  ArticlePublicRow,
-} from '@/app/lib/repositories/article.repo';
-import type {
   ArticleListItemDto,
   ArticlePreviewDTO,
   ArticlePublicPageDto,
+  ArticleRecentRow,
   ArticleResponseDTO,
+  BlogRecentPostItemDto,
 } from '@/app/types';
+import type {
+  ArticleLike,
+  ArticlePublicFullRow,
+  ArticlePublicRow,
+} from '@/types';
 
-/** Admin: model/lean -> ArticleResponseDTO */
-export type ArticleLike = {
-  _id: Types.ObjectId | string;
-  slug: string;
-  status: ArticleResponseDTO['status'];
-  title: string;
-  subtitle?: string | null;
-  summary: string;
-  content: string;
-  tags?: string;
-  src?: string[];
-  language: ArticleResponseDTO['language'];
-  authorId: Types.ObjectId | string;
-  categoryId: Types.ObjectId | string;
-  serviceId: Types.ObjectId | string;
-  publishedAt?: Date | string | null;
-  createdAt?: Date | string | null;
-  updatedAt?: Date | string | null;
-};
+/* ======================================================================== */
+/* ADMIN                                                                    */
+/* ======================================================================== */
 
 export const mapArticleToResponse = (
   article: ArticleLike
@@ -50,103 +35,157 @@ export const mapArticleToResponse = (
   tags: stringArray(article.tags),
   src: stringArray(article.src),
   language: article.language,
-  authorId: toIdString(article.authorId),
-  categoryId: toIdString(article.categoryId),
-  serviceId: toIdString(article.serviceId),
+
+  authorId: article.authorId ? toIdString(article.authorId) : '',
+  categoryId: article.categoryId ? toIdString(article.categoryId) : '',
+  serviceId: article.serviceId ? toIdString(article.serviceId) : '',
+
   publishedAt: toIsoString(article.publishedAt),
   createdAt: toIsoString(article.createdAt),
   updatedAt: toIsoString(article.updatedAt),
 });
 
+/* ======================================================================== */
+/* RESPONSE DTO -> PUBLIC DTO                                               */
+/* ======================================================================== */
+
 export const mapArticleResponseToPublic = (
-  a: ArticleResponseDTO
+  article: ArticleResponseDTO
 ): ArticlePublicPageDto => ({
-  ...a,
-  id: a._id,
-  author: a.author
-    ? { id: a.author._id, name: a.author.name, avatar: a.author.avatar }
+  ...article,
+  id: article._id,
+
+  author: article.author
+    ? {
+        id: article.author._id,
+        name: article.author.name,
+        avatar: article.author.avatar,
+      }
     : undefined,
-  category: a.category
-    ? { id: a.category._id, title: a.category.title, slug: a.category.slug }
+
+  category: article.category
+    ? {
+        id: article.category._id,
+        title: article.category.title,
+        slug: article.category.slug,
+      }
     : undefined,
-  service: a.service
-    ? { id: a.service._id, title: a.service.title, slug: a.service.slug }
+
+  service: article.service
+    ? {
+        id: article.service._id,
+        title: article.service.title,
+        slug: article.service.slug,
+      }
     : undefined,
 });
 
-/** Public list row -> ArticleListItemDto */
+/* ======================================================================== */
+/* PUBLIC LIST                                                              */
+/* ======================================================================== */
+
 export const mapPublicRowToListItem = (
-  a: ArticlePublicRow
+  article: ArticlePublicRow
 ): ArticleListItemDto => ({
-  id: a._id.toString(),
-  slug: a.slug,
-  title: a.title,
-  summary: a.summary,
-  tags: Array.isArray(a.tags) ? a.tags : [],
-  src: firstImage(a.src),
-  publishedAt: a.publishedAt?.toISOString(),
-  updatedAt: a.updatedAt?.toISOString(),
-  category: a.categoryId
+  id: toIdString(article._id),
+  slug: article.slug,
+  title: article.title,
+  summary: article.summary,
+
+  tags: stringArray(article.tags),
+  src: firstImage(article.src),
+
+  publishedAt: toIsoString(article.publishedAt),
+  updatedAt: toIsoString(article.updatedAt),
+
+  category: article.categoryId
     ? {
-        id: a.categoryId._id.toString(),
-        title: a.categoryId.title,
-        slug: a.categoryId.slug,
+        id: toIdString(article.categoryId._id),
+        title: article.categoryId.title,
+        slug: article.categoryId.slug,
       }
     : undefined,
-  service: a.serviceId
+
+  service: article.serviceId
     ? {
-        id: a.serviceId._id.toString(),
-        title: a.serviceId.title,
-        slug: a.serviceId.slug,
+        id: toIdString(article.serviceId._id),
+        title: article.serviceId.title,
+        slug: article.serviceId.slug,
       }
     : undefined,
 });
 
-/** Full public row -> ArticlePublicPageDto */
+/* ======================================================================== */
+/* PUBLIC PAGE                                                              */
+/* ======================================================================== */
+
 export const mapPublicFullRowToPage = (
-  row: ArticlePublicFullRow
+  article: ArticlePublicFullRow
 ): ArticlePublicPageDto => ({
-  id: row._id.toString(),
-  slug: row.slug,
-  status: row.status,
-  title: row.title,
-  subtitle: row.subtitle,
-  summary: row.summary,
-  content: row.content,
-  tags: Array.isArray(row.tags) ? row.tags : [],
-  src: Array.isArray(row.src) ? row.src : [],
-  language: row.language,
-  publishedAt: row.publishedAt?.toISOString(),
-  category: row.categoryId
+  id: toIdString(article._id),
+
+  slug: article.slug,
+  status: article.status,
+
+  title: article.title,
+  subtitle: article.subtitle,
+
+  summary: article.summary,
+  content: article.content,
+
+  tags: stringArray(article.tags),
+  src: stringArray(article.src),
+
+  language: article.language,
+  publishedAt: toIsoString(article.publishedAt),
+
+  category: article.categoryId
     ? {
-        id: row.categoryId._id.toString(),
-        title: row.categoryId.title,
-        slug: row.categoryId.slug,
+        id: toIdString(article.categoryId._id),
+        title: article.categoryId.title,
+        slug: article.categoryId.slug,
       }
     : undefined,
-  author: row.authorId
+
+  author: article.authorId
     ? {
-        id: row.authorId._id.toString(),
-        name: row.authorId.name,
-        avatar: row.authorId.avatar,
+        id: toIdString(article.authorId._id),
+        name: article.authorId.name,
+        avatar: article.authorId.avatar,
       }
     : undefined,
-  service: row.serviceId
+
+  service: article.serviceId
     ? {
-        id: row.serviceId._id.toString(),
-        title: row.serviceId.title,
-        slug: row.serviceId.slug,
+        id: toIdString(article.serviceId._id),
+        title: article.serviceId.title,
+        slug: article.serviceId.slug,
       }
     : undefined,
 });
 
-export function mapArticleToPreviewDTO(doc: ArticleLike): ArticlePreviewDTO {
+/* ======================================================================== */
+/* PREVIEW                                                                  */
+/* ======================================================================== */
+
+export const mapArticleToPreviewDTO = (
+  article: ArticleLike
+): ArticlePreviewDTO => ({
+  id: toIdString(article._id),
+  title: article.title,
+  slug: article.slug,
+  summary: article.summary,
+  src: stringArray(article.src),
+  publishedAt: toIsoString(article.publishedAt),
+});
+
+export function mapRecentRowToBlogItem(
+  row: ArticleRecentRow
+): BlogRecentPostItemDto {
   return {
-    id: doc._id.toString(),
-    title: doc.title,
-    slug: doc.slug,
-    summary: doc.summary,
-    src: doc.src ?? [],
-    publishedAt: doc.publishedAt?.toString(),
+    id: row._id.toString(),
+    slug: row.slug,
+    title: row.title,
+    publishedAt: row.publishedAt ?? undefined,
   };
 }

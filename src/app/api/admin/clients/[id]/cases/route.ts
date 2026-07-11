@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 
+import {
+  caseActions,
+  casePublicActions,
+} from '@/app/actions/case-admin.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { caseAdminService } from '@/app/lib/services/case-admin.service';
 import { CreateCaseDTO, createCaseSchema } from '@/app/types';
 
 type RouteContext = {
@@ -11,7 +14,7 @@ type RouteContext = {
 export async function GET(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
-    const data = await caseAdminService.getByClientId(id);
+    const data = await casePublicActions.getCasesByClientId(id);
 
     return NextResponse.json({ ok: true, data });
   } catch (err) {
@@ -29,10 +32,10 @@ export async function POST(req: Request, { params }: RouteContext) {
       stripUnknown: true,
     });
 
-    const data = await caseAdminService.createForClient(
-      id,
-      validated as CreateCaseDTO
-    );
+    const data = await caseActions.create({
+      ...(validated as CreateCaseDTO),
+      clientId: id,
+    });
 
     return NextResponse.json({ ok: true, data }, { status: 201 });
   } catch (err) {

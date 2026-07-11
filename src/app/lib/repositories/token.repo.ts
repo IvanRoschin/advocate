@@ -1,15 +1,13 @@
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { TokenType } from '@/app/types';
 import Token, { TokenDB, TokenDocument } from '@/models/Token';
+import { mapUserToResponse, TokenType } from '@/app/types';
+import { userRepo } from './user.repo';
 
 export const tokenRepo = {
   async create(data: Partial<TokenDocument>) {
-    await dbConnect();
     return Token.create(data);
   },
 
   async findValid(token: string, type?: TokenType) {
-    await dbConnect();
     const query: Partial<TokenDB> & { token: string; used: boolean } = {
       token,
       used: false,
@@ -31,5 +29,55 @@ export const tokenRepo = {
   async markUsed(tokenDoc: TokenDocument) {
     tokenDoc.used = true;
     await tokenDoc.save();
+  },
+
+  async changeEmail(token: TokenDocument) {
+    if (token.type !== TokenType.EMAIL_CHANGE) {
+      throw new Error('Невірний тип токена');
+    }
+
+    const newEmail = token.email;
+    if (!newEmail) {
+      throw new Error('Не вказано новий email у токені');
+    }
+
+    const user = await userRepo.findById(token.userId.toString());
+    if (!user) {
+      throw new Error('Користувача не знайдено');
+    }
+
+    const normalizedEmail = newEmail.trim().toLowerCase();
+
+    if (normalizedEmail !== user.email) {
+      const exists = await userRepo.findByEmail(normalizedEmail);
+      if (exists) {
+        throw new Error('Email вже використовується');
+      }
+    }
+
+    user.email = normalizedEmail;
+    await user.save();
+
+    await this.markUsed(token);
+
+    return user;
+  },
+
+  async activateAccount(token: TokenDocument) {
+    if (token.type !== TokenType.VERIFICATION) {
+      throw new Error('Невірний тип токена');
+    }
+
+    const user = await userRepo.findById(token.userId.toString());
+    if (!user) {
+      throw new Error('Користувача не знайдено');
+    }
+
+    user.isActive = true;
+    await user.save();
+
+    await this.markUsed(token);
+
+    return mapUserToResponse(user);
   },
 };

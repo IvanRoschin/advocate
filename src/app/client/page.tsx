@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation';
 
 import { routes } from '@/app/config/routes';
 import { authOptions } from '@/config';
-import { clientDashboardService } from '@/lib/services/client-dashboard.service';
+
+import { clientDashboardActions } from '../actions/client-dashboard.actions';
 import ClientPage from './ClientPage';
 
 export default async function ClientDashboardPage() {
@@ -17,9 +18,9 @@ export default async function ClientDashboardPage() {
     redirect(routes.client.settings.repairClientAccess);
   }
 
-  const data = await clientDashboardService.getByClientId(
-    session.user.activeClientId
-  );
+  const data = await clientDashboardActions.getByClientId({
+    clientId: session.user.activeClientId,
+  });
 
   return <ClientPage data={data} />;
 }

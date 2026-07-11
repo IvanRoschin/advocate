@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { routes } from '@/app/config/routes';
 import { UserRole } from './app/types';
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const token = await getToken({ req });
   const nonce = crypto.randomUUID();
 

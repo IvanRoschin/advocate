@@ -1,0 +1,117 @@
+version: '3.9'
+
+services:
+  app:
+    container_name: advocate-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # ONLY PUBLIC BUILD-TIME VARS
+        NEXT_PUBLIC_URL: ${NEXT_PUBLIC_URL}
+        NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+        NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET: ${NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+        NEXT_PUBLIC_FACEBOOK_URL: ${NEXT_PUBLIC_FACEBOOK_URL}
+        NEXT_PUBLIC_INSTAGRAM_URL: ${NEXT_PUBLIC_INSTAGRAM_URL}
+        NEXT_PUBLIC_ADVOCATE_EMAIL: ${NEXT_PUBLIC_ADVOCATE_EMAIL}
+        NEXT_PUBLIC_ADVOCATE_PN_1: ${NEXT_PUBLIC_ADVOCATE_PN_1}
+        NEXT_PUBLIC_ADVOCATE_PN_2: ${NEXT_PUBLIC_ADVOCATE_PN_2}
+        MONGODB_URI: ${MONGODB_URI}
+
+    ports:
+      - '3000:3000'
+
+    environment:
+      # DB
+      MONGODB_URI: ${MONGODB_URI}
+
+      # Cloudinary (server-only)
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+
+      # SMTP
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_EMAIL: ${SMTP_EMAIL}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM_NAME: ${SMTP_FROM_NAME}
+
+      # Telegram
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+
+      # WayForPay
+      WAYFORPAY_MERCHANT_ACCOUNT: ${WAYFORPAY_MERCHANT_ACCOUNT}
+      WAYFORPAY_MERCHANT_DOMAIN: ${WAYFORPAY_MERCHANT_DOMAIN}
+      WAYFORPAY_SECRET_KEY: ${WAYFORPAY_SECRET_KEY}
+      WAYFORPAY_URL: ${WAYFORPAY_URL}
+
+      # Auth
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+
+      # Google
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+
+      # Cloudflare
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY}
+
+    restart: unless-stopped
+
+    depends_on:
+      - mongo
+
+    networks:
+      - app-network
+
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:3000']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  mongo:
+    image: mongo:7
+    container_name: advocate-mongo
+    restart: unless-stopped
+
+    environment:
+      MONGO_INITDB_DATABASE: advocate
+
+    volumes:
+      - mongo_data:/data/db
+
+    ports:
+      - '27017:27017'
+
+    networks:
+      - app-network
+
+    healthcheck:
+      test:
+        echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo_data:

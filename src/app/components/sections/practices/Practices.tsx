@@ -1,13 +1,14 @@
 import Link from 'next/link';
 
+import { servicePublicActions } from '@/app/actions/service.actions';
 import Btn from '@/app/components/ui/button/Btn';
 import { routes } from '@/app/config/routes';
-import { serviceService } from '@/app/lib/services/service.service';
 import { practicesSection } from '@/app/resources';
+
 import PracticesCard from './PracticesCard';
 
 export default async function Practices() {
-  const services = await serviceService.getPublicList({ limit: 4 });
+  const servicesRow = await servicePublicActions.list({ limit: 4 });
 
   return (
     <section
@@ -29,9 +30,9 @@ export default async function Practices() {
         </header>
 
         <div className="section-content">
-          {services.length > 0 ? (
+          {servicesRow.items.length > 0 ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
-              {services.map(service => (
+              {servicesRow.items.map(service => (
                 <PracticesCard
                   key={service.id}
                   title={service.title}

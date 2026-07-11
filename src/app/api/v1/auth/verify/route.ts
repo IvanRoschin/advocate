@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { tokenActions } from '@/app/actions/token.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { tokenService } from '@/app/lib/services/token.service';
 import { TokenType, VerifyTokenDTO } from '@/app/types';
 
 export async function POST(req: Request) {
@@ -15,10 +15,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const tokenDoc = await tokenService.verify(token.trim());
+    const tokenDoc = await tokenActions.verify({ token: token.trim() });
 
     if (tokenDoc.type === TokenType.EMAIL_CHANGE) {
-      const user = await tokenService.changeEmail(tokenDoc);
+      const user = await tokenActions.changeEmail(tokenDoc);
 
       return NextResponse.json({
         success: true,
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     }
 
     if (tokenDoc.type === TokenType.VERIFICATION) {
-      const user = await tokenService.activateAccount(tokenDoc);
+      const user = await tokenActions.activateAccount(tokenDoc);
 
       return NextResponse.json({
         success: true,

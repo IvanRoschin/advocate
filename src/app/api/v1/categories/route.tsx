@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server';
 
+import { categoryActions } from '@/app/actions/category.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { categoryService } from '@/app/lib/services/category.service';
 
 export async function GET() {
   try {
-    await dbConnect();
-
-    const categories = await categoryService.getAll();
+    const categories = await categoryActions.getAll();
 
     return NextResponse.json({ ok: true, data: categories });
   } catch (err) {
