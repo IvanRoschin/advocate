@@ -102,7 +102,7 @@ export const NavDesktopList = ({
 
   return (
     <nav className="font-eukrainehead min-w-0" aria-label={menuText.navAria}>
-      <ul className="flex h-10 min-w-0 items-center gap-1 whitespace-nowrap">
+      <ul className="flex h-10 min-w-0 items-center gap-0.5 whitespace-nowrap">
         {items.map(item => {
           const active =
             'href' in item
@@ -122,13 +122,13 @@ export const NavDesktopList = ({
                   aria-current={active ? 'page' : undefined}
                   title={item.label}
                   className={cn(
-                    'desktop-nav-link flex h-9 items-center gap-1.5 rounded-xl px-2.5 text-sm leading-none font-medium transition',
+                    'desktop-nav-link flex h-9 items-center gap-1 rounded-xl px-2 text-sm leading-none font-medium transition',
                     active
                       ? 'desktop-nav-link-active shadow-sm'
                       : 'desktop-nav-link-inactive'
                   )}
                 >
-                  <item.Icon className="shrink-0 text-base" aria-hidden />
+                  <item.Icon className="shrink-0 text-[15px]" aria-hidden />
                   <span className={labelClass}>{item.label}</span>
                 </AppLink>
               ) : (
@@ -136,11 +136,9 @@ export const NavDesktopList = ({
                   type="button"
                   title={item.label}
                   onClick={item.onClick}
-                  className={cn(
-                    'desktop-nav-link desktop-nav-link-inactive flex h-9 items-center gap-1.5 rounded-xl px-2.5 text-sm leading-none font-medium transition'
-                  )}
+                  className="desktop-nav-link desktop-nav-link-inactive flex h-9 items-center gap-1 rounded-xl px-2 text-sm leading-none font-medium transition"
                 >
-                  <item.Icon className="shrink-0 text-base" aria-hidden />
+                  <item.Icon className="shrink-0 text-[15px]" aria-hidden />
                   <span className={labelClass}>{item.label}</span>
                 </button>
               )}

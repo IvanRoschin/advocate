@@ -34,8 +34,11 @@ html {
 }
 
 body {
-  font-family: var(--font-manrope), system-ui, sans-serif;
-}
+    font-family: var(--font-eukraine), system-ui, sans-serif;
+    font-size: var(--fs-base);
+    line-height: var(--lh-normal);
+    color: var(--text-default);
+  }
 
 /* layout helpers */
 .container {

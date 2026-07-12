@@ -8,7 +8,7 @@ import {
   InfiniteScroll,
   PageResult,
 } from '@/app/components/common/InfiniteScroll';
-import { apiUrl } from '@/app/config/routes';
+import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
@@ -46,8 +46,11 @@ export default function ArticlesClient({
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
 
+  const [search, setSearch] = useState('');
+
   const [articles, setArticles] =
     useState<ArticleResponseDTO[]>(initialArticles);
+
   const [articleToDelete, setArticleToDelete] =
     useState<ArticleResponseDTO | null>(null);
 
@@ -79,7 +82,7 @@ export default function ArticlesClient({
     start();
     try {
       await apiFetch<void>(
-        apiUrl(`/api/admin/articles/${articleToDelete._id}`),
+        apiUrl(routes.api.admin.articles + `/${articleToDelete._id}`),
         {
           method: 'DELETE',
         }
@@ -101,7 +104,7 @@ export default function ArticlesClient({
 
   const handleEdit = useCallback(
     (article: ArticleResponseDTO) => {
-      router.push(`/admin/articles/${article._id}/edit`);
+      router.push(routes.api.admin.articles + `/${article._id}/edit`);
     },
     [router]
   );
@@ -110,7 +113,7 @@ export default function ArticlesClient({
     page: number
   ): Promise<PageResult<ArticleResponseDTO>> => {
     const response = await fetch(
-      apiUrl(`/api/admin/articles?page=${page}&limit=5`)
+      apiUrl(routes.api.admin.articles + `?page=${page}&limit=5`)
     );
     const json = (await response.json()) as {
       ok: boolean;
@@ -122,7 +125,7 @@ export default function ArticlesClient({
   };
 
   const handleCreate = useCallback(() => {
-    router.push('/admin/articles/new');
+    router.push(routes.api.admin.articles + '/new');
   }, [router]);
 
   const columns = useMemo(
@@ -176,6 +179,8 @@ export default function ArticlesClient({
         <AdminTableToolbar>
           <input
             type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder="Пошук..."
             className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
@@ -197,6 +202,7 @@ export default function ArticlesClient({
               data={articles}
               columns={columns}
               isLoading={false}
+              globalFilter={search}
               emptyMessage="Статей поки немає"
               mobileRender={article => (
                 <ArticleMobileCard
@@ -212,22 +218,6 @@ export default function ArticlesClient({
             />
           )}
         />
-        {/* 
-        <AdminTable
-          data={articles}
-          columns={columns}
-          isLoading={false}
-          emptyMessage="Статей поки немає"
-          mobileRender={article => (
-            <ArticleMobileCard
-              row={article}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              authorName={authorNameById.get(article.authorId) ?? '—'}
-              categoryTitle={categoryTitleById.get(article.categoryId) ?? '—'}
-            />
-          )}
-        /> */}
       </AdminPageContainer>
 
       {renderDeleteModal}

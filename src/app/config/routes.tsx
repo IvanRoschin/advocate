@@ -38,11 +38,18 @@ export const routes = {
     admin: {
       articles: '/api/admin/articles',
       categories: '/api/admin/categories',
+      clients: '/api/admin/clients',
       dashboard: '/api/admin/dashboard',
       leads: '/api/admin/leads',
       reviews: '/api/admin/reviews',
+      services: '/api/admin/services',
       subscribe: '/api/admin/subscribe',
+      slides: '/api/admin/slides',
       users: '/api/admin/users',
+    },
+    client: {
+      me: 'api/client/me',
+      profile: 'api/client/profile',
     },
     v1: {
       articles: '/api/v1/articles',

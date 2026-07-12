@@ -7,7 +7,7 @@ import type {
 
 export const pageSettingsRepo = {
   findByEntity(entity: PageSettingsResponseDTO['entity']) {
-    return PageSettings.findOne({ entity });
+    return PageSettings.findOne({ entity }).lean();
   },
 
   async upsertByEntity(data: UpdatePageSettingsDTO) {
@@ -19,6 +19,6 @@ export const pageSettingsRepo = {
         upsert: true,
         setDefaultsOnInsert: true,
       }
-    );
+    ).lean();
   },
 };

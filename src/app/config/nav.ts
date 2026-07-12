@@ -190,7 +190,7 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
       useUserStore.getState().clearUser();
 
       await signOut({
-        callbackUrl: routes.public.auth.signIn,
+        callbackUrl: routes.public.home,
       });
     },
   },
@@ -242,7 +242,7 @@ export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
   {
     key: 'repairClient',
     href: routes.client.settings.repairClientAccess,
-    label: 'Відновити клієнта',
+    label: 'Відновити',
     Icon: iconLibrary.settings,
     startsWith: true,
   },
@@ -254,7 +254,7 @@ export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
       useUserStore.getState().clearUser();
 
       await signOut({
-        callbackUrl: routes.public.auth.signIn,
+        callbackUrl: routes.public.home,
       });
     },
   },
@@ -310,7 +310,7 @@ export const MANAGER_NAV_ITEMS: readonly NavItem[] = [
       useUserStore.getState().clearUser();
 
       await signOut({
-        callbackUrl: routes.public.auth.signIn,
+        callbackUrl: routes.public.home,
       });
     },
   },

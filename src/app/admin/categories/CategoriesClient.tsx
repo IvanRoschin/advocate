@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { CategoryForm } from '@/app/components/forms';
-import { apiUrl } from '@/app/config/routes';
+import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
@@ -33,11 +33,11 @@ interface Props {
 }
 
 export default function CategoriesClient({ initialCategories }: Props) {
-  const [search, setSearch] = useState('');
-
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
+
+  const [search, setSearch] = useState('');
 
   const [categories, setCategories] =
     useState<CategoryResponseDTO[]>(initialCategories);
@@ -73,7 +73,7 @@ export default function CategoriesClient({ initialCategories }: Props) {
     start();
     try {
       await apiFetch<void>(
-        apiUrl(`/api/admin/categories/${categoryToDelete._id}`),
+        apiUrl(routes.api.admin.categories + `/${categoryToDelete._id}`),
         { method: 'DELETE' }
       );
       setCategories(prev =>
@@ -99,7 +99,7 @@ export default function CategoriesClient({ initialCategories }: Props) {
     start();
     try {
       const newCategory = await apiFetch<CategoryResponseDTO>(
-        apiUrl('/api/admin/categories'),
+        apiUrl(routes.api.admin.categories),
         {
           method: 'POST',
           body: JSON.stringify(payload),
@@ -122,7 +122,7 @@ export default function CategoriesClient({ initialCategories }: Props) {
     start();
     try {
       const updatedCategory = await apiFetch<CategoryResponseDTO>(
-        apiUrl(`/api/admin/categories/${categoryToUpdate._id}`),
+        apiUrl(routes.api.admin.categories + `/${categoryToUpdate._id}`),
         {
           method: 'PATCH',
           body: JSON.stringify(payload),
@@ -245,6 +245,7 @@ export default function CategoriesClient({ initialCategories }: Props) {
             onDelete: handleDelete,
           })}
           isLoading={isLoading}
+          globalFilter={search}
           emptyMessage="Категорій поки немає"
           mobileRender={category => (
             <CategoryMobileCard
