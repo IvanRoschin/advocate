@@ -4,6 +4,7 @@ import {
   blogLayout,
   BlogLayoutNode,
 } from '@/app/resources/content/pages/blog.layout';
+
 import { BLOG_SECTIONS } from './_components/blog.sections';
 
 type BlogPageProps = {

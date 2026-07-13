@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { apiUrl } from '@/app/config/routes';
+import { apiUrl, routes } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import {
   clientProfileSchema,
@@ -202,7 +202,7 @@ export default function ClientProfilePageClient({ initialProfile }: Props) {
             onSubmit={async (values, helpers) => {
               try {
                 const updated = await apiFetch<ClientProfileDto>(
-                  apiUrl('/api/client/profile'),
+                  apiUrl(routes.api.client.profile),
                   {
                     method: 'PATCH',
                     body: JSON.stringify(mapFormToUpdateClientProfile(values)),

@@ -1,13 +1,11 @@
 import { Category } from '@/app/models';
-
-import { createQuery } from './queryFactory';
-
 import type {
   CategoryAdminRow,
   CategoryPublicRow,
   CreateCategoryRequestDTO,
   UpdateCategoryDTO,
 } from '@/app/types';
+import { createQuery } from './queryFactory';
 const categoryQuery = createQuery(Category);
 
 export const categoryRepo = {
@@ -37,7 +35,10 @@ export const categoryRepo = {
   },
 
   async update(id: string, data: UpdateCategoryDTO) {
-    return Category.findByIdAndUpdate(id, data, { new: true });
+    return Category.findByIdAndUpdate(id, data, {
+      returnDocument: 'after',
+      runValidators: true,
+    });
   },
 
   async deleteById(id: string) {

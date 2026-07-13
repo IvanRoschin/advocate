@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import SlideForm from '@/app/components/forms/SlideForm';
-import { apiUrl } from '@/app/config/routes';
+import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
@@ -37,6 +37,8 @@ export default function SlidesClient({ initialSlides }: Props) {
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
+
+  const [search, setSearch] = useState('');
 
   const [slides, setSlides] = useState<SlideResponseDTO[]>(initialSlides);
   const [slideToDelete, setSlideToDelete] = useState<SlideResponseDTO | null>(
@@ -82,8 +84,8 @@ export default function SlidesClient({ initialSlides }: Props) {
 
       try {
         const endpoint = checked
-          ? `/api/admin/slides/${slide._id}/activate`
-          : `/api/admin/slides/${slide._id}/deactivate`;
+          ? routes.api.admin.slides + `/${slide._id}/activate`
+          : routes.api.admin.slides + `/${slide._id}/deactivate`;
 
         const updated = await apiFetch<SlideResponseDTO>(apiUrl(endpoint), {
           method: 'PATCH',
@@ -114,9 +116,12 @@ export default function SlidesClient({ initialSlides }: Props) {
 
     start();
     try {
-      await apiFetch<void>(apiUrl(`/api/admin/slides/${slideToDelete._id}`), {
-        method: 'DELETE',
-      });
+      await apiFetch<void>(
+        apiUrl(routes.api.admin.slides + `/${slideToDelete._id}`),
+        {
+          method: 'DELETE',
+        }
+      );
 
       setSlides(prev => prev.filter(item => item._id !== slideToDelete._id));
       toast.success('Слайд видалено');
@@ -134,7 +139,7 @@ export default function SlidesClient({ initialSlides }: Props) {
       start();
       try {
         const created = await apiFetch<SlideResponseDTO>(
-          apiUrl('/api/admin/slides'),
+          apiUrl(routes.api.admin.slides),
           {
             method: 'POST',
             body: JSON.stringify(payload),
@@ -160,7 +165,7 @@ export default function SlidesClient({ initialSlides }: Props) {
       start();
       try {
         const updated = await apiFetch<SlideResponseDTO>(
-          apiUrl(`/api/admin/slides/${slideToUpdate._id}`),
+          apiUrl(routes.api.admin.slides + `/${slideToUpdate._id}`),
           {
             method: 'PATCH',
             body: JSON.stringify(payload),
@@ -281,8 +286,10 @@ export default function SlidesClient({ initialSlides }: Props) {
         <AdminTableToolbar>
           <input
             type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder="Пошук..."
-            className="h-10 w-full rounded-xl border px-3 sm:max-w-xs"
+            className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
         </AdminTableToolbar>
 
@@ -290,6 +297,7 @@ export default function SlidesClient({ initialSlides }: Props) {
           data={slides}
           columns={columns}
           isLoading={isLoading}
+          globalFilter={search}
           emptyMessage="Слайдів поки немає"
           mobileRender={slide => (
             <SlideMobileCard

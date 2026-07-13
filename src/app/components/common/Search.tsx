@@ -37,7 +37,7 @@ const Search = ({ placeholder }: { placeholder: string }) => {
         Пошук
       </label>
       <div className="relative flex w-full items-center justify-center">
-        <div className="pointer-events-none absolute inset-y-0 start-0 z-10 flex items-center ps-3">
+        <div className="pointer-events-none absolute inset-y-0 inset-s-0 z-10 flex items-center ps-3">
           <CiSearch />
         </div>
         <input

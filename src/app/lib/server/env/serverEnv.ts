@@ -1,4 +1,4 @@
-export const env = {
+export const serverEnv = {
   baseUrl:
     process.env.NEXT_PUBLIC_URL ||
     process.env.NEXTAUTH_URL ||

@@ -7,6 +7,7 @@ import { Loader } from '@/components';
 import {
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   Row,
   SortingState,
@@ -162,8 +163,10 @@ export function AdminTable<TData>({
   isLoading = false,
   emptyMessage = 'Дані відсутні',
   mobileRender,
+  globalFilter,
 }: AdminTableProps<TData> & {
   mobileRender?: (row: TData) => ReactNode;
+  globalFilter?: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -171,10 +174,11 @@ export function AdminTable<TData>({
   const table = useReactTable({
     data,
     columns,
-    state: { sorting },
+    state: { sorting, globalFilter },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   if (isLoading) {

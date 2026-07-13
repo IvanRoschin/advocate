@@ -1,8 +1,8 @@
-import { env } from './env/serverEnv';
+import { serverEnv } from './env/serverEnv';
 
 export async function sendTelegramMessage(message: string) {
-  const token = env.telegram.botToken;
-  const chatId = env.telegram.chatId;
+  const token = serverEnv.telegram.botToken;
+  const chatId = serverEnv.telegram.chatId;
 
   if (!token) {
     throw new Error('TELEGRAM_BOT_TOKEN missing');

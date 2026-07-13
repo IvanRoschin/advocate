@@ -1,4 +1,4 @@
-import { env } from '../server/env/serverEnv';
+import { serverEnv } from '../server/env/serverEnv';
 
 export type ServiceImageVariant = 'card' | 'hero';
 
@@ -28,7 +28,7 @@ export function getServiceImageUrl(
 }
 
 function buildCloudinaryUrl(publicId: string, transform: string): string {
-  const cloudName = env.cloudinary.cloudName;
+  const cloudName = serverEnv.cloudinary.cloudName;
 
   return `https://res.cloudinary.com/${cloudName}/image/upload/${transform}/${publicId}`;
 }

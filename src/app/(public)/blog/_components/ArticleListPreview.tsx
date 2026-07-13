@@ -5,6 +5,7 @@ import { CldImage } from 'next-cloudinary';
 import Link from 'next/link';
 
 import { NextImage } from '@/app/components';
+import { NoCoverPlaceholder } from '@/app/components/common/NoCoverPlaceholder';
 import { imageVariants } from '@/app/config/imageVariants';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { cn, formatDate } from '@/app/lib/utils';
@@ -54,9 +55,7 @@ export function ArticleListPreview({
                           className="object-cover"
                         />
                       ) : (
-                        <div className="text-muted-foreground flex h-full w-full items-center justify-center text-sm">
-                          No cover
-                        </div>
+                        <NoCoverPlaceholder />
                       )}
                       <div className="from-background/35 bg-linear-to-top pointer-events-none absolute inset-0 to-transparent" />
                     </div>

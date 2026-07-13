@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { apiUrl } from '@/app/config/routes';
+import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
@@ -38,7 +38,10 @@ export default function UsersClient({ initialUsers }: Props) {
   const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
 
+  const [search, setSearch] = useState('');
+
   const [users, setUsers] = useState<UserResponseDTO[]>(initialUsers);
+
   const [userToDelete, setUserToDelete] = useState<UserResponseDTO | null>(
     null
   );
@@ -61,9 +64,12 @@ export default function UsersClient({ initialUsers }: Props) {
     if (!userToDelete) return;
 
     try {
-      await apiFetch<void>(apiUrl(`/api/admin/users/${userToDelete._id}`), {
-        method: 'DELETE',
-      });
+      await apiFetch<void>(
+        apiUrl(routes.api.admin.users + `/${userToDelete._id}`),
+        {
+          method: 'DELETE',
+        }
+      );
 
       setUsers(prev => prev.filter(u => u._id !== userToDelete._id));
 
@@ -83,7 +89,7 @@ export default function UsersClient({ initialUsers }: Props) {
   const handleCreateUser = async (payload: CreateUserRequestDTO) => {
     try {
       const newUser = await apiFetch<UserResponseDTO>(
-        apiUrl('/api/admin/users'),
+        apiUrl(routes.api.admin.users),
         {
           method: 'POST',
           body: JSON.stringify(payload),
@@ -115,7 +121,7 @@ export default function UsersClient({ initialUsers }: Props) {
       };
 
       const updatedUser = await apiFetch<UserResponseDTO>(
-        apiUrl(`/api/admin/users/${userToUpdate._id}`),
+        apiUrl(routes.api.admin.users + `/${userToUpdate._id}`),
         {
           method: 'PATCH',
           body: JSON.stringify(cleanPayload),
@@ -221,6 +227,8 @@ export default function UsersClient({ initialUsers }: Props) {
         <AdminTableToolbar>
           <input
             type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder="Пошук..."
             className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
@@ -234,6 +242,7 @@ export default function UsersClient({ initialUsers }: Props) {
           })}
           isLoading={isLoading}
           emptyMessage="Користувачів поки немає"
+          globalFilter={search}
           mobileRender={user => (
             <UserMobileCard
               row={user}

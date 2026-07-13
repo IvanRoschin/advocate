@@ -1,27 +1,21 @@
 import 'server-only';
+
 import { sendEmail } from '@/app/lib/server/mail/emailService';
-import { sendTelegramMessage } from '@/app/lib/server/sendTelegram';
+import { createEntityNotifier } from '@/app/lib/server/notifications/createEntityNotifier';
 import { person } from '@/app/resources';
 import { EmailTemplateType } from '@/app/templates/email/types';
-import { UserRole } from '@/app/types';
-import type { CreateLeadDTO } from '@/app/types';
-import type { ConvertLeadToClientResult } from './lead-conversion.types';
+import { CreateLeadDTO, UserRole } from '@/app/types';
 
-/* ================= New lead notifications ================= */
+import { ConvertLeadToClientResult } from './lead-conversion.types';
 
-export async function notifyClient(data: CreateLeadDTO): Promise<void> {
-  await sendEmail({
+export const notifyLeadCreated = createEntityNotifier<CreateLeadDTO>({
+  clientEmail: data => ({
     to: data.email,
     type: EmailTemplateType.LEAD_CLIENT,
-    props: {
-      name: data.name,
-    },
-  });
-}
+    props: { name: data.name },
+  }),
 
-export async function notifyAdmin(data: CreateLeadDTO): Promise<void> {
-  await sendEmail({
-    to: person.email,
+  adminEmail: data => ({
     type: EmailTemplateType.LEAD_ADMIN,
     props: {
       name: data.name,
@@ -30,30 +24,24 @@ export async function notifyAdmin(data: CreateLeadDTO): Promise<void> {
       message: data.message,
       source: data.source,
     },
-  });
-}
+  }),
 
-export async function notifyTelegram(data: CreateLeadDTO): Promise<void> {
-  const lines = [
-    '🚨 <b>Нова заявка</b>',
-    `Джерело: ${data.source}`,
-    `Імʼя: ${data.name}`,
-    `Email: ${data.email}`,
-    `Телефон: ${data.phone}`,
-  ];
+  telegramMessage: data => {
+    const lines = [
+      '🚨 <b>Нова заявка</b>',
+      `Джерело: ${data.source}`,
+      `Імʼя: ${data.name}`,
+      `Email: ${data.email}`,
+      `Телефон: ${data.phone}`,
+    ];
 
-  if (data.message) {
-    lines.push(`Повідомлення: ${data.message}`);
-  }
+    if (data.message) {
+      lines.push(`Повідомлення: ${data.message}`);
+    }
 
-  await sendTelegramMessage(lines.join('\n'));
-}
-
-export async function notifyLeadCreated(data: CreateLeadDTO): Promise<void> {
-  await notifyClient(data).catch(console.error);
-  await notifyAdmin(data).catch(console.error);
-  await notifyTelegram(data).catch(console.error);
-}
+    return lines.join('\n');
+  },
+});
 
 /* ================= Conversion notifications ================= */
 
@@ -85,7 +73,7 @@ export async function notifyClientAccountProvisioned(
       temporaryPassword: clientAccountUser.temporaryPassword,
       email: clientAccountUser.email,
     },
-  }).catch(console.error);
+  }).catch(err => console.error('[NOTIFY_ACTIVATE_ACCOUNT_ERROR]', err));
 
   await sendEmail({
     to: person.email,
@@ -96,5 +84,5 @@ export async function notifyClientAccountProvisioned(
       role: UserRole.CLIENT,
       phone: clientAccountUser.phone,
     },
-  }).catch(console.error);
+  }).catch(err => console.error('[NOTIFY_USER_CREATED_ERROR]', err));
 }

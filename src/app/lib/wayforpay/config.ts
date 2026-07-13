@@ -1,5 +1,6 @@
 import 'server-only';
-import { env } from '../server/env/serverEnv';
+
+import { serverEnv } from '../server/env/serverEnv';
 
 function normalizeDomain(input: string): string {
   try {
@@ -17,18 +18,21 @@ function required(value: string | undefined, name: string): string {
 export function getWayForPayConfig() {
   return {
     merchantAccount: required(
-      env.wayforpay.merchantAccount,
+      serverEnv.wayforpay.merchantAccount,
       'WAYFORPAY_MERCHANT_ACCOUNT'
     ),
-    secretKey: required(env.wayforpay.secretKey, 'WAYFORPAY_SECRET_KEY'),
+    secretKey: required(serverEnv.wayforpay.secretKey, 'WAYFORPAY_SECRET_KEY'),
     apiUrl:
-      required(env.wayforpay.url, 'WAYFORPAY_URL') ||
+      required(serverEnv.wayforpay.url, 'WAYFORPAY_URL') ||
       'https://api.wayforpay.com/api',
-    publicUrl: env.baseUrl,
+    publicUrl: serverEnv.baseUrl,
     merchantDomainName: normalizeDomain(
-      required(env.wayforpay.merchantDomain, 'WAYFORPAY_MERCHANT_DOMAIN') ||
-        required(env.baseUrl, 'NEXT_PUBLIC_URL')
+      required(
+        serverEnv.wayforpay.merchantDomain,
+        'WAYFORPAY_MERCHANT_DOMAIN'
+      ) || required(serverEnv.baseUrl, 'NEXT_PUBLIC_URL')
     ),
-    serviceUrl: env.wayforpay.url || `${env.baseUrl}/api/wayforpay/callback`,
+    serviceUrl:
+      serverEnv.wayforpay.url || `${serverEnv.baseUrl}/api/wayforpay/callback`,
   } as const;
 }

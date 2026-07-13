@@ -2,11 +2,11 @@ import 'server-only';
 
 import { validate } from '@/app/helpers/validate';
 import { leadRepo } from '@/app/lib/repositories/lead.repo';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { recaptchaService } from '@/app/lib/server/recaptcha.service';
 import { createLeadRequestSchema, mapLeadToResponse } from '@/app/types';
 
-import { ValidationError } from '../lib/server/errors';
+import { checkHoneypot } from '../helpers';
+import { verifyTurnstile } from '../helpers/verifyTurnstile';
+import { person } from '../resources';
 import { createAction } from './createAction';
 import { createEntityModule } from './createEntityModule';
 import { convertLeadToClient } from './lead-conversion.helpers';
@@ -37,12 +37,6 @@ export const leadActions = createEntityModule({
 
 /* ================= Public ================= */
 
-function checkHoneypot(website?: string): void {
-  if (website?.trim()) {
-    throw new ValidationError('Bot detected');
-  }
-}
-
 function normalizeLeadData(body: CreateLeadRequestDTO): CreateLeadDTO {
   return {
     name: body.name.trim(),
@@ -55,14 +49,18 @@ function normalizeLeadData(body: CreateLeadRequestDTO): CreateLeadDTO {
 
 export const leadPublicActions = {
   create: createAction<unknown, LeadResponseDTO>(async ({ args: payload }) => {
-    await dbConnect();
+    if (!person.email) {
+      throw new Error('NEXT_PUBLIC_ADVOCATE_EMAIL missing');
+    }
 
     const body = await validate(createLeadRequestSchema, payload);
 
-    checkHoneypot(body.website);
-    await recaptchaService.verify(body.recaptchaToken);
+    await checkHoneypot(body.website);
+
+    await verifyTurnstile(body.turnstileToken);
 
     const leadData = normalizeLeadData(body);
+
     const lead = await leadRepo.create(leadData);
 
     await notifyLeadCreated(leadData);

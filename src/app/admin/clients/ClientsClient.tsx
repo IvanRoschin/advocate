@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import ClientForm from '@/app/components/forms/ClientForm';
-import { apiUrl } from '@/app/config/routes';
+import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
@@ -37,6 +37,8 @@ export default function ClientsClient({ initialClients }: Props) {
   const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
 
+  const [search, setSearch] = useState('');
+
   const [clients, setClients] = useState<ClientResponseDTO[]>(initialClients);
   const [clientToDelete, setClientToDelete] =
     useState<ClientResponseDTO | null>(null);
@@ -59,9 +61,12 @@ export default function ClientsClient({ initialClients }: Props) {
     start();
 
     try {
-      await apiFetch<void>(apiUrl(`/api/admin/clients/${clientToDelete.id}`), {
-        method: 'DELETE',
-      });
+      await apiFetch<void>(
+        apiUrl(routes.api.admin.clients + `/${clientToDelete.id}`),
+        {
+          method: 'DELETE',
+        }
+      );
 
       setClients(prev =>
         prev.filter(client => client.id !== clientToDelete.id)
@@ -82,7 +87,7 @@ export default function ClientsClient({ initialClients }: Props) {
 
     try {
       const newClient = await apiFetch<ClientResponseDTO>(
-        apiUrl('/api/admin/clients'),
+        apiUrl(routes.api.admin.clients),
         {
           method: 'POST',
           body: JSON.stringify(values),
@@ -161,6 +166,8 @@ export default function ClientsClient({ initialClients }: Props) {
         <AdminTableToolbar>
           <input
             type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder="Пошук..."
             className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
@@ -173,6 +180,7 @@ export default function ClientsClient({ initialClients }: Props) {
             onDelete: handleDelete,
           })}
           isLoading={isLoading}
+          globalFilter={search}
           emptyMessage="Клієнтів поки немає"
           mobileRender={client => (
             <ClientMobileCard

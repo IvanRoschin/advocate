@@ -1,13 +1,11 @@
 import { Client, ClientAccess, User } from '@/app/models';
-import { mapClientToResponse } from '@/app/types';
-
-import { createQuery } from './queryFactory';
-
 import type {
   ClientResponseDTO,
   CreateClientDTO,
   UpdateClientDTO,
 } from '@/app/types';
+import { mapClientToResponse } from '@/app/types';
+import { createQuery } from './queryFactory';
 export type RepairClientAccessResult =
   | {
       ok: true;
@@ -76,7 +74,7 @@ export const clientRepo = {
           ...(data.email ? { email: data.email.toLowerCase().trim() } : {}),
         },
       },
-      { new: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     return client ? mapClientToResponse(client) : null;

@@ -10,22 +10,26 @@ export interface PageResult<T> {
 
 interface InfiniteScrollProps<T> {
   initialData: T[];
+  initialHasMore?: boolean;
   loadMore: (page: number) => Promise<PageResult<T>>;
   renderContent: (items: T[]) => ReactNode;
   emptyState?: ReactNode;
   endMessage?: ReactNode;
+  loader?: ReactNode;
 }
 
 export function InfiniteScroll<T>({
   initialData,
+  initialHasMore = true,
   loadMore,
   renderContent,
   emptyState,
   endMessage,
+  loader,
 }: InfiniteScrollProps<T>) {
   const [items, setItems] = useState<T[]>(initialData);
   const [isLoading, setIsLoading] = useState(false);
-  const [allLoaded, setAllLoaded] = useState(false);
+  const [allLoaded, setAllLoaded] = useState(initialHasMore);
 
   const pageRef = useRef(1);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -81,15 +85,16 @@ export function InfiniteScroll<T>({
       {renderContent(items)}
       {!allLoaded && <div ref={sentinelRef} className="h-10 w-full" />}
       <div className="flex justify-center py-6">
-        {isLoading && (
-          <TailSpin
-            visible
-            height={40}
-            width={40}
-            color="#ea580c"
-            ariaLabel="loading"
-          />
-        )}
+        {isLoading &&
+          (loader ?? (
+            <TailSpin
+              visible
+              height={40}
+              width={40}
+              color="#ea580c"
+              ariaLabel="loading"
+            />
+          ))}
         {!isLoading && allLoaded && endMessage}
       </div>
     </>

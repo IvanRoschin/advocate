@@ -1,14 +1,12 @@
 import { Types } from 'mongoose';
 
 import { Review } from '@/app/models';
-
-import { createQuery } from './queryFactory';
-
 import type {
   CreateReviewRequestDTO,
   ReviewResponseDTO,
   UpdateReviewDTO,
 } from '@/app/types';
+import { createQuery } from './queryFactory';
 /* ========================= TYPES ========================= */
 
 export type RepoPaginatedResult<T> = {
@@ -60,7 +58,8 @@ export const reviewRepo = {
         }),
       },
       {
-        new: true,
+        returnDocument: 'after',
+        runValidators: true,
       }
     ).lean<ReviewResponseDTO>();
   },

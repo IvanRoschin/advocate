@@ -13,7 +13,7 @@ import { mapCategoryCountToBlogItem } from '../types/category/category.mapper';
 import { createAction } from './createAction';
 import { createEntityModule } from './createEntityModule';
 
-type PublicListResult = {
+export type PublicListResult = {
   items: ArticleListItemDto[];
   total: number;
   hasMore: boolean;

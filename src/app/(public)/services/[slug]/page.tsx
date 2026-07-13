@@ -5,7 +5,6 @@ import { servicePublicActions } from '@/app/actions/service.actions';
 import { ServiceReviewForm } from '@/app/components';
 import { LayoutNode, renderLayout } from '@/app/lib/layouts/renderLayout';
 import { ServiceSectionKey } from '@/app/types';
-
 import {
   SERVICE_SECTIONS,
   ServiceSectionProps,

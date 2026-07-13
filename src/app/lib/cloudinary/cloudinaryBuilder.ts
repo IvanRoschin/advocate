@@ -1,4 +1,4 @@
-import { env } from '../server/env/serverEnv';
+import { serverEnv } from '../server/env/serverEnv';
 
 const CLOUDINARY_WIDTHS = [320, 480, 640, 768, 1024, 1280, 1600];
 
@@ -9,7 +9,7 @@ export const buildCloudinaryUrl = (
     quality?: number | 'auto';
   }
 ) => {
-  const cloudName = env.cloudinary.cloudName;
+  const cloudName = serverEnv.cloudinary.cloudName;
 
   if (!cloudName) {
     throw new Error('NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME missing');

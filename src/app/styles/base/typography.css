@@ -27,7 +27,7 @@
 @layer base {
   /* ---------- Body / Base ---------- */
   body {
-    font-family: var(--font-manrope), system-ui, sans-serif;
+    font-family: var(--font-eukraine), system-ui, sans-serif;
     font-size: var(--fs-base);
     line-height: var(--lh-normal);
     color: var(--text-default);
@@ -41,7 +41,7 @@
   h5,
   h6 {
     font-family: var(--font-eukrainehead), system-ui, sans-serif;
-    font-weight: 600;
+    font-synthesis: none;
     color: var(--heading-color);
     margin-top: 0;
     margin-bottom: 0.5em;
@@ -50,26 +50,32 @@
   h1 {
     font-size: var(--fs-h1);
     line-height: var(--lh-tight);
+    font-weight: 700;
   }
   h2 {
     font-size: var(--fs-h2);
     line-height: var(--lh-tight);
+    font-weight: 700;
   }
   h3 {
     font-size: var(--fs-h3);
     line-height: var(--lh-tight);
+    font-weight: 500;
   }
   h4 {
     font-size: var(--fs-h4);
     line-height: var(--lh-normal);
+    font-weight: 500;
   }
   h5 {
     font-size: var(--fs-h5);
     line-height: var(--lh-normal);
+    font-weight: 400;
   }
   h6 {
     font-size: var(--fs-h6);
     line-height: var(--lh-loose);
+    font-weight: 400;
   }
 
   /* ---------- Lead ---------- */

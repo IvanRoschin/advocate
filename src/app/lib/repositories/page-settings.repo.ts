@@ -1,5 +1,4 @@
 import PageSettings from '@/app/models/PageSettings';
-
 import type {
   PageSettingsResponseDTO,
   UpdatePageSettingsDTO,
@@ -7,18 +6,24 @@ import type {
 
 export const pageSettingsRepo = {
   findByEntity(entity: PageSettingsResponseDTO['entity']) {
-    return PageSettings.findOne({ entity });
+    return PageSettings.findOne({ entity }).lean();
   },
 
   async upsertByEntity(data: UpdatePageSettingsDTO) {
     return PageSettings.findOneAndUpdate(
       { entity: data.entity },
-      { $set: { layout: data.layout } },
       {
-        new: true,
+        $set: {
+          layout: data.layout,
+          // Можно добавить другие поля, если нужно при upsert
+        },
+      },
+      {
+        returnDocument: 'after',
+        runValidators: true,
         upsert: true,
         setDefaultsOnInsert: true,
       }
-    );
+    ).lean();
   },
 };

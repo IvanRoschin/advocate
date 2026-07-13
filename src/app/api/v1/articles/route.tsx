@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 
 import { articlePublicActions } from '@/app/actions/article.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
+import type { ApiResponse } from '@/app/lib/server/ApiError';
+import { ArticleListItemDto } from '@/app/types';
+
+type ArticlesListData = {
+  items: ArticleListItemDto[];
+  hasMore: boolean;
+};
 
 export async function GET(req: Request) {
   try {
@@ -17,10 +24,12 @@ export async function GET(req: Request) {
       categorySlug,
     });
 
-    return NextResponse.json({
+    return NextResponse.json<ApiResponse<ArticlesListData>>({
       ok: true,
-      data: result.items,
-      meta: { page, limit, hasMore: result.hasMore },
+      data: {
+        items: result.items,
+        hasMore: result.hasMore,
+      },
     });
   } catch (err) {
     return errorToResponse(err);
