@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { slidePublicActions } from '@/app/actions/slide.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { slideService } from '@/app/lib/services/slide.service';
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -10,7 +10,7 @@ type RouteContext = {
 export async function PATCH(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
-    const slide = await slideService.deactivate(id);
+    const slide = await slidePublicActions.deactivate(id);
 
     return NextResponse.json({ ok: true, data: slide });
   } catch (err) {

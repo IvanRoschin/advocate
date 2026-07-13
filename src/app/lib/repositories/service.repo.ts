@@ -1,21 +1,19 @@
+import { Types } from 'mongoose';
+
+import { Category } from '@/app/models';
 import Service from '@/app/models/Service';
 import type {
   CreateServiceRequestDTO,
   ServiceLayoutNode,
+  ServiceLike,
   ServiceSectionsDto,
   ServiceStatus,
 } from '@/app/types';
+import { createQuery } from './queryFactory';
+/* ========================= TYPES ========================= */
 
 export type ServiceListRow = {
-  _id: import('mongoose').Types.ObjectId;
-  slug: string;
-  title: string;
-  summary: string;
-  src?: string[];
-};
-
-export type PopulatedArticle = {
-  _id: import('mongoose').Types.ObjectId;
+  _id: Types.ObjectId;
   slug: string;
   title: string;
   summary: string;
@@ -23,66 +21,130 @@ export type PopulatedArticle = {
 };
 
 export type ServicePublicFullRow = {
-  _id: import('mongoose').Types.ObjectId;
+  _id: Types.ObjectId;
+
   slug: string;
   status: ServiceStatus;
+
   title: string;
   summary: string;
+
   src?: string[];
+
   layout: ServiceLayoutNode[];
   sections: ServiceSectionsDto;
+
   seoTitle: string;
   seoDescription: string;
-  relatedArticles: Array<import('mongoose').Types.ObjectId | PopulatedArticle>;
+
+  relatedArticles: Array<Types.ObjectId | unknown>;
+
   publishedAt?: Date;
   updatedAt?: Date;
 };
 
+const PUBLIC_SORT = { publishedAt: -1, _id: -1 } as const;
+const serviceQuery = createQuery(Service);
+
+/* ========================= REPO ========================= */
+
 export const serviceRepo = {
-  findAll() {
+  /* ================= CRUD================= */
+
+  async findAll(): Promise<ServiceLike[]> {
     return Service.find()
       .sort({ createdAt: -1 })
-      .lean()
-      .populate('relatedArticles', 'slug title summary src');
+      .select('_id slug title summary src')
+      .lean<ServiceLike[]>();
   },
 
-  findById(id: string) {
-    return Service.findById(id).populate(
-      'relatedArticles',
-      'slug title summary src'
-    );
+  async findAllPaginated(page: number, limit: number) {
+    return serviceQuery()
+      .sortBy({ createdAt: -1 })
+      .paginate(page, limit)
+      .execWithCount<ServiceLike>();
   },
 
-  findBySlug(slug: string) {
-    return Service.findOne({ slug }).populate(
-      'relatedArticles',
-      'slug title summary src'
-    );
+  async findById(id: string) {
+    return Service.findById(id);
   },
 
-  findPublicList(limit = 24): Promise<ServiceListRow[]> {
+  async findBySlug(slug: string) {
+    return Service.findOne({ slug });
+  },
+
+  async create(data: CreateServiceRequestDTO) {
+    return Service.create(data);
+  },
+
+  async update(
+    id: string,
+    data: Partial<CreateServiceRequestDTO & { slug: string; src: string[] }>
+  ) {
+    return Service.findByIdAndUpdate(id, data, {
+      returnDocument: 'after',
+      runValidators: true,
+    }).lean<ServiceLike>();
+  },
+
+  async deleteById(id: string) {
+    return Service.findByIdAndDelete(id);
+  },
+};
+
+/* ================= PUBLIC ================= */
+
+export const serviceQueries = {
+  async list(args: { page?: number; limit?: number; categorySlug?: string }) {
+    const page = Math.max(1, args?.page ?? 1);
+    const limit = Math.max(1, args?.limit ?? 10);
+
+    const categoryId = args?.categorySlug
+      ? await resolveCategoryIdBySlug(args.categorySlug)
+      : null;
+
+    return serviceQuery()
+      .where({
+        status: 'published',
+        ...(categoryId ? { categoryId } : {}),
+      })
+      .sortBy(PUBLIC_SORT)
+      .paginate(page, limit)
+      .execWithCount<ServiceListRow>();
+  },
+
+  async findPublicPaginated(page: number, limit: number) {
+    return serviceQuery()
+      .where({ status: 'published' })
+      .sortBy({ publishedAt: -1 })
+      .paginate(page, limit)
+      .execWithCount<ServiceListRow>();
+  },
+
+  async findPublicList(limit = 24): Promise<ServiceListRow[]> {
     return Service.find({ status: 'published' })
-      .populate('relatedArticles', 'slug title summary src')
       .select('_id slug title summary src')
       .sort({ publishedAt: -1, _id: -1 })
       .limit(limit)
       .lean<ServiceListRow[]>();
   },
 
-  findPublishedBySlug(slug: string): Promise<ServicePublicFullRow | null> {
+  async findPublishedBySlug(
+    slug: string
+  ): Promise<ServicePublicFullRow | null> {
     return Service.findOne({ slug, status: 'published' })
       .select(
-        'slug status title summary src layout sections seoTitle seoDescription publishedAt updatedAt'
+        'slug status title summary src layout sections seoTitle seoDescription publishedAt updatedAt relatedArticles'
       )
-      .lean<ServicePublicFullRow>()
-      .populate('relatedArticles', 'slug title summary src');
-  },
-
-  create(data: CreateServiceRequestDTO & { slug: string; src: string[] }) {
-    return Service.create(data);
-  },
-
-  deleteById(id: string) {
-    return Service.findByIdAndDelete(id);
+      .populate({ path: 'relatedArticles', select: 'slug title summary src' })
+      .lean<ServicePublicFullRow>();
   },
 };
+
+async function resolveCategoryIdBySlug(slug: string) {
+  const category = await Category.findOne({ slug })
+    .select('_id')
+    .lean<{ _id: Types.ObjectId }>();
+
+  return category?._id ?? null;
+}

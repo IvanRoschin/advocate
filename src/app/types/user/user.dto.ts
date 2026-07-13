@@ -25,8 +25,8 @@ export type UserResponseDTO = {
 
   googleId?: string;
 
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type UpdateUserDTO = Partial<CreateUserRequestDTO>;
@@ -35,7 +35,6 @@ export type SessionUserDTO = {
   id: string;
   role: string;
   phone: string;
-  surname: string;
   name?: string | null;
   email?: string | null;
   image?: string | null;

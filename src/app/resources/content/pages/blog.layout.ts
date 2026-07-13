@@ -31,7 +31,8 @@ export const blogLayout: BlogLayoutNode[] = [
     type: 'group',
     key: 'blogContent',
     display: true,
-    wrapperClassName: 'container py-10 lg:py-14',
+    wrapperClassName:
+      'container py-10 lg:py-14 flex flex-col gap-8 lg:flex-row lg:items-start',
     items: [
       { key: 'articles', display: true },
       { key: 'filters', display: true },

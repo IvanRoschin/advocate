@@ -1,7 +1,7 @@
 'use client';
 
 import { Form, Formik, FormikHelpers } from 'formik';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { getSession, signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -34,6 +34,8 @@ const resolveAuthErrorMessage = (error?: string | null) => {
 };
 
 const LoginForm = () => {
+  const shouldReduceMotion = useReducedMotion();
+
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
@@ -62,6 +64,12 @@ const LoginForm = () => {
         if (callback?.error === 'AUTH_USER_NOT_ACTIVATED') {
           const email = encodeURIComponent(values.email.trim());
           router.replace(`${routes.public.auth.verifyEmail}?email=${email}`);
+          return;
+        }
+
+        if (callback?.error === 'AUTH_USER_NOT_FOUND') {
+          const email = encodeURIComponent(values.email.trim());
+          router.replace(`${routes.public.auth.noAccount}?email=${email}`);
           return;
         }
 
@@ -94,7 +102,7 @@ const LoginForm = () => {
       setIsLoading(true);
 
       await signIn('google', {
-        callbackUrl: '/auth/redirect',
+        callbackUrl: '/redirect',
       });
     } catch (error) {
       console.error('Google sign-in error:', error);
@@ -105,9 +113,9 @@ const LoginForm = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
     >
       <Formik
         initialValues={initialValues}
@@ -190,6 +198,15 @@ const LoginForm = () => {
           className="nav font-medium hover:text-gray-500"
         >
           Відновити
+        </Link>
+      </p>
+      <p className="mt-2 text-center text-sm text-gray-500">
+        Немає кабінету?{' '}
+        <Link
+          href={routes.public.auth.register}
+          className="nav font-medium hover:text-gray-500"
+        >
+          Зареєструватися
         </Link>
       </p>
     </motion.div>

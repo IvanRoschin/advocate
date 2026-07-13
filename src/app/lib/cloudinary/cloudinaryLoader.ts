@@ -1,4 +1,4 @@
-// lib/cloudinary/cloudinaryLoader.ts
+import { serverEnv } from '../server/env/serverEnv';
 
 export const cloudinaryLoader = ({
   src,
@@ -9,10 +9,10 @@ export const cloudinaryLoader = ({
   width: number;
   quality?: number;
 }) => {
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const cloudName = serverEnv.cloudinary.cloudName;
 
   if (!cloudName) {
-    throw new Error('Missing NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME');
+    throw new Error('NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME missing');
   }
 
   const q = quality || 'auto';

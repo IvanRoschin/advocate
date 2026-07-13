@@ -1,15 +1,12 @@
 import { NextResponse } from 'next/server';
 
+import { serviceActions } from '@/app/actions/service.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { serviceService } from '@/app/lib/services/service.service';
 import { CreateServiceRequestDTO, createServiceSchema } from '@/app/types';
 
 export async function GET() {
   try {
-    await dbConnect();
-
-    const services = await serviceService.getAll();
+    const services = await serviceActions.getAll();
     return NextResponse.json({ ok: true, data: services });
   } catch (err) {
     return errorToResponse(err);
@@ -18,8 +15,6 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    await dbConnect();
-
     const body = await req.json();
 
     const validated = await createServiceSchema.validate(body, {
@@ -28,7 +23,7 @@ export async function POST(req: Request) {
 
     const data = validated as CreateServiceRequestDTO;
 
-    const service = await serviceService.create(data);
+    const service = await serviceActions.create(data);
 
     return NextResponse.json({ ok: true, data: service }, { status: 201 });
   } catch (err) {

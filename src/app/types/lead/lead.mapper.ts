@@ -1,3 +1,4 @@
+import { toIdString, toIsoString } from '@/app/lib/mappers/_utils';
 import type { LeadDocument } from '@/models/Lead';
 import { CreateClientDTO } from '../client';
 import type {
@@ -5,10 +6,9 @@ import type {
   LeadResponseDTO,
   LeadToClientDraftInput,
 } from './lead.dto';
-
 export function mapLeadToResponse(lead: LeadDocument): LeadResponseDTO {
   return {
-    id: lead._id.toString(),
+    id: toIdString(lead._id),
     name: lead.name,
     email: lead.email,
     phone: lead.phone,
@@ -16,13 +16,13 @@ export function mapLeadToResponse(lead: LeadDocument): LeadResponseDTO {
     source: lead.source,
     status: lead.status,
     convertedToClient: lead.convertedToClient,
-    clientId: lead.clientId ? lead.clientId.toString() : null,
+    clientId: lead.clientId ? toIdString(lead.clientId) : null,
     notes: lead.notes ?? '',
     assignedToUserId: lead.assignedToUserId
-      ? lead.assignedToUserId.toString()
+      ? toIdString(lead.assignedToUserId)
       : null,
-    createdAt: lead.createdAt ? new Date(lead.createdAt).toISOString() : '',
-    updatedAt: lead.updatedAt ? new Date(lead.updatedAt).toISOString() : '',
+    createdAt: toIsoString(lead.createdAt),
+    updatedAt: toIsoString(lead.updatedAt),
   };
 }
 

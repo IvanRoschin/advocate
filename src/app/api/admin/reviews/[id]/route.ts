@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { reviewActions } from '@/app/actions/review.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { reviewService } from '@/app/lib/services/review.service';
 import { UpdateReviewDTO, updateReviewSchema } from '@/app/types';
 
 type RouteContext = {
@@ -11,7 +11,7 @@ type RouteContext = {
 export async function GET(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
-    const review = await reviewService.getById(id);
+    const review = await reviewActions.getById(id);
 
     return NextResponse.json({ ok: true, data: review });
   } catch (err) {
@@ -35,7 +35,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       )
     ) as UpdateReviewDTO;
 
-    const review = await reviewService.update(id, data);
+    const review = await reviewActions.update(id, data);
 
     return NextResponse.json({ ok: true, data: review });
   } catch (err) {
@@ -46,7 +46,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 export async function DELETE(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
-    const result = await reviewService.delete(id);
+    const result = await reviewActions.delete(id);
 
     return NextResponse.json({ ok: true, data: result });
   } catch (err) {

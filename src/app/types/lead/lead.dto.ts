@@ -33,8 +33,8 @@ export type LeadResponseDTO = {
   clientId: string | null;
   notes: string;
   assignedToUserId: string | null;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type LeadToClientDraftInput = {

@@ -1,5 +1,7 @@
 // src/app/config/routes.ts
 
+import { serverEnv } from '../lib/server/env/serverEnv';
+
 export const routes = {
   public: {
     home: '/',
@@ -17,7 +19,9 @@ export const routes = {
 
     auth: {
       verifyEmail: '/verify-email',
+      register: '/register',
       signIn: '/signin',
+      noAccount: '/no-account',
       forgotPassword: '/forgot-password',
       restorePassword: '/restore-password',
     },
@@ -34,11 +38,18 @@ export const routes = {
     admin: {
       articles: '/api/admin/articles',
       categories: '/api/admin/categories',
+      clients: '/api/admin/clients',
       dashboard: '/api/admin/dashboard',
       leads: '/api/admin/leads',
       reviews: '/api/admin/reviews',
+      services: '/api/admin/services',
       subscribe: '/api/admin/subscribe',
+      slides: '/api/admin/slides',
       users: '/api/admin/users',
+    },
+    client: {
+      me: 'api/client/me',
+      profile: 'api/client/profile',
     },
     v1: {
       articles: '/api/v1/articles',
@@ -74,6 +85,7 @@ export const routes = {
     crm: {
       leads: '/admin/leads',
       clients: '/admin/clients',
+      subscribers: '/admin/subscribers',
     },
 
     finance: {
@@ -122,7 +134,7 @@ export type PublicStringRouteKey = {
 
 // ---------- Helpers ----------
 export const baseUrl =
-  process.env.NEXT_PUBLIC_URL?.replace(/\/$/, '') ?? 'http://localhost:3000';
+  serverEnv.baseUrl.replace(/\/$/, '') ?? 'http://localhost:3000';
 
 export const apiUrl = (path: string) => {
   const base = baseUrl.replace(/\/$/, '');

@@ -1,58 +1,65 @@
-import Slide from '@/app/models/Slide';
-
-import type { CreateSlideDTO, UpdateSlideDTO } from '@/app/types';
+import { Slide } from '@/app/models';
+import type { CreateSlideDTO, SlideLike, UpdateSlideDTO } from '@/app/types';
+import 'server-only';
+import { createQuery } from './queryFactory';
+const slideQuery = createQuery(Slide);
 
 export const slideRepo = {
-  async findAll() {
-    return Slide.find().sort({ createdAt: -1 }).lean();
+  /* ================= CRUD ================= */
+
+  async findAll(): Promise<SlideLike[]> {
+    return Slide.find().lean<SlideLike[]>();
+  },
+
+  async findAllPaginated(page: number, limit: number) {
+    return slideQuery()
+      .sortBy({ createdAt: -1 })
+      .paginate(page, limit)
+      .execWithCount<SlideLike>();
   },
 
   async findById(id: string) {
-    return Slide.findById(id).lean();
+    return Slide.findById(id);
   },
 
-  async getActiveSlides() {
-    return Slide.find({ isActive: true }).sort({ createdAt: -1 }).lean();
+  async create(data: CreateSlideDTO) {
+    return Slide.create(data);
   },
 
-  async create(payload: CreateSlideDTO) {
-    return Slide.create(payload);
-  },
-
-  async updateById(id: string, payload: UpdateSlideDTO) {
-    return Slide.findByIdAndUpdate(id, payload, {
-      new: true,
+  async update(id: string, data: UpdateSlideDTO) {
+    return Slide.findByIdAndUpdate(id, data, {
+      returnDocument: 'after',
       runValidators: true,
-    }).lean();
+    });
   },
 
   async deleteById(id: string) {
-    return Slide.findByIdAndDelete(id).lean();
+    return Slide.findByIdAndDelete(id);
   },
 
-  async deactivateAll() {
-    return Slide.updateMany({}, { $set: { isActive: false } });
-  },
+  /* ================= Activation ================= */
 
   async activate(id: string) {
     return Slide.findByIdAndUpdate(
       id,
-      { $set: { isActive: true } },
-      { new: true, runValidators: true }
-    ).lean();
+      { isActive: true },
+      { returnDocument: 'after', runValidators: true }
+    );
   },
 
   async deactivate(id: string) {
     return Slide.findByIdAndUpdate(
       id,
-      { $set: { isActive: false } },
-      { new: true, runValidators: true }
-    ).lean();
+      { isActive: false },
+      { returnDocument: 'after', runValidators: true }
+    );
   },
+};
 
-  async search(query: string) {
-    return Slide.find({ $text: { $search: query } })
+export const slideQueries = {
+  async findActive() {
+    return Slide.find({ isActive: true })
       .sort({ createdAt: -1 })
-      .lean();
+      .lean<SlideLike[]>();
   },
 };

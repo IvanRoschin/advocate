@@ -1,16 +1,19 @@
-import type { ServiceLayoutNode } from '@/app/types';
+import { LayoutNode } from '@/app/lib/layouts/renderLayout';
 
-export const defaultServiceLayout: ServiceLayoutNode[] = [
-  {
-    type: 'section',
-    key: 'header',
-    display: true,
-  },
-  {
-    type: 'section',
-    key: 'hero',
-    display: true,
-  },
+export type ServiceSectionKey =
+  | 'header'
+  | 'hero'
+  | 'benefits'
+  | 'process'
+  | 'faq'
+  | 'reviews'
+  | 'cta'
+  | 'relatedArticles'
+  | 'footer';
+
+export const defaultServiceLayout: LayoutNode<ServiceSectionKey>[] = [
+  { type: 'section', key: 'header', display: true },
+  { type: 'section', key: 'hero', display: true },
   {
     type: 'group',
     key: 'serviceMainContent',
@@ -25,9 +28,5 @@ export const defaultServiceLayout: ServiceLayoutNode[] = [
       { key: 'relatedArticles', display: true },
     ],
   },
-  {
-    type: 'section',
-    key: 'footer',
-    display: true,
-  },
+  { type: 'section', key: 'footer', display: true },
 ];

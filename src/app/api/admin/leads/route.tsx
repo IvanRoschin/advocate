@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server';
 
+import { leadActions } from '@/app/actions/lead.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { Lead } from '@/models';
 
 export async function GET() {
   try {
-    await dbConnect();
-
-    const leads = await Lead.find().lean();
+    const result = await leadActions.getAll();
+    const leads = result.items;
 
     return NextResponse.json({ ok: true, data: leads });
   } catch (err) {

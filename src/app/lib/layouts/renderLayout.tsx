@@ -1,34 +1,35 @@
 import type { ReactNode } from 'react';
 import { Fragment } from 'react';
 
-type LayoutSectionNode<TSectionKey extends string> = {
+export type LayoutSectionNode<TSectionKey extends string> = {
   type: 'section';
   key: TSectionKey;
   display: boolean;
 };
 
-type LayoutGroupItem<TSectionKey extends string> = {
+export type LayoutGroupItem<TSectionKey extends string> = {
   key: TSectionKey;
   display: boolean;
 };
 
-type LayoutGroupNode<TSectionKey extends string> = {
+export type LayoutGroupNode<TSectionKey extends string> = {
   type: 'group';
   key: string;
   display: boolean;
   wrapperClassName?: string;
-  items: LayoutGroupItem<TSectionKey>[];
+  items: readonly LayoutGroupItem<TSectionKey>[];
 };
 
 export type LayoutNode<TSectionKey extends string> =
   | LayoutSectionNode<TSectionKey>
   | LayoutGroupNode<TSectionKey>;
 
-export type LayoutSectionRenderer<TProps> = (props: TProps) => ReactNode;
+export type LayoutSectionComponent<TProps> = (
+  props: Readonly<TProps>
+) => ReactNode;
 
-export type LayoutSectionsMap<TSectionKey extends string, TProps> = Record<
-  TSectionKey,
-  LayoutSectionRenderer<TProps>
+export type LayoutSectionsMap<TSectionKey extends string, TProps> = Readonly<
+  Record<TSectionKey, LayoutSectionComponent<TProps>>
 >;
 
 type RenderGroupParams<TSectionKey extends string> = {
@@ -38,9 +39,9 @@ type RenderGroupParams<TSectionKey extends string> = {
 };
 
 type RenderLayoutParams<TSectionKey extends string, TProps> = {
-  layout: LayoutNode<TSectionKey>[];
+  layout: readonly LayoutNode<TSectionKey>[];
   sections: LayoutSectionsMap<TSectionKey, TProps>;
-  sectionProps: TProps;
+  sectionProps: Readonly<TProps>;
   renderGroup?: (params: RenderGroupParams<TSectionKey>) => ReactNode;
 };
 
@@ -48,45 +49,47 @@ const defaultRenderGroup = <TSectionKey extends string>({
   node,
   children,
   index,
-}: RenderGroupParams<TSectionKey>) => {
-  return (
-    <div key={`${node.key}-${index}`} className={node.wrapperClassName}>
-      {children}
-    </div>
-  );
-};
+}: RenderGroupParams<TSectionKey>) => (
+  <div key={`${node.key}-${index}`} className={node.wrapperClassName}>
+    {children}
+  </div>
+);
 
 export const renderLayout = <TSectionKey extends string, TProps>({
   layout,
   sections,
   sectionProps,
   renderGroup,
-}: RenderLayoutParams<TSectionKey, TProps>) => {
-  const renderSection = (sectionKey: TSectionKey, uniqueKey: string) => (
-    <Fragment key={uniqueKey}>{sections[sectionKey](sectionProps)}</Fragment>
-  );
+}: RenderLayoutParams<TSectionKey, TProps>): ReactNode[] => {
+  const groupRenderer = renderGroup ?? defaultRenderGroup;
 
-  const renderNode = (node: LayoutNode<TSectionKey>, index: number) => {
+  const renderSection = (sectionKey: TSectionKey, key: string): ReactNode => {
+    const Section = sections[sectionKey];
+
+    return <Fragment key={key}>{Section(sectionProps)}</Fragment>;
+  };
+
+  return layout.map((node, index) => {
     if (!node.display) return null;
 
     if (node.type === 'section') {
       return renderSection(node.key, `${node.key}-${index}`);
     }
 
-    const children = node.items.flatMap((item, itemIndex) => {
-      if (!item.display) return [];
+    const children: ReactNode[] = [];
 
-      return [renderSection(item.key, `${node.key}-${item.key}-${itemIndex}`)];
-    });
+    for (const [itemIndex, item] of node.items.entries()) {
+      if (!item.display) continue;
 
-    const groupRenderer = renderGroup ?? defaultRenderGroup;
+      children.push(
+        renderSection(item.key, `${node.key}-${item.key}-${itemIndex}`)
+      );
+    }
 
     return groupRenderer({
       node,
       children,
       index,
     });
-  };
-
-  return layout.map(renderNode);
+  });
 };

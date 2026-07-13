@@ -1,44 +1,58 @@
-import {
-  CategoryResponseDTO,
+import { Category } from '@/app/models';
+import type {
+  CategoryAdminRow,
+  CategoryPublicRow,
   CreateCategoryRequestDTO,
   UpdateCategoryDTO,
 } from '@/app/types';
-import { Category } from '@/models';
+import { createQuery } from './queryFactory';
+const categoryQuery = createQuery(Category);
 
 export const categoryRepo = {
-  async findAll() {
-    const categories = await Category.find().sort({ createdAt: -1 }).lean();
+  /* ================= CRUD ================= */
 
-    if (!categories || categories.length === 0) {
-      return [];
-    }
-
-    return categories;
+  async findAll(): Promise<CategoryAdminRow[]> {
+    return Category.find().sort({ createdAt: -1 }).lean<CategoryAdminRow[]>();
   },
 
-  findById(id: string) {
+  async findAllPaginated(page: number, limit: number) {
+    return categoryQuery()
+      .sortBy({ createdAt: -1 })
+      .paginate(page, limit)
+      .execWithCount<CategoryAdminRow>();
+  },
+
+  async findById(id: string) {
     return Category.findById(id);
   },
 
-  findBySlug(slug: string) {
+  async findBySlug(slug: string) {
     return Category.findOne({ slug });
   },
 
-  create(data: CreateCategoryRequestDTO) {
+  async create(data: CreateCategoryRequestDTO) {
     return Category.create(data);
   },
 
-  update(id: string, data: UpdateCategoryDTO) {
-    return Category.findByIdAndUpdate(id, data, { new: true });
+  async update(id: string, data: UpdateCategoryDTO) {
+    return Category.findByIdAndUpdate(id, data, {
+      returnDocument: 'after',
+      runValidators: true,
+    });
   },
 
-  delete(id: string) {
+  async deleteById(id: string) {
     return Category.findByIdAndDelete(id);
   },
-  findPublicList(limit = 20): Promise<CategoryResponseDTO[]> {
+};
+
+export const categoryQueries = {
+  /* ================= PUBLIC LIST ================= */
+
+  async list(limit = 20): Promise<CategoryPublicRow[]> {
     return Category.find()
       .sort({ publishedAt: -1, _id: -1 })
       .limit(limit)
-      .lean<CategoryResponseDTO[]>();
+      .lean<CategoryPublicRow[]>();
   },
 };

@@ -1,18 +1,15 @@
 import { NextResponse } from 'next/server';
 
+import { articleActions } from '@/app/actions/article.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { articleService } from '@/app/lib/services/article.service';
 import { UpdateArticleDTO, updateArticleSchema } from '@/app/types';
 
 type Params = Promise<{ id: string }>;
 
 export async function GET(_: Request, { params }: { params: Params }) {
   try {
-    await dbConnect();
-
     const { id } = await params;
-    const article = await articleService.getById(id);
+    const article = await articleActions.getById(id);
 
     return NextResponse.json({ ok: true, data: article });
   } catch (err) {
@@ -22,8 +19,6 @@ export async function GET(_: Request, { params }: { params: Params }) {
 
 export async function PATCH(req: Request, { params }: { params: Params }) {
   try {
-    await dbConnect();
-
     const { id } = await params;
     const body = await req.json();
 
@@ -32,7 +27,12 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
       stripUnknown: true,
     });
 
-    const updated = await articleService.update(id, data);
+    const patch = {
+      ...data,
+      src: data.src ?? undefined,
+    };
+
+    const updated = await articleActions.update(id, patch);
 
     return NextResponse.json({ ok: true, data: updated });
   } catch (err) {
@@ -42,10 +42,8 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
 
 export async function DELETE(_: Request, { params }: { params: Params }) {
   try {
-    await dbConnect();
-
     const { id } = await params;
-    const deleted = await articleService.delete(id);
+    const deleted = await articleActions.delete(id);
 
     return NextResponse.json({ ok: true, data: deleted });
   } catch (err) {

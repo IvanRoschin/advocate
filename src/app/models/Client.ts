@@ -37,7 +37,7 @@ const clientSchema = new Schema(
     },
     phone: {
       type: String,
-      required: true,
+      default: '',
       trim: true,
       index: true,
     },

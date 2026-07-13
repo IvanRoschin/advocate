@@ -1,15 +1,41 @@
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { TokenType } from '@/app/types';
+import crypto from 'crypto';
+import { Types } from 'mongoose';
+
+import { CreateTokenDTO, mapUserToResponse, TokenType } from '@/app/types';
 import Token, { TokenDB, TokenDocument } from '@/models/Token';
 
+import { ensureUserClient } from '../auth/ensureClientAccess';
+import { userRepo } from './user.repo';
+
+function generateTokenString(bytes = 32) {
+  return crypto.randomBytes(bytes).toString('hex');
+}
+
+const TTL_SECONDS_BY_TYPE: Record<TokenType, number> = {
+  [TokenType.REFRESH]: 60 * 60 * 24 * 30,
+  [TokenType.VERIFICATION]: 60 * 60 * 24,
+  [TokenType.RESET_PASSWORD]: 60 * 60 * 2,
+  [TokenType.EMAIL_CHANGE]: 60 * 60,
+  [TokenType.PASSWORD_RESTORE]: 60 * 60,
+};
+
 export const tokenRepo = {
-  async create(data: Partial<TokenDocument>) {
-    await dbConnect();
-    return Token.create(data);
+  async create<T extends TokenType>(data: CreateTokenDTO<T>) {
+    const type = data.type ?? TokenType.REFRESH;
+    const ttl = data.ttlSeconds ?? TTL_SECONDS_BY_TYPE[type];
+
+    return Token.create({
+      userId: new Types.ObjectId(data.userId),
+      token: generateTokenString(),
+      type,
+      email: data.email,
+      meta: data.meta,
+      used: false,
+      expiresAt: new Date(Date.now() + ttl * 1000),
+    });
   },
 
   async findValid(token: string, type?: TokenType) {
-    await dbConnect();
     const query: Partial<TokenDB> & { token: string; used: boolean } = {
       token,
       used: false,
@@ -29,7 +55,61 @@ export const tokenRepo = {
   },
 
   async markUsed(tokenDoc: TokenDocument) {
+    if (tokenDoc.used) return;
     tokenDoc.used = true;
+    tokenDoc.meta = undefined;
     await tokenDoc.save();
+  },
+
+  async changeEmail(token: TokenDocument) {
+    if (token.type !== TokenType.EMAIL_CHANGE) {
+      throw new Error('Невірний тип токена');
+    }
+
+    const newEmail = token.email;
+    if (!newEmail) {
+      throw new Error('Не вказано новий email у токені');
+    }
+
+    const user = await userRepo.findById(token.userId.toString());
+    if (!user) {
+      throw new Error('Користувача не знайдено');
+    }
+
+    const normalizedEmail = newEmail.trim().toLowerCase();
+
+    if (normalizedEmail !== user.email) {
+      const exists = await userRepo.findByEmail(normalizedEmail);
+      if (exists) {
+        throw new Error('Email вже використовується');
+      }
+    }
+
+    user.email = normalizedEmail;
+    await user.save();
+
+    await this.markUsed(token);
+
+    return mapUserToResponse(user);
+  },
+
+  async activateAccount(token: TokenDocument) {
+    if (token.type !== TokenType.VERIFICATION) {
+      throw new Error('Невірний тип токена');
+    }
+
+    const user = await userRepo.findById(token.userId.toString());
+    if (!user) {
+      throw new Error('Користувача не знайдено');
+    }
+
+    user.isActive = true;
+    await user.save();
+
+    await this.markUsed(token);
+
+    await ensureUserClient(user);
+
+    return mapUserToResponse(user);
   },
 };

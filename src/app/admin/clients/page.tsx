@@ -1,10 +1,11 @@
-import { clientService } from '@/app/lib/services/client.service';
-
+import { clientActions } from '@/app/actions/client.actions';
+import type { ClientResponseDTO } from '@/app/types';
 import ClientsClient from './ClientsClient';
 
-import type { ClientResponseDTO } from '@/app/types';
 const ClientsPage = async () => {
-  const clients = (await clientService.getAll()) as ClientResponseDTO[];
+  const result = await clientActions.getAll();
+
+  const clients: ClientResponseDTO[] = result.items;
 
   return <ClientsClient initialClients={clients} />;
 };

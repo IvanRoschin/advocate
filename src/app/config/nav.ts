@@ -1,10 +1,9 @@
 import { signOut } from 'next-auth/react';
+import type { IconType } from 'react-icons';
 
 import { routes } from '@/app/config/routes';
 import { useUserStore } from '@/app/store/user.store';
 import { iconLibrary, menuText } from '@/resources';
-
-import type { IconType } from 'react-icons';
 
 export type NavScope = 'public' | 'admin' | 'client' | 'manager' | 'mobile';
 
@@ -162,6 +161,13 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
     startsWith: true,
   },
   {
+    key: 'subscribers',
+    href: routes.admin.crm.subscribers,
+    label: 'Підписники',
+    Icon: iconLibrary.email,
+    startsWith: true,
+  },
+  {
     key: 'reviews',
     href: routes.admin.ui.reviews,
     label: 'Відгуки',
@@ -190,7 +196,7 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
       useUserStore.getState().clearUser();
 
       await signOut({
-        callbackUrl: routes.public.auth.signIn,
+        callbackUrl: routes.public.home,
       });
     },
   },
@@ -242,7 +248,7 @@ export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
   {
     key: 'repairClient',
     href: routes.client.settings.repairClientAccess,
-    label: 'Відновити клієнта',
+    label: 'Відновити',
     Icon: iconLibrary.settings,
     startsWith: true,
   },
@@ -254,7 +260,7 @@ export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
       useUserStore.getState().clearUser();
 
       await signOut({
-        callbackUrl: routes.public.auth.signIn,
+        callbackUrl: routes.public.home,
       });
     },
   },
@@ -310,7 +316,7 @@ export const MANAGER_NAV_ITEMS: readonly NavItem[] = [
       useUserStore.getState().clearUser();
 
       await signOut({
-        callbackUrl: routes.public.auth.signIn,
+        callbackUrl: routes.public.home,
       });
     },
   },

@@ -2,20 +2,20 @@ import type { ReactNode } from 'react';
 
 import { Header, ReviewsSection } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
+import type {
+  ArticleListItemDto,
+  ReviewResponseDTO,
+  ServicePublicPageDto,
+  ServiceSectionKey,
+} from '@/app/types';
 
 import RelatedArticles from './RelatedArticles';
 import ServiceCtaOrderButton from './ServiceCtaOrderButton';
 import ServiceHero from './ServiceHero';
 
-import type {
-  ArticlePreviewDTO,
-  ReviewResponseDTO,
-  ServicePublicPageDto,
-  ServiceSectionKey,
-} from '@/app/types';
 export type ServiceSectionProps = {
   service: ServicePublicPageDto;
-  articles: ArticlePreviewDTO[];
+  articles: ArticleListItemDto[];
   reviews?: ReviewResponseDTO[];
   reviewForm?: ReactNode;
 };
@@ -66,31 +66,46 @@ const ServiceProcessSection: ServiceSectionComponent = ({ service }) => {
 
   return (
     <section className="container py-10">
-      <div className="mb-6 max-w-2xl">
+      <div className="mb-10 max-w-2xl">
         <h2 className="title-app text-accent text-2xl font-semibold lg:text-3xl">
           {process.title}
         </h2>
       </div>
 
-      <div className="grid gap-4">
-        {process.steps.map((step, index) => (
-          <article
-            key={`${step.title}-${index}`}
-            className="border-border bg-card rounded-2xl border p-5"
-          >
-            <div className="text-accent text-sm font-semibold">
-              Крок {index + 1}
+      <div className="relative">
+        <div
+          className="absolute top-2 bottom-2 left-4.75 w-px lg:left-5.75"
+          style={{ backgroundColor: 'var(--accentcolor)', opacity: 0.25 }}
+        />
+
+        <div className="space-y-8">
+          {process.steps.map((step, index) => (
+            <div
+              key={`${step.title}-${index}`}
+              className="relative flex gap-5 pl-0"
+            >
+              <div
+                className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-semibold lg:h-12 lg:w-12"
+                style={{
+                  borderColor: 'var(--accentcolor)',
+                  color: 'var(--accentcolor)',
+                  backgroundColor: 'var(--background)',
+                }}
+              >
+                {index + 1}
+              </div>
+
+              <div className="min-w-0 pt-1.5">
+                <h3 className="text-accent text-lg font-semibold">
+                  {step.title}
+                </h3>
+                <p className="text-app mt-2 text-sm leading-6">
+                  {step.description}
+                </p>
+              </div>
             </div>
-
-            <h3 className="text-accent mt-2 text-lg font-semibold">
-              {step.title}
-            </h3>
-
-            <p className="text-app mt-3 text-sm leading-6">
-              {step.description}
-            </p>
-          </article>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -109,18 +124,27 @@ const ServiceFaqSection: ServiceSectionComponent = ({ service }) => {
         </h2>
       </div>
 
-      <div className="grid gap-4">
+      <div className="divide-border divide-y border-t border-b">
         {faq.items.map((item, index) => (
-          <article
+          <details
             key={`${item.question}-${index}`}
-            className="border-border bg-card rounded-2xl border p-5"
+            className="faq-item group py-4"
           >
-            <h3 className="text-accent text-lg font-semibold">
+            <summary className="text-accent flex cursor-pointer list-none items-center justify-between text-lg font-semibold [&::-webkit-details-marker]:hidden">
               {item.question}
-            </h3>
-
-            <p className="text-app mt-3 text-sm leading-6">{item.answer}</p>
-          </article>
+              <span
+                className="ml-4 shrink-0 text-2xl leading-none font-light transition-transform duration-200 group-open:rotate-45"
+                style={{ color: 'var(--accentcolor)' }}
+              >
+                +
+              </span>
+            </summary>
+            <div className="faq-panel">
+              <p className="text-app pt-3 pr-8 text-sm leading-6">
+                {item.answer}
+              </p>
+            </div>
+          </details>
         ))}
       </div>
     </section>

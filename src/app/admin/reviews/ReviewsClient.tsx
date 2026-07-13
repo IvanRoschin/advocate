@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { apiUrl } from '@/app/config/routes';
+import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
@@ -33,6 +33,8 @@ export default function ReviewsClient({ initialReviews }: Props) {
   const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
 
+  const [search, setSearch] = useState('');
+
   const [reviews, setReviews] = useState<ReviewResponseDTO[]>(initialReviews);
   const [reviewToDelete, setReviewToDelete] =
     useState<ReviewResponseDTO | null>(null);
@@ -52,9 +54,12 @@ export default function ReviewsClient({ initialReviews }: Props) {
 
     start();
     try {
-      await apiFetch<void>(apiUrl(`/api/admin/reviews/${reviewToDelete._id}`), {
-        method: 'DELETE',
-      });
+      await apiFetch<void>(
+        apiUrl(routes.api.admin.reviews + `/${reviewToDelete._id}`),
+        {
+          method: 'DELETE',
+        }
+      );
 
       setReviews(prev => prev.filter(item => item._id !== reviewToDelete._id));
 
@@ -70,7 +75,7 @@ export default function ReviewsClient({ initialReviews }: Props) {
 
   const handleEdit = useCallback(
     (review: ReviewResponseDTO) => {
-      router.push(`/admin/reviews/${review._id}/edit`);
+      router.push(routes.api.admin.reviews + `/${review._id}/edit`);
     },
     [router]
   );
@@ -128,7 +133,9 @@ export default function ReviewsClient({ initialReviews }: Props) {
         <AdminTableToolbar>
           <input
             type="text"
-            placeholder="Пошук за автором..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Пошук..."
             className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
         </AdminTableToolbar>
@@ -137,6 +144,7 @@ export default function ReviewsClient({ initialReviews }: Props) {
           data={reviews}
           columns={columns}
           isLoading={isLoading}
+          globalFilter={search}
           emptyMessage="Відгуків поки немає"
           mobileRender={review => (
             <ReviewMobileCard

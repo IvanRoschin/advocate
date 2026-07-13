@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 
+import { userActions } from '@/app/actions/user.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { userService } from '@/lib/services/user.service';
 
 export async function GET() {
   try {
-    const users = await userService.getAll();
+    const users = await userActions.getAll();
 
     return NextResponse.json({ ok: true, data: users });
   } catch (err) {
@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const user = await userService.createWithNotifications(body);
+    const user = await userActions.create(body);
 
     return NextResponse.json({ ok: true, data: user });
   } catch (err) {

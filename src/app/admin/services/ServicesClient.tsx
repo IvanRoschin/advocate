@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { apiUrl } from '@/app/config/routes';
+import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
@@ -33,8 +33,11 @@ export default function ServicesClient({ initialServices }: Props) {
   const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
 
+  const [search, setSearch] = useState('');
+
   const [services, setServices] =
     useState<ServiceResponseDTO[]>(initialServices);
+
   const [serviceToDelete, setServiceToDelete] =
     useState<ServiceResponseDTO | null>(null);
 
@@ -55,7 +58,7 @@ export default function ServicesClient({ initialServices }: Props) {
 
     try {
       await apiFetch<void>(
-        apiUrl(`/api/admin/services/${serviceToDelete._id}`),
+        apiUrl(routes.api.admin.services + `/${serviceToDelete._id}`),
         {
           method: 'DELETE',
         }
@@ -77,7 +80,7 @@ export default function ServicesClient({ initialServices }: Props) {
 
   const handleEdit = useCallback(
     (service: ServiceResponseDTO) => {
-      router.push(`/admin/services/${service._id}/edit`);
+      router.push(routes.api.admin.services + `/${service._id}/edit`);
     },
     [router]
   );
@@ -135,6 +138,8 @@ export default function ServicesClient({ initialServices }: Props) {
         <AdminTableToolbar>
           <input
             type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder="Пошук..."
             className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
@@ -145,6 +150,7 @@ export default function ServicesClient({ initialServices }: Props) {
           columns={columns}
           isLoading={isLoading}
           emptyMessage="Послуг поки немає"
+          globalFilter={search}
           mobileRender={service => (
             <ServiceMobileCard
               row={service}

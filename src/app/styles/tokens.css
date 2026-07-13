@@ -11,8 +11,5 @@
   /* fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-eukrainehead: var(--font-eukrainehead);
-  --font-eukraine: var(--font-eukraine);
-  --font-manrope: var(--font-manrope);
-  --font-sacramento: var(--font-sacramento);
+
 }

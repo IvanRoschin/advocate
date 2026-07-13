@@ -2,7 +2,7 @@
 
 import { CldImage } from 'next-cloudinary';
 
-import { Breadcrumbs } from '@/app/components';
+import { Breadcrumbs, NextImage } from '@/app/components';
 import { imageVariants } from '@/app/config/imageVariants';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { ServicePublicPageDto } from '@/app/types';
@@ -33,11 +33,14 @@ const ServiceHero = ({ service }: ServiceSectionProps) => {
         </div>
         {publicId ? (
           <div className="relative min-h-70 min-w-0 overflow-hidden rounded-2xl lg:min-h-90">
-            <CldImage
+            <NextImage
+              as={CldImage}
               src={publicId}
               alt={service.title}
               fill
               sizes={variant.sizes}
+              useSkeleton
+              preload
               className="object-cover"
             />
           </div>

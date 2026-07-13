@@ -1,4 +1,4 @@
-'use server';
+import 'server-only'; // было 'use server' — см. пояснение ниже
 
 import nodemailer from 'nodemailer';
 
@@ -8,7 +8,7 @@ import {
   EmailTemplateType,
 } from '@/app/templates/email/types';
 
-import { errorToResponse } from '../errors/errorToResponse';
+import { serverEnv } from '../env/serverEnv';
 import { emailMetaMap } from './emailMeta';
 
 interface SendEmailParams<T extends EmailTemplateType> {
@@ -24,19 +24,16 @@ export async function sendEmail<T extends EmailTemplateType>({
   props,
   from,
 }: SendEmailParams<T>) {
-  const { SMTP_EMAIL, SMTP_PASSWORD } = process.env;
-  if (!SMTP_EMAIL || !SMTP_PASSWORD) {
+  const { email, password } = serverEnv.smtp;
+  if (!email || !password) {
     throw new Error(
       '❌ SMTP_EMAIL and SMTP_PASSWORD must be set in environment variables'
     );
   }
 
   const transporter = nodemailer.createTransport({
-    service: 'Gmail', // или другой сервис
-    auth: {
-      user: SMTP_EMAIL,
-      pass: SMTP_PASSWORD,
-    },
+    service: 'Gmail',
+    auth: { user: email, pass: password },
   });
 
   const meta = emailMetaMap[type];
@@ -47,19 +44,12 @@ export async function sendEmail<T extends EmailTemplateType>({
   const fromField =
     from?.email && from?.name
       ? { name: from.name, address: from.email }
-      : `"Адвокат Іван Рощин" <${SMTP_EMAIL}>`;
+      : `"Адвокат Іван Рощин" <${email}>`;
 
-  try {
-    const result = await transporter.sendMail({
-      from: fromField,
-      to,
-      subject: meta.subject,
-      html,
-    });
-
-    return result;
-  } catch (err) {
-    return errorToResponse(err);
-    throw err;
-  }
+  return transporter.sendMail({
+    from: fromField,
+    to,
+    subject: meta.subject,
+    html,
+  });
 }

@@ -1,3 +1,5 @@
+import { serverEnv } from '../server/env/serverEnv';
+
 export type ServiceImageVariant = 'card' | 'hero';
 
 export function getServiceImageUrl(
@@ -26,11 +28,7 @@ export function getServiceImageUrl(
 }
 
 function buildCloudinaryUrl(publicId: string, transform: string): string {
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-
-  if (!cloudName) {
-    throw new Error('Missing NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME');
-  }
+  const cloudName = serverEnv.cloudinary.cloudName;
 
   return `https://res.cloudinary.com/${cloudName}/image/upload/${transform}/${publicId}`;
 }

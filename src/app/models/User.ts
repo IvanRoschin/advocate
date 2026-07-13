@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import mongoose from 'mongoose';
+import mongoose, { InferSchemaType } from 'mongoose';
 
 import { UserRole } from '@/types';
 
@@ -40,4 +40,15 @@ userSchema.methods.comparePassword = function (password: string) {
   return bcrypt.compareSync(password, this.password);
 };
 
-export default mongoose.models.User || mongoose.model('User', userSchema);
+export interface UserMethods {
+  comparePassword(password: string): boolean;
+}
+
+export type UserInput = InferSchemaType<typeof userSchema>;
+export type UserDocument = UserInput & UserMethods;
+
+const User =
+  (mongoose.models.User as mongoose.Model<UserDocument>) ||
+  mongoose.model<UserDocument>('User', userSchema);
+
+export default User;

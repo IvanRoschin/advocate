@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { resetPassword } from '@/app/actions/auth.actions';
 import { ValidationError } from '@/app/lib/server/errors/httpErrors';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { authService } from '@/app/lib/services/auth.service';
 
 type ResetPasswordRequestDTO = {
   token?: string;
@@ -11,8 +10,6 @@ type ResetPasswordRequestDTO = {
 
 export async function POST(req: Request) {
   try {
-    await dbConnect();
-
     const body = (await req.json()) as ResetPasswordRequestDTO;
 
     const token = body?.token?.trim();
@@ -29,7 +26,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await authService.resetPassword(token, password);
+    const result = await resetPassword({
+      token,
+      newPassword: password,
+    });
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {

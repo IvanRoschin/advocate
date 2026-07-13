@@ -231,7 +231,7 @@ export const createLeadRequestSchema = Yup.object({
       otherwise: schema => schema.notRequired(),
     }),
 
-  recaptchaToken: Yup.string().trim().required('Підтвердіть, що ви не робот'),
+  turnstileToken: Yup.string().trim().required('Підтвердіть, що ви не робот'),
 });
 
 export type CreateLeadRequestDTO = Yup.InferType<

@@ -1,5 +1,5 @@
-import { AppLink } from '@/components';
 import { logo } from '@/resources/content';
+import { AppLink } from '@/components';
 import { NextImage } from '../common';
 
 interface LogoProps {
@@ -10,15 +10,18 @@ const Logo: React.FC<LogoProps> = ({ variant = 'dark' }) => {
   const src = variant === 'dark' ? `${logo.logoBlack}` : `${logo.logoWhite}`;
 
   return (
-    <AppLink href="/" className="block shrink-0" aria-label="Go to homepage">
+    <AppLink
+      href="/"
+      className="relative block h-12 w-40 shrink-0 2xl:h-14"
+      aria-label="Go to homepage"
+    >
       <NextImage
-        useSkeleton
         src={src}
         alt="Company logo"
-        width={160}
-        height={60}
-        priority
-        className="h-12 w-auto object-contain 2xl:h-14"
+        fill
+        preload
+        sizes="160px"
+        className="object-contain"
       />
     </AppLink>
   );

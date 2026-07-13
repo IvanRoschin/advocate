@@ -1,12 +1,15 @@
 import type { ReactNode } from 'react';
 
 import Footer from '@/app/components/footer/Footer';
-import type { ServicesSectionKey } from '@/app/resources/content/pages/services.layout';
-import type { ServiceListItemDto } from '@/app/types';
+import { ServiceListItemDto } from '@/app/types';
 import { Header } from '@/components';
-import ServicesList from './ServicesList';
+
+import { ServicesFeed } from './ServicesFeed';
+
+import type { ServicesSectionKey } from '@/app/resources/content/pages/services.layout';
 export type ServicesSectionProps = {
   services: ServiceListItemDto[];
+  hasMore: boolean;
 };
 
 export type ServicesSectionComponent = (
@@ -31,8 +34,10 @@ const HeroSection: ServicesSectionComponent = () => (
   </section>
 );
 
-const ListSection: ServicesSectionComponent = ({ services }) => (
-  <ServicesList services={services} />
+const ListSection: ServicesSectionComponent = ({ services, hasMore }) => (
+  <section className="min-w-0">
+    <ServicesFeed initialItems={services} hasMore={hasMore} />
+  </section>
 );
 
 const FooterSection: ServicesSectionComponent = () => (

@@ -1,9 +1,7 @@
-import { articleService } from '@/app/lib/services';
-import { serviceService } from '@/app/lib/services/service.service';
-import { mapServiceToResponse } from '@/app/types';
-import ServiceEditorClient from '../../_components/ServiceEditorClient';
+import { articleActions } from '@/app/actions/article.actions';
+import { serviceActions } from '@/app/actions/service.actions';
 
-export const dynamic = 'force-dynamic';
+import ServiceEditorClient from '../../_components/ServiceEditorClient';
 
 type EditServicePageProps = {
   params: Promise<{ id: string }>;
@@ -14,15 +12,13 @@ export default async function EditServicePage({
 }: EditServicePageProps) {
   const { id } = await params;
 
-  const [serviceRaw, articleRaw] = await Promise.all([
-    serviceService.getById(id),
-    articleService.getPublicList(),
+  const [service, articleRaw] = await Promise.all([
+    serviceActions.getById(id),
+    articleActions.getAll({ limit: 50 }),
   ]);
 
-  const service = mapServiceToResponse(serviceRaw);
-
   const articles = articleRaw.items.map(a => ({
-    id: String(a.id),
+    id: String(a._id),
     title: a.title,
   }));
 

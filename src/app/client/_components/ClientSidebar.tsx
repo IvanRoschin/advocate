@@ -14,6 +14,8 @@ const ClientSidebar = memo(() => {
   const scope = useMemo(() => getUserScope(user?.role), [user?.role]);
   const items = useNavItems(scope);
 
+  if (!user) return null;
+
   return (
     <aside className="bg-surface-input sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-gray-200 p-6 dark:border-white/10">
       <div className="mb-6">

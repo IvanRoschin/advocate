@@ -1,20 +1,29 @@
 import PageSettings from '@/app/models/PageSettings';
-import type { UpdatePageSettingsDTO } from '@/app/types';
+import type {
+  PageSettingsResponseDTO,
+  UpdatePageSettingsDTO,
+} from '@/app/types';
 
 export const pageSettingsRepo = {
-  findByEntity(entity: UpdatePageSettingsDTO['entity']) {
-    return PageSettings.findOne({ entity });
+  findByEntity(entity: PageSettingsResponseDTO['entity']) {
+    return PageSettings.findOne({ entity }).lean();
   },
 
   async upsertByEntity(data: UpdatePageSettingsDTO) {
     return PageSettings.findOneAndUpdate(
       { entity: data.entity },
-      { $set: { layout: data.layout } },
       {
-        new: true,
+        $set: {
+          layout: data.layout,
+          // Можно добавить другие поля, если нужно при upsert
+        },
+      },
+      {
+        returnDocument: 'after',
+        runValidators: true,
         upsert: true,
         setDefaultsOnInsert: true,
       }
-    );
+    ).lean();
   },
 };

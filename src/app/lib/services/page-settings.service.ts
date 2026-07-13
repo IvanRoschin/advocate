@@ -1,88 +1,91 @@
-import { pageSettingsRepo } from '@/app/lib/repositories/page-settings.repo';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { defaultArticleLayout } from '@/app/resources/content/pages/article.layout';
-import { defaultHomeLayout } from '@/app/resources/content/pages/home.layout';
-import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
-import type {
-  ArticleLayoutNode,
-  HomeLayoutNode,
-  PageSettingsResponseDTO,
-  ServiceLayoutNode,
-  UpdatePageSettingsDTO,
-} from '@/app/types';
+// import 'server-only';
 
-const getDefaultLayoutByEntity = (entity: 'article' | 'service' | 'home') => {
-  switch (entity) {
-    case 'article':
-      return defaultArticleLayout;
-    case 'service':
-      return defaultServiceLayout;
-    case 'home':
-      return defaultHomeLayout;
-  }
-};
+// import { pageSettingsRepo } from '@/app/lib/repositories/page-settings.repo';
+// import { dbConnect } from '@/app/lib/server/mongoose';
+// import { defaultArticleLayout } from '@/app/resources/content/pages/article.layout';
+// import { defaultHomeLayout } from '@/app/resources/content/pages/home.layout';
+// import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
 
-export const pageSettingsService = {
-  async getByEntity(
-    entity: 'article' | 'service' | 'home'
-  ): Promise<PageSettingsResponseDTO> {
-    await dbConnect();
+// import type {
+//   ArticleLayoutNode,
+//   HomeLayoutNode,
+//   PageSettingsResponseDTO,
+//   ServiceLayoutNode,
+//   UpdatePageSettingsDTO,
+// } from '@/app/types';
 
-    const settings = await pageSettingsRepo.findByEntity(entity).lean();
+// const getDefaultLayoutByEntity = (entity: 'article' | 'service' | 'home') => {
+//   switch (entity) {
+//     case 'article':
+//       return defaultArticleLayout;
+//     case 'service':
+//       return defaultServiceLayout;
+//     case 'home':
+//       return defaultHomeLayout;
+//   }
+// };
 
-    if (!settings) {
-      return {
-        _id: 'default',
-        entity,
-        layout: getDefaultLayoutByEntity(entity),
-      };
-    }
+// export const pageSettingsService = {
+//   async getByEntity(
+//     entity: 'article' | 'service' | 'home'
+//   ): Promise<PageSettingsResponseDTO> {
+//     await dbConnect();
 
-    return {
-      _id: settings._id.toString(),
-      entity: settings.entity,
-      layout:
-        Array.isArray(settings.layout) && settings.layout.length > 0
-          ? settings.layout
-          : getDefaultLayoutByEntity(entity),
-      createdAt: settings.createdAt?.toISOString(),
-      updatedAt: settings.updatedAt?.toISOString(),
-    };
-  },
-  async getArticleLayout(): Promise<ArticleLayoutNode[]> {
-    const settings = await this.getByEntity('article');
+//     const settings = await pageSettingsRepo.findByEntity(entity).lean();
 
-    return Array.isArray(settings.layout)
-      ? (settings.layout as ArticleLayoutNode[])
-      : defaultArticleLayout;
-  },
+//     if (!settings) {
+//       return {
+//         _id: 'default',
+//         entity,
+//         layout: getDefaultLayoutByEntity(entity),
+//       };
+//     }
 
-  async getServiceLayout(): Promise<ServiceLayoutNode[]> {
-    const settings = await this.getByEntity('service');
+//     return {
+//       _id: settings._id.toString(),
+//       entity: settings.entity,
+//       layout:
+//         Array.isArray(settings.layout) && settings.layout.length > 0
+//           ? settings.layout
+//           : getDefaultLayoutByEntity(entity),
+//       createdAt: settings.createdAt?.toISOString(),
+//       updatedAt: settings.updatedAt?.toISOString(),
+//     };
+//   },
+//   async getArticleLayout(): Promise<ArticleLayoutNode[]> {
+//     const settings = await this.getByEntity('article');
 
-    return Array.isArray(settings.layout)
-      ? (settings.layout as ServiceLayoutNode[])
-      : defaultServiceLayout;
-  },
-  async getHomeLayout(): Promise<HomeLayoutNode[]> {
-    const settings = await this.getByEntity('home');
+//     return Array.isArray(settings.layout)
+//       ? (settings.layout as ArticleLayoutNode[])
+//       : defaultArticleLayout;
+//   },
 
-    return Array.isArray(settings.layout)
-      ? (settings.layout as HomeLayoutNode[])
-      : defaultHomeLayout;
-  },
+//   async getServiceLayout(): Promise<ServiceLayoutNode[]> {
+//     const settings = await this.getByEntity('service');
 
-  async update(data: UpdatePageSettingsDTO): Promise<PageSettingsResponseDTO> {
-    await dbConnect();
+//     return Array.isArray(settings.layout)
+//       ? (settings.layout as ServiceLayoutNode[])
+//       : defaultServiceLayout;
+//   },
+//   async getHomeLayout(): Promise<HomeLayoutNode[]> {
+//     const settings = await this.getByEntity('home');
 
-    const saved = await pageSettingsRepo.upsertByEntity(data);
+//     return Array.isArray(settings.layout)
+//       ? (settings.layout as HomeLayoutNode[])
+//       : defaultHomeLayout;
+//   },
 
-    return {
-      _id: saved._id.toString(),
-      entity: saved.entity,
-      layout: Array.isArray(saved.layout) ? saved.layout : [],
-      createdAt: saved.createdAt?.toISOString(),
-      updatedAt: saved.updatedAt?.toISOString(),
-    };
-  },
-};
+//   async update(data: UpdatePageSettingsDTO): Promise<PageSettingsResponseDTO> {
+//     await dbConnect();
+
+//     const saved = await pageSettingsRepo.upsertByEntity(data);
+
+//     return {
+//       _id: saved._id.toString(),
+//       entity: saved.entity,
+//       layout: Array.isArray(saved.layout) ? saved.layout : [],
+//       createdAt: saved.createdAt?.toISOString(),
+//       updatedAt: saved.updatedAt?.toISOString(),
+//     };
+//   },
+// };

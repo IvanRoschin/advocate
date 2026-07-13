@@ -145,6 +145,7 @@ export const iconLibrary = {
   // существующие admin keys
   clients: FaUserTie,
   users: FaUsers,
+  subscribers: HiEnvelope,
   articles: FaFileAlt,
   categories: FaTags,
   orders: FaShoppingCart,

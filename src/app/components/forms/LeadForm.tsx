@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
+import { serverEnv } from '@/app/lib/server/env/serverEnv';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
 import { useThemeStore } from '@/app/store/theme.store';
 import {
@@ -80,9 +81,6 @@ const selectClassName =
 const panelClassName =
   'border-border rounded-2xl border bg-transparent p-4 dark:bg-card';
 
-const footerClassName =
-  'border-border sticky bottom-0 mt-4 flex flex-wrap items-center justify-end gap-2 border-t bg-transparent pt-4';
-
 export default function LeadForm({
   onSubmit,
   onClose,
@@ -110,6 +108,22 @@ export default function LeadForm({
   const shouldShowMessage =
     isAdminMode || (isPublicMode && publicVariant === 'contacts');
 
+  const formShellClassName = isPublicMode
+    ? 'flex w-full flex-col'
+    : 'flex max-h-[85vh] w-full flex-col overflow-hidden';
+
+  const scrollRegionClassName = isPublicMode
+    ? 'flex-1'
+    : 'min-h-0 flex-1 overflow-y-auto pr-1';
+
+  const contentSpacingClassName = isPublicMode ? 'space-y-5' : 'space-y-3';
+
+  const sectionShellClassName = isPublicMode ? '' : cardClassName;
+
+  const footerShellClassName = isPublicMode
+    ? 'mt-6 flex flex-col gap-3'
+    : 'border-border sticky bottom-0 mt-4 flex flex-wrap items-center justify-end gap-2 border-t bg-card pt-4';
+
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
 
@@ -117,7 +131,8 @@ export default function LeadForm({
 
   const turnstileRef = useRef<TurnstileInstance | null>(null);
 
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const siteKey = serverEnv.cloudflare.turnstileSiteKey;
+
   const isCaptchaConfigured = Boolean(siteKey);
 
   const validationSchema = isAdminMode
@@ -279,12 +294,16 @@ export default function LeadForm({
             isAdminMode && submitCount > 0 && Object.keys(errors).length > 0;
 
           return (
-            <Form className="flex max-h-[85vh] w-full flex-col overflow-hidden">
-              <div className="min-h-0 flex-1 pr-1">
-                <div className="space-y-3">
+            <Form className={formShellClassName}>
+              <div className={scrollRegionClassName}>
+                <div className={contentSpacingClassName}>
                   <motion.section
                     {...fieldMotion(0.1)}
-                    className={`${cardClassName} p-4 sm:p-5`}
+                    className={
+                      isPublicMode
+                        ? undefined
+                        : `${sectionShellClassName} p-4 sm:p-5`
+                    }
                   >
                     <div className="mb-4">
                       <h3 className={sectionTitleClassName}>Контактні дані</h3>
@@ -420,7 +439,11 @@ export default function LeadForm({
                   {shouldShowConsent && (
                     <motion.section
                       {...fieldMotion(0.2)}
-                      className={`${cardClassName} p-3 sm:p-4`}
+                      className={
+                        isPublicMode
+                          ? 'border-border border-t pt-4'
+                          : `${cardClassName} p-3 sm:p-4`
+                      }
                     >
                       <label className="flex items-start gap-3">
                         <input
@@ -458,7 +481,9 @@ export default function LeadForm({
                   {shouldUseCaptcha && siteKey && (
                     <motion.section
                       {...fieldMotion(0.25)}
-                      className={`${cardClassName} p-4 sm:p-5`}
+                      className={
+                        isPublicMode ? undefined : `${cardClassName} p-4 sm:p-5`
+                      }
                     >
                       <div className="flex justify-center">
                         <Turnstile
@@ -505,7 +530,7 @@ export default function LeadForm({
                 </div>
               </div>
 
-              <div className={footerClassName}>
+              <div className={footerShellClassName}>
                 {onClose && (
                   <Btn
                     type="button"
@@ -528,6 +553,7 @@ export default function LeadForm({
                         : 'Надіслати')
                   }
                   disabled={isSubmitDisabled}
+                  className={isPublicMode ? 'w-full' : undefined}
                 />
               </div>
             </Form>

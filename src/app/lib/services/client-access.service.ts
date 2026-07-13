@@ -1,75 +1,77 @@
-import { getServerSession } from 'next-auth';
+// import 'server-only';
 
-import { authOptions } from '@/app/config/authOptions';
-import { clientRepo } from '@/app/lib/repositories';
-import { caseRepo } from '@/app/lib/repositories/case.repo';
-import {
-  UnauthorizedError,
-  ValidationError,
-} from '@/app/lib/server/errors/httpErrors';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import {
-  mapClientToDashboardOverviewDto,
-  mapClientToProfileDto,
-  UpdateClientProfileDto,
-} from '@/app/types';
+// import { getServerSession } from 'next-auth';
 
-import { clientAccessRepo } from '../repositories/client-access.repo';
+// import { authOptions } from '@/app/config/authOptions';
+// import { clientRepo } from '@/app/lib/repositories';
+// import { caseRepo } from '@/app/lib/repositories/case.repo';
+// import {
+//   UnauthorizedError,
+//   ValidationError,
+// } from '@/app/lib/server/errors/httpErrors';
+// import { dbConnect } from '@/app/lib/server/mongoose';
+// import {
+//   mapClientToDashboardOverviewDto,
+//   mapClientToProfileDto,
+//   UpdateClientProfileDto,
+// } from '@/app/types';
 
-const getAuthorizedClient = async () => {
-  await dbConnect();
+// import { clientAccessRepo } from '../repositories/client-access.repo';
 
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
+// const getAuthorizedClient = async () => {
+//   await dbConnect();
 
-  if (!userId) {
-    throw new UnauthorizedError('Неавторизований користувач');
-  }
+//   const session = await getServerSession(authOptions);
+//   const userId = session?.user?.id;
 
-  const access = await clientAccessRepo.findPreferredActiveByUserId(userId);
-  if (!access) {
-    throw new ValidationError('Клієнтський профіль не знайдено');
-  }
+//   if (!userId) {
+//     throw new UnauthorizedError('Неавторизований користувач');
+//   }
 
-  const clientId = access.clientId.toString();
+//   const access = await clientAccessRepo.findPreferredActiveByUserId(userId);
+//   if (!access) {
+//     throw new ValidationError('Клієнтський профіль не знайдено');
+//   }
 
-  const client = await clientRepo.findById(clientId);
-  if (!client) {
-    throw new ValidationError('Клієнта не знайдено');
-  }
+//   const clientId = access.clientId.toString();
 
-  return client;
-};
+//   const client = await clientRepo.findById(clientId);
+//   if (!client) {
+//     throw new ValidationError('Клієнта не знайдено');
+//   }
 
-export const clientCabinetService = {
-  async getMyOverview() {
-    const client = await getAuthorizedClient();
-    const cases = await caseRepo.findByClientId(client.id.toString());
+//   return client;
+// };
 
-    return mapClientToDashboardOverviewDto(client, cases);
-  },
+// export const clientCabinetService = {
+//   async getMyOverview() {
+//     const client = await getAuthorizedClient();
+//     const cases = await caseRepo.findByClientId(client.id.toString());
 
-  async getMyProfile() {
-    const client = await getAuthorizedClient();
-    return mapClientToProfileDto(client);
-  },
+//     return mapClientToDashboardOverviewDto(client, cases);
+//   },
 
-  async updateMyProfile(data: UpdateClientProfileDto) {
-    const client = await getAuthorizedClient();
+//   async getMyProfile() {
+//     const client = await getAuthorizedClient();
+//     return mapClientToProfileDto(client);
+//   },
 
-    const updated = await clientRepo.updateProfileById(client.id, {
-      fullName: data.fullName,
-      email: data.email.toLowerCase(),
-      phone: data.phone,
-      address: data.address,
-      companyName: data.companyName,
-      type: data.type,
-    });
+//   async updateMyProfile(data: UpdateClientProfileDto) {
+//     const client = await getAuthorizedClient();
 
-    if (!updated) {
-      throw new ValidationError('Не вдалося оновити профіль');
-    }
+//     const updated = await clientRepo.updateProfileById(client.id, {
+//       fullName: data.fullName,
+//       email: data.email.toLowerCase(),
+//       phone: data.phone,
+//       address: data.address,
+//       companyName: data.companyName,
+//       type: data.type,
+//     });
 
-    return mapClientToProfileDto(updated);
-  },
-};
+//     if (!updated) {
+//       throw new ValidationError('Не вдалося оновити профіль');
+//     }
+
+//     return mapClientToProfileDto(updated);
+//   },
+// };

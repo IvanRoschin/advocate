@@ -2,9 +2,9 @@
 
 import { CldImage } from 'next-cloudinary';
 
-import { Breadcrumbs } from '@/app/components';
+import { Breadcrumbs, NextImage } from '@/app/components';
 import { imageVariants } from '@/app/config/imageVariants';
-import { formatDate } from '@/app/helpers';
+import { formatDate } from '@/app/helpers/formatDate';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { Badge } from '@/components/ui/badge';
 
@@ -13,7 +13,7 @@ import ArticleToc from './ArticleToc.client.tsx';
 
 type ArticlePageDto = Awaited<
   ReturnType<
-    typeof import('@/app/lib/services/article.service').articleService.getPublicBySlug
+    typeof import('@/app/actions/article.actions').articlePublicActions.findBySlug
   >
 >;
 
@@ -28,6 +28,9 @@ export const HeroSection = ({
   minutes,
   toc,
 }: BlogArticleSectionProps) => {
+  if (!article) {
+    return;
+  }
   const variant = imageVariants.card;
 
   const publicId = article.src?.[0]
@@ -87,11 +90,14 @@ export const HeroSection = ({
 
           {publicId ? (
             <div className="bg-muted relative mt-4 aspect-16/7 w-full overflow-hidden rounded-2xl">
-              <CldImage
+              <NextImage
+                as={CldImage}
                 src={publicId}
                 alt={article.title}
                 fill
                 sizes={variant.sizes}
+                useSkeleton
+                preload
                 className="object-cover"
               />
             </div>

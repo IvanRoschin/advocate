@@ -4,6 +4,7 @@ const storageKeys = {
   compare: 'compare',
   filters: 'filters',
   slide: 'slide-form-draft',
+  subscriber: 'subscriber',
 };
 
 export default storageKeys;

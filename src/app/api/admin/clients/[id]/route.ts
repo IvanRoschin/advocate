@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
+import { clientActions } from '@/app/actions/client.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { clientService } from '@/app/lib/services/client.service';
 import { UpdateClientDTO, updateClientSchema } from '@/app/types';
 
 type RouteContext = {
@@ -11,7 +11,7 @@ type RouteContext = {
 export async function GET(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
-    const client = await clientService.getById(id);
+    const client = await clientActions.getById(id);
 
     return NextResponse.json({ ok: true, data: client });
   } catch (err) {
@@ -35,7 +35,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       )
     ) as UpdateClientDTO;
 
-    const client = await clientService.update(id, data);
+    const client = await clientActions.update(id, data);
 
     return NextResponse.json({ ok: true, data: client });
   } catch (err) {
@@ -46,7 +46,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 export async function DELETE(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
-    const client = await clientService.delete(id);
+    const client = await clientActions.delete(id);
 
     return NextResponse.json({ ok: true, data: client });
   } catch (err) {

@@ -1,8 +1,9 @@
+import { ColumnDef } from '@tanstack/react-table';
+
+import { formatDate } from '@/app/helpers';
 import { iconLibrary } from '@/app/resources';
 import { LeadResponseDTO } from '@/app/types';
 import { Btn } from '@/components';
-import { ColumnDef } from '@tanstack/react-table';
-
 import { Center } from '../_components/table/Center';
 import { SortableHeader } from '../_components/table/SortableHeader';
 
@@ -69,7 +70,7 @@ export const leadColumns = ({
     ),
     cell: ({ row }) => (
       <Center>
-        {new Date(row.original.createdAt).toLocaleDateString('uk-UA')}
+        {row.original.createdAt ? formatDate(row.original.createdAt) : '—'}{' '}
       </Center>
     ),
   },

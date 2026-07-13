@@ -8,7 +8,6 @@ import {
 } from '@/app/lib/mappers/_utils';
 
 import type {
-  PopulatedArticle,
   ServiceListRow,
   ServicePublicFullRow,
 } from '@/app/lib/repositories/service.repo';
@@ -20,7 +19,6 @@ import type {
   ServiceResponseDTO,
   ServiceSectionKey,
 } from '@/app/types';
-
 const SERVICE_SECTION_KEYS: ServiceSectionKey[] = [
   'hero',
   'benefits',
@@ -29,6 +27,14 @@ const SERVICE_SECTION_KEYS: ServiceSectionKey[] = [
   'reviews',
   'cta',
 ];
+
+type PopulatedArticle = {
+  _id: Types.ObjectId;
+  slug: string;
+  title: string;
+  summary: string;
+  src?: unknown;
+};
 
 const isServiceSectionKey = (key: string): key is ServiceSectionKey =>
   SERVICE_SECTION_KEYS.includes(key as ServiceSectionKey);
@@ -69,7 +75,7 @@ export const normalizeServiceLayout = (
     };
   });
 
-type ServiceLike = {
+export type ServiceLike = {
   _id: Types.ObjectId | string;
   slug: string;
   status: ServiceResponseDTO['status'];
@@ -121,8 +127,8 @@ export const mapServiceResponseToPublic = (
   seoTitle: service.seoTitle,
   seoDescription: service.seoDescription,
   relatedArticles: [],
-  publishedAt: service.publishedAt,
-  updatedAt: service.updatedAt,
+  publishedAt: toIsoString(service.publishedAt),
+  updatedAt: toIsoString(service.updatedAt),
 });
 
 export const mapServiceRowToListItem = (
@@ -151,7 +157,8 @@ export const mapPublicServiceRowToPage = (
   relatedArticles: Array.isArray(row.relatedArticles)
     ? row.relatedArticles
         .filter(
-          (a): a is PopulatedArticle => typeof a === 'object' && 'slug' in a
+          (a): a is PopulatedArticle =>
+            a !== null && typeof a === 'object' && 'slug' in a
         )
         .map(a => ({
           id: a._id.toString(),
@@ -161,6 +168,6 @@ export const mapPublicServiceRowToPage = (
           src: firstImage(a.src),
         }))
     : [],
-  publishedAt: row.publishedAt?.toISOString(),
-  updatedAt: row.updatedAt?.toISOString(),
+  publishedAt: toIsoString(row.publishedAt),
+  updatedAt: toIsoString(row.updatedAt),
 });

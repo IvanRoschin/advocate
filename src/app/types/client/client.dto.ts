@@ -4,25 +4,6 @@ export const CLIENT_STATUSES = ['active', 'inactive'] as const;
 export type ClientType = (typeof CLIENT_TYPES)[number];
 export type ClientStatus = (typeof CLIENT_STATUSES)[number];
 
-export type ConvertLeadToClientResult =
-  | {
-      ok: true;
-      clientId: string;
-      userId?: string;
-      linkedUser: boolean;
-    }
-  | {
-      ok: false;
-      code:
-        | 'LEAD_NOT_FOUND'
-        | 'LEAD_ALREADY_CONVERTED'
-        | 'CLIENT_ALREADY_EXISTS'
-        | 'USER_LINK_CONFLICT'
-        | 'VALIDATION_ERROR'
-        | 'UNKNOWN_ERROR';
-      message: string;
-    };
-
 export type ClientResponseDTO = {
   id: string;
   type: ClientType;

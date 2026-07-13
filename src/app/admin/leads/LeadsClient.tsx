@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { LeadForm } from '@/app/components/forms';
-import { apiUrl } from '@/app/config/routes';
+import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
@@ -37,6 +37,8 @@ export default function LeadsClient({ initialLeads }: Props) {
   const start = useLoadingStore.getState().start;
   const done = useLoadingStore.getState().done;
 
+  const [search, setSearch] = useState('');
+
   const [leads, setLeads] = useState<LeadResponseDTO[]>(initialLeads);
   const [leadToDelete, setLeadToDelete] = useState<LeadResponseDTO | null>(
     null
@@ -59,9 +61,12 @@ export default function LeadsClient({ initialLeads }: Props) {
 
     start();
     try {
-      await apiFetch<void>(apiUrl(`/api/admin/leads/${leadToDelete.id}`), {
-        method: 'DELETE',
-      });
+      await apiFetch<void>(
+        apiUrl(routes.api.admin.leads + `/${leadToDelete.id}`),
+        {
+          method: 'DELETE',
+        }
+      );
 
       setLeads(prev => prev.filter(lead => lead.id !== leadToDelete.id));
       toast.success('Лід видалений');
@@ -91,7 +96,7 @@ export default function LeadsClient({ initialLeads }: Props) {
     start();
     try {
       const newLead = await apiFetch<LeadResponseDTO>(
-        apiUrl('/api/admin/leads'),
+        apiUrl(routes.api.admin.leads),
         {
           method: 'POST',
           body: JSON.stringify(payload),
@@ -124,7 +129,7 @@ export default function LeadsClient({ initialLeads }: Props) {
     start();
     try {
       const updatedLead = await apiFetch<LeadResponseDTO>(
-        apiUrl(`/api/admin/leads/${leadToUpdate.id}`),
+        apiUrl(routes.api.admin.leads + `/${leadToUpdate.id}`),
         {
           method: 'PATCH',
           body: JSON.stringify(payload),
@@ -160,7 +165,7 @@ export default function LeadsClient({ initialLeads }: Props) {
           phone: string;
         } | null;
         case: unknown | null;
-      }>(apiUrl(`/api/admin/leads/${leadToUpdate.id}/convert`), {
+      }>(apiUrl(routes.api.admin.leads + `/${leadToUpdate.id}/convert`), {
         method: 'POST',
       });
 
@@ -220,6 +225,8 @@ export default function LeadsClient({ initialLeads }: Props) {
         <AdminTableToolbar>
           <input
             type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder="Пошук..."
             className="border-border bg-background h-10 w-full rounded-xl border px-3 sm:max-w-xs"
           />
@@ -232,6 +239,7 @@ export default function LeadsClient({ initialLeads }: Props) {
             onDelete: handleDelete,
           })}
           isLoading={false}
+          globalFilter={search}
           emptyMessage="Заявок поки немає"
           mobileRender={lead => (
             <LeadMobileCard

@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -23,51 +19,23 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/config": [
-        "./src/app/config/index.ts"
-      ],
-      "@/components/*": [
-        "./src/app/components/*"
-      ],
-      "@/components": [
-        "./src/app/components/index.ts"
-      ],
-      "@/resources/*": [
-        "./src/app/resources/*"
-      ],
-      "@/resources": [
-        "./src/app/resources/index.ts"
-      ],
-      "@/sections/*": [
-        "./src/app/components/sections/*"
-      ],
-      "@/sections": [
-        "./src/app/components/sections/index.ts"
-      ],
-      "@/lib/*": [
-        "./src/app/lib/*"
-      ],
-      "@/lib": [
-        "./src/app/lib/index.ts"
-      ],
-      "@/store/*": [
-        "./src/app/store/*"
-      ],
-      "@/models/*": [
-        "./src/app/models/*"
-      ],
-      "@/models": [
-        "./src/app/models/index.ts"
-      ],
-      "@/types/*": [
-        "./src/app/types/*"
-      ],
-      "@/types": [
-        "./src/app/types/index.ts"
-      ]
+      "@/*": ["./src/*"],
+      "@/config": ["./src/app/config/index.ts"],
+      "@/actions/*": ["./src/app/actions/*"],
+      "@/actions": ["./src/app/actions/index.ts"],
+      "@/components/*": ["./src/app/components/*"],
+      "@/components": ["./src/app/components/index.ts"],
+      "@/resources/*": ["./src/app/resources/*"],
+      "@/resources": ["./src/app/resources/index.ts"],
+      "@/sections/*": ["./src/app/components/sections/*"],
+      "@/sections": ["./src/app/components/sections/index.ts"],
+      "@/lib/*": ["./src/app/lib/*"],
+      "@/lib": ["./src/app/lib/index.ts"],
+      "@/store/*": ["./src/app/store/*"],
+      "@/models/*": ["./src/app/models/*"],
+      "@/models": ["./src/app/models/index.ts"],
+      "@/types/*": ["./src/app/types/*"],
+      "@/types": ["./src/app/types/index.ts"]
     }
   },
   "include": [
@@ -77,7 +45,5 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

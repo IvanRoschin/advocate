@@ -28,14 +28,29 @@ html {
     transform: translateY(0);
   }
 }
+@keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
 
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
 }
 
 body {
-  font-family: var(--font-manrope), system-ui, sans-serif;
-}
+    font-family: var(--font-eukraine), system-ui, sans-serif;
+    font-size: var(--fs-base);
+    line-height: var(--lh-normal);
+    color: var(--text-default);
+  }
 
 /* layout helpers */
 .container {
@@ -44,6 +59,13 @@ body {
 }
 
 @theme inline {
+  --font-sans: var(--font-manrope);
+  --font-eukraine: var(--font-eukraine);
+  --font-eukrainehead: var(--font-eukrainehead);
+  --font-sacramento: var(--font-sacramento);
+  --font-mono: var(--font-geist-mono);
+  --font-geist-sans: var(--font-geist-sans);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

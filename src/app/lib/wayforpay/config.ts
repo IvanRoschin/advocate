@@ -1,12 +1,6 @@
 import 'server-only';
 
-function required(name: string, value: string | undefined): string {
-  if (!value) {
-    throw new Error(`Missing required env: ${name}`);
-  }
-
-  return value;
-}
+import { serverEnv } from '../server/env/serverEnv';
 
 function normalizeDomain(input: string): string {
   try {
@@ -16,25 +10,29 @@ function normalizeDomain(input: string): string {
   }
 }
 
-export function getWayForPayConfig() {
-  const publicUrl = required('NEXT_PUBLIC_URL', process.env.NEXT_PUBLIC_URL);
+function required(value: string | undefined, name: string): string {
+  if (!value) throw new Error(`Missing env: ${name}`);
+  return value;
+}
 
+export function getWayForPayConfig() {
   return {
     merchantAccount: required(
-      'WAYFORPAY_MERCHANT_ACCOUNT',
-      process.env.WAYFORPAY_MERCHANT_ACCOUNT
+      serverEnv.wayforpay.merchantAccount,
+      'WAYFORPAY_MERCHANT_ACCOUNT'
     ),
-    secretKey: required(
-      'WAYFORPAY_SECRET_KEY',
-      process.env.WAYFORPAY_SECRET_KEY
-    ),
-    apiUrl: process.env.WAYFORPAY_API_URL || 'https://api.wayforpay.com/api',
-    publicUrl,
+    secretKey: required(serverEnv.wayforpay.secretKey, 'WAYFORPAY_SECRET_KEY'),
+    apiUrl:
+      required(serverEnv.wayforpay.url, 'WAYFORPAY_URL') ||
+      'https://api.wayforpay.com/api',
+    publicUrl: serverEnv.baseUrl,
     merchantDomainName: normalizeDomain(
-      process.env.WAYFORPAY_MERCHANT_DOMAIN || publicUrl
+      required(
+        serverEnv.wayforpay.merchantDomain,
+        'WAYFORPAY_MERCHANT_DOMAIN'
+      ) || required(serverEnv.baseUrl, 'NEXT_PUBLIC_URL')
     ),
     serviceUrl:
-      process.env.WAYFORPAY_SERVICE_URL ||
-      `${publicUrl}/api/wayforpay/callback`,
+      serverEnv.wayforpay.url || `${serverEnv.baseUrl}/api/wayforpay/callback`,
   } as const;
 }

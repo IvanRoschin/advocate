@@ -1,12 +1,13 @@
 import Link from 'next/link';
 
+import { formatDate } from '../helpers';
+
 import type {
   CaseStatus,
   ClientDashboardAccessDto,
   ClientDashboardCaseDto,
   ClientDashboardOverviewDto,
 } from '@/app/types';
-
 type Props = {
   data: ClientDashboardOverviewDto;
 };
@@ -47,16 +48,6 @@ const accessRoleMeta: Record<ClientDashboardAccessDto['accessRole'], string> = {
   owner: 'Власник кабінету',
   manager: 'Менеджер',
   viewer: 'Перегляд',
-};
-
-const formatDate = (value?: string) => {
-  if (!value) return '—';
-
-  return new Intl.DateTimeFormat('uk-UA', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(value));
 };
 
 const getCasesSummary = (cases: ClientDashboardCaseDto[]) => {

@@ -1,15 +1,12 @@
 import { NextResponse } from 'next/server';
 
+import { slideActions } from '@/app/actions/slide.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { dbConnect } from '@/app/lib/server/mongoose';
-import { slideService } from '@/app/lib/services/slide.service';
 import { CreateSlideDTO, createSlideSchema } from '@/app/types';
 
 export async function GET() {
   try {
-    await dbConnect();
-
-    const slides = await slideService.getAll();
+    const slides = await slideActions.getAll();
 
     return NextResponse.json({ ok: true, data: slides });
   } catch (error) {
@@ -19,8 +16,6 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    await dbConnect();
-
     const body = await req.json();
 
     const validated = await createSlideSchema.validate(body, {
@@ -29,7 +24,7 @@ export async function POST(req: Request) {
 
     const data = validated as CreateSlideDTO;
 
-    const slide = await slideService.create(data);
+    const slide = await slideActions.create(data);
 
     return NextResponse.json({ ok: true, data: slide }, { status: 201 });
   } catch (error) {

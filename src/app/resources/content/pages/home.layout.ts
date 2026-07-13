@@ -1,3 +1,5 @@
+import { LayoutNode } from '@/app/lib/layouts/renderLayout';
+
 export type HomeSectionKey =
   | 'socials'
   | 'header'
@@ -12,25 +14,10 @@ export type HomeSectionKey =
   | 'footer'
   | 'scrollToTop';
 
-export type HomeLayoutNode =
-  | {
-      type: 'section';
-      key: HomeSectionKey;
-      display: boolean;
-    }
-  | {
-      type: 'group';
-      key: string;
-      display: boolean;
-      wrapperClassName?: string;
-      items: Array<{ key: HomeSectionKey; display: boolean }>;
-    };
-
-export const defaultHomeLayout: HomeLayoutNode[] = [
+export const defaultHomeLayout: LayoutNode<HomeSectionKey>[] = [
   { type: 'section', key: 'socials', display: true },
   { type: 'section', key: 'header', display: true },
 
-  // особая группа Hero + Services (services поверх)
   {
     type: 'group',
     key: 'heroStack',
@@ -48,7 +35,6 @@ export const defaultHomeLayout: HomeLayoutNode[] = [
   { type: 'section', key: 'reviews', display: true },
   { type: 'section', key: 'whyChooseMe', display: true },
   { type: 'section', key: 'order', display: true },
-
   { type: 'section', key: 'footer', display: true },
   { type: 'section', key: 'scrollToTop', display: true },
 ];

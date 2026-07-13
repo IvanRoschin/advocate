@@ -121,7 +121,7 @@ export const NavPill = ({
       <nav
         className={cn(
           'flex items-center justify-between overflow-x-auto whitespace-nowrap',
-          '[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden'
+          'scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden'
         )}
         aria-label="Навігація"
       >

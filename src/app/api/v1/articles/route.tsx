@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
 
+import { articlePublicActions } from '@/app/actions/article.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { articleService } from '@/app/lib/services/article.service';
+import type { ApiResponse } from '@/app/lib/server/ApiError';
+import { ArticleListItemDto } from '@/app/types';
+
+type ArticlesListData = {
+  items: ArticleListItemDto[];
+  hasMore: boolean;
+};
 
 export async function GET(req: Request) {
   try {
@@ -11,16 +18,18 @@ export async function GET(req: Request) {
     const limit = Math.max(1, Number(searchParams.get('limit') ?? 5));
     const categorySlug = searchParams.get('category') ?? undefined;
 
-    const result = await articleService.loadMorePublic({
+    const result = await articlePublicActions.list({
       page,
       limit,
       categorySlug,
     });
 
-    return NextResponse.json({
+    return NextResponse.json<ApiResponse<ArticlesListData>>({
       ok: true,
-      data: result.data,
-      meta: { page, limit, hasMore: result.hasMore },
+      data: {
+        items: result.items,
+        hasMore: result.hasMore,
+      },
     });
   } catch (err) {
     return errorToResponse(err);

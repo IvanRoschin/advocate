@@ -9,7 +9,7 @@ export function subscriberClientTemplate({
   email,
 }: SubscriberClientTemplateProps) {
   return baseEmailLayout({
-    title: `Подписка подтверждена ✅`,
+    title: `Підписку підтверджено ✅`,
     content: subscriberClientContent({ email }),
     footer: legalFooter(),
   });
@@ -20,7 +20,7 @@ export function subscriberClientContent({
 }: SubscriberClientTemplateProps) {
   return `
     <p style="font-size: 15px; line-height: 1.6;">
-      Привет! Вы успешно подписались на нашу рассылку.
+      Вітаємо! Ви успішно підписалися на нашу розсилку.
     </p>
 
     <p style="font-size: 15px; line-height: 1.6;">
@@ -28,7 +28,7 @@ export function subscriberClientContent({
     </p>
 
     <p style="font-size: 15px; line-height: 1.6;">
-      Вы будете получать новости и обновления от нас. Спасибо, что остаетесь с нами! 🚀
+      Ви будете отримувати новини та оновлення від нас. Дякуємо, що залишаєтесь із нами! 🚀
     </p>
   `;
 }

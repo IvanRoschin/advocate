@@ -3,8 +3,10 @@
 import { Form, Formik, FormikHelpers } from 'formik';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 import { useAuthFeedback } from '@/app/(auth)/_components/AuthFeedbackProvider';
+import { resetPassword } from '@/app/actions/auth.actions';
 import { routes } from '@/app/config/routes';
 import { Btn, Input } from '@/components';
 
@@ -24,6 +26,8 @@ type Props = {
 
 const RestorePasswordForm = ({ token }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { openAuthNotification } = useAuthFeedback();
 
   const initialValues: InitialStateType = {
@@ -48,25 +52,19 @@ const RestorePasswordForm = ({ token }: Props) => {
     try {
       setIsLoading(true);
 
-      const res = await fetch(routes.api.v1.auth.resetPassword, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token,
-          password: values.password,
-        }),
+      const res: RestorePasswordResponse = await resetPassword({
+        token,
+        newPassword: values.password,
       });
 
-      const data: RestorePasswordResponse = await res.json();
-
-      if (data.ok) {
+      if (res.ok) {
         resetForm();
       }
 
       openAuthNotification({
-        title: data.ok ? 'Успіх' : 'Помилка',
-        message: data.message,
-        redirectTo: data.ok ? routes.public.auth.signIn : undefined,
+        title: res.ok ? 'Успіх' : 'Помилка',
+        message: res.message,
+        redirectTo: res.ok ? routes.public.auth.signIn : undefined,
       });
     } catch (error) {
       console.error('[RESTORE_PASSWORD_FORM_ERROR]', error);
@@ -89,20 +87,49 @@ const RestorePasswordForm = ({ token }: Props) => {
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
         {() => (
           <Form className="flex flex-col gap-5">
-            <Input
-              label="Новий пароль"
-              type="password"
-              name="password"
-              required
-              autoComplete=""
-            />
-            <Input
-              label="Повторіть пароль"
-              type="password"
-              name="confirmPassword"
-              autoComplete=""
-              required
-            />
+            <div className="relative">
+              <Input
+                label="Новий пароль"
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                required
+                autoComplete=""
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute top-1/2 right-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-gray-500"
+                aria-label={showPassword ? 'Сховати пароль' : 'Показати пароль'}
+                tabIndex={-1}
+              >
+                {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              </button>
+            </div>
+
+            <div className="relative">
+              <Input
+                label="Повторіть пароль"
+                type={showConfirmPassword ? 'text' : 'password'}
+                name="confirmPassword"
+                autoComplete=""
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(prev => !prev)}
+                className="absolute top-1/2 right-3 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-gray-500"
+                aria-label={
+                  showConfirmPassword ? 'Сховати пароль' : 'Показати пароль'
+                }
+                tabIndex={-1}
+              >
+                {showConfirmPassword ? (
+                  <FiEyeOff size={20} />
+                ) : (
+                  <FiEye size={20} />
+                )}
+              </button>
+            </div>
 
             <div className="flex justify-center">
               <motion.div
