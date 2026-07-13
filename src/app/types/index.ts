@@ -11,5 +11,6 @@ export * from './page-settings';
 export * from './review';
 export * from './service';
 export * from './slide';
+export * from './subscriber';
 export * from './token';
 export * from './user';

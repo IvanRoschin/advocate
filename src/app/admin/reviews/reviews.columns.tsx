@@ -1,16 +1,15 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
+import { formatDate } from '@/app/helpers';
 import { iconLibrary } from '@/app/resources';
-import { Btn } from '@/components';
-import { Badge } from '@/components/ui/badge';
-
-import { Center, SortableHeader } from '../_components/table';
-
 import type {
   ReviewResponseDTO,
   ReviewStatus,
   ReviewTargetType,
 } from '@/app/types';
+import { Btn } from '@/components';
+import { Badge } from '@/components/ui/badge';
+import { Center, SortableHeader } from '../_components/table';
 type ColumnActions = {
   onEdit: (review: ReviewResponseDTO) => void;
   onDelete: (review: ReviewResponseDTO) => void;
@@ -41,9 +40,6 @@ const targetTypeLabel = (type: ReviewTargetType) => {
       return type;
   }
 };
-
-const formatDate = (iso?: string) =>
-  iso ? new Date(iso).toLocaleDateString('uk-UA') : '—';
 
 export const reviewsColumns = ({
   onEdit,

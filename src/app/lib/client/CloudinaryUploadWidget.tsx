@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import Btn from '@/app/components/ui/button/Btn';
 import { NextImage } from '@/components/common';
 
-import { env } from '../server/env/serverEnv';
+import { serverEnv } from '../server/env/serverEnv';
 
 interface Props {
   onUpload: (url: string) => void;
@@ -31,8 +31,8 @@ const CloudinaryUploadWidget = ({ onUpload, initialUrl }: Props) => {
       if (window.cloudinary && !widgetRef.current) {
         widgetRef.current = window.cloudinary.createUploadWidget(
           {
-            cloudName: env.cloudinary.cloudName,
-            uploadPreset: env.cloudinary.uploadPreset,
+            cloudName: serverEnv.cloudinary.cloudName,
+            uploadPreset: serverEnv.cloudinary.uploadPreset,
             multiple: false,
             folder: 'categories',
             sources: ['local', 'url', 'camera'],

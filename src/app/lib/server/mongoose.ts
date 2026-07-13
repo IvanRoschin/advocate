@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import { env } from './env/serverEnv';
+import { serverEnv } from './env/serverEnv';
 
 declare global {
   var mongoose:
@@ -16,7 +16,7 @@ const cached =
 
 export async function dbConnect() {
   if (cached.conn) return cached.conn;
-  const uri = env.mongoUri;
+  const uri = serverEnv.mongoUri;
 
   if (!uri) {
     if (process.env.NODE_ENV === 'production') {

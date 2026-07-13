@@ -1,15 +1,16 @@
 'use client';
 
 import { Form, Formik, FormikHelpers } from 'formik';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
-import { useRecaptchaWidget } from '@/app/hooks/useRecaptchaWidget';
 import { ApiClientError } from '@/app/lib/client/apiFetch';
-import { env } from '@/app/lib/server/env/serverEnv';
+import { serverEnv } from '@/app/lib/server/env/serverEnv';
 import { leadFormSchema } from '@/app/types';
 import { Checkbox, Input, Textarea } from '@/components';
+import { TurnstileInstance } from '@marsidev/react-turnstile';
 
 type ContactFormValues = {
   name: string;
@@ -84,10 +85,13 @@ async function submitContactForm(
 }
 
 const ContactForm = () => {
-  const { containerRef, captchaToken, isRendered, resetCaptcha } =
-    useRecaptchaWidget({
-      siteKey: env.cloudflare.turnstileSiteKey,
-    });
+  const siteKey = serverEnv.cloudflare.turnstileSiteKey;
+
+  const isCaptchaConfigured = Boolean(siteKey);
+
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
+
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const handleSubmit = async (
     values: ContactFormValues,
@@ -97,7 +101,15 @@ const ContactForm = () => {
 
     setStatus(undefined);
 
-    if (!captchaToken) {
+    if (!isCaptchaConfigured) {
+      const message = 'Cloudflare Turnstile не налаштований';
+      setStatus({
+        type: 'error',
+        message,
+      } as ContactFormStatus);
+    }
+
+    if (!turnstileToken) {
       const message = 'Будь ласка, підтвердіть, що ви не робот';
 
       setStatus({
@@ -110,10 +122,11 @@ const ContactForm = () => {
     }
 
     try {
-      await submitContactForm(values, captchaToken);
+      await submitContactForm(values, turnstileToken);
 
       resetForm({ values: initialValues });
-      resetCaptcha();
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
 
       setStatus({
         type: 'success',
@@ -136,6 +149,8 @@ const ContactForm = () => {
       } as ContactFormStatus);
 
       toast.error(message);
+      setTurnstileToken(null);
+      turnstileRef.current?.reset();
     }
   };
 
@@ -177,16 +192,6 @@ const ContactForm = () => {
               className="hidden"
             />
 
-            <div className="mt-2 flex items-center justify-center">
-              <div ref={containerRef} />
-            </div>
-
-            {!isRendered ? (
-              <p className="text-muted-foreground text-center text-sm">
-                Завантаження перевірки безпеки...
-              </p>
-            ) : null}
-
             {status ? (
               <div
                 className={
@@ -218,10 +223,7 @@ const ContactForm = () => {
                   formik.isSubmitting ? 'Надсилання...' : 'Надіслати звернення'
                 }
                 disabled={
-                  formik.isSubmitting ||
-                  !formik.dirty ||
-                  !formik.isValid ||
-                  !isRendered
+                  formik.isSubmitting || !formik.dirty || !formik.isValid
                 }
               />
 

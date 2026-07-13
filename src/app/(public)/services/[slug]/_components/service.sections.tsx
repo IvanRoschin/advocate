@@ -2,17 +2,17 @@ import type { ReactNode } from 'react';
 
 import { Header, ReviewsSection } from '@/app/components';
 import Footer from '@/app/components/footer/Footer';
-
-import RelatedArticles from './RelatedArticles';
-import ServiceCtaOrderButton from './ServiceCtaOrderButton';
-import ServiceHero from './ServiceHero';
-
 import type {
   ArticleListItemDto,
   ReviewResponseDTO,
   ServicePublicPageDto,
   ServiceSectionKey,
 } from '@/app/types';
+
+import RelatedArticles from './RelatedArticles';
+import ServiceCtaOrderButton from './ServiceCtaOrderButton';
+import ServiceHero from './ServiceHero';
+
 export type ServiceSectionProps = {
   service: ServicePublicPageDto;
   articles: ArticleListItemDto[];

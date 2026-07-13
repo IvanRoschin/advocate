@@ -1,13 +1,17 @@
-import type { Metadata } from 'next';
+import { Suspense } from 'react';
 
 import { servicePublicActions } from '@/app/actions/service.actions';
+import { Loader } from '@/app/components';
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
 import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import { servicesLayout } from '@/app/resources/content/pages/services.layout';
+
 import {
   SERVICES_SECTIONS,
   ServicesSectionProps,
 } from './_components/services.sections';
+
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Послуги адвоката | Іван Рощин',
@@ -18,19 +22,21 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function ServicesPage() {
-  const servicesRow = await servicePublicActions.list({ limit: 20 });
-  const services = servicesRow.items;
+  const servicesRow = await servicePublicActions.list({ limit: 6 });
 
   const sectionProps: ServicesSectionProps = {
-    services,
+    services: servicesRow.items,
+    hasMore: servicesRow.hasMore,
   };
   return (
     <main className="bg-background text-foreground min-h-screen">
-      {renderLayout({
-        layout: servicesLayout,
-        sections: SERVICES_SECTIONS,
-        sectionProps,
-      })}
+      <Suspense fallback={<Loader />}>
+        {renderLayout({
+          layout: servicesLayout,
+          sections: SERVICES_SECTIONS,
+          sectionProps,
+        })}
+      </Suspense>
     </main>
   );
 }

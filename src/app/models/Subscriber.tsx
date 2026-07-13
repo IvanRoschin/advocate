@@ -23,6 +23,8 @@ const subscriberSchema = new Schema(
 // Опционально: полнотекстовый индекс, если нужно искать по email
 subscriberSchema.index({ '$**': 'text' });
 
+export type SubscriberEntity = InferSchemaType<typeof subscriberSchema>;
+
 // Типы TypeScript
 export type SubscriberInput = InferSchemaType<typeof subscriberSchema>;
 

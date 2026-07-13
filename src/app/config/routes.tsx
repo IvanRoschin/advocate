@@ -1,6 +1,6 @@
 // src/app/config/routes.ts
 
-import { env } from '../lib/server/env/serverEnv';
+import { serverEnv } from '../lib/server/env/serverEnv';
 
 export const routes = {
   public: {
@@ -134,7 +134,7 @@ export type PublicStringRouteKey = {
 
 // ---------- Helpers ----------
 export const baseUrl =
-  env.baseUrl.replace(/\/$/, '') ?? 'http://localhost:3000';
+  serverEnv.baseUrl.replace(/\/$/, '') ?? 'http://localhost:3000';
 
 export const apiUrl = (path: string) => {
   const base = baseUrl.replace(/\/$/, '');

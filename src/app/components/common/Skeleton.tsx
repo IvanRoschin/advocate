@@ -1,19 +1,16 @@
 import * as React from 'react';
 
-import { cn } from '@/lib/index';
+import { cn } from '@/app/lib/utils/cn';
 
 type SkeletonProps = React.ComponentPropsWithoutRef<'div'>;
 
 export default function Skeleton({ className, ...rest }: SkeletonProps) {
   return (
     <div
-      className={cn('animate-shimmer bg-[#f6f7f8]', className)}
-      style={{
-        backgroundImage:
-          'linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%)',
-        backgroundSize: '700px 100%',
-        backgroundRepeat: 'no-repeat',
-      }}
+      className={cn(
+        'bg-muted animate-shimmer from-muted via-foreground/10 to-muted rounded bg-linear-to-r bg-size-[200%_100%]',
+        className
+      )}
       {...rest}
     />
   );

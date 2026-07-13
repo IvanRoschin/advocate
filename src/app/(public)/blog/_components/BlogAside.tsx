@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { SubscribeForm } from '@/app/components/forms';
+import { SubscribeForm } from '@/app/components';
 import { formatDate } from '@/app/helpers';
 import { cn } from '@/app/lib';
 import { blog } from '@/app/resources/content';

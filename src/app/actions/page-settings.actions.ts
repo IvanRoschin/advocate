@@ -1,14 +1,12 @@
 import { pageSettingsRepo } from '@/app/lib/repositories/page-settings.repo';
-
-import { defaultLayouts } from '../resources/content/pages';
-import { createAction } from './createAction';
-
 import type {
   PageLayoutNode,
   PageSettingsEntity,
   PageSettingsResponseDTO,
   UpdatePageSettingsDTO,
 } from '@/app/types';
+import { defaultLayouts } from '../resources/content/pages';
+import { createAction } from './createAction';
 export const pageSettingsActions = {
   getLayout: createAction<
     PageSettingsEntity,

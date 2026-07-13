@@ -5,9 +5,9 @@ import { auto as autoFormat } from '@cloudinary/url-gen/qualifiers/format';
 import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
 import { auto as autoQuality } from '@cloudinary/url-gen/qualifiers/quality';
 
-import { env } from '../server/env/serverEnv';
+import { serverEnv } from '../server/env/serverEnv';
 
-const cloudName = env.cloudinary.cloudName;
+const cloudName = serverEnv.cloudinary.cloudName;
 
 if (!cloudName) {
   throw new Error('NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME missing');
