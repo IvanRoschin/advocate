@@ -79,7 +79,7 @@ export const caseRepo = {
 
   async update(id: string, data: UpdateCaseRepoInput) {
     return Case.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: 'after',
       runValidators: true,
     });
   },
@@ -87,12 +87,12 @@ export const caseRepo = {
   async deleteById(id: string) {
     return Case.findByIdAndDelete(id);
   },
-  
+
   async reassignClient(id: string, clientId: string) {
     return Case.findByIdAndUpdate(
       id,
       { clientId },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
   },
 };

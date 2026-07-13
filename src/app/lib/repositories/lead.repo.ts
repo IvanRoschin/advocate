@@ -3,7 +3,6 @@ import { ClientSession } from 'mongoose';
 import type { CreateLeadDTO, UpdateLeadDTO } from '@/app/types';
 import { Lead } from '@/models';
 import { createQuery } from './queryFactory';
-
 const leadQuery = createQuery(Lead);
 
 export const leadRepo = {
@@ -36,7 +35,7 @@ export const leadRepo = {
     return Lead.findByIdAndUpdate(
       id,
       { ...data },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
   },
 
@@ -53,6 +52,10 @@ export const leadRepo = {
     data: Record<string, unknown>,
     session?: ClientSession
   ) {
-    return Lead.findByIdAndUpdate(id, data, { new: true, session });
+    return Lead.findByIdAndUpdate(id, data, {
+      runValidators: true,
+      returnDocument: 'after',
+      session,
+    });
   },
 };

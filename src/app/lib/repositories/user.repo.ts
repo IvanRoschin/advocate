@@ -9,7 +9,6 @@ import {
   UserRole,
 } from '@/app/types';
 import { User } from '@/models';
-
 import { createQuery } from './queryFactory';
 
 const userQuery = createQuery(User);
@@ -64,7 +63,8 @@ export const userRepo = {
 
   async update(id: string, data: UpdateUserDTO) {
     return User.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: 'after',
+      runValidators: true,
     });
   },
 

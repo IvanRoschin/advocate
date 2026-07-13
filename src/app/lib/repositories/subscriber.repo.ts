@@ -4,7 +4,6 @@ import {
   SubscriberLike,
   UpdateSubscriberDTO,
 } from '@/app/types';
-
 import { createQuery } from './queryFactory';
 
 const subscriberQuery = createQuery(Subscriber);
@@ -33,7 +32,8 @@ export const subscriberRepo = {
 
   async update(id: string, data: UpdateSubscriberDTO) {
     return Subscriber.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: 'after',
+      runValidators: true,
     });
   },
 
@@ -47,7 +47,7 @@ export const subscriberRepo = {
     return Subscriber.findByIdAndUpdate(
       id,
       { subscribed: true },
-      { new: true }
+      { returnDocument: 'after' }
     );
   },
 
@@ -55,7 +55,7 @@ export const subscriberRepo = {
     return Subscriber.findByIdAndUpdate(
       id,
       { subscribed: false },
-      { new: true }
+      { returnDocument: 'after', runValidators: true }
     );
   },
 };

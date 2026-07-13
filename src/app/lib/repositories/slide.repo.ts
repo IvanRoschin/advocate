@@ -28,7 +28,8 @@ export const slideRepo = {
 
   async update(id: string, data: UpdateSlideDTO) {
     return Slide.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: 'after',
+      runValidators: true,
     });
   },
 
@@ -39,11 +40,19 @@ export const slideRepo = {
   /* ================= Activation ================= */
 
   async activate(id: string) {
-    return Slide.findByIdAndUpdate(id, { isActive: true }, { new: true });
+    return Slide.findByIdAndUpdate(
+      id,
+      { isActive: true },
+      { returnDocument: 'after', runValidators: true }
+    );
   },
 
   async deactivate(id: string) {
-    return Slide.findByIdAndUpdate(id, { isActive: false }, { new: true });
+    return Slide.findByIdAndUpdate(
+      id,
+      { isActive: false },
+      { returnDocument: 'after', runValidators: true }
+    );
   },
 };
 

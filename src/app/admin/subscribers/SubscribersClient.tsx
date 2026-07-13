@@ -22,7 +22,11 @@ import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
 import { SubscriberMobileCard } from './_components/SubscriberMobileCard';
 import { subscribersColumns } from './subscribers.columns';
 
-import type { SubscriberResponseDTO, UpdateSubscriberDTO } from '@/app/types';
+import type {
+  CreateSubscriberDTO,
+  SubscriberResponseDTO,
+  UpdateSubscriberDTO,
+} from '@/app/types';
 type Props = {
   initialSubscribers: SubscriberResponseDTO[];
 };
@@ -41,6 +45,7 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
   const [subscriberToUpdate, setSubscriberToUpdate] =
     useState<SubscriberResponseDTO | null>(null);
 
+  const createModal = useModal('createSubscriber');
   const deleteModal = useModal('deleteSubscriber');
   const updateModal = useModal('updateSubscriber');
 
@@ -145,6 +150,30 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
     [done, start, subscriberToUpdate, updateModal]
   );
 
+  const handleCreateSubscriber = useCallback(
+    async (payload: CreateSubscriberDTO) => {
+      start();
+      try {
+        const created = await apiFetch<SubscriberResponseDTO>(
+          apiUrl(routes.api.admin.subscribe),
+          {
+            method: 'POST',
+            body: JSON.stringify(payload),
+          }
+        );
+
+        setSubscribers(prev => [created, ...prev]);
+        toast.success('Підписника створено');
+        createModal.close();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Помилка створення');
+      } finally {
+        done();
+      }
+    },
+    [createModal, done, start]
+  );
+
   // ==================== COLUMNS & MODALS ====================
 
   const columns = useMemo(
@@ -155,6 +184,19 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
         onToggleActive: handleToggleActive,
       }),
     [handleDelete, handleEdit, handleToggleActive]
+  );
+  const renderCreateModal = (
+    <Modal
+      isOpen={createModal.isOpen}
+      onClose={createModal.close}
+      body={
+        <SubscriberForm
+          mode="create"
+          onSubmit={handleCreateSubscriber}
+          onClose={createModal.close}
+        />
+      }
+    />
   );
 
   const renderDeleteModal = (
@@ -201,6 +243,7 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
           title="Підписники відсутні"
           subtitle="Поки що немає жодного підписника"
         />
+        {renderCreateModal}
         {renderDeleteModal}
         {renderUpdateModal}
       </div>
@@ -214,15 +257,7 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
       <AdminPageContainer
         title="Підписники"
         description="Управління email-підписками"
-        actions={
-          <Btn
-            label="Додати підписника"
-            onClick={() => {
-              setSubscriberToUpdate(null);
-              updateModal.open(); // можно сделать отдельный createModal при желании
-            }}
-          />
-        }
+        actions={<Btn label="Додати підписника" onClick={createModal.open} />}
       >
         <AdminTableToolbar>
           <input
@@ -250,7 +285,7 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
           )}
         />
       </AdminPageContainer>
-
+      {renderCreateModal}
       {renderDeleteModal}
       {renderUpdateModal}
     </div>

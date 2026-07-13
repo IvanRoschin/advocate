@@ -55,7 +55,8 @@ export const articleRepo = {
     data: Partial<CreateArticleRequestDTO & { slug: string; src: string[] }>
   ): Promise<ArticleAdminRow | null> {
     return Article.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: 'after',
+      runValidators: true,
     }).lean<ArticleAdminRow>();
   },
 

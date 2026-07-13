@@ -86,7 +86,7 @@ export default function ServicesClient({ initialServices }: Props) {
   );
 
   const handleCreate = useCallback(() => {
-    router.push(routes.api.admin.services + '/new');
+    router.push('/admin/services/new');
   }, [router]);
 
   const columns = useMemo(

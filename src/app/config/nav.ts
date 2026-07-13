@@ -1,10 +1,9 @@
 import { signOut } from 'next-auth/react';
+import type { IconType } from 'react-icons';
 
 import { routes } from '@/app/config/routes';
 import { useUserStore } from '@/app/store/user.store';
 import { iconLibrary, menuText } from '@/resources';
-
-import type { IconType } from 'react-icons';
 
 export type NavScope = 'public' | 'admin' | 'client' | 'manager' | 'mobile';
 
@@ -159,6 +158,13 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
     href: routes.admin.crm.clients,
     label: 'Клієнти',
     Icon: iconLibrary.clients,
+    startsWith: true,
+  },
+  {
+    key: 'subscribers',
+    href: routes.admin.crm.subscribers,
+    label: 'Підписники',
+    Icon: iconLibrary.email,
     startsWith: true,
   },
   {

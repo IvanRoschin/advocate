@@ -125,7 +125,7 @@ export default function ArticlesClient({
   };
 
   const handleCreate = useCallback(() => {
-    router.push(routes.api.admin.articles + '/new');
+    router.push('/admin/articles/new');
   }, [router]);
 
   const columns = useMemo(

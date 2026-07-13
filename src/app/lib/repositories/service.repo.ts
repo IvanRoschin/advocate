@@ -2,9 +2,6 @@ import { Types } from 'mongoose';
 
 import { Category } from '@/app/models';
 import Service from '@/app/models/Service';
-
-import { createQuery } from './queryFactory';
-
 import type {
   CreateServiceRequestDTO,
   ServiceLayoutNode,
@@ -12,6 +9,7 @@ import type {
   ServiceSectionsDto,
   ServiceStatus,
 } from '@/app/types';
+import { createQuery } from './queryFactory';
 /* ========================= TYPES ========================= */
 
 export type ServiceListRow = {
@@ -84,7 +82,8 @@ export const serviceRepo = {
     data: Partial<CreateServiceRequestDTO & { slug: string; src: string[] }>
   ) {
     return Service.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: 'after',
+      runValidators: true,
     }).lean<ServiceLike>();
   },
 

@@ -81,7 +81,7 @@ export default function ReviewsClient({ initialReviews }: Props) {
   );
 
   const handleCreate = useCallback(() => {
-    router.push(routes.api.admin.reviews + '/new');
+    router.push('/admin/reviews/new');
   }, [router]);
 
   const columns = useMemo(
