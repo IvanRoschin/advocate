@@ -45,11 +45,6 @@ RUN npm run build
 # ---------- runner ----------
 FROM node:22-alpine AS runner
 
-# Оновлюємо систему і ставимо мінімально необхідне
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends dumb-init && \
-    rm -rf /var/lib/apt/lists/*
-
 WORKDIR /app
 
 ENV NODE_ENV=production \
