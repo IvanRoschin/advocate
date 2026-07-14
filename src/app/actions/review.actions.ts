@@ -34,14 +34,17 @@ export const reviewPublicActions = {
       pageKey?: string;
     },
     PublicListResult
-  >(async ({ args }) => {
-    const result = await reviewQueries.list(args);
+  >(
+    async ({ args }) => {
+      const result = await reviewQueries.list(args);
 
-    return {
-      ...result,
-      items: result.items.map(mapReviewToResponse),
-    };
-  }),
+      return {
+        ...result,
+        items: result.items.map(mapReviewToResponse),
+      };
+    },
+    { buildFallback: { items: [], total: 0, hasMore: false } }
+  ),
 
   recent: createAction<number | undefined, ReviewResponseDTO[]>(
     async ({ args }) => {

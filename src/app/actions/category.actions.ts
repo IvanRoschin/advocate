@@ -45,7 +45,8 @@ export const categoryPublicActions = {
     async ({ args }) => {
       const raw = await categoryQueries.list(args?.limit);
       return raw.map(mapCategoryToResponse);
-    }
+    },
+    { buildFallback: [] }
   ),
 
   /* ================= BY SLUG ================= */
