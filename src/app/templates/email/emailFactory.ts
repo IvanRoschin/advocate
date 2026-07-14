@@ -1,10 +1,11 @@
-import { accountActivatedTemplate } from './account-activated/accountActivatedTemplate';
-import { activateUserAccountAccessTemplate } from './activate-user-account/ActivateUserAccountTemplate';
-import { createUserNotificationTemplate } from './create-user-notification/createUserNotificationTemplate';
-import { emailChangeTemplate } from './email-change/emailChangeTemplate';
+import { accountActivatedTemplate } from './accountActivated/accountActivatedTemplate';
+import { activateUserAccountAccessTemplate } from './activateUserAccount/ActivateUserAccountTemplate';
+import { createUserNotificationTemplate } from './createUserNotification/createUserNotificationTemplate';
+import { emailChangeTemplate } from './emailChange/emailChangeTemplate';
 import { leadAdminTemplate } from './lead/leadAdminTemplate';
 import { leadClientTemplate } from './lead/leadClientTemplate';
 import { resetPasswordTemplate } from './restore-password/restorePassword';
+import { reviewAdminTemplate } from './reviewAdminNotification/reviewAdminTemplate';
 import { subscriberAdminTemplate } from './subscriber/subscriberAdminTemplate';
 import { subscriberClientTemplate } from './subscriber/subscriberClientTemplate';
 import { EmailTemplatePropsMap, EmailTemplateType } from './types';
@@ -32,6 +33,8 @@ const templateMap: {
 
   [EmailTemplateType.EMAIL_CHANGE]: emailChangeTemplate,
   [EmailTemplateType.RESET_PASSWORD]: resetPasswordTemplate,
+
+  [EmailTemplateType.REVIEW_ADMIN]: reviewAdminTemplate,
 };
 
 export function renderEmailTemplate<T extends EmailTemplateType>(

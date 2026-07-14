@@ -10,11 +10,22 @@ import {
   ResendVerificationResult,
 } from './register.logic';
 
-export const registerAccount = createAction<RegisterInput, RegisterResult>(
-  async ({ args }) => registerAccountLogic(args)
-);
+type PublicRegisterInput = RegisterInput & {
+  website?: string;
+  turnstileToken?: string;
+};
+
+type PublicResendInput = ResendVerificationInput & {
+  website?: string;
+  turnstileToken?: string;
+};
+
+export const registerAccount = createAction<
+  PublicRegisterInput,
+  RegisterResult
+>(async ({ args }) => registerAccountLogic(args));
 
 export const resendVerification = createAction<
-  ResendVerificationInput,
+  PublicResendInput,
   ResendVerificationResult
 >(async ({ args }) => resendVerificationLogic(args));

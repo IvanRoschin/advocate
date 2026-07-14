@@ -1,13 +1,14 @@
-import { checkHoneypot, verifyTurnstile } from '../helpers';
+import 'server-only';
+
 import {
   subscriberQueries,
   subscriberRepo,
 } from '../lib/repositories/subscriber.repo';
 import { Subscriber } from '../models';
-import { person } from '../resources';
 import { mapSubscriberToResponse, SubscriberResponseDTO } from '../types';
 import { createAction } from './createAction';
 import { createEntityModule } from './createEntityModule';
+import { createPublicAction } from './createPublicAction';
 import { notifySubscriberCreated } from './subscriber-notifications.helpers';
 
 export const subscriberActions = createEntityModule({
@@ -26,22 +27,12 @@ export const subscriberActions = createEntityModule({
 });
 
 export const subscriberPublicActions = {
-  create: createAction<
-    {
-      email: string;
-      website: string;
-      turnstileToken: string;
-    },
+  create: createPublicAction<
+    { email: string; website?: string; turnstileToken?: string },
     SubscriberResponseDTO
   >(async ({ args }) => {
-    if (!person.email) {
-      throw new Error('NEXT_PUBLIC_ADVOCATE_EMAIL missing');
-    }
-    await checkHoneypot(args.website);
-
-    await verifyTurnstile(args.turnstileToken);
-
     let subscriber = await Subscriber.findOne({ email: args.email });
+
     if (subscriber) {
       if (!subscriber.subscribed) {
         subscriber.subscribed = true;

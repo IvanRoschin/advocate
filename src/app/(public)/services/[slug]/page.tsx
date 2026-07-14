@@ -2,9 +2,10 @@ import { articlePublicActions } from '@/app/actions/article.actions';
 import { pageSettingsActions } from '@/app/actions/page-settings.actions';
 import { reviewPublicActions } from '@/app/actions/review.actions';
 import { servicePublicActions } from '@/app/actions/service.actions';
-import { ServiceReviewForm } from '@/app/components';
+import PublicReviewForm from '@/app/components/forms/public/PulicReviewForm';
 import { LayoutNode, renderLayout } from '@/app/lib/layouts/renderLayout';
 import { ServiceSectionKey } from '@/app/types';
+
 import {
   SERVICE_SECTIONS,
   ServiceSectionProps,
@@ -41,7 +42,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
     service,
     articles: articles.items,
     reviews: reviews.items,
-    reviewForm: <ServiceReviewForm serviceId={service.id} />,
+    reviewForm: <PublicReviewForm targetType="service" targetId={service.id} />,
   };
 
   return (

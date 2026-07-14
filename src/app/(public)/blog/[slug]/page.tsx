@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { articlePublicActions } from '@/app/actions/article.actions';
 import { pageSettingsActions } from '@/app/actions/page-settings.actions';
 import { reviewPublicActions } from '@/app/actions/review.actions';
-import { ServiceReviewForm } from '@/app/components';
+import PublicReviewForm from '@/app/components/forms/public/PulicReviewForm';
 import { baseUrl } from '@/app/config/routes';
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
 import { LayoutNode, renderLayout } from '@/app/lib/layouts/renderLayout';
@@ -114,7 +114,7 @@ export default async function BlogArticlePage({
     related,
     url,
     reviews,
-    reviewForm: <ServiceReviewForm serviceId={article.id} />,
+    reviewForm: <PublicReviewForm targetType="article" targetId={article.id} />,
   };
   const layout = (await pageSettingsActions.getLayout(
     'article'

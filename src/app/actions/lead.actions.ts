@@ -4,11 +4,9 @@ import { validate } from '@/app/helpers/validate';
 import { leadRepo } from '@/app/lib/repositories/lead.repo';
 import { createLeadRequestSchema, mapLeadToResponse } from '@/app/types';
 
-import { checkHoneypot } from '../helpers';
-import { verifyTurnstile } from '../helpers/verifyTurnstile';
-import { person } from '../resources';
 import { createAction } from './createAction';
 import { createEntityModule } from './createEntityModule';
+import { createPublicAction } from './createPublicAction';
 import { convertLeadToClient } from './lead-conversion.helpers';
 import { notifyLeadCreated } from './lead-notifications.helpers';
 
@@ -48,19 +46,15 @@ function normalizeLeadData(body: CreateLeadRequestDTO): CreateLeadDTO {
 }
 
 export const leadPublicActions = {
-  create: createAction<unknown, LeadResponseDTO>(async ({ args: payload }) => {
-    if (!person.email) {
-      throw new Error('NEXT_PUBLIC_ADVOCATE_EMAIL missing');
-    }
-
+  create: createPublicAction<
+    Partial<CreateLeadRequestDTO> & {
+      website?: string;
+      turnstileToken?: string;
+    },
+    LeadResponseDTO
+  >(async ({ args: payload }) => {
     const body = await validate(createLeadRequestSchema, payload);
-
-    await checkHoneypot(body.website);
-
-    await verifyTurnstile(body.turnstileToken);
-
     const leadData = normalizeLeadData(body);
-
     const lead = await leadRepo.create(leadData);
 
     await notifyLeadCreated(leadData);

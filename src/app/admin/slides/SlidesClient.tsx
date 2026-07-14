@@ -3,7 +3,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import SlideForm from '@/app/components/forms/SlideForm';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -15,6 +14,7 @@ import {
   EmptyState,
   Loader,
   Modal,
+  SlideForm,
 } from '@/components';
 
 import { AdminPageContainer } from '../_components/AdminPageContainer';

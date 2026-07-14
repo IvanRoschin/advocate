@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import { ArticleForm } from '@/app/components/forms';
+import { ArticleForm } from '@/app/components';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 
@@ -11,7 +11,7 @@ import type {
   CategoryOption,
   ServiceOption,
   UserOption,
-} from '@/app/components/forms/ArticleForm';
+} from '@/app/components/forms/admin/ArticleForm';
 import type { CreateArticleRequestDTO } from '@/app/types';
 
 type Props =

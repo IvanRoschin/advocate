@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { routes } from '@/app/config/routes';
 import { tokenRepo } from '@/app/lib/repositories/token.repo';
 import { userRepo } from '@/app/lib/repositories/user.repo';
@@ -6,7 +8,7 @@ import { ValidationError } from '@/app/lib/server/errors/httpErrors';
 import { sendEmail } from '@/app/lib/server/mail/emailService';
 import { EmailTemplateType } from '@/app/templates/email/types';
 import { TokenType } from '@/app/types';
-import 'server-only';
+
 import { toIdString } from '../lib/mappers/_utils';
 
 export type RequestResetInput = { email: string };

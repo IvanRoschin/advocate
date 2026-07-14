@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import ReviewForm from '@/app/components/forms/ReviewForm';
+import ReviewForm from '@/app/components/forms/admin/ReviewForm';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 

@@ -10,8 +10,13 @@ import {
 } from './auth.logic';
 import { createAction } from './createAction';
 
+type PublicRequestResetInput = RequestResetInput & {
+  website?: string;
+  turnstileToken?: string;
+};
+
 export const requestPasswordReset = createAction<
-  RequestResetInput,
+  PublicRequestResetInput,
   RequestResetResult
 >(async ({ args }) => requestPasswordResetLogic(args));
 

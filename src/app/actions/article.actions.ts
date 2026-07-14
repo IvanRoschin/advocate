@@ -43,14 +43,17 @@ export const articlePublicActions = {
       categorySlug?: string;
     },
     PublicListResult
-  >(async ({ args }) => {
-    const result = await articleQueries.list(args);
+  >(
+    async ({ args }) => {
+      const result = await articleQueries.list(args);
 
-    return {
-      ...result,
-      items: result.items.map(mapPublicRowToListItem),
-    };
-  }),
+      return {
+        ...result,
+        items: result.items.map(mapPublicRowToListItem),
+      };
+    },
+    { buildFallback: { items: [], total: 0, hasMore: false } }
+  ),
 
   recent: createAction<number | undefined, BlogRecentPostItemDto[]>(
     async ({ args }) => {

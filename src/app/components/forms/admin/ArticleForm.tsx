@@ -10,9 +10,13 @@ import { useFormDraft } from '@/app/hooks/useFormDraft';
 import { clearFormDraft } from '@/app/lib/client/form-draft';
 import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
 import { createArticleSchema, updateArticleSchema } from '@/app/types';
-import { Input, Select, TagsInputField, Textarea } from '@/components/index';
-
-import FormDraftPersist from './FormDraftPersist';
+import {
+  FormDraftPersist,
+  Input,
+  Select,
+  TagsInputField,
+  Textarea,
+} from '@/components';
 
 import type {
   ArticleLanguage,

@@ -4,7 +4,7 @@ import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 
-import FormDraftPersist from '@/app/components/forms/FormDraftPersist';
+import FormDraftPersist from '@/app/components/forms/shared/FormDraftPersist';
 import Btn from '@/app/components/ui/button/Btn';
 import storageKeys from '@/app/config/storageKeys';
 import { clearFormDraft, loadFormDraft } from '@/app/lib/client/form-draft';
