@@ -1,6 +1,6 @@
 'use client';
 
-import LeadForm from '@/app/components/forms/LeadForm';
+import LeadForm from '@/app/components/forms/public/LeadForm';
 import { iconLibrary, orderSection } from '@/app/resources';
 import { NextImage } from '@/components';
 

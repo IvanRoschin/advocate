@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import SubscriberForm from '@/app/components/forms/SubscriberForm';
+import SubscriberForm from '@/app/components/forms/admin/SubscriberForm';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';

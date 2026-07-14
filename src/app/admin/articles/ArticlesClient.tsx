@@ -29,7 +29,8 @@ import { articlesColumns } from './articles.columns';
 import type {
   CategoryOption,
   UserOption,
-} from '@/app/components/forms/ArticleForm';
+} from '@/app/components/forms/admin/ArticleForm';
+
 import type { ArticleResponseDTO } from '@/app/types';
 interface Props {
   initialArticles: ArticleResponseDTO[];

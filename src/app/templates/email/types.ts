@@ -9,9 +9,17 @@ export enum EmailTemplateType {
   ACCOUNT_ACTIVATED = 'ACCOUNT_ACTIVATED',
   ACTIVATE_USER_ACCOUNT = 'ACTIVATE_USER_ACCOUNT',
   RESET_PASSWORD = 'RESET_PASSWORD',
+  REVIEW_ADMIN = 'REVIEW_ADMIN',
 }
 
 export type EmailTemplatePropsMap = {
+  [EmailTemplateType.REVIEW_ADMIN]: {
+    authorName: string;
+    text: string;
+    rating: number;
+    targetType: 'service' | 'article';
+  };
+
   [EmailTemplateType.LEAD_CLIENT]: {
     name?: string;
   };

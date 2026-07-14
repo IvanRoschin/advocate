@@ -9,6 +9,10 @@ export interface EmailMeta {
 }
 
 export const emailMetaMap: Record<EmailTemplateType, EmailMeta> = {
+  [EmailTemplateType.REVIEW_ADMIN]: {
+    subject: 'Новий коменатр',
+  },
+
   [EmailTemplateType.LEAD_CLIENT]: {
     subject: 'Дякуємо за звернення',
   },

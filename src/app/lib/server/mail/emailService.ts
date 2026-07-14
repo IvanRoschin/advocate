@@ -1,4 +1,4 @@
-import 'server-only'; // было 'use server' — см. пояснение ниже
+import 'server-only';
 
 import nodemailer from 'nodemailer';
 
