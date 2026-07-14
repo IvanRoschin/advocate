@@ -45,14 +45,17 @@ export const servicePublicActions = {
       categorySlug?: string;
     },
     PublicListResult
-  >(async ({ args }) => {
-    const result = await serviceQueries.list(args);
+  >(
+    async ({ args }) => {
+      const result = await serviceQueries.list(args);
 
-    return {
-      ...result,
-      items: result.items.map(mapServiceRowToListItem),
-    };
-  }),
+      return {
+        ...result,
+        items: result.items.map(mapServiceRowToListItem),
+      };
+    },
+    { buildFallback: { items: [], total: 0, hasMore: false } }
+  ),
 
   findPublishedBySlug: createAction<{ slug: string }, ServicePublicPageDto>(
     async ({ args }) => {

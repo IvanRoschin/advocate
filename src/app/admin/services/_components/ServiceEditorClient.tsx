@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { ServiceForm } from '@/app/components/forms';
-import { ArticleOption } from '@/app/components/forms/ServiceForm';
+import { ArticleOption } from '@/app/components/forms/admin/ServiceForm';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 

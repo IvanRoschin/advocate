@@ -4,7 +4,7 @@ import { useField, useFormikContext } from 'formik';
 import { useEffect } from 'react';
 import slugify from 'slugify';
 
-import { ArticleFormValues } from '../forms/ArticleForm';
+import { ArticleFormValues } from '@/components/forms/admin/ArticleForm';
 
 type RawSlugifyOptions = Parameters<typeof slugify>[1];
 type SlugifyObjectOptions = Exclude<RawSlugifyOptions, string | undefined>;

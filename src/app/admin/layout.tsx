@@ -7,6 +7,8 @@ import {
   AdminSectionProps,
 } from './_components/admin.sections';
 
+export const dynamic = 'force-dynamic';
+
 export default function AdminLayout({
   children,
 }: Readonly<{

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { LeadForm } from '@/app/components/forms';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -13,6 +12,7 @@ import {
   Btn,
   DeleteConfirmation,
   EmptyState,
+  LeadForm,
   Loader,
   Modal,
 } from '@/components';

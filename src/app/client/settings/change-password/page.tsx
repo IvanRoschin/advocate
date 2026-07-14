@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth';
 
-import { ChangePasswordForm } from '@/app/components/forms/ChangePasswordForm';
+import { ChangePasswordForm } from '@/app/components/forms/public/PulicChangePasswordForm';
 import { authOptions } from '@/app/config';
 
 export default async function ChangePasswordPage() {

@@ -5,6 +5,8 @@ import Header from '@/app/components/header/Header';
 import AuthAside from './_components/AuthAside';
 import AuthFeedbackProvider from './_components/AuthFeedbackProvider';
 
+export const dynamic = 'force-dynamic';
+
 type Props = {
   children: ReactNode;
 };

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import RegisterForm from '@/app/components/forms/RegisterForm';
+import RegisterForm from '@/app/components/forms/public/PulicRegisterForm';
 import { routes } from '@/app/config/routes';
 
 import AuthCard from '../_components/AuthCard';

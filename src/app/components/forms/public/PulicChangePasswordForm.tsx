@@ -1,7 +1,7 @@
 'use client';
 
+import { PasswordForm } from '@/app/components/forms/public/PasswordForm';
 import { changePasswordSchema } from '@/app/helpers/validationSchemas';
-import { PasswordForm } from '@/components/forms/PasswordForm';
 
 interface Values {
   oldPassword: string;

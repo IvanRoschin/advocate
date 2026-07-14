@@ -11,7 +11,7 @@ import { clearFormDraft } from '@/app/lib/client/form-draft';
 import { createSubscriberSchema } from '@/app/types';
 import { Checkbox, Input } from '@/components';
 
-import FormDraftPersist from './FormDraftPersist'; // если используете
+import FormDraftPersist from '../shared/FormDraftPersist'; // если используете
 
 import type {
   CreateSubscriberDTO,

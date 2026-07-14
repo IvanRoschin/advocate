@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import LeadForm from '@/app/components/forms/LeadForm';
+import LeadForm from '@/app/components/forms/public/LeadForm';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 

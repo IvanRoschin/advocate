@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import ClientForm from '@/app/components/forms/ClientForm';
+import ClientForm from '@/app/components/forms/admin/ClientForm';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 

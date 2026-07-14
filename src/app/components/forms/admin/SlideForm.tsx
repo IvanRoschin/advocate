@@ -10,9 +10,7 @@ import { useFormDraft } from '@/app/hooks/useFormDraft';
 import { clearFormDraft } from '@/app/lib/client/form-draft';
 import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
 import { createSlideSchema, updateSlideSchema } from '@/app/types';
-import { Checkbox, Input, Textarea } from '@/components';
-
-import FormDraftPersist from './FormDraftPersist';
+import { Checkbox, FormDraftPersist, Input, Textarea } from '@/components';
 
 import type {
   CreateSlideDTO,

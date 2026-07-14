@@ -6,9 +6,7 @@ import { motion } from 'framer-motion';
 import Btn from '@/app/components/ui/button/Btn';
 import { DEFAULT_CATEGORY_ICON } from '@/app/resources/category-icons';
 import { CreateCategoryRequestDTO, createCategorySchema } from '@/app/types';
-import { Input } from '@/components/index';
-
-import { IconPicker } from '../common/IconPicker';
+import { IconPicker, Input } from '@/components';
 
 interface Props {
   onSubmit: (values: CreateCategoryRequestDTO) => void;

@@ -58,9 +58,12 @@ export const slidePublicActions = {
     return mapSlideToResponse(slide);
   }),
 
-  active: createAction<void, SlideResponseDTO[]>(async () => {
-    const items = await slideQueries.findActive();
+  active: createAction<void, SlideResponseDTO[]>(
+    async () => {
+      const items = await slideQueries.findActive();
 
-    return items.map(mapSlideToResponse);
-  }),
+      return items.map(mapSlideToResponse);
+    },
+    { buildFallback: [] }
+  ),
 };
