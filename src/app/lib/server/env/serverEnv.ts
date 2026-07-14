@@ -16,7 +16,6 @@ export const serverEnv = {
   smtp: {
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT),
-    user: process.env.SMTP_USER,
     email: process.env.SMTP_EMAIL,
     password: process.env.SMTP_PASSWORD,
     fromName: process.env.SMTP_FROM_NAME,
@@ -30,8 +29,6 @@ export const serverEnv = {
   cloudinary: {
     cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
     uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
-    apiKey: process.env.CLOUDINARY_API_KEY,
-    apiSecret: process.env.CLOUDINARY_API_SECRET,
   },
 
   wayforpay: {

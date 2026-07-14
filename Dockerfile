@@ -2,6 +2,7 @@
 
 FROM node:22-alpine AS base
 RUN apk add --no-cache libc6-compat
+
 WORKDIR /app
 
 # ---------- deps ----------
@@ -27,7 +28,6 @@ ARG NEXT_PUBLIC_ADVOCATE_EMAIL
 ARG NEXT_PUBLIC_ADVOCATE_PN_1
 ARG NEXT_PUBLIC_ADVOCATE_PN_2
 
-# 👉 expose to Next build
 ENV NEXT_PUBLIC_URL=$NEXT_PUBLIC_URL \
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=$NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME \
     NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=$NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET \
@@ -37,12 +37,19 @@ ENV NEXT_PUBLIC_URL=$NEXT_PUBLIC_URL \
     NEXT_PUBLIC_ADVOCATE_EMAIL=$NEXT_PUBLIC_ADVOCATE_EMAIL \
     NEXT_PUBLIC_ADVOCATE_PN_1=$NEXT_PUBLIC_ADVOCATE_PN_1 \
     NEXT_PUBLIC_ADVOCATE_PN_2=$NEXT_PUBLIC_ADVOCATE_PN_2 \
-    NEXT_TELEMETRY_DISABLED=1
+    NEXT_TELEMETRY_DISABLED=1 \
+    SKIP_DB_ON_BUILD=true
 
 RUN npm run build
 
 # ---------- runner ----------
 FROM node:22-alpine AS runner
+
+# Оновлюємо систему і ставимо мінімально необхідне
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends dumb-init && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 ENV NODE_ENV=production \
