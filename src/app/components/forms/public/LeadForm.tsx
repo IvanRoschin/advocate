@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
-import { clientEnv } from '@/app/lib/server/env/clientEnv';
+import { clientEnv } from '@/app/lib/client/env/clientEnv';
 import { useLoadingStore } from '@/app/store/loading.store.ts';
 import { useThemeStore } from '@/app/store/theme.store';
 import {
