@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl, routes } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
-import { clientEnv } from '@/app/lib/server/env/clientEnv';
+import { clientEnv } from '@/app/lib/client/env/clientEnv';
 import { useThemeStore } from '@/app/store/theme.store';
 import { Checkbox, Input, StarRatingField, Textarea } from '@/components';
 import { Turnstile } from '@marsidev/react-turnstile';
@@ -44,7 +44,7 @@ const publicReviewSchema = Yup.object({
   rating: Yup.number()
     .min(1, 'Мінімальний рейтинг 1')
     .max(5, 'Максимальний рейтинг 5')
-    .required('Оцініть послугу'),
+    .required('Оцініть статтю'),
 
   consent: Yup.boolean().oneOf([true], 'Потрібна згода на обробку даних'),
 
@@ -131,7 +131,12 @@ const PublicReviewForm = ({ targetType, targetId }: Props) => {
           <motion.div {...fieldMotion(0.05)} className="grid gap-4">
             <Input name="authorName" label="Ваше ім'я" required />
             <Textarea name="text" label="Ваш відгук" rows={5} required />
-            <StarRatingField name="rating" label="Оцініть послугу" step={0.5} />
+            <StarRatingField
+              name="rating"
+              targetType={targetType}
+              label=""
+              step={0.5}
+            />
           </motion.div>
 
           <motion.div
