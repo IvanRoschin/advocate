@@ -4,7 +4,9 @@ import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 
-import Btn from '@/app/components/ui/button/Btn';
+import AdminFormSection from '@/app/components/forms/shared/AdminFormSection';
+import AdminFormShell from '@/app/components/forms/shared/AdminFormShell';
+import { fieldMotion } from '@/app/components/forms/shared/formMotion';
 import storageKeys from '@/app/config/storageKeys';
 import { useFormDraft } from '@/app/hooks/useFormDraft';
 import { clearFormDraft } from '@/app/lib/client/form-draft';
@@ -25,9 +27,8 @@ import type {
   CreateArticleRequestDTO,
   UpdateArticleDTO,
 } from '@/app/types';
-/* ------------------------------------------------------------------ */
-/* Helpers ------------------------------------------------------------ */
 
+/* Helpers — без изменений */
 const parseTags = (raw: string): string[] =>
   raw
     .split(',')
@@ -67,7 +68,6 @@ const buildPatch = (
 ): UpdateArticleDTO => {
   const i = normalize(initial);
   const c = normalize(current);
-
   const patch: UpdateArticleDTO = {};
 
   if (c.slug !== i.slug) patch.slug = c.slug;
@@ -89,9 +89,7 @@ const buildPatch = (
   return stripEmpty(patch) as UpdateArticleDTO;
 };
 
-/* ------------------------------------------------------------------ */
-/* Props -------------------------------------------------------------- */
-
+/* Props — без изменений */
 type BaseProps = {
   onClose: () => void;
   submitLabel?: string;
@@ -123,7 +121,6 @@ const ArticleForm = (props: Props) => {
 
   const persist =
     props.persistToLocalStorage ?? (props.mode === 'create' ? true : false);
-
   const clearOnClose = props.clearDraftOnClose ?? true;
 
   const { draft, clearDraft } = useFormDraft<ArticleFormValues>(
@@ -180,192 +177,170 @@ const ArticleForm = (props: Props) => {
   };
 
   return (
-    <>
-      {isEditMode ? 'Редагувати статтю' : 'Додати нову статтю'}
+    <Formik<ArticleFormValues>
+      enableReinitialize={isEditMode || (props.mode === 'create' && persist)}
+      initialValues={defaultValues}
+      validationSchema={schema}
+      onSubmit={async values => {
+        const normalized = normalize(values);
 
-      <Formik<ArticleFormValues>
-        enableReinitialize={isEditMode || (props.mode === 'create' && persist)}
-        initialValues={defaultValues}
-        validationSchema={schema}
-        onSubmit={async values => {
-          const normalized = normalize(values);
+        if (props.mode === 'create') {
+          const payload: CreateArticleRequestDTO = {
+            slug: normalized.slug,
+            status: normalized.status as ArticleStatus,
+            title: normalized.title,
+            ...(normalized.subtitle ? { subtitle: normalized.subtitle } : {}),
+            summary: normalized.summary,
+            content: normalized.content,
+            tags: normalized.tags,
+            ...(normalized.src.length ? { src: normalized.src } : {}),
+            language: normalized.language,
+            authorId: normalized.authorId,
+            categoryId: normalized.categoryId,
+            serviceId: normalized.serviceId,
+          };
 
-          if (props.mode === 'create') {
-            const payload: CreateArticleRequestDTO = {
-              slug: normalized.slug,
-              status: normalized.status as ArticleStatus,
-              title: normalized.title,
-              ...(normalized.subtitle ? { subtitle: normalized.subtitle } : {}),
-              summary: normalized.summary,
-              content: normalized.content,
-              tags: normalized.tags,
-              ...(normalized.src.length ? { src: normalized.src } : {}),
-              language: normalized.language,
-              authorId: normalized.authorId,
-              categoryId: normalized.categoryId,
-              serviceId: normalized.serviceId,
-            };
-
-            await props.onSubmit(payload);
-            clearDraft();
-            return;
-          }
-
-          const patch = buildPatch(baseValues, normalized);
-          await props.onSubmit(patch);
+          await props.onSubmit(payload);
           clearDraft();
-        }}
-      >
-        {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
-          <Form className="flex w-full max-w-4xl flex-col gap-6">
-            <FormDraftPersist<ArticleFormValues>
-              storageKey={storageKeys.article}
-              enabled={persist && props.mode === 'create'}
-              values={values}
-            />
+          return;
+        }
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.04 }}
-            >
-              <Input
-                name="title"
-                label="Заголовок"
-                placeholder="Введіть заголовок статті"
-                required
-              />
-            </motion.div>
+        const patch = buildPatch(baseValues, normalized);
+        await props.onSubmit(patch);
+        clearDraft();
+      }}
+    >
+      {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
+        <Form>
+          <FormDraftPersist<ArticleFormValues>
+            storageKey={storageKeys.article}
+            enabled={persist && props.mode === 'create'}
+            values={values}
+          />
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.08 }}
-            >
-              <Input
-                name="subtitle"
-                label="Підзаголовок"
-                placeholder="Введіть підзаголовок"
-              />
-            </motion.div>
+          <AdminFormShell
+            title={isEditMode ? 'Редагувати статтю' : 'Додати нову статтю'}
+            onClose={handleClose}
+            submitLabel={
+              submitLabel ?? (isEditMode ? 'Оновити статтю' : 'Додати статтю')
+            }
+            isSubmitting={isSubmitting}
+            submitDisabled={!isValid}
+          >
+            <AdminFormSection title="Основний зміст">
+              <motion.div {...fieldMotion(0.04)}>
+                <Input
+                  name="title"
+                  label="Заголовок"
+                  placeholder="Введіть заголовок статті"
+                  required
+                />
+              </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-            >
-              <Textarea
-                name="summary"
-                label="Короткий опис (summary)"
-                required
-              />
-            </motion.div>
+              <motion.div {...fieldMotion(0.06)} className="mt-3">
+                <Input
+                  name="subtitle"
+                  label="Підзаголовок"
+                  placeholder="Введіть підзаголовок"
+                />
+              </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.12 }}
-            >
-              <Textarea name="content" label="Контент" rows={12} required />
-            </motion.div>
+              <motion.div {...fieldMotion(0.08)} className="mt-3">
+                <Textarea
+                  name="summary"
+                  label="Короткий опис (summary)"
+                  required
+                />
+              </motion.div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <Select
-                name="status"
-                label="Статус"
-                options={[
-                  { value: 'draft', label: 'Чернета' },
-                  { value: 'published', label: 'Опубліковано' },
-                ]}
-              />
+              <motion.div {...fieldMotion(0.1)} className="mt-3">
+                <Textarea name="content" label="Контент" rows={12} required />
+              </motion.div>
+            </AdminFormSection>
 
-              <Select
-                name="language"
-                label="Мова"
-                options={[
-                  { value: 'uk', label: 'Українська' },
-                  { value: 'ru', label: 'Русский' },
-                  { value: 'en', label: 'English' },
-                ]}
-              />
+            <AdminFormSection title="Публікація">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Select
+                  name="status"
+                  label="Статус"
+                  options={[
+                    { value: 'draft', label: 'Чернета' },
+                    { value: 'published', label: 'Опубліковано' },
+                  ]}
+                />
 
-              <div />
-            </div>
+                <Select
+                  name="language"
+                  label="Мова"
+                  options={[
+                    { value: 'uk', label: 'Українська' },
+                    { value: 'ru', label: 'Русский' },
+                    { value: 'en', label: 'English' },
+                  ]}
+                />
+              </div>
+            </AdminFormSection>
 
-            <Select
-              name="authorId"
-              label="Автор"
-              options={(users ?? []).map(u => ({
-                value: u.id,
-                label: u.name,
-              }))}
-              required
-            />
+            <AdminFormSection title="Класифікація">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Select
+                  name="authorId"
+                  label="Автор"
+                  options={(users ?? []).map(u => ({
+                    value: u.id,
+                    label: u.name,
+                  }))}
+                  required
+                />
 
-            <Select
-              name="categoryId"
-              label="Категорія"
-              options={(categories ?? []).map(c => ({
-                value: c.id,
-                label: c.title,
-              }))}
-              required
-            />
+                <Select
+                  name="categoryId"
+                  label="Категорія"
+                  options={(categories ?? []).map(c => ({
+                    value: c.id,
+                    label: c.title,
+                  }))}
+                  required
+                />
 
-            <Select
-              name="serviceId"
-              label="Послуга"
-              options={(services ?? []).map(s => ({
-                value: s.id,
-                label: s.title,
-              }))}
-              required
-            />
+                <Select
+                  name="serviceId"
+                  label="Послуга"
+                  options={(services ?? []).map(s => ({
+                    value: s.id,
+                    label: s.title,
+                  }))}
+                  required
+                />
+              </div>
+            </AdminFormSection>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.15 }}
-            >
-              <ImageUploadCloudinary
-                fieldName="src"
-                setFieldValue={setFieldValue}
-                values={values.src}
-                error={typeof errors.src === 'string' ? errors.src : undefined}
-                uploadPreset="article_cover"
-                multiple
-              />
-            </motion.div>
+            <AdminFormSection title="Медіа та теги">
+              <motion.div {...fieldMotion(0.12)}>
+                <ImageUploadCloudinary
+                  fieldName="src"
+                  setFieldValue={setFieldValue}
+                  values={values.src}
+                  error={
+                    typeof errors.src === 'string' ? errors.src : undefined
+                  }
+                  uploadPreset="article_cover"
+                  multiple
+                />
+              </motion.div>
 
-            <TagsInputField
-              name="tagsInput"
-              label="Теги (через кому)"
-              placeholder="Наприклад: право, суд, адвокат"
-            />
-
-            <div className="flex justify-end gap-2">
-              <Btn
-                type="button"
-                label="Скасувати"
-                uiVariant="ghost"
-                onClick={handleClose}
-              />
-
-              <Btn
-                uiVariant="accent"
-                radius={12}
-                type="submit"
-                label={
-                  submitLabel ??
-                  (isEditMode ? 'Оновити статтю' : 'Додати статтю')
-                }
-                disabled={!isValid || isSubmitting}
-              />
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </>
+              <div className="mt-3">
+                <TagsInputField
+                  name="tagsInput"
+                  label="Теги (через кому)"
+                  placeholder="Наприклад: право, суд, адвокат"
+                />
+              </div>
+            </AdminFormSection>
+          </AdminFormShell>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

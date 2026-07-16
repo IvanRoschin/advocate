@@ -1,9 +1,8 @@
 'use client';
 
 import { Form, Formik } from 'formik';
-import { motion } from 'framer-motion';
 
-import Btn from '@/app/components/ui/button/Btn';
+import AdminFormShell from '@/app/components/forms/shared/AdminFormShell';
 import { DEFAULT_CATEGORY_ICON } from '@/app/resources/category-icons';
 import { CreateCategoryRequestDTO, createCategorySchema } from '@/app/types';
 import { IconPicker, Input } from '@/components';
@@ -24,61 +23,42 @@ const CategoryForm = ({
   const isEditMode = Boolean(initialValues);
 
   return (
-    <>
-      {isEditMode ? 'Редагувати категорію' : 'Додати нову категорію'}
-      <Formik<CreateCategoryRequestDTO>
-        enableReinitialize
-        initialValues={{
-          title: initialValues?.title ?? '',
-          icon: initialValues?.icon ?? DEFAULT_CATEGORY_ICON,
-        }}
-        validationSchema={createCategorySchema}
-        onSubmit={onSubmit}
-      >
-        {({ isValid, isSubmitting, setFieldValue, values }) => (
-          <Form className="flex w-full max-w-lg flex-col gap-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Input name="title" label="Назва категорії" required />{' '}
-            </motion.div>
-            {/* ICON PICKER */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-2"
-            >
-              <label className="text-sm font-medium">Іконка категорії</label>
+    <Formik<CreateCategoryRequestDTO>
+      enableReinitialize
+      initialValues={{
+        title: initialValues?.title ?? '',
+        icon: initialValues?.icon ?? DEFAULT_CATEGORY_ICON,
+      }}
+      validationSchema={createCategorySchema}
+      onSubmit={onSubmit}
+    >
+      {({ isValid, isSubmitting, setFieldValue, values }) => (
+        <Form>
+          <AdminFormShell
+            title={
+              isEditMode ? 'Редагувати категорію' : 'Додати нову категорію'
+            }
+            onClose={onClose}
+            submitLabel={submitLabel}
+            isSubmitting={isSubmitting}
+            submitDisabled={!isValid}
+          >
+            <Input name="title" label="Назва категорії" required />
+
+            <div className="mt-3 space-y-2">
+              <label className="text-secondary text-sm font-medium">
+                Іконка категорії
+              </label>
 
               <IconPicker
                 value={values.icon}
                 onChange={v => setFieldValue('icon', v)}
               />
-            </motion.div>
-            <div className="flex justify-end gap-2">
-              {onClose && (
-                <Btn
-                  type="button"
-                  label="Скасувати"
-                  uiVariant="ghost"
-                  onClick={onClose}
-                />
-              )}
-
-              <Btn
-                uiVariant="accent"
-                radius={12}
-                type="submit"
-                label={submitLabel}
-                disabled={!isValid || isSubmitting}
-              />
             </div>
-          </Form>
-        )}
-      </Formik>
-    </>
+          </AdminFormShell>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

@@ -1,8 +1,7 @@
 'use client';
 
-import LeadForm from '@/app/components/forms/public/LeadForm';
 import { iconLibrary, orderSection } from '@/app/resources';
-import { NextImage } from '@/components';
+import { LeadForm, NextImage } from '@/components';
 
 const Order = () => {
   const UptitleIcon = iconLibrary[orderSection.left.uptitleIcon];
@@ -42,7 +41,7 @@ const Order = () => {
         </div>
 
         <div className="bg-app/85 surface-dark flex w-full max-w-md flex-1 flex-col rounded-2xl p-6 shadow-md backdrop-blur-md">
-          <LeadForm mode="public" publicVariant="home" source="home" />
+          <LeadForm publicVariant="home" source="home" />
         </div>
       </div>
     </section>

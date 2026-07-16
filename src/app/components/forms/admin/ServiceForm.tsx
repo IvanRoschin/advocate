@@ -4,8 +4,10 @@ import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 
+import AdminFormSection from '@/app/components/forms/shared/AdminFormSection';
+import AdminFormShell from '@/app/components/forms/shared/AdminFormShell';
 import FormDraftPersist from '@/app/components/forms/shared/FormDraftPersist';
-import Btn from '@/app/components/ui/button/Btn';
+import { fieldMotion } from '@/app/components/forms/shared/formMotion';
 import storageKeys from '@/app/config/storageKeys';
 import { clearFormDraft, loadFormDraft } from '@/app/lib/client/form-draft';
 import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
@@ -247,16 +249,12 @@ const buildPatch = (
   return stripUndefined(patch) as UpdateServiceDTO;
 };
 
-/* ------------------------------------------------------------------ */
-/* Component --------------------------------------------------------- */
-
 const ServiceForm = (props: Props) => {
   const isEditMode = props.mode === 'edit';
   const initialValues = isEditMode ? props.initialValues : undefined;
 
   const persist =
     props.persistToLocalStorage ?? (props.mode === 'create' ? true : false);
-
   const clearOnClose = props.clearDraftOnClose ?? true;
 
   const [draft] = useState<DraftShape | null>(() => {
@@ -276,34 +274,25 @@ const ServiceForm = (props: Props) => {
       title: initialValues?.title ?? '',
       summary: initialValues?.summary ?? '',
       src: ensureMutableArray(initialValues?.src),
-
-      // Главное исправление — layout
       layout: ensureMutableLayout(
         initialValues?.layout ?? defaultServiceLayout
       ),
-
       seoTitle: initialValues?.seoTitle ?? '',
       seoDescription: initialValues?.seoDescription ?? '',
-
       relatedArticles: ensureMutableArray(
         initialValues?.relatedArticles?.map(extractArticleId)
       ),
-
       heroTitle: initialValues?.sections?.hero?.title ?? '',
       heroDescription: initialValues?.sections?.hero?.description ?? '',
       heroSrc: ensureMutableArray(initialValues?.sections?.hero?.src),
-
       benefitsTitle: initialValues?.sections?.benefits?.title ?? '',
       benefitsItems: ensureMutableArray(
         initialValues?.sections?.benefits?.items
       ),
-
       processTitle: initialValues?.sections?.process?.title ?? '',
       processSteps: ensureMutableArray(initialValues?.sections?.process?.steps),
-
       faqTitle: initialValues?.sections?.faq?.title ?? '',
       faqItems: ensureMutableArray(initialValues?.sections?.faq?.items),
-
       ctaTitle: initialValues?.sections?.cta?.title ?? '',
       ctaDescription: initialValues?.sections?.cta?.description ?? '',
       ctaButtonLabel: initialValues?.sections?.cta?.buttonLabel ?? '',
@@ -327,106 +316,102 @@ const ServiceForm = (props: Props) => {
   }, [baseValues, draft, persist, props.mode]);
 
   const handleClose = () => {
-    if (clearOnClose) {
-      clearFormDraft(storageKeys.service);
-    }
+    if (clearOnClose) clearFormDraft(storageKeys.service);
     props.onClose();
   };
 
   return (
-    <>
-      {isEditMode ? 'Редагувати послугу' : 'Додати нову послугу'}
-
-      <Formik<ServiceFormValues>
-        enableReinitialize={isEditMode || (props.mode === 'create' && persist)}
-        initialValues={defaultValues}
-        validationSchema={schema}
-        onSubmit={async values => {
-          if (props.mode === 'create') {
-            await props.onSubmit(buildCreatePayload(values));
-            clearFormDraft(storageKeys.service);
-            return;
-          }
-
-          const patch = buildPatch(baseValues, values);
-          await props.onSubmit(patch);
+    <Formik<ServiceFormValues>
+      enableReinitialize={isEditMode || (props.mode === 'create' && persist)}
+      initialValues={defaultValues}
+      validationSchema={schema}
+      onSubmit={async values => {
+        if (props.mode === 'create') {
+          await props.onSubmit(buildCreatePayload(values));
           clearFormDraft(storageKeys.service);
-        }}
-      >
-        {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
-          <Form className="flex w-full max-w-5xl flex-col gap-6">
-            <FormDraftPersist<ServiceFormValues>
-              storageKey={storageKeys.service}
-              enabled={persist && props.mode === 'create'}
-              values={values}
-            />
+          return;
+        }
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.04 }}
-            >
-              <Input name="title" label="Назва послуги" required />
-            </motion.div>
+        const patch = buildPatch(baseValues, values);
+        await props.onSubmit(patch);
+        clearFormDraft(storageKeys.service);
+      }}
+    >
+      {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
+        <Form>
+          <FormDraftPersist<ServiceFormValues>
+            storageKey={storageKeys.service}
+            enabled={persist && props.mode === 'create'}
+            values={values}
+          />
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.06 }}
-            >
-              <Textarea
-                name="summary"
-                label="Короткий опис"
-                rows={4}
-                required
-              />
-            </motion.div>
+          <AdminFormShell
+            title={isEditMode ? 'Редагувати послугу' : 'Додати нову послугу'}
+            onClose={handleClose}
+            submitLabel={
+              props.submitLabel ??
+              (isEditMode ? 'Оновити послугу' : 'Додати послугу')
+            }
+            isSubmitting={isSubmitting}
+            submitDisabled={!isValid}
+          >
+            <AdminFormSection title="Основна інформація">
+              <motion.div {...fieldMotion(0.04)}>
+                <Input name="title" label="Назва послуги" required />
+              </motion.div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <Select
-                name="status"
-                label="Статус"
-                options={[
-                  { value: 'draft', label: 'Чернетка' },
-                  { value: 'published', label: 'Опубліковано' },
-                ]}
-              />
+              <motion.div {...fieldMotion(0.06)} className="mt-3">
+                <Textarea
+                  name="summary"
+                  label="Короткий опис"
+                  rows={4}
+                  required
+                />
+              </motion.div>
 
-              <Input name="slug" label="Slug" />
-            </div>
+              <div className="mt-3 grid gap-4 md:grid-cols-2">
+                <Select
+                  name="status"
+                  label="Статус"
+                  options={[
+                    { value: 'draft', label: 'Чернетка' },
+                    { value: 'published', label: 'Опубліковано' },
+                  ]}
+                />
+                <Input name="slug" label="Slug" />
+              </div>
+            </AdminFormSection>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <Input name="seoTitle" label="SEO title" required />
-              <Input name="seoDescription" label="SEO description" required />
-            </div>
+            <AdminFormSection title="SEO">
+              <div className="grid gap-4 md:grid-cols-2">
+                <Input name="seoTitle" label="SEO title" required />
+                <Input name="seoDescription" label="SEO description" required />
+              </div>
+            </AdminFormSection>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.08 }}
-            >
-              <ImageUploadCloudinary
-                fieldName="src"
-                setFieldValue={setFieldValue}
-                values={values.src}
-                error={typeof errors.src === 'string' ? errors.src : undefined}
-                uploadPreset="service_cover"
-                multiple={false}
-              />
-            </motion.div>
+            <AdminFormSection title="Обкладинка">
+              <motion.div {...fieldMotion(0.08)}>
+                <ImageUploadCloudinary
+                  fieldName="src"
+                  setFieldValue={setFieldValue}
+                  values={values.src}
+                  error={
+                    typeof errors.src === 'string' ? errors.src : undefined
+                  }
+                  uploadPreset="service_cover"
+                  multiple={false}
+                />
+              </motion.div>
+            </AdminFormSection>
 
-            <div className="border-border rounded-2xl border p-4">
-              <h3 className="text-accent mb-4 text-lg font-semibold">Hero</h3>
-
+            <AdminFormSection title="Hero">
               <div className="grid gap-4">
                 <Input name="heroTitle" label="Hero title" />
-
                 <Textarea
                   name="heroDescription"
                   label="Hero description"
                   rows={4}
                 />
-
                 <ImageUploadCloudinary
                   fieldName="heroSrc"
                   setFieldValue={setFieldValue}
@@ -435,47 +420,50 @@ const ServiceForm = (props: Props) => {
                   multiple={false}
                 />
               </div>
-            </div>
+            </AdminFormSection>
 
-            <RepeatableFieldsSection
-              sectionTitle="Benefits"
-              sectionFieldName="benefitsTitle"
-              sectionLabel="Benefits title"
-              itemsFieldName="benefitsItems"
-              items={values.benefitsItems}
-              mode="title-description"
-              addButtonLabel="Додати benefit"
-              itemLabelPrefix="Benefit"
-            />
+            <AdminFormSection title="Benefits">
+              <RepeatableFieldsSection
+                sectionTitle=""
+                sectionFieldName="benefitsTitle"
+                sectionLabel="Benefits title"
+                itemsFieldName="benefitsItems"
+                items={values.benefitsItems}
+                mode="title-description"
+                addButtonLabel="Додати benefit"
+                itemLabelPrefix="Benefit"
+              />
+            </AdminFormSection>
 
-            <RepeatableFieldsSection
-              sectionTitle="Process"
-              sectionFieldName="processTitle"
-              sectionLabel="Process title"
-              itemsFieldName="processSteps"
-              items={values.processSteps}
-              mode="title-description"
-              addButtonLabel="Додати step"
-              itemLabelPrefix="Step"
-            />
+            <AdminFormSection title="Process">
+              <RepeatableFieldsSection
+                sectionTitle=""
+                sectionFieldName="processTitle"
+                sectionLabel="Process title"
+                itemsFieldName="processSteps"
+                items={values.processSteps}
+                mode="title-description"
+                addButtonLabel="Додати step"
+                itemLabelPrefix="Step"
+              />
+            </AdminFormSection>
 
-            <RepeatableFieldsSection
-              sectionTitle="FAQ"
-              sectionFieldName="faqTitle"
-              sectionLabel="FAQ title"
-              itemsFieldName="faqItems"
-              items={values.faqItems}
-              mode="question-answer"
-              addButtonLabel="Додати FAQ"
-              itemLabelPrefix="FAQ"
-            />
+            <AdminFormSection title="FAQ">
+              <RepeatableFieldsSection
+                sectionTitle=""
+                sectionFieldName="faqTitle"
+                sectionLabel="FAQ title"
+                itemsFieldName="faqItems"
+                items={values.faqItems}
+                mode="question-answer"
+                addButtonLabel="Додати FAQ"
+                itemLabelPrefix="FAQ"
+              />
+            </AdminFormSection>
 
-            <div className="border-border rounded-2xl border p-4">
-              <h3 className="text-accent mb-4 text-lg font-semibold">CTA</h3>
-
+            <AdminFormSection title="CTA">
               <div className="grid gap-4">
                 <Input name="ctaTitle" label="CTA title" />
-
                 <Textarea
                   name="ctaDescription"
                   label="CTA description"
@@ -483,13 +471,10 @@ const ServiceForm = (props: Props) => {
                 />
                 <Input name="ctaButtonLabel" label="CTA button label" />
               </div>
-            </div>
-            {props.articles?.length ? (
-              <div className="border-border rounded-2xl border p-4">
-                <h3 className="text-accent mb-4 text-lg font-semibold">
-                  Пов’язані статті
-                </h3>
+            </AdminFormSection>
 
+            {props.articles?.length ? (
+              <AdminFormSection title="Пов'язані статті">
                 <div className="grid gap-2">
                   {props.articles.map(article => {
                     const checked = values.relatedArticles.includes(article.id);
@@ -518,38 +503,17 @@ const ServiceForm = (props: Props) => {
                             }
                           }}
                         />
-
                         <span className="text-sm">{article.title}</span>
                       </label>
                     );
                   })}
                 </div>
-              </div>
+              </AdminFormSection>
             ) : null}
-
-            <div className="flex justify-end gap-2">
-              <Btn
-                type="button"
-                label="Скасувати"
-                uiVariant="ghost"
-                onClick={handleClose}
-              />
-
-              <Btn
-                uiVariant="accent"
-                radius={12}
-                type="submit"
-                label={
-                  props.submitLabel ??
-                  (isEditMode ? 'Оновити послугу' : 'Додати послугу')
-                }
-                disabled={!isValid || isSubmitting}
-              />
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </>
+          </AdminFormShell>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

@@ -2,19 +2,17 @@
 
 import { Form, Formik, FormikHelpers } from 'formik';
 import { motion } from 'framer-motion';
-import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import * as Yup from 'yup';
 
+import { fieldMotion } from '@/app/components/forms/shared/formMotion';
+import { HoneypotField } from '@/app/components/forms/shared/HoneypotField';
+import { usePublicCaptcha } from '@/app/components/forms/shared/usePublicCaptcha';
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl, routes } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
-import { clientEnv } from '@/app/lib/client/env/clientEnv';
-import { useThemeStore } from '@/app/store/theme.store';
 import { Checkbox, Input, StarRatingField, Textarea } from '@/components';
-import { Turnstile } from '@marsidev/react-turnstile';
 
-import type { TurnstileInstance } from '@marsidev/react-turnstile';
 type Props = {
   targetType: 'service' | 'article';
   targetId: string;
@@ -25,7 +23,7 @@ type PublicReviewFormValues = {
   text: string;
   rating: number;
   consent: boolean;
-  website: string; // honeypot
+  website: string;
 };
 
 const publicReviewSchema = Yup.object({
@@ -34,20 +32,16 @@ const publicReviewSchema = Yup.object({
     .min(2, 'Мінімум 2 символи')
     .max(120, 'Максимум 120 символів')
     .required("Вкажіть ім'я"),
-
   text: Yup.string()
     .trim()
     .min(5, 'Мінімум 5 символів')
     .max(5000, 'Максимум 5000 символів')
     .required('Вкажіть текст відгуку'),
-
   rating: Yup.number()
     .min(1, 'Мінімальний рейтинг 1')
     .max(5, 'Максимальний рейтинг 5')
-    .required('Оцініть статтю'),
-
+    .required('Оцініть послугу'),
   consent: Yup.boolean().oneOf([true], 'Потрібна згода на обробку даних'),
-
   website: Yup.string().max(0),
 });
 
@@ -59,24 +53,8 @@ const initialValues: PublicReviewFormValues = {
   website: '',
 };
 
-const fieldMotion = (delay: number) => ({
-  initial: { opacity: 0, y: 6 },
-  animate: { opacity: 1, y: 0 },
-  transition: { delay, duration: 0.2 },
-});
-
 const PublicReviewForm = ({ targetType, targetId }: Props) => {
-  const theme = useThemeStore(state => state.theme);
-  const turnstileRef = useRef<TurnstileInstance | null>(null);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-
-  const siteKey = clientEnv.cloudflare.turnstileSiteKey;
-
-  if (!siteKey) {
-    toast.message('Відсутній turnstileSiteKey');
-  }
-
-  const isCaptchaConfigured = Boolean(siteKey);
+  const captcha = usePublicCaptcha();
 
   const handleSubmit = async (
     values: PublicReviewFormValues,
@@ -84,7 +62,7 @@ const PublicReviewForm = ({ targetType, targetId }: Props) => {
   ) => {
     const { resetForm } = helpers;
 
-    if (isCaptchaConfigured && !turnstileToken) {
+    if (captcha.isConfigured && !captcha.token) {
       toast.error('Будь ласка, підтвердіть, що ви не робот');
       return;
     }
@@ -99,13 +77,12 @@ const PublicReviewForm = ({ targetType, targetId }: Props) => {
           targetType,
           targetId,
           website: values.website,
-          turnstileToken,
+          turnstileToken: captcha.token,
         }),
       });
 
       resetForm({ values: initialValues });
-      setTurnstileToken(null);
-      turnstileRef.current?.reset();
+      captcha.reset();
 
       toast.success(
         'Дякуємо! Відгук успішно надіслано та передано на модерацію.'
@@ -114,9 +91,7 @@ const PublicReviewForm = ({ targetType, targetId }: Props) => {
       toast.error(
         error instanceof Error ? error.message : 'Помилка надсилання відгуку'
       );
-
-      setTurnstileToken(null);
-      turnstileRef.current?.reset();
+      captcha.reset();
     }
   };
 
@@ -133,9 +108,9 @@ const PublicReviewForm = ({ targetType, targetId }: Props) => {
             <Textarea name="text" label="Ваш відгук" rows={5} required />
             <StarRatingField
               name="rating"
-              targetType={targetType}
-              label=""
+              label="Оцініть послугу"
               step={0.5}
+              targetType={targetType}
             />
           </motion.div>
 
@@ -148,32 +123,11 @@ const PublicReviewForm = ({ targetType, targetId }: Props) => {
             </Checkbox>
           </motion.div>
 
-          <input
-            type="text"
-            name="website"
-            autoComplete="off"
-            tabIndex={-1}
-            aria-hidden="true"
-            className="hidden"
-          />
+          <HoneypotField />
 
-          {isCaptchaConfigured && siteKey && (
+          {captcha.isConfigured && (
             <motion.div {...fieldMotion(0.15)} className="flex justify-center">
-              <Turnstile
-                ref={turnstileRef}
-                siteKey={siteKey}
-                options={{
-                  theme: theme === 'dark' ? 'dark' : 'light',
-                  size: 'normal',
-                  language: 'uk',
-                }}
-                onSuccess={token => setTurnstileToken(token)}
-                onExpire={() => setTurnstileToken(null)}
-                onError={() => {
-                  setTurnstileToken(null);
-                  toast.error('Помилка перевірки Cloudflare Turnstile');
-                }}
-              />
+              {captcha.widget}
             </motion.div>
           )}
 
@@ -187,7 +141,7 @@ const PublicReviewForm = ({ targetType, targetId }: Props) => {
                 isSubmitting ||
                 !dirty ||
                 !isValid ||
-                (isCaptchaConfigured && !turnstileToken)
+                (captcha.isConfigured && !captcha.token)
               }
             />
 

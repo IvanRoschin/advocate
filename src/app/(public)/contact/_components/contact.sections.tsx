@@ -272,7 +272,7 @@ const ContactFormSection: ContactPageSectionComponent = () => {
         </div>
 
         <div className={`${panelClassName} p-6 lg:p-8`}>
-          <LeadForm mode="public" publicVariant="contacts" source="contacts" />
+          <LeadForm publicVariant="contacts" source="contacts" />
         </div>
       </div>
     </section>

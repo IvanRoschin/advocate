@@ -1,7 +1,5 @@
-import { NextImage } from '@/app/components';
+import { NextImage, PaymentForm } from '@/app/components';
 import { payment } from '@/app/resources/content';
-
-import PaymentForm from './paymentForm';
 
 export default function PaymentsAside() {
   return (
