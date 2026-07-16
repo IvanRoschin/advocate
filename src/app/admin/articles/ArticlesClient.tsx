@@ -105,7 +105,7 @@ export default function ArticlesClient({
 
   const handleEdit = useCallback(
     (article: ArticleResponseDTO) => {
-      router.push(routes.api.admin.articles + `/${article._id}/edit`);
+      router.push(`/admin/articles/${article._id}/edit`);
     },
     [router]
   );

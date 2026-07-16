@@ -75,7 +75,7 @@ export default function ReviewsClient({ initialReviews }: Props) {
 
   const handleEdit = useCallback(
     (review: ReviewResponseDTO) => {
-      router.push(routes.api.admin.reviews + `/${review._id}/edit`);
+      router.push(`/admin/reviews/${review._id}/edit`);
     },
     [router]
   );
