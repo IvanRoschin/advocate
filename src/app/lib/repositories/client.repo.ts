@@ -5,6 +5,7 @@ import type {
   UpdateClientDTO,
 } from '@/app/types';
 import { mapClientToResponse } from '@/app/types';
+import { deleteClientCascade } from './client-deletion.helpers';
 import { createQuery } from './queryFactory';
 export type RepairClientAccessResult =
   | {
@@ -81,8 +82,7 @@ export const clientRepo = {
   },
 
   async deleteById(id: string) {
-    const deleted = await Client.findByIdAndDelete(id);
-    return deleted ? deleted._id.toString() : null;
+    return deleteClientCascade(id);
   },
 
   async repairClientAccessService(

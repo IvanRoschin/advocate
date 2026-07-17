@@ -10,7 +10,7 @@ import { usePublicCaptcha } from '@/app/components/forms/shared/usePublicCaptcha
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl, routes } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
-import { useLoadingStore } from '@/app/store/loading.store.ts';
+import { useLoadingStore } from '@/app/store/loading.store';
 import { publicLeadContactsSchema, publicLeadHomeSchema } from '@/app/types';
 import { Checkbox, Input, Textarea } from '@/components';
 

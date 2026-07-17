@@ -8,8 +8,7 @@ import { formatDate } from '@/app/helpers/formatDate';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { Badge } from '@/components/ui/badge';
 
-import { TocItem } from './ArticleToc';
-import ArticleToc from './ArticleToc.client.tsx';
+import ArticleToc, { TocItem } from './ArticleToc';
 
 type ArticlePageDto = Awaited<
   ReturnType<

@@ -9,7 +9,7 @@ import { fieldMotion } from '@/app/components/forms/shared/formMotion';
 import { HoneypotField } from '@/app/components/forms/shared/HoneypotField';
 import { usePublicCaptcha } from '@/app/components/forms/shared/usePublicCaptcha';
 import Btn from '@/app/components/ui/button/Btn';
-import { useLoadingStore } from '@/app/store/loading.store.ts';
+import { useLoadingStore } from '@/app/store/loading.store';
 import {
   CreatePaymentRequestDTO,
   createPaymentSchema,

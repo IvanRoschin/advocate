@@ -7,7 +7,7 @@ import LeadForm from '@/app/components/forms/admin/LeadForm';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
-import { useLoadingStore } from '@/app/store/loading.store.ts';
+import { useLoadingStore } from '@/app/store/loading.store';
 import {
   Breadcrumbs,
   Btn,

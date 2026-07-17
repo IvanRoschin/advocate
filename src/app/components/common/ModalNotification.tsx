@@ -59,7 +59,7 @@ const ModalNotification = ({
             type="button"
             label="Скасувати"
             onClick={onCancel}
-            variant="outline"
+            uiVariant="outline"
             className="flex-1 py-3 text-base font-medium"
           />
         )}
@@ -69,7 +69,7 @@ const ModalNotification = ({
             type="button"
             label="OK"
             onClick={onConfirm}
-            variant="accent"
+            uiVariant="accent"
             className="flex-1 py-3 text-base font-medium"
           />
         )}

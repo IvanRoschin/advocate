@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-import { useLoadingStore } from '@/store/loading.store.ts';
+import { useLoadingStore } from '@/store/loading.store';
 
 type Props = { children: React.ReactNode };
 
