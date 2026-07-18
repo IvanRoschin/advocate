@@ -1,10 +1,10 @@
-export type WayForPayProduct = {
+type WayForPayProduct = {
   name: string;
   price: number;
   quantity?: number;
 };
 
-export type WayForPayClient = {
+type WayForPayClient = {
   firstName?: string;
   lastName?: string;
   email?: string;

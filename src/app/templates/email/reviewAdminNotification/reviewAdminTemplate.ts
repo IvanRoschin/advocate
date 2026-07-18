@@ -16,7 +16,7 @@ export function reviewAdminTemplate(props: ReviewAdminTemplateProps) {
   });
 }
 
-export function reviewAdminContent({
+function reviewAdminContent({
   authorName,
   text,
   rating,

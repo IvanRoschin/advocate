@@ -2,7 +2,7 @@ import mongoose, { InferSchemaType, Types } from 'mongoose';
 
 const { Schema } = mongoose;
 
-export const CLIENT_ACCESS_ROLES = ['owner', 'manager', 'viewer'] as const;
+const CLIENT_ACCESS_ROLES = ['owner', 'manager', 'viewer'] as const;
 
 const clientAccessSchema = new Schema(
   {

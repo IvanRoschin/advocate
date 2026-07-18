@@ -2,8 +2,8 @@ import mongoose, { InferSchemaType, Types } from 'mongoose';
 
 const { Schema } = mongoose;
 
-export const CLIENT_TYPES = ['individual', 'company'] as const;
-export const CLIENT_STATUSES = ['active', 'inactive'] as const;
+const CLIENT_TYPES = ['individual', 'company'] as const;
+const CLIENT_STATUSES = ['active', 'inactive'] as const;
 
 const clientSchema = new Schema(
   {

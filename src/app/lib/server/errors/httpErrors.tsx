@@ -27,13 +27,3 @@ export class ConflictError extends ApiError {
   }
 }
 
-export class NotImplementedError extends ApiError {
-  constructor(message = 'Not implemented') {
-    super(message, 501, 'NOT_IMPLEMENTED');
-  }
-}
-export class ForbiddenError extends ApiError {
-  constructor(message = 'Forbidden') {
-    super(message, 403, 'FORBIDDEN');
-  }
-}

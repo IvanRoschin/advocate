@@ -27,7 +27,7 @@ type ButtonLikeProps = CommonProps &
     href?: undefined;
   };
 
-export type BtnProps = AnchorLikeProps | ButtonLikeProps;
+type BtnProps = AnchorLikeProps | ButtonLikeProps;
 
 function cn(...classes: Array<string | undefined | false>) {
   return classes.filter(Boolean).join(' ');

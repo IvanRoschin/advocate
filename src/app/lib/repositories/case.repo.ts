@@ -3,7 +3,7 @@ import { ClientSession } from 'mongoose';
 import Case from '@/app/models/Case';
 import { createQuery } from './queryFactory';
 
-export type CaseStatus =
+type CaseStatus =
   | 'new'
   | 'in_progress'
   | 'awaiting_client'

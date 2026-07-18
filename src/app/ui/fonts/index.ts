@@ -57,14 +57,6 @@ export const eUkrainehead = localFont({
   display: 'swap',
 });
 
-// Декоративне лого-начертання — окремий варіант, не «вага» в звичайному сенсі
-export const eUkrainaheadLogo = localFont({
-  src: './e-Ukraine Head/e-UkraineHead-LOGO.otf',
-  variable: '--font-eukrainehead-logo',
-  weight: '500',
-  display: 'swap',
-});
-
 export const eUkraine = localFont({
   src: [
     { path: './e-Ukraine/e-Ukraine-Thin.otf', weight: '100', style: 'normal' },

@@ -1,6 +1,6 @@
 import { routes } from '@/app/config/routes';
 
-export type AdminDashboardGroupKey =
+type AdminDashboardGroupKey =
   | 'crm'
   | 'content'
   | 'finance'

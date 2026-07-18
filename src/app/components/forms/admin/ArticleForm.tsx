@@ -41,7 +41,7 @@ export type UserOption = { id: string; name: string };
 export type CategoryOption = { id: string; title: string };
 export type ServiceOption = { id: string; title: string };
 
-export type ArticleFormValues = CreateArticleRequestDTO & {
+type ArticleFormValues = CreateArticleRequestDTO & {
   tagsInput: string;
   src: CoverImageDto;
 };

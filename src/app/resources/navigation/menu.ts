@@ -1,28 +1,3 @@
-import type {
-  AdminStringRouteKey,
-  PublicStringRouteKey,
-} from '@/app/config/routes';
-
-export type MenuItem = {
-  title: string;
-  route: PublicStringRouteKey;
-};
-
-export type AdminMenuItem = {
-  title: string;
-  route: AdminStringRouteKey;
-};
-
-export const mainMenu = [
-  { title: 'Головна', route: 'home' },
-  { title: 'Про мене', route: 'about' },
-  { title: 'Практики', route: 'practices' },
-  { title: 'Послуги', route: 'services' },
-  { title: 'Блог', route: 'blog' },
-  { title: 'Оплата послуг', route: 'payments' },
-  { title: 'Контакти', route: 'contact' },
-] satisfies MenuItem[];
-
 export const menuText = {
   navAria: 'Навігація',
   burgerAria: 'Меню',

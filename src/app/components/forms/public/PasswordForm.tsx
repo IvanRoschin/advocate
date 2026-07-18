@@ -8,7 +8,7 @@ import { useModal } from '@/app/hooks/useModal';
 import { Btn, Input, Modal, ModalNotification } from '@/components';
 
 import type { Schema } from 'yup';
-export type PasswordField = {
+type PasswordField = {
   name: string;
   label: string;
   autoComplete?: string;

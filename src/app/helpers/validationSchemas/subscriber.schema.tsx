@@ -18,6 +18,3 @@ const subscriberSchema = Yup.object({
 });
 
 export default subscriberSchema;
-
-// Тип TypeScript для данных формы
-export type SubscriberInput = Yup.InferType<typeof subscriberSchema>;

@@ -2,7 +2,7 @@ import * as cheerio from 'cheerio';
 
 import { slugify } from './slugify';
 
-export type TocItem = {
+type TocItem = {
   id: string;
   text: string;
   level: 2 | 3;

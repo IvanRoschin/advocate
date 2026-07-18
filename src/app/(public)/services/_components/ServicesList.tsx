@@ -9,7 +9,7 @@ import { imageVariants } from '@/app/config/imageVariants';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { ServiceListItemDto } from '@/app/types';
 
-export type ListSectionProps = {
+type ListSectionProps = {
   services: ServiceListItemDto[];
 };
 

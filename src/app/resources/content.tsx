@@ -1,4 +1,4 @@
-import type { Blog, ContactContent, Newsletter, Person, Social } from '@/types';
+import type { Blog, ContactContent, Person, Social } from '@/types';
 
 type PaymentDetail = {
   label: string;
@@ -53,12 +53,6 @@ const person: Person = {
   location: 'Україна, м. Київ',
   timeZone: 'Europe/Kyiv',
   languages: ['Українська'],
-};
-
-const newsletter: Newsletter = {
-  display: true,
-  title: <>Підписатися на розсилку</>,
-  description: <>Нові статті, практичні роз’яснення та юридичні нотатки.</>,
 };
 
 const phone1 = '0951983729';
@@ -260,15 +254,4 @@ const contact: ContactContent = {
   },
 };
 
-export {
-  blog,
-  brand,
-  contact,
-  home,
-  logo,
-  newsletter,
-  payment,
-  person,
-  social,
-};
-export type { BlogContent, PaymentContent, PaymentDetail };
+export { blog, brand, contact, home, logo, payment, person, social };

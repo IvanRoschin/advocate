@@ -18,7 +18,7 @@ interface EmptyStateProps {
   onReset?: () => void;
 }
 
-export const EmptyState: React.FC<EmptyStateProps> = ({
+const EmptyState: React.FC<EmptyStateProps> = ({
   title = 'За Вашим запитом нічого не знайдейно 🤷‍♂️',
   subtitle = 'Спробуйте змінити фільтри ⚙️',
   showReset,

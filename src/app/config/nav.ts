@@ -3,7 +3,7 @@ import type { IconType } from 'react-icons';
 
 import { routes } from '@/app/config/routes';
 import { useUserStore } from '@/app/store/user.store';
-import { iconLibrary, menuText } from '@/resources';
+import { iconLibrary } from '@/resources';
 
 export type NavScope = 'public' | 'admin' | 'client' | 'manager' | 'mobile';
 
@@ -15,19 +15,19 @@ type BaseNavItem = {
   enabled?: boolean;
 };
 
-export type NavItemLink = BaseNavItem & {
+type NavItemLink = BaseNavItem & {
   href: string;
   onClick?: never;
 };
 
-export type NavItemAction = BaseNavItem & {
+type NavItemAction = BaseNavItem & {
   href?: never;
   onClick: () => void | Promise<void>;
 };
 
 export type NavItem = NavItemLink | NavItemAction;
 
-export const PUBLIC_NAV_ITEMS: readonly NavItem[] = [
+const PUBLIC_NAV_ITEMS: readonly NavItem[] = [
   {
     key: 'home',
     href: routes.public.home,
@@ -75,7 +75,7 @@ export const PUBLIC_NAV_ITEMS: readonly NavItem[] = [
     Icon: iconLibrary.contact,
   },
 ];
-export const PUBLIC_NAV_MOBILE_ITEMS: readonly NavItem[] = [
+const PUBLIC_NAV_MOBILE_ITEMS: readonly NavItem[] = [
   {
     key: 'home',
     href: routes.public.home,
@@ -111,7 +111,7 @@ export const PUBLIC_NAV_MOBILE_ITEMS: readonly NavItem[] = [
   },
 ];
 
-export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
+const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   {
     key: 'dashboard',
     href: routes.admin.dashboard,
@@ -202,7 +202,7 @@ export const ADMIN_NAV_ITEMS: readonly NavItem[] = [
   },
 ];
 
-export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
+const CLIENT_NAV_ITEMS: readonly NavItem[] = [
   {
     key: 'cases',
     href: routes.client.cases,
@@ -266,7 +266,7 @@ export const CLIENT_NAV_ITEMS: readonly NavItem[] = [
   },
 ];
 
-export const MANAGER_NAV_ITEMS: readonly NavItem[] = [
+const MANAGER_NAV_ITEMS: readonly NavItem[] = [
   {
     key: 'dashboard',
     href: routes.admin.dashboard,
@@ -329,8 +329,3 @@ export const NAV_ITEMS_BY_SCOPE: Record<NavScope, readonly NavItem[]> = {
   manager: MANAGER_NAV_ITEMS,
   mobile: PUBLIC_NAV_MOBILE_ITEMS,
 };
-
-export const navCta = {
-  href: routes.public.offer,
-  label: menuText.cta,
-} as const;

@@ -22,25 +22,6 @@ export type PageSectionKey =
   | 'footer'
   | 'scrollToTop';
 
-export type PageLayoutItemInput = {
-  key: PageSectionKey;
-  display: boolean;
-};
-
-export type PageSectionLayoutInput = {
-  type: 'section';
-  key: PageSectionKey;
-  display: boolean;
-};
-
-export type PageGroupLayoutInput = {
-  type: 'group';
-  key: string;
-  display: boolean;
-  wrapperClassName?: string;
-  items: PageLayoutItemInput[];
-};
-
 // Для БД / DTO — key: string (уже есть)
 export type PageLayoutNode =
   | { type: 'section'; key: string; display: boolean }
@@ -50,17 +31,6 @@ export type PageLayoutNode =
       display: boolean;
       wrapperClassName?: string;
       items: Array<{ key: string; display: boolean }>;
-    };
-
-// Для рендера — сужаем key до конкретного union
-export type TypedLayoutNode<TKey extends string> =
-  | { type: 'section'; key: TKey; display: boolean }
-  | {
-      type: 'group';
-      key: string;
-      display: boolean;
-      wrapperClassName?: string;
-      items: Array<{ key: TKey; display: boolean }>;
     };
 
 export type PageSettingsEntity = 'article' | 'service' | 'home';
