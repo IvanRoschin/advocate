@@ -1,12 +1,14 @@
 'use client';
 
 import { Form, Formik, FormikHelpers } from 'formik';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { registerAccount } from '@/app/actions/register.actions';
+import { HoneypotField } from '@/app/components/forms/shared/HoneypotField';
+import { usePublicCaptcha } from '@/app/components/forms/shared/usePublicCaptcha';
 import { normalizePhoneUA } from '@/app/lib/utils/normalizePhone';
 import { Btn, Input } from '@/components';
 
@@ -14,32 +16,43 @@ interface InitialStateType {
   name: string;
   phone: string;
   email: string;
+  website: string;
 }
 
 const RegisterForm = () => {
   const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
+  const captcha = usePublicCaptcha();
 
   const initialValues: InitialStateType = {
     name: '',
     phone: '+380',
     email: searchParams.get('email') ?? '',
+    website: '',
   };
 
   const handleSubmit = async (
     values: InitialStateType,
     { resetForm }: FormikHelpers<InitialStateType>
   ) => {
-    if (isLoading) return;
+    if (!captcha.isConfigured) {
+      toast.error('Cloudflare Turnstile не налаштований');
+      return;
+    }
+
+    if (!captcha.token) {
+      toast.error('Будь ласка, підтвердіть, що ви не робот');
+      return;
+    }
 
     try {
-      setIsLoading(true);
-
       const result = await registerAccount({
         name: values.name.trim(),
         phone: normalizePhoneUA(values.phone),
         email: values.email.trim(),
+        website: values.website,
+        turnstileToken: captcha.token,
       });
 
       if (!result.ok) {
@@ -49,13 +62,13 @@ const RegisterForm = () => {
 
       setIsSent(true);
       resetForm();
+      captcha.reset();
       toast.success(result.message);
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : 'Не вдалося надіслати заявку'
       );
-    } finally {
-      setIsLoading(false);
+      captcha.reset();
     }
   };
 
@@ -70,16 +83,16 @@ const RegisterForm = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
     >
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {() => (
+        {({ isSubmitting }) => (
           <Form className="flex flex-col gap-5">
             <Input name="name" label="Ім'я" type="text" required />
             <Input
@@ -96,19 +109,18 @@ const RegisterForm = () => {
               required
             />
 
+            <HoneypotField />
+
+            {captcha.isConfigured && (
+              <div className="flex justify-center">{captcha.widget}</div>
+            )}
+
             <div className="flex justify-center">
-              <motion.div
-                className="inline-block"
-                whileHover={{ scale: isLoading ? 1 : 1.02 }}
-                whileTap={{ scale: isLoading ? 1 : 0.97 }}
-                transition={{ type: 'spring', stiffness: 300 }}
-              >
-                <Btn
-                  type="submit"
-                  label={isLoading ? 'Надсилання...' : 'Надіслати заявку'}
-                  disabled={isLoading}
-                />
-              </motion.div>
+              <Btn
+                type="submit"
+                label={isSubmitting ? 'Надсилання...' : 'Надіслати заявку'}
+                disabled={isSubmitting || !captcha.token}
+              />
             </div>
           </Form>
         )}

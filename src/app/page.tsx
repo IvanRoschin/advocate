@@ -2,7 +2,7 @@ import { pageSettingsActions } from './actions/page-settings.actions';
 import { reviewPublicActions } from './actions/review.actions';
 import { slidePublicActions } from './actions/slide.actions';
 import { buildOgImageUrl, generateMetadata } from './helpers';
-import { HOME_SECTIONS, HomeSectionProps } from './home.sections';
+import { HOME_SECTIONS, HomeSectionProps } from './_components/home.sections';
 import { LayoutNode, renderLayout } from './lib/layouts/renderLayout';
 import { home, person } from './resources/content';
 import { HomeSectionKey } from './resources/content/pages/home.layout';

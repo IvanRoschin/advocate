@@ -3,7 +3,7 @@
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { useLoadingStore } from '@/app/store/loading.store.ts';
+import { useLoadingStore } from '@/app/store/loading.store';
 
 export function RouteLoadingReset() {
   const pathname = usePathname();

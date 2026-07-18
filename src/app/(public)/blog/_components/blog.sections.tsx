@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 
 import Footer from '@/app/components/footer/Footer';
-import { blog } from '@/app/resources/content';
 import type { BlogSectionKey } from '@/app/resources/content/pages/blog.layout';
 import {
   ArticleListItemDto,
@@ -11,6 +10,7 @@ import {
 import { Header, ScrollToTopButton, Socials } from '@/components';
 import { BlogArticlesFeed } from './BlogArticlesFeed';
 import BlogAside from './BlogAside';
+import BlogHero from './BlogHero';
 /* --------------------------------- Types ---------------------------------- */
 
 export type BlogSectionProps = {
@@ -25,19 +25,7 @@ export type BlogSectionComponent = (props: BlogSectionProps) => ReactNode;
 
 /* -------------------------------- Sections -------------------------------- */
 
-const HeroSection: BlogSectionComponent = () => (
-  <section className="container pt-10 lg:pt-14">
-    <div className="mb-8 max-w-3xl">
-      <p className="text-accent mb-2 text-sm font-semibold tracking-[0.18em] uppercase">
-        {blog.eyebrow}
-      </p>
-      <h1 className="title-app text-accent text-3xl font-semibold tracking-tight lg:text-4xl">
-        {blog.heading}
-      </h1>
-      <p className="text-app mt-4 text-base leading-7">{blog.lead}</p>
-    </div>
-  </section>
-);
+const HeroSection: BlogSectionComponent = () => <BlogHero />;
 
 const FiltersSection: BlogSectionComponent = ({
   recent,

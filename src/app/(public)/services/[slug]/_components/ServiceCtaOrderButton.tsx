@@ -36,7 +36,7 @@ export default function ServiceCtaOrderButton({ label }: Props) {
             </div>
 
             <div className="mt-2">
-              <LeadForm mode="public" source={'home'} />
+              <LeadForm source={'home'} />
             </div>
           </div>
         }

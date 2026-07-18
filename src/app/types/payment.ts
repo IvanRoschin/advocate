@@ -6,6 +6,7 @@ export interface CreatePaymentRequestDTO {
   firstName: string;
   lastName: string;
   email: string;
+  website: string;
 }
 
 export const createPaymentSchema = Yup.object({

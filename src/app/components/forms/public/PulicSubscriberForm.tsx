@@ -1,45 +1,35 @@
 'use client';
 
 import { Form, Formik } from 'formik';
-import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+import { HoneypotField } from '@/app/components/forms/shared/HoneypotField';
+import { usePublicCaptcha } from '@/app/components/forms/shared/usePublicCaptcha';
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl, routes } from '@/app/config/routes';
 import subscriberSchema from '@/app/helpers/validationSchemas/subscriber.schema';
 import { apiFetch } from '@/app/lib/client/apiFetch';
-import { serverEnv } from '@/app/lib/server/env/serverEnv';
-import { useThemeStore } from '@/app/store/theme.store';
 import { Checkbox, Input } from '@/components';
-import { Turnstile } from '@marsidev/react-turnstile';
 
-import type { TurnstileInstance } from '@marsidev/react-turnstile';
 type Props = {
   variant?: 'default' | 'aside';
 };
 
-const SubscribeForm = ({ variant = 'default' }: Props) => {
+const PublicSubscribeForm = ({ variant = 'default' }: Props) => {
   const isAside = variant === 'aside';
-  const theme = useThemeStore(state => state.theme);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-
-  const turnstileRef = useRef<TurnstileInstance | null>(null);
-
-  const siteKey = serverEnv.cloudflare.turnstileSiteKey;
-
-  const isCaptchaConfigured = Boolean(siteKey);
+  const captcha = usePublicCaptcha(isAside ? 'flexible' : 'normal');
 
   return (
     <Formik
       initialValues={{ email: '', consent: false, website: '' }}
       validationSchema={subscriberSchema}
       onSubmit={async (values, { resetForm }) => {
-        if (!isCaptchaConfigured) {
+        if (!captcha.isConfigured) {
           toast.error('Cloudflare Turnstile не налаштований');
           return;
         }
 
-        if (!turnstileToken) {
+        if (!captcha.token) {
           toast.error('Будь ласка, підтвердіть, що ви не робот');
           return;
         }
@@ -51,27 +41,22 @@ const SubscribeForm = ({ variant = 'default' }: Props) => {
               email: values.email.trim(),
               consent: values.consent,
               website: values.website,
-              turnstileToken,
+              turnstileToken: captcha.token,
             }),
           });
 
           toast.success('Ви успішно підписались на розсилку!');
-
           resetForm();
-          setTurnstileToken(null);
-          turnstileRef.current?.reset();
+          captcha.reset();
         } catch (e: unknown) {
-          const message =
-            e instanceof Error ? e.message : 'Сталася невідома помилка';
-
-          toast.error(message);
-
-          setTurnstileToken(null);
-          turnstileRef.current?.reset();
+          toast.error(
+            e instanceof Error ? e.message : 'Сталася невідома помилка'
+          );
+          captcha.reset();
         }
       }}
     >
-      {() => (
+      {({ isSubmitting, dirty }) => (
         <Form
           className={
             isAside
@@ -79,15 +64,13 @@ const SubscribeForm = ({ variant = 'default' }: Props) => {
               : 'mt-4 flex w-full max-w-md flex-col items-stretch gap-4 text-xs'
           }
         >
-          <div className="w-full">
-            <Input
-              name="email"
-              label="Email"
-              type="email"
-              required
-              className={isAside ? 'text-sm' : undefined}
-            />
-          </div>
+          <Input
+            name="email"
+            label="Email"
+            type="email"
+            required
+            className={isAside ? 'text-sm' : undefined}
+          />
 
           <Checkbox name="consent">
             Я згоден(-на) на обробку персональних даних відповідно до{' '}
@@ -96,58 +79,25 @@ const SubscribeForm = ({ variant = 'default' }: Props) => {
             </a>
           </Checkbox>
 
-          {/* Honeypot */}
-          <input
-            type="text"
-            name="website"
-            autoComplete="off"
-            tabIndex={-1}
-            aria-hidden="true"
-            className="hidden"
+          <HoneypotField />
+
+          {captcha.widget}
+
+          <Btn
+            radius={12}
+            type="submit"
+            label="Підписатися"
+            disabled={isSubmitting || !dirty || !captcha.token}
+            className={
+              isAside
+                ? 'min-h-11 w-full px-4 py-2 text-sm'
+                : 'min-h-[3.7rem] w-full px-6 py-3'
+            }
           />
-
-          {siteKey && (
-            <div className="flex flex-col items-center gap-2">
-              <Turnstile
-                ref={turnstileRef}
-                siteKey={siteKey}
-                options={{
-                  theme: theme === 'dark' ? 'dark' : 'light',
-                  size: isAside ? 'flexible' : 'normal',
-                  language: 'uk',
-                }}
-                onSuccess={token => setTurnstileToken(token)}
-                onExpire={() => setTurnstileToken(null)}
-                onError={() => {
-                  setTurnstileToken(null);
-                  toast.error('Помилка перевірки Cloudflare Turnstile');
-                }}
-              />
-
-              {!turnstileToken && (
-                <p className="text-secondary text-center text-xs">
-                  Підтвердіть, що ви не робот.
-                </p>
-              )}
-            </div>
-          )}
-
-          <div className="w-full">
-            <Btn
-              radius={12}
-              type="submit"
-              label="Підписатися"
-              className={
-                isAside
-                  ? 'min-h-11 w-full px-4 py-2 text-sm'
-                  : 'min-h-[3.7rem] w-full px-6 py-3'
-              }
-            />
-          </div>
         </Form>
       )}
     </Formik>
   );
 };
 
-export default SubscribeForm;
+export default PublicSubscribeForm;

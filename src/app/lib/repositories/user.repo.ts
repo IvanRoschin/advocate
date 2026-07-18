@@ -10,6 +10,7 @@ import {
 } from '@/app/types';
 import { User } from '@/models';
 import { createQuery } from './queryFactory';
+import { deleteUserCascade } from './user-deletion.helpers';
 
 const userQuery = createQuery(User);
 
@@ -68,9 +69,7 @@ export const userRepo = {
     });
   },
 
-  async deleteById(id: string) {
-    return User.findByIdAndDelete(id);
-  },
+  deleteById: deleteUserCascade,
 };
 
 /* ========================= QUERIES ========================= */

@@ -3,7 +3,7 @@
 import Link, { LinkProps } from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { useLoadingStore } from '@/app/store/loading.store.ts';
+import { useLoadingStore } from '@/app/store/loading.store';
 
 type Props = LinkProps &
   React.AnchorHTMLAttributes<HTMLAnchorElement> & {

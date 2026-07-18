@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
-import { useLoadingStore } from '@/app/store/loading.store.ts';
+import { useLoadingStore } from '@/app/store/loading.store';
 import {
   Breadcrumbs,
   Btn,
@@ -75,7 +75,7 @@ export default function ReviewsClient({ initialReviews }: Props) {
 
   const handleEdit = useCallback(
     (review: ReviewResponseDTO) => {
-      router.push(routes.api.admin.reviews + `/${review._id}/edit`);
+      router.push(`/admin/reviews/${review._id}/edit`);
     },
     [router]
   );

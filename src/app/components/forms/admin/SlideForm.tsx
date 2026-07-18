@@ -4,7 +4,8 @@ import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 
-import Btn from '@/app/components/ui/button/Btn';
+import AdminFormShell from '@/app/components/forms/shared/AdminFormShell';
+import { fieldMotion } from '@/app/components/forms/shared/formMotion';
 import storageKeys from '@/app/config/storageKeys';
 import { useFormDraft } from '@/app/hooks/useFormDraft';
 import { clearFormDraft } from '@/app/lib/client/form-draft';
@@ -61,7 +62,6 @@ const buildPatch = (
 ): UpdateSlideDTO => {
   const i = normalize(initial);
   const c = normalize(current);
-
   const patch: UpdateSlideDTO = {};
 
   if (c.title !== i.title) patch.title = c.title;
@@ -78,7 +78,6 @@ const SlideForm = (props: Props) => {
 
   const persist =
     props.persistToLocalStorage ?? (props.mode === 'create' ? true : false);
-
   const clearOnClose = props.clearDraftOnClose ?? true;
 
   const { draft, clearDraft } = useFormDraft<SlideFormValues>(
@@ -121,64 +120,58 @@ const SlideForm = (props: Props) => {
   };
 
   return (
-    <>
-      {isEditMode ? 'Редагувати слайд' : 'Додати новий слайд'}
+    <Formik<SlideFormValues>
+      enableReinitialize={isEditMode || (props.mode === 'create' && persist)}
+      initialValues={defaultValues}
+      validationSchema={schema}
+      onSubmit={async values => {
+        const normalized = normalize(values);
 
-      <Formik<SlideFormValues>
-        enableReinitialize={isEditMode || (props.mode === 'create' && persist)}
-        initialValues={defaultValues}
-        validationSchema={schema}
-        onSubmit={async values => {
-          const normalized = normalize(values);
+        if (props.mode === 'create') {
+          const payload: CreateSlideDTO = {
+            title: normalized.title,
+            desc: normalized.desc,
+            src: normalized.src,
+            isActive: normalized.isActive,
+          };
 
-          if (props.mode === 'create') {
-            const payload: CreateSlideDTO = {
-              title: normalized.title,
-              desc: normalized.desc,
-              src: normalized.src,
-              isActive: normalized.isActive,
-            };
-
-            await props.onSubmit(payload);
-            clearDraft();
-            return;
-          }
-
-          const patch = buildPatch(baseValues, normalized);
-
-          await props.onSubmit(patch);
+          await props.onSubmit(payload);
           clearDraft();
-        }}
-      >
-        {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
-          <Form className="flex w-full max-w-4xl flex-col gap-6">
-            <FormDraftPersist<SlideFormValues>
-              storageKey={storageKeys.slide}
-              enabled={persist && props.mode === 'create'}
-              values={values}
-            />
+          return;
+        }
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.04 }}
-            >
+        const patch = buildPatch(baseValues, normalized);
+        await props.onSubmit(patch);
+        clearDraft();
+      }}
+    >
+      {({ isValid, isSubmitting, setFieldValue, values, errors }) => (
+        <Form>
+          <FormDraftPersist<SlideFormValues>
+            storageKey={storageKeys.slide}
+            enabled={persist && props.mode === 'create'}
+            values={values}
+          />
+
+          <AdminFormShell
+            title={isEditMode ? 'Редагувати слайд' : 'Додати новий слайд'}
+            onClose={handleClose}
+            submitLabel={
+              props.submitLabel ??
+              (isEditMode ? 'Оновити слайд' : 'Додати слайд')
+            }
+            isSubmitting={isSubmitting}
+            submitDisabled={!isValid}
+          >
+            <motion.div {...fieldMotion(0.04)}>
               <Input name="title" label="Назва" required />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.08 }}
-            >
+            <motion.div {...fieldMotion(0.08)} className="mt-3">
               <Textarea name="desc" label="Опис" rows={2} required />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.12 }}
-            >
+            <motion.div {...fieldMotion(0.12)} className="mt-3">
               <div className="border-border bg-background/50 rounded-2xl border p-4">
                 <Checkbox name="isActive">
                   <div className="space-y-1">
@@ -192,11 +185,7 @@ const SlideForm = (props: Props) => {
               </div>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.16 }}
-            >
+            <motion.div {...fieldMotion(0.16)} className="mt-3">
               <ImageUploadCloudinary
                 fieldName="src"
                 setFieldValue={setFieldValue}
@@ -206,30 +195,10 @@ const SlideForm = (props: Props) => {
                 multiple={false}
               />
             </motion.div>
-
-            <div className="flex justify-end gap-2">
-              <Btn
-                type="button"
-                label="Скасувати"
-                uiVariant="ghost"
-                onClick={handleClose}
-              />
-
-              <Btn
-                uiVariant="accent"
-                radius={12}
-                type="submit"
-                label={
-                  props.submitLabel ??
-                  (isEditMode ? 'Оновити слайд' : 'Додати слайд')
-                }
-                disabled={!isValid || isSubmitting}
-              />
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </>
+          </AdminFormShell>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

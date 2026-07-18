@@ -11,16 +11,16 @@ import {
 } from '@/components';
 import Header from '@/components/header/Header';
 
-import Footer from './components/footer/Footer';
-import Practices from './components/sections/practices/Practices';
-import Reviews from './components/sections/reviews/Reviews';
-import Services from './components/sections/services/Services';
-import { HomeSectionKey } from './resources/content/pages/home.layout';
+import Footer from '@/app/components/footer/Footer';
+import Practices from '@/app/components/sections/practices/Practices';
+import Reviews from '@/app/components/sections/reviews/Reviews';
+import Services from '@/app/components/sections/services/Services';
+import { HomeSectionKey } from '@/app/resources/content/pages/home.layout';
 import {
   ReviewResponseDTO,
   ServicePublicPageDto,
   SlideResponseDTO,
-} from './types';
+} from '@/app/types';
 
 export type HomeSectionProps = {
   reviews?: ReviewResponseDTO[];

@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { useLoadingStore } from '@/store/loading.store.ts';
+import { useLoadingStore } from '@/store/loading.store';
 
 export function TopProgressBar() {
   const progress = useLoadingStore(s => s.progress);

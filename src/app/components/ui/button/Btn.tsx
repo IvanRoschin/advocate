@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import type { IconType } from 'react-icons';
 
-type BtnVariant = 'accent' | 'outline' | 'ghost';
+type BtnVariant = 'accent' | 'outline' | 'ghost' | 'destructive';
 type BtnType = 'submit' | 'reset' | 'button';
 
 type CommonProps = {
@@ -40,6 +40,8 @@ const variantClasses: Record<BtnVariant, string> = {
     'bg-transparent text-[var(--accentcolor)] border-2 border-[var(--accentcolor)] hover:bg-[color-mix(in_srgb,var(--accentcolor)_10%,transparent)]',
   ghost:
     'bg-transparent text-[var(--accentcolor)] hover:bg-[color-mix(in_srgb,var(--accentcolor)_8%,transparent)]',
+  destructive:
+    'bg-red-600 text-white hover:brightness-105 active:brightness-95',
 };
 
 const baseClasses =

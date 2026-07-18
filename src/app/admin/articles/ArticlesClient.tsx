@@ -11,7 +11,7 @@ import {
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
-import { useLoadingStore } from '@/app/store/loading.store.ts';
+import { useLoadingStore } from '@/app/store/loading.store';
 import {
   Breadcrumbs,
   Btn,
@@ -105,7 +105,7 @@ export default function ArticlesClient({
 
   const handleEdit = useCallback(
     (article: ArticleResponseDTO) => {
-      router.push(routes.api.admin.articles + `/${article._id}/edit`);
+      router.push(`/admin/articles/${article._id}/edit`);
     },
     [router]
   );

@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import LeadForm from '@/app/components/forms/public/LeadForm';
+import LeadForm from '@/app/components/forms/admin/LeadForm';
 import { apiUrl } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
 
@@ -102,12 +102,7 @@ export default function LeadEditorClient(props: Props) {
   return (
     <div className="container py-6">
       {props.mode === 'create' ? (
-        <LeadForm
-          mode="create"
-          onClose={backToList}
-          onSubmit={handleCreate}
-          source={'home'}
-        />
+        <LeadForm mode="create" onClose={backToList} onSubmit={handleCreate} />
       ) : (
         <LeadForm
           mode="edit"
@@ -125,7 +120,6 @@ export default function LeadEditorClient(props: Props) {
           onConvertToClient={handleConvertToClient}
           onClose={backToList}
           onSubmit={handleUpdate}
-          source={'home'}
         />
       )}
     </div>

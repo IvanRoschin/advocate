@@ -7,6 +7,7 @@ import { KeyboardEvent, useId, useMemo, useState } from 'react';
 type Props = {
   name: string;
   label?: string;
+  targetType?: 'service' | 'article';
   max?: number;
   step?: 0.5 | 1;
   required?: boolean;
@@ -21,6 +22,7 @@ const roundToStep = (value: number, step: number) =>
 const StarRatingField = ({
   name,
   label = 'Рейтинг',
+  targetType,
   max = 5,
   step = 0.5,
   required = false,
@@ -30,6 +32,15 @@ const StarRatingField = ({
   const { setFieldValue, setFieldTouched } =
     useFormikContext<Record<string, unknown>>();
   const [hoverValue, setHoverValue] = useState<number | null>(null);
+
+  // Динамічний лейбл
+  const displayLabel = useMemo(() => {
+    if (label) return label;
+
+    if (targetType === 'service') return 'Оцініть послугу';
+    if (targetType === 'article') return 'Оцініть статтю';
+    return 'Рейтинг';
+  }, [label, targetType]);
 
   const committedValue =
     typeof field.value === 'number' ? clamp(field.value, 0, max) : 0;
@@ -85,7 +96,7 @@ const StarRatingField = ({
   return (
     <div className="grid gap-2">
       <label htmlFor={id} className="text-sm font-medium">
-        {label} {required ? <span aria-hidden="true">*</span> : null}
+        {displayLabel} {required ? <span aria-hidden="true">*</span> : null}
       </label>
 
       <div

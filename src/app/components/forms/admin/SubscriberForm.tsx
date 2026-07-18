@@ -4,14 +4,14 @@ import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 
-import Btn from '@/app/components/ui/button/Btn';
+import AdminFormShell from '@/app/components/forms/shared/AdminFormShell';
+import FormDraftPersist from '@/app/components/forms/shared/FormDraftPersist';
+import { fieldMotion } from '@/app/components/forms/shared/formMotion';
 import storageKeys from '@/app/config/storageKeys';
 import { useFormDraft } from '@/app/hooks/useFormDraft';
 import { clearFormDraft } from '@/app/lib/client/form-draft';
 import { createSubscriberSchema } from '@/app/types';
 import { Checkbox, Input } from '@/components';
-
-import FormDraftPersist from '../shared/FormDraftPersist'; // если используете
 
 import type {
   CreateSubscriberDTO,
@@ -89,48 +89,49 @@ const SubscriberForm = (props: Props) => {
   };
 
   return (
-    <>
-      <div className="text-accent mb-6 text-xl font-semibold">
-        {isEditMode ? 'Редагувати підписника' : 'Додати нового підписника'}
-      </div>
+    <Formik<SubscriberFormValues>
+      enableReinitialize={isEditMode || (props.mode === 'create' && persist)}
+      initialValues={defaultValues}
+      validationSchema={createSubscriberSchema}
+      onSubmit={async values => {
+        const normalized = normalize(values);
 
-      <Formik<SubscriberFormValues>
-        enableReinitialize={isEditMode || (props.mode === 'create' && persist)}
-        initialValues={defaultValues}
-        validationSchema={createSubscriberSchema} // можно сделать updateSchema при необходимости
-        onSubmit={async values => {
-          const normalized = normalize(values);
+        if (props.mode === 'create') {
+          const payload: CreateSubscriberDTO = {
+            email: normalized.email,
+            subscribed: normalized.subscribed,
+          };
 
-          if (props.mode === 'create') {
-            const payload: CreateSubscriberDTO = {
-              email: normalized.email,
-              subscribed: normalized.subscribed,
-            };
-
-            await props.onSubmit(payload);
-            clearDraft();
-            return;
-          }
-
-          // Для edit — можно сделать patch, если нужно
-          await props.onSubmit(normalized as UpdateSubscriberDTO);
+          await props.onSubmit(payload);
           clearDraft();
-        }}
-      >
-        {({ isValid, isSubmitting, values }) => (
-          <Form className="flex w-full max-w-md flex-col gap-6">
-            {/* Сохранение черновика */}
-            <FormDraftPersist<SubscriberFormValues>
-              storageKey={storageKeys.subscriber}
-              enabled={persist && props.mode === 'create'}
-              values={values}
-            />
+          return;
+        }
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.04 }}
-            >
+        await props.onSubmit(normalized as UpdateSubscriberDTO);
+        clearDraft();
+      }}
+    >
+      {({ isValid, isSubmitting, values }) => (
+        <Form>
+          <FormDraftPersist<SubscriberFormValues>
+            storageKey={storageKeys.subscriber}
+            enabled={persist && props.mode === 'create'}
+            values={values}
+          />
+
+          <AdminFormShell
+            title={
+              isEditMode ? 'Редагувати підписника' : 'Додати нового підписника'
+            }
+            onClose={handleClose}
+            submitLabel={
+              props.submitLabel ??
+              (isEditMode ? 'Оновити підписника' : 'Додати підписника')
+            }
+            isSubmitting={isSubmitting}
+            submitDisabled={!isValid}
+          >
+            <motion.div {...fieldMotion(0.04)}>
               <Input
                 name="email"
                 label="Email адреса"
@@ -140,11 +141,7 @@ const SubscriberForm = (props: Props) => {
               />
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.08 }}
-            >
+            <motion.div {...fieldMotion(0.08)} className="mt-3">
               <div className="border-border bg-background/50 rounded-2xl border p-4">
                 <Checkbox name="subscribed">
                   <div className="space-y-1">
@@ -156,30 +153,10 @@ const SubscriberForm = (props: Props) => {
                 </Checkbox>
               </div>
             </motion.div>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Btn
-                type="button"
-                label="Скасувати"
-                uiVariant="ghost"
-                onClick={handleClose}
-              />
-
-              <Btn
-                uiVariant="accent"
-                radius={12}
-                type="submit"
-                label={
-                  props.submitLabel ??
-                  (isEditMode ? 'Оновити підписника' : 'Додати підписника')
-                }
-                disabled={!isValid || isSubmitting}
-              />
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </>
+          </AdminFormShell>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

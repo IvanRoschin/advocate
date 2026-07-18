@@ -3,7 +3,8 @@
 import { Form, Formik } from 'formik';
 import { useMemo } from 'react';
 
-import Btn from '@/app/components/ui/button/Btn';
+import AdminFormSection from '@/app/components/forms/shared/AdminFormSection';
+import AdminFormShell from '@/app/components/forms/shared/AdminFormShell';
 import {
   createReviewFormSchema,
   CreateReviewRequestDTO,
@@ -51,11 +52,7 @@ const buildCreatePayload = (
   };
 
   if (values.targetType === 'page') {
-    return {
-      ...base,
-      targetType: 'page',
-      pageKey: values.pageKey.trim(),
-    };
+    return { ...base, targetType: 'page', pageKey: values.pageKey.trim() };
   }
 
   return {
@@ -129,7 +126,6 @@ const ReviewForm = (props: Props) => {
           await props.onSubmit(buildCreatePayload(values));
           return;
         }
-
         await props.onSubmit(buildUpdatePayload(values));
       }}
     >
@@ -142,70 +138,73 @@ const ReviewForm = (props: Props) => {
               : withPlaceholder('Оберіть сторінку', pageOptions);
 
         return (
-          <Form className="flex w-full max-w-3xl flex-col gap-6">
-            <Input name="authorName" label="Автор" required />
+          <Form>
+            <AdminFormShell
+              title={isEditMode ? 'Редагувати відгук' : 'Додати відгук'}
+              onClose={props.onClose}
+              submitLabel={
+                props.submitLabel ??
+                (isEditMode ? 'Оновити відгук' : 'Додати відгук')
+              }
+              isSubmitting={isSubmitting}
+              submitDisabled={!isValid}
+            >
+              <AdminFormSection title="Відгук">
+                <Input name="authorName" label="Автор" required />
+                <div className="mt-3">
+                  <Textarea
+                    name="text"
+                    label="Текст відгуку"
+                    rows={6}
+                    required
+                  />
+                </div>
 
-            <Textarea name="text" label="Текст відгуку" rows={6} required />
+                <div className="mt-3 grid gap-4 md:grid-cols-3">
+                  <Input name="rating" label="Рейтинг (1-5)" type="number" />
 
-            <div className="grid gap-4 md:grid-cols-3">
-              <Input name="rating" label="Рейтинг (1-5)" type="number" />
+                  <Select
+                    name="status"
+                    label="Статус"
+                    options={[
+                      { value: 'pending', label: 'Очікує' },
+                      { value: 'approved', label: 'Погоджено' },
+                      { value: 'rejected', label: 'Відхилено' },
+                    ]}
+                  />
 
-              <Select
-                name="status"
-                label="Статус"
-                options={[
-                  { value: 'pending', label: 'Очікує' },
-                  { value: 'approved', label: 'Погоджено' },
-                  { value: 'rejected', label: 'Відхилено' },
-                ]}
-              />
+                  <Select
+                    name="targetType"
+                    label="Тип привʼязки"
+                    options={[
+                      { value: 'service', label: 'Послуга' },
+                      { value: 'article', label: 'Стаття' },
+                      { value: 'page', label: 'Сторінка' },
+                    ]}
+                  />
+                </div>
+              </AdminFormSection>
 
-              <Select
-                name="targetType"
-                label="Тип привʼязки"
-                options={[
-                  { value: 'service', label: 'Послуга' },
-                  { value: 'article', label: 'Стаття' },
-                  { value: 'page', label: 'Сторінка' },
-                ]}
-              />
-            </div>
-
-            {values.targetType === 'page' ? (
-              <Select
-                name="pageKey"
-                label="Сторінка"
-                required
-                options={targetOptions}
-              />
-            ) : (
-              <Select
-                name="targetId"
-                label={values.targetType === 'service' ? 'Послуга' : 'Стаття'}
-                required
-                options={targetOptions}
-              />
-            )}
-
-            <div className="flex justify-end gap-2">
-              <Btn
-                type="button"
-                label="Скасувати"
-                uiVariant="ghost"
-                onClick={props.onClose}
-              />
-
-              <Btn
-                uiVariant="accent"
-                radius={12}
-                type="submit"
-                label={
-                  props.submitLabel ??
-                  (isEditMode ? 'Оновити відгук' : 'Додати відгук')
-                }
-                disabled={!isValid || isSubmitting}
-              />
-            </div>
+              <AdminFormSection title="Привʼязка">
+                {values.targetType === 'page' ? (
+                  <Select
+                    name="pageKey"
+                    label="Сторінка"
+                    required
+                    options={targetOptions}
+                  />
+                ) : (
+                  <Select
+                    name="targetId"
+                    label={
+                      values.targetType === 'service' ? 'Послуга' : 'Стаття'
+                    }
+                    required
+                    options={targetOptions}
+                  />
+                )}
+              </AdminFormSection>
+            </AdminFormShell>
           </Form>
         );
       }}

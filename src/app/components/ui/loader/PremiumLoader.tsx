@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { brand } from '@/app/resources';
-import { useLoadingStore } from '@/app/store/loading.store.ts';
+import { useLoadingStore } from '@/app/store/loading.store';
 
 import { NextImage } from '../../common';
 
