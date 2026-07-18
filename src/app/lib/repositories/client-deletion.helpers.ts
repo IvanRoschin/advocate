@@ -1,30 +1,17 @@
-import mongoose from 'mongoose';
-
 import { Case, Client, ClientAccess } from '@/app/models';
 
 /**
  * Каскадно видаляє клієнта разом з його справами (Case) та доступами
- * (ClientAccess) в одній транзакції.
+ * (ClientAccess). Повертає id видаленого клієнта або null, якщо клієнта
+ * не знайдено.
  */
-export async function deleteClientCascade(id: string): Promise<string | null> {
-  const session = await mongoose.startSession();
+export async function deleteClientCascade(id: string) {
+  const client = await Client.findById(id);
+  if (!client) return null;
 
-  try {
-    let deletedId: string | null = null;
+  await Case.deleteMany({ clientId: id });
+  await ClientAccess.deleteMany({ clientId: id });
+  await Client.findByIdAndDelete(id);
 
-    await session.withTransaction(async () => {
-      const client = await Client.findById(id).session(session);
-      if (!client) return;
-
-      await Case.deleteMany({ clientId: id }).session(session);
-      await ClientAccess.deleteMany({ clientId: id }).session(session);
-      await Client.findByIdAndDelete(id).session(session);
-
-      deletedId = client._id.toString();
-    });
-
-    return deletedId;
-  } finally {
-    await session.endSession();
-  }
+  return client._id.toString();
 }

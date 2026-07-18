@@ -81,9 +81,7 @@ export const clientRepo = {
     return client ? mapClientToResponse(client) : null;
   },
 
-  async deleteById(id: string) {
-    return deleteClientCascade(id);
-  },
+  deleteById: deleteClientCascade,
 
   async repairClientAccessService(
     userId: string
