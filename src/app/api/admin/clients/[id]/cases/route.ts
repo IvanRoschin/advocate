@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { NextResponse } from 'next/server';
 
 import {
@@ -5,6 +6,7 @@ import {
   casePublicActions,
 } from '@/app/actions/case-admin.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
+import { ValidationError } from '@/app/lib/server/errors';
 import { CreateCaseDTO, createCaseSchema } from '@/app/types';
 
 type RouteContext = {
@@ -14,6 +16,11 @@ type RouteContext = {
 export async function GET(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
+
+    if (!Types.ObjectId.isValid(id)) {
+      throw new ValidationError('Некоректний ID клієнта');
+    }
+
     const data = await casePublicActions.getCasesByClientId(id);
 
     return NextResponse.json({ ok: true, data });
@@ -25,6 +32,11 @@ export async function GET(_: Request, { params }: RouteContext) {
 export async function POST(req: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
+
+    if (!Types.ObjectId.isValid(id)) {
+      throw new ValidationError('Некоректний ID клієнта');
+    }
+
     const body = await req.json();
 
     const validated = await createCaseSchema.validate(body, {

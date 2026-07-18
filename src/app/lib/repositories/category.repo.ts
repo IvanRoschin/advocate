@@ -30,6 +30,10 @@ export const categoryRepo = {
     return Category.findOne({ slug });
   },
 
+  async existsBySlug(slug: string) {
+    return (await Category.exists({ slug })) !== null;
+  },
+
   async create(data: CreateCategoryRequestDTO) {
     return Category.create(data);
   },
