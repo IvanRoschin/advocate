@@ -33,6 +33,7 @@ jobs:
           NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
             ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
           NEXT_PUBLIC_URL: ${{ secrets.NEXT_PUBLIC_URL }}
+          SKIP_DB_ON_BUILD: true
 
   deploy:
     name: Build Docker Image
