@@ -11,45 +11,22 @@ export type ArticleSectionKey =
   | 'serviceLink'
   | 'footer';
 
-export type ArticleLayoutItemInput = {
-  key: ArticleSectionKey;
-  display: boolean;
-};
-
-export type ArticleSectionLayoutInput = {
-  type: 'section';
-  key: ArticleSectionKey;
-  display: boolean;
-};
-
-export type ArticleGroupLayoutInput = {
-  type: 'group';
-  key: string;
-  display: boolean;
-  wrapperClassName?: string;
-  items: ArticleLayoutItemInput[];
-};
-
-export type ArticleLayoutNodeInput =
-  | ArticleSectionLayoutInput
-  | ArticleGroupLayoutInput;
-
 export type ArticleLanguage = 'uk' | 'ru' | 'en';
 
 export type CoverImageDto = string[];
 
-export type ArticleAuthorDto = {
+type ArticleAuthorDto = {
   _id: string;
   name: string;
   avatar?: string;
 };
 
-export type ArticleCategoryDto = {
+type ArticleCategoryDto = {
   _id: string;
   title: string;
   slug: string;
 };
-export type ArticleServiceDto = {
+type ArticleServiceDto = {
   _id: string;
   title: string;
   slug: string;
@@ -189,24 +166,3 @@ export type BlogRecentPostItemDto = {
   publishedAt?: Date;
 };
 
-export type ArticlePreviewDTO = {
-  id: string;
-  title: string;
-  slug: string;
-  summary: string;
-  src: string[];
-  publishedAt?: Date | string | null;
-};
-
-export type ArticleWithServiceDTO = {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-
-  service: {
-    id: string;
-    title: string;
-    slug: string;
-  } | null;
-};

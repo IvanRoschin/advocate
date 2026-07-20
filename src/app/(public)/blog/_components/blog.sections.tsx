@@ -13,7 +13,7 @@ import BlogAside from './BlogAside';
 import BlogHero from './BlogHero';
 /* --------------------------------- Types ---------------------------------- */
 
-export type BlogSectionProps = {
+type BlogSectionProps = {
   category?: string;
   initialItems: ArticleListItemDto[];
   hasMore: boolean;

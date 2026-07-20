@@ -14,14 +14,6 @@ import { deleteUserCascade } from './user-deletion.helpers';
 
 const userQuery = createQuery(User);
 
-/* ========================= TYPES ========================= */
-
-export type RepoPaginatedResult<T> = {
-  items: T[];
-  total: number;
-  hasMore: boolean;
-};
-
 /* ========================= REPO ========================= */
 
 export const userRepo = {

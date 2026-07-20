@@ -17,7 +17,7 @@ export function leadAdminTemplate(props: LeadAdminTemplateProps) {
   });
 }
 
-export function leadAdminContent({
+function leadAdminContent({
   name,
   email,
   phone,

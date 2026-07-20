@@ -28,7 +28,3 @@ export const clientAccessRepo = {
     return access;
   },
 };
-
-export type ClientAccessWithRole = NonNullable<
-  Awaited<ReturnType<typeof clientAccessRepo.findPreferredActiveByUserId>>
->;

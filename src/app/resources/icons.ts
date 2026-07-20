@@ -177,5 +177,5 @@ export const iconLibrary = {
   protection: FaUserShield, // 🛡️ Защита прав
 } as const satisfies Record<string, IconType>;
 
-export type IconLibrary = typeof iconLibrary;
+type IconLibrary = typeof iconLibrary;
 export type IconName = keyof IconLibrary;

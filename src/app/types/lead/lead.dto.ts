@@ -36,11 +36,3 @@ export type LeadResponseDTO = {
   createdAt?: string;
   updatedAt?: string;
 };
-
-export type LeadToClientDraftInput = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  message: string;
-};

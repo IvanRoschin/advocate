@@ -4,13 +4,6 @@ import { persist } from 'zustand/middleware';
 
 import storageKeys from '@/app/config/storageKeys';
 
-export interface Option {
-  value: string;
-  label: string;
-  slug?: string;
-  src?: string;
-}
-
 export interface FiltersState {
   selectedCategory: string;
   sort: 'asc' | 'desc' | '';

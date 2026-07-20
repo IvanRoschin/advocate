@@ -1,5 +1,3 @@
-import slugify from 'slugify';
-
 import { caseQueries, caseRepo } from '@/app/lib/repositories/case.repo';
 import { AdminClientCaseDto, mapCaseRowToAdminDto } from '@/app/types';
 
@@ -13,15 +11,11 @@ export const caseActions = createEntityModule({
   toListDTO: mapCaseRowToAdminDto,
 
   slug: {
-    enabled: true,
-    makeSlug: input =>
-      slugify(input, { lower: true, strict: true, locale: 'uk' }),
-    getBase: data => data.title,
+    enabled: false,
   },
 
   validation: {
     notFoundMessage: 'Case not found',
-    slugConflictMessage: 'Case slug already exists',
   },
 });
 

@@ -11,18 +11,18 @@ export type ServiceSectionKey =
   | 'cta'
   | 'footer';
 
-export type ServiceLayoutItemInput = {
+type ServiceLayoutItemInput = {
   key: ServiceSectionKey;
   display: boolean;
 };
 
-export type ServiceSectionLayoutInput = {
+type ServiceSectionLayoutInput = {
   type: 'section';
   key: ServiceSectionKey;
   display: boolean;
 };
 
-export type ServiceGroupLayoutInput = {
+type ServiceGroupLayoutInput = {
   type: 'group';
   key: string;
   display: boolean;
@@ -51,43 +51,43 @@ export type ServiceLayoutNode =
       }>;
     };
 
-export type ServiceHeroDto = {
+type ServiceHeroDto = {
   title: string;
   description: string;
   src: string[];
 };
 
-export type ServiceBenefitsItemDto = {
+type ServiceBenefitsItemDto = {
   title: string;
   description: string;
 };
 
-export type ServiceBenefitsDto = {
+type ServiceBenefitsDto = {
   title: string;
   items: ServiceBenefitsItemDto[];
 };
 
-export type ServiceProcessStepDto = {
+type ServiceProcessStepDto = {
   title: string;
   description: string;
 };
 
-export type ServiceProcessDto = {
+type ServiceProcessDto = {
   title: string;
   steps: ServiceProcessStepDto[];
 };
 
-export type ServiceFaqItemDto = {
+type ServiceFaqItemDto = {
   question: string;
   answer: string;
 };
 
-export type ServiceFaqDto = {
+type ServiceFaqDto = {
   title: string;
   items: ServiceFaqItemDto[];
 };
 
-export type ServiceCtaDto = {
+type ServiceCtaDto = {
   title: string;
   description: string;
   buttonLabel: string;
@@ -101,7 +101,7 @@ export type ServiceSectionsDto = {
   cta?: ServiceCtaDto;
 };
 
-export type RelatedArticleRef = {
+type RelatedArticleRef = {
   id: string;
   slug: string;
   title: string;

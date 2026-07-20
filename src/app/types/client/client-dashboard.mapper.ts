@@ -8,7 +8,7 @@ import type {
   ClientResponseDTO,
 } from '@/app/types';
 
-export const mapClientToDashboardClientDto = (
+const mapClientToDashboardClientDto = (
   client: ClientResponseDTO
 ): ClientDashboardClientDto => ({
   id: toIdString(client.id),
@@ -22,7 +22,7 @@ export const mapClientToDashboardClientDto = (
   address: client.address,
 });
 
-export const mapCaseRowToDashboardCaseDto = (
+const mapCaseRowToDashboardCaseDto = (
   row: CaseRow
 ): ClientDashboardCaseDto => ({
   id: toIdString(row._id),

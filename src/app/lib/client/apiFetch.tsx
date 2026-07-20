@@ -1,6 +1,6 @@
 import type { ApiResponse } from '../server/ApiError';
 
-export class ApiClientError extends Error {
+class ApiClientError extends Error {
   constructor(
     public code: string,
     message: string,

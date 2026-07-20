@@ -6,19 +6,19 @@ import type {
   ArticleStatus,
 } from '@/app/types';
 
-export type CategoryLean = {
+type CategoryLean = {
   _id: Types.ObjectId;
   title: string;
   slug: string;
 };
 
-export type ServiceLean = {
+type ServiceLean = {
   _id: Types.ObjectId;
   title: string;
   slug: string;
 };
 
-export type AuthorLean = {
+type AuthorLean = {
   _id: Types.ObjectId;
   name: string;
   avatar?: string;

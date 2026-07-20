@@ -1,6 +1,6 @@
 import type { IconName } from '@/app/resources/icons';
 
-export type AdminDashboardStatColor =
+type AdminDashboardStatColor =
   | 'bg-teal-500'
   | 'bg-cyan-500'
   | 'bg-sky-500'

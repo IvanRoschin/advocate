@@ -1,23 +1,23 @@
 // token.meta.ts
 import { TokenType } from './token.enums';
 
-export interface BaseTokenMeta extends Record<string, unknown> {
+interface BaseTokenMeta extends Record<string, unknown> {
   createdBy?: string;
 }
 
-export interface VerificationTokenMeta extends BaseTokenMeta {
+interface VerificationTokenMeta extends BaseTokenMeta {
   plainPassword: string;
 }
 
-export interface ResetPasswordMeta extends BaseTokenMeta {
+interface ResetPasswordMeta extends BaseTokenMeta {
   plainPassword: string;
 }
 
-export interface PasswordRestoreMeta extends BaseTokenMeta {
+interface PasswordRestoreMeta extends BaseTokenMeta {
   plainPassword: string;
 }
 
-export type TokenMetaByType = {
+type TokenMetaByType = {
   [TokenType.VERIFICATION]: VerificationTokenMeta;
   // future:
   [TokenType.RESET_PASSWORD]: ResetPasswordMeta;

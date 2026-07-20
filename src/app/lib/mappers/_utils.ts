@@ -42,14 +42,3 @@ export const firstImage = (v: unknown): string | undefined => {
   const s = v.find(x => typeof x === 'string' && x.trim());
   return typeof s === 'string' ? s.trim() : undefined;
 };
-
-export const sameArray = (
-  a?: readonly string[] | null,
-  b?: readonly string[] | null
-) => {
-  const aa = a ?? [];
-  const bb = b ?? [];
-  if (aa.length !== bb.length) return false;
-  for (let i = 0; i < aa.length; i++) if (aa[i] !== bb[i]) return false;
-  return true;
-};

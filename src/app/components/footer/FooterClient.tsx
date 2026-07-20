@@ -2,12 +2,12 @@
 
 import { getRouteUrl } from '@/app/config/routes';
 import { useThemeStore } from '@/app/store/theme.store';
-import { CategoryResponseDTO } from '@/app/types';
+import { BlogCategoryItemDto } from '@/app/types';
 import { AppLink, Logo } from '@/components';
 import { footerSection, iconLibrary, person, social } from '@/resources';
 
 type Props = {
-  categories: CategoryResponseDTO[];
+  categories: BlogCategoryItemDto[];
 };
 
 export default function FooterClient({ categories }: Props) {
@@ -53,7 +53,7 @@ export default function FooterClient({ categories }: Props) {
               <ul className="text-footer-muted space-y-2 text-sm">
                 {categories.length > 0 ? (
                   categories.map(category => (
-                    <li key={category._id}>
+                    <li key={category.id}>
                       <AppLink
                         className="footer-link"
                         href={`/blog?category=${encodeURIComponent(category.slug)}`}

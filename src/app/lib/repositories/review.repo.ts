@@ -7,14 +7,6 @@ import type {
   UpdateReviewDTO,
 } from '@/app/types';
 import { createQuery } from './queryFactory';
-/* ========================= TYPES ========================= */
-
-export type RepoPaginatedResult<T> = {
-  items: T[];
-  total: number;
-  hasMore: boolean;
-};
-
 const PUBLIC_SORT = { createdAt: -1, _id: -1 } as const;
 
 const reviewQuery = createQuery(Review);

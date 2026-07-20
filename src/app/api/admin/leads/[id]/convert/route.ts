@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { leadActions, leadAdminActions } from '@/app/actions/lead.actions';
+import { leadAdminActions } from '@/app/actions/lead.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 
 type RouteContext = {

@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-export const pageSettingsEntitySchema = Yup.mixed<'article' | 'service'>()
+const pageSettingsEntitySchema = Yup.mixed<'article' | 'service'>()
   .oneOf(['article', 'service'], 'Некоректна сутність')
   .required("Обов'язкове поле");
 

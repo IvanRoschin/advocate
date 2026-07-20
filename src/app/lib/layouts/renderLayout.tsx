@@ -1,18 +1,18 @@
 import type { ReactNode } from 'react';
 import { Fragment } from 'react';
 
-export type LayoutSectionNode<TSectionKey extends string> = {
+type LayoutSectionNode<TSectionKey extends string> = {
   type: 'section';
   key: TSectionKey;
   display: boolean;
 };
 
-export type LayoutGroupItem<TSectionKey extends string> = {
+type LayoutGroupItem<TSectionKey extends string> = {
   key: TSectionKey;
   display: boolean;
 };
 
-export type LayoutGroupNode<TSectionKey extends string> = {
+type LayoutGroupNode<TSectionKey extends string> = {
   type: 'group';
   key: string;
   display: boolean;
@@ -24,11 +24,9 @@ export type LayoutNode<TSectionKey extends string> =
   | LayoutSectionNode<TSectionKey>
   | LayoutGroupNode<TSectionKey>;
 
-export type LayoutSectionComponent<TProps> = (
-  props: Readonly<TProps>
-) => ReactNode;
+type LayoutSectionComponent<TProps> = (props: Readonly<TProps>) => ReactNode;
 
-export type LayoutSectionsMap<TSectionKey extends string, TProps> = Readonly<
+type LayoutSectionsMap<TSectionKey extends string, TProps> = Readonly<
   Record<TSectionKey, LayoutSectionComponent<TProps>>
 >;
 

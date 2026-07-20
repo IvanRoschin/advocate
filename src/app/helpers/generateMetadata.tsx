@@ -8,7 +8,7 @@ type OgImages = NonNullable<
   Exclude<Metadata['openGraph'], null | undefined>['images']
 >;
 
-export type OpenGraphExtras = {
+type OpenGraphExtras = {
   // базовые
   type?: OgType;
   locale?: string;

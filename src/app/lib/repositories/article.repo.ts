@@ -8,14 +8,6 @@ import type {
   CreateArticleRequestDTO,
 } from '@/app/types';
 import { createQuery } from './queryFactory';
-/* ========================= TYPES ========================= */
-
-export type RepoPaginatedResult<T> = {
-  items: T[];
-  total: number;
-  hasMore: boolean;
-};
-
 const PUBLIC_SORT = { publishedAt: -1, _id: -1 } as const;
 
 const articleQuery = createQuery(Article);

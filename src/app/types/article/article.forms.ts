@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-import type { ArticleStatus, CoverImageDto } from './article.dto';
+import type { ArticleStatus } from './article.dto';
 
 /* -------------------------------- Helpers -------------------------------- */
 
@@ -37,7 +37,7 @@ const srcPatchSchema = Yup.array()
 
 /* -------------------------------- Base rules -------------------------------- */
 
-export const baseArticleSchema = {
+const baseArticleSchema = {
   status: Yup.mixed<ArticleStatus>().oneOf(
     ['draft', 'published'],
     'Некоректний статус'
@@ -93,25 +93,6 @@ export const baseArticleSchema = {
     .max(3, 'Максимум 3 фото'),
 };
 
-export type ArticleBaseValues = {
-  status: ArticleStatus;
-
-  title: string;
-  subtitle?: string;
-
-  summary: string;
-  content: string;
-
-  tags: string[];
-
-  src: CoverImageDto;
-
-  language: 'uk' | 'ru' | 'en';
-
-  authorId: string;
-  categoryId: string;
-};
-
 /* -------------------------------- Create -------------------------------- */
 
 export const createArticleSchema = Yup.object({
@@ -138,7 +119,6 @@ export const createArticleSchema = Yup.object({
   serviceId: baseArticleSchema.serviceId.required("Обов'язкове поле"),
 }).noUnknown(true);
 
-export type CreateArticleFormValues = Yup.InferType<typeof createArticleSchema>;
 
 /* -------------------------------- Update (PATCH) -------------------------------- */
 
@@ -171,4 +151,3 @@ export const updateArticleSchema = Yup.object({
       )
   );
 
-export type UpdateArticleFormValues = Yup.InferType<typeof updateArticleSchema>;
