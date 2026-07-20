@@ -70,10 +70,13 @@ export const articlePublicActions = {
     return raw.map(mapPublicRowToListItem);
   }),
 
-  categories: createAction<void, BlogCategoryItemDto[]>(async () => {
-    const raw = await articleQueries.categories();
-    return raw.map(mapCategoryCountToBlogItem);
-  }),
+  categories: createAction<void, BlogCategoryItemDto[]>(
+    async () => {
+      const raw = await articleQueries.categories();
+      return raw.map(mapCategoryCountToBlogItem);
+    },
+    { buildFallback: [] }
+  ),
 
   findBySlug: createAction<string, ArticlePublicPageDto | null>(
     async ({ args: slug }) => {
