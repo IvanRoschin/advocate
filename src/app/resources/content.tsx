@@ -108,8 +108,8 @@ const social: Social = [
 ];
 
 const logo = {
-  logoBlack: '/images/logo/logo_black_bg.webp',
-  logoWhite: '/images/logo/logo_white_bg.webp',
+  logoBlack: '/images/logo/logo_black_bg.png',
+  logoWhite: '/images/logo/logo_white_bg.png',
 };
 
 const brand = {

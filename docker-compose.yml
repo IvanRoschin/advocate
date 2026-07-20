@@ -16,14 +16,13 @@ services:
         NEXT_PUBLIC_ADVOCATE_EMAIL: ${NEXT_PUBLIC_ADVOCATE_EMAIL}
         NEXT_PUBLIC_ADVOCATE_PN_1: ${NEXT_PUBLIC_ADVOCATE_PN_1}
         NEXT_PUBLIC_ADVOCATE_PN_2: ${NEXT_PUBLIC_ADVOCATE_PN_2}
-        MONGODB_URI: ${MONGODB_URI}
 
     ports:
       - '3000:3000'
 
     environment:
-      # DB
-      MONGODB_URI: ${MONGODB_URI}     
+      # DB (MongoDB Atlas)
+      MONGODB_URI: ${MONGODB_URI}
 
       # SMTP
       SMTP_HOST: ${SMTP_HOST}
@@ -44,6 +43,7 @@ services:
 
       # Auth
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
 
       # Google
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
@@ -53,12 +53,6 @@ services:
       TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY}
 
     restart: unless-stopped
-
-    depends_on:
-      - mongo
-
-    networks:
-      - app-network
 
     healthcheck:
       test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:3000']
@@ -72,40 +66,3 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
-
-  mongo:
-    image: mongo:7
-    container_name: advocate-mongo
-    restart: unless-stopped
-
-    environment:
-      MONGO_INITDB_DATABASE: advocate
-
-    volumes:
-      - mongo_data:/data/db
-
-    ports:
-      - '27017:27017'
-
-    networks:
-      - app-network
-
-    healthcheck:
-      test:
-        echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-    logging:
-      driver: 'json-file'
-      options:
-        max-size: '10m'
-        max-file: '3'
-
-networks:
-  app-network:
-    driver: bridge
-
-volumes:
-  mongo_data:

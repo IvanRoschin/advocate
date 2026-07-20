@@ -45,8 +45,7 @@ type FixedSizeProps<TProps extends CommonImageProps> = BaseProps<TProps> & {
 };
 
 type NextImageProps<TProps extends CommonImageProps> =
-  | FillProps<TProps>
-  | FixedSizeProps<TProps>;
+  FillProps<TProps> | FixedSizeProps<TProps>;
 
 export default function NextImage<
   TProps extends CommonImageProps = React.ComponentProps<typeof Image>,
