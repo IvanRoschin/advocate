@@ -1,11 +1,11 @@
 import { Types } from 'mongoose';
 
 import { toIsoString } from '@/app/lib/mappers/_utils';
-import { CreateUserRequestDTO, UserResponseDTO } from '@/types';
+import { UserResponseDTO } from '@/types';
 
 import { UserRole } from './user.enums';
 
-export type UserEntity = {
+type UserEntity = {
   _id: string;
   name: string;
   email: string;
@@ -41,14 +41,5 @@ export function mapUserToResponse(user: UserLike): UserResponseDTO {
     isActive: user.isActive,
     createdAt: toIsoString(user.createdAt),
     updatedAt: toIsoString(user.updatedAt),
-  };
-}
-
-export function mapCreateRequestToUser(dto: CreateUserRequestDTO) {
-  return {
-    name: dto.name,
-    email: dto.email,
-    phone: dto.phone,
-    role: dto.role,
   };
 }

@@ -1,9 +1,9 @@
-import { categoryPublicActions } from '@/app/actions/category.actions';
+import { articlePublicActions } from '@/app/actions/article.actions';
 
 import FooterClient from './FooterClient';
 
 export default async function Footer() {
-  const categories = await categoryPublicActions.list({ limit: 8 });
+  const categories = await articlePublicActions.categories();
 
   return <FooterClient categories={categories} />;
 }

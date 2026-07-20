@@ -1,6 +1,5 @@
 import mongoose, { Types } from 'mongoose';
 
-import { IconName } from '@/app/resources';
 import { Category } from '@/models';
 
 import { BlogCategoryItemDto } from '../article';
@@ -20,15 +19,6 @@ export function mapCategoryToResponse(
     icon: category.icon,
     createdAt: category.createdAt?.toISOString(),
     updatedAt: category.updatedAt?.toISOString(),
-  };
-}
-
-export function mapCreateRequestToCategory(dto: CategoryResponseDTO) {
-  return {
-    _id: dto._id,
-    title: dto.title,
-    slug: dto.slug,
-    src: dto.icon as IconName,
   };
 }
 

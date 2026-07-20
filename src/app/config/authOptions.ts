@@ -49,7 +49,7 @@ declare module 'next-auth/jwt' {
   }
 }
 
-export type AuthUser = {
+type AuthUser = {
   id: string;
   name?: string;
   surname?: string;
@@ -61,7 +61,7 @@ export type AuthUser = {
   clientAccessRole?: 'owner' | 'manager' | 'viewer';
 };
 
-export const AUTH_ERROR_CODES = {
+const AUTH_ERROR_CODES = {
   MISSING_CREDENTIALS: 'AUTH_MISSING_CREDENTIALS',
   USER_NOT_FOUND: 'AUTH_USER_NOT_FOUND',
   INVALID_PASSWORD: 'AUTH_INVALID_PASSWORD',

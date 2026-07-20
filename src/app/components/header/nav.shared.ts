@@ -24,7 +24,7 @@ const getHrefHash = (href?: string) => {
 
 const isHashLink = (href?: string) => href?.startsWith('/#') ?? false;
 
-export const isNavItemLink = (
+const isNavItemLink = (
   item: NavItem
 ): item is Extract<NavItem, { href: string }> =>
   'href' in item && typeof item.href === 'string' && item.href.length > 0;

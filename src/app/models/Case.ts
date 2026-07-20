@@ -2,7 +2,7 @@ import mongoose, { InferSchemaType, Types } from 'mongoose';
 
 const { Schema } = mongoose;
 
-export const CASE_STATUSES = [
+const CASE_STATUSES = [
   'new',
   'in_progress',
   'awaiting_client',

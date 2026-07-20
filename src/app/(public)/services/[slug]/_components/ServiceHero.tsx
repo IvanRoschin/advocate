@@ -7,7 +7,7 @@ import { imageVariants } from '@/app/config/imageVariants';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { ServicePublicPageDto } from '@/app/types';
 
-export type ServiceSectionProps = {
+type ServiceSectionProps = {
   service: ServicePublicPageDto;
 };
 

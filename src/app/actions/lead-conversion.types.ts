@@ -1,6 +1,6 @@
 import 'server-only';
 
-export type ClientAccessRole = 'owner' | 'manager' | 'viewer';
+type ClientAccessRole = 'owner' | 'manager' | 'viewer';
 
 export type ExistingUserResolution =
   | { kind: 'create_new_user' }

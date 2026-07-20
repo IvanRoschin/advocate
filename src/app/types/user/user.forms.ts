@@ -11,7 +11,7 @@ const passwordRegex = /^\S+$/;
 const emptyToUndefined = (v: unknown) =>
   typeof v === 'string' && v.trim() === '' ? undefined : v;
 
-export const baseUserSchema = {
+const baseUserSchema = {
   name: Yup.string()
     .transform(emptyToUndefined)
     .min(2)
@@ -57,8 +57,6 @@ export const createUserSchema: Yup.ObjectSchema<CreateUserRequestDTO> =
     googleId: baseUserSchema.googleId,
   }).noUnknown(true);
 
-export type CreateUserFormValues = Yup.InferType<typeof createUserSchema>;
-
 export const updateUserSchema = Yup.object({
   name: baseUserSchema.name.optional(),
 
@@ -81,4 +79,3 @@ export const updateUserSchema = Yup.object({
       )
   );
 
-export type UpdateUserFormValues = Yup.InferType<typeof updateUserSchema>;

@@ -119,52 +119,6 @@ export const updateReviewFormSchema = Yup.object({
   }),
 }).noUnknown(true);
 
-export const createReviewSchema = Yup.object({
-  authorName: Yup.string()
-    .transform(emptyToUndefined)
-    .trim()
-    .min(2, 'Мінімальна кількість символів 2')
-    .max(120, 'Максимальна кількість символів 120')
-    .required("Обов'язкове поле"),
-
-  text: Yup.string()
-    .transform(emptyToUndefined)
-    .trim()
-    .min(5, 'Мінімальна кількість символів 5')
-    .max(5000, 'Максимальна кількість символів 5000')
-    .required("Обов'язкове поле"),
-
-  rating: Yup.number()
-    .min(1, 'Мінімальний рейтинг 1')
-    .max(5, 'Максимальний рейтинг 5')
-    .optional(),
-
-  status: Yup.mixed<ReviewStatus>()
-    .oneOf(['pending', 'approved', 'rejected'], 'Некоректний статус')
-    .required("Обов'язкове поле"),
-
-  targetType: Yup.mixed<ReviewTargetType>()
-    .oneOf(['service', 'article', 'page'], 'Некоректний тип')
-    .required("Обов'язкове поле"),
-
-  targetId: Yup.string().trim().optional(),
-  pageKey: Yup.string().trim().optional(),
-})
-  .test(
-    'target-link',
-    'Для service/article потрібен targetId, для page потрібен pageKey',
-    value => {
-      if (!value) return false;
-
-      if (value.targetType === 'page') {
-        return Boolean(value.pageKey?.trim());
-      }
-
-      return Boolean(value.targetId?.trim());
-    }
-  )
-  .noUnknown(true);
-
 export const updateReviewSchema = Yup.object({
   authorName: Yup.string()
     .transform(emptyToUndefined)

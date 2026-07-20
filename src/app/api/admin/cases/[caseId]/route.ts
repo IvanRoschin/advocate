@@ -1,7 +1,9 @@
+import { Types } from 'mongoose';
 import { NextResponse } from 'next/server';
 
 import { caseActions } from '@/app/actions/case-admin.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
+import { ValidationError } from '@/app/lib/server/errors';
 import { UpdateCaseDTO, updateCaseSchema } from '@/app/types';
 
 type RouteContext = {
@@ -11,6 +13,11 @@ type RouteContext = {
 export async function PATCH(req: Request, { params }: RouteContext) {
   try {
     const { caseId } = await params;
+
+    if (!Types.ObjectId.isValid(caseId)) {
+      throw new ValidationError('Некоректний ID справи');
+    }
+
     const body = await req.json();
 
     const validated = await updateCaseSchema.validate(body, {
@@ -35,6 +42,11 @@ export async function PATCH(req: Request, { params }: RouteContext) {
 export async function DELETE(_: Request, { params }: RouteContext) {
   try {
     const { caseId } = await params;
+
+    if (!Types.ObjectId.isValid(caseId)) {
+      throw new ValidationError('Некоректний ID справи');
+    }
+
     const data = await caseActions.delete(caseId);
 
     return NextResponse.json({ ok: true, data });

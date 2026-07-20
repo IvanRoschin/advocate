@@ -12,21 +12,10 @@ import type {
   ServicePublicFullRow,
 } from '@/app/lib/repositories/service.repo';
 import type {
-  ServiceLayoutNode,
-  ServiceLayoutNodeInput,
   ServiceListItemDto,
   ServicePublicPageDto,
   ServiceResponseDTO,
-  ServiceSectionKey,
 } from '@/app/types';
-const SERVICE_SECTION_KEYS: ServiceSectionKey[] = [
-  'hero',
-  'benefits',
-  'process',
-  'faq',
-  'reviews',
-  'cta',
-];
 
 type PopulatedArticle = {
   _id: Types.ObjectId;
@@ -35,45 +24,6 @@ type PopulatedArticle = {
   summary: string;
   src?: unknown;
 };
-
-const isServiceSectionKey = (key: string): key is ServiceSectionKey =>
-  SERVICE_SECTION_KEYS.includes(key as ServiceSectionKey);
-
-export const normalizeServiceLayout = (
-  layout: ServiceLayoutNodeInput[]
-): ServiceLayoutNode[] =>
-  layout.map(node => {
-    if (node.type === 'section') {
-      if (!isServiceSectionKey(node.key)) {
-        throw new Error(`Invalid service section key: ${node.key}`);
-      }
-
-      return {
-        type: 'section',
-        key: node.key,
-        display: Boolean(node.display),
-      };
-    }
-
-    return {
-      type: 'group',
-      key: node.key.trim(),
-      display: Boolean(node.display),
-      wrapperClassName: node.wrapperClassName?.trim() || undefined,
-      items: Array.isArray(node.items)
-        ? node.items.map(item => {
-            if (!isServiceSectionKey(item.key)) {
-              throw new Error(`Invalid service section key: ${item.key}`);
-            }
-
-            return {
-              key: item.key,
-              display: Boolean(item.display),
-            };
-          })
-        : [],
-    };
-  });
 
 export type ServiceLike = {
   _id: Types.ObjectId | string;
@@ -110,24 +60,6 @@ export const mapServiceToResponse = (
     : [],
   publishedAt: toIsoString(service.publishedAt),
   createdAt: toIsoString(service.createdAt),
-  updatedAt: toIsoString(service.updatedAt),
-});
-
-export const mapServiceResponseToPublic = (
-  service: ServiceResponseDTO
-): ServicePublicPageDto => ({
-  id: service._id,
-  slug: service.slug,
-  status: service.status,
-  title: service.title,
-  summary: service.summary,
-  src: service.src,
-  layout: service.layout,
-  sections: service.sections,
-  seoTitle: service.seoTitle,
-  seoDescription: service.seoDescription,
-  relatedArticles: [],
-  publishedAt: toIsoString(service.publishedAt),
   updatedAt: toIsoString(service.updatedAt),
 });
 

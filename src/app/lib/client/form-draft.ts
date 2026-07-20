@@ -1,4 +1,4 @@
-export const safeJsonParse = <T>(raw: string): T | null => {
+const safeJsonParse = <T>(raw: string): T | null => {
   try {
     return JSON.parse(raw) as T;
   } catch {

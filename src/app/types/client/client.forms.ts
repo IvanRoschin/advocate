@@ -27,8 +27,6 @@ const clientShape = {
 
 export const clientFormSchema = Yup.object(clientShape);
 
-export const createClientSchema = Yup.object(clientShape);
-
 export const updateClientSchema = Yup.object({
   type: Yup.mixed<(typeof CLIENT_TYPES)[number]>()
     .oneOf([...CLIENT_TYPES], 'Оберіть тип клієнта')

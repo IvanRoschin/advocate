@@ -15,7 +15,7 @@ export function subscriberClientTemplate({
   });
 }
 
-export function subscriberClientContent({
+function subscriberClientContent({
   email,
 }: SubscriberClientTemplateProps) {
   return `

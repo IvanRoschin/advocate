@@ -114,19 +114,7 @@ export const routes = {
 } as const;
 
 // ---------- Types ----------
-export type PublicRoutes = typeof routes.public;
-export type AuthRoutes = typeof routes.public.auth;
-
-export type BlogRoutes = typeof routes.blog;
-
-export type ApiRoutes = typeof routes.api.v1;
-export type ApiRouteKey = keyof typeof routes.api.v1;
-
-export type AdminRoutes = typeof routes.admin;
-
-export type AdminStringRouteKey = {
-  [K in keyof AdminRoutes]: AdminRoutes[K] extends string ? K : never;
-}[keyof AdminRoutes];
+type PublicRoutes = typeof routes.public;
 
 export type PublicStringRouteKey = {
   [K in keyof PublicRoutes]: PublicRoutes[K] extends string ? K : never;
@@ -141,11 +129,6 @@ export const apiUrl = (path: string) => {
   const p = path.replace(/^\//, '');
   return `${base}/${p}`;
 };
-
-export const protectedRoutes = [
-  routes.admin.dashboard,
-  routes.client.dashboard,
-];
 
 // ✅ теперь типобезопасно: route не может быть 'auth'
 export const getRouteUrl = (route: PublicStringRouteKey): string => {

@@ -6,7 +6,6 @@ import {
 } from '@/app/lib/mappers/_utils';
 import type {
   ArticleListItemDto,
-  ArticlePreviewDTO,
   ArticlePublicPageDto,
   ArticleRecentRow,
   ArticleResponseDTO,
@@ -43,41 +42,6 @@ export const mapArticleToResponse = (
   publishedAt: toIsoString(article.publishedAt),
   createdAt: toIsoString(article.createdAt),
   updatedAt: toIsoString(article.updatedAt),
-});
-
-/* ======================================================================== */
-/* RESPONSE DTO -> PUBLIC DTO                                               */
-/* ======================================================================== */
-
-export const mapArticleResponseToPublic = (
-  article: ArticleResponseDTO
-): ArticlePublicPageDto => ({
-  ...article,
-  id: article._id,
-
-  author: article.author
-    ? {
-        id: article.author._id,
-        name: article.author.name,
-        avatar: article.author.avatar,
-      }
-    : undefined,
-
-  category: article.category
-    ? {
-        id: article.category._id,
-        title: article.category.title,
-        slug: article.category.slug,
-      }
-    : undefined,
-
-  service: article.service
-    ? {
-        id: article.service._id,
-        title: article.service.title,
-        slug: article.service.slug,
-      }
-    : undefined,
 });
 
 /* ======================================================================== */
@@ -162,21 +126,6 @@ export const mapPublicFullRowToPage = (
         slug: article.serviceId.slug,
       }
     : undefined,
-});
-
-/* ======================================================================== */
-/* PREVIEW                                                                  */
-/* ======================================================================== */
-
-export const mapArticleToPreviewDTO = (
-  article: ArticleLike
-): ArticlePreviewDTO => ({
-  id: toIdString(article._id),
-  title: article.title,
-  slug: article.slug,
-  summary: article.summary,
-  src: stringArray(article.src),
-  publishedAt: toIsoString(article.publishedAt),
 });
 
 export function mapRecentRowToBlogItem(

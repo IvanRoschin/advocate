@@ -15,7 +15,7 @@ export function subscriberAdminTemplate({
   });
 }
 
-export function subscriberAdminContent({
+function subscriberAdminContent({
   email,
 }: SubscriberAdminTemplateProps) {
   return `

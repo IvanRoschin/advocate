@@ -1,4 +1,4 @@
-import type { Blog, ContactContent, Newsletter, Person, Social } from '@/types';
+import type { Blog, ContactContent, Person, Social } from '@/types';
 
 type PaymentDetail = {
   label: string;
@@ -55,12 +55,6 @@ const person: Person = {
   languages: ['Українська'],
 };
 
-const newsletter: Newsletter = {
-  display: true,
-  title: <>Підписатися на розсилку</>,
-  description: <>Нові статті, практичні роз’яснення та юридичні нотатки.</>,
-};
-
 const phone1 = '0951983729';
 const phone2 = '0961983729';
 
@@ -114,8 +108,8 @@ const social: Social = [
 ];
 
 const logo = {
-  logoBlack: '/images/logo/logo_black_bg.webp',
-  logoWhite: '/images/logo/logo_white_bg.webp',
+  logoBlack: '/images/logo/logo_black_bg.png',
+  logoWhite: '/images/logo/logo_white_bg.png',
 };
 
 const brand = {
@@ -260,15 +254,4 @@ const contact: ContactContent = {
   },
 };
 
-export {
-  blog,
-  brand,
-  contact,
-  home,
-  logo,
-  newsletter,
-  payment,
-  person,
-  social,
-};
-export type { BlogContent, PaymentContent, PaymentDetail };
+export { blog, brand, contact, home, logo, payment, person, social };

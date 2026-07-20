@@ -4,16 +4,6 @@ export type ReviewTargetOptionDto = {
   value: string;
   label: string;
 };
-export const REVIEW_PAGE_KEYS = [
-  'home',
-  'about',
-  'contacts',
-  'services',
-  'blog',
-] as const;
-
-export type ReviewPageKey = (typeof REVIEW_PAGE_KEYS)[number];
-
 export type ReviewResponseDTO = {
   _id: string;
   authorName: string;

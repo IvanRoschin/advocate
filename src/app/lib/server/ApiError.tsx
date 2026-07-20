@@ -1,9 +1,9 @@
-export type ApiSuccess<T> = {
+type ApiSuccess<T> = {
   ok: true;
   data: T;
 };
 
-export type ApiError = {
+type ApiError = {
   ok: false;
   error: {
     code: string;

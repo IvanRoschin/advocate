@@ -73,6 +73,10 @@ export const serviceRepo = {
     return Service.findOne({ slug });
   },
 
+  async existsBySlug(slug: string) {
+    return (await Service.exists({ slug })) !== null;
+  },
+
   async create(data: CreateServiceRequestDTO) {
     return Service.create(data);
   },
