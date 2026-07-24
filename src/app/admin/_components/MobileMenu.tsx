@@ -4,7 +4,9 @@ import { LogOut, Menu, X } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ThemeToggle } from '@/app/components/header/ThemeToggle';
 import { useNavLinkItems } from '@/app/components/header/nav.shared';
+import { routes } from '@/app/config/routes';
 import { getUserScope } from '@/app/lib/auth/getUserScope';
 import { cn } from '@/app/lib/utils';
 import { useUserStore } from '@/app/store/user.store';
@@ -34,7 +36,7 @@ export default function MobileMenu() {
     clearUser();
 
     await signOut({
-      callbackUrl: '/signin',
+      callbackUrl: routes.public.auth.signIn,
     });
   };
 
@@ -56,14 +58,18 @@ export default function MobileMenu() {
           {getMenuTitle(scope)}
         </p>
 
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          aria-label="Відкрити меню"
-          className="hover:bg-muted inline-flex h-10 w-10 items-center justify-center rounded-xl transition"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+
+          <button
+            type="button"
+            onClick={() => setIsOpen(true)}
+            aria-label="Відкрити меню"
+            className="hover:bg-muted inline-flex h-10 w-10 items-center justify-center rounded-xl transition"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       <div

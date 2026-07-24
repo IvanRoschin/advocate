@@ -29,33 +29,41 @@ html {
   }
 }
 @keyframes shimmer {
-    from {
-      background-position: 200% 0;
-    }
-    to {
-      background-position: -200% 0;
-    }
+  from {
+    background-position: 200% 0;
   }
+  to {
+    background-position: -200% 0;
+  }
+}
 
-  .animate-shimmer {
-    animation: shimmer 1.6s ease-in-out infinite;
-  }
+.animate-shimmer {
+  animation: shimmer 1.6s ease-in-out infinite;
+}
 
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
 }
 
 body {
-    font-family: var(--font-eukraine), system-ui, sans-serif;
-    font-size: var(--fs-base);
-    line-height: var(--lh-normal);
-    color: var(--text-default);
-  }
+  font-family: var(--font-eukraine), system-ui, sans-serif;
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  color: var(--text-default);
+}
 
 /* layout helpers */
 .container {
   margin: 0 auto;
   padding: 12px 32px 0 32px;
+}
+
+/* На дуже вузьких екранах (менше ~400px) 32px паддингу з обох боків
+   з'їдають надто велику частку корисної ширини — трохи стискаємо. */
+@media (max-width: 400px) {
+  .container {
+    padding-inline: 16px;
+  }
 }
 
 @theme inline {

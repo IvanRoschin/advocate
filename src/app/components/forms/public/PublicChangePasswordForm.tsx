@@ -1,5 +1,6 @@
 'use client';
 
+import { changeOwnPassword } from '@/app/actions/auth.actions';
 import { PasswordForm } from '@/app/components/forms/public/PasswordForm';
 import { changePasswordSchema } from '@/app/helpers/validationSchemas';
 
@@ -20,6 +21,7 @@ export const ChangePasswordForm = ({
 
   return (
     <PasswordForm<Values>
+      variant="embedded"
       title="Змінити пароль"
       submitLabel="Змінити пароль"
       hiddenUsername={userEmail ?? ''}
@@ -47,7 +49,12 @@ export const ChangePasswordForm = ({
         },
       ]}
       onSubmit={async values => {
-        console.warn('values', values);
+        const res = await changeOwnPassword({
+          oldPassword: values.oldPassword,
+          newPassword: values.newPassword,
+        });
+
+        return { message: res.message, ok: res.ok };
       }}
     />
   );

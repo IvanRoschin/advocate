@@ -60,7 +60,11 @@ export default function PublicLeadForm({
         }
 
         if (!captcha.token) {
-          toast.error('Будь ласка, підтвердіть, що ви не робот');
+          toast.error(
+            captcha.loadFailed
+              ? 'Перевірка безпеки не завантажилась. Оновіть сторінку і спробуйте ще раз.'
+              : 'Будь ласка, підтвердіть, що ви не робот'
+          );
           done();
           return;
         }
@@ -133,7 +137,11 @@ export default function PublicLeadForm({
             radius={12}
             type="submit"
             label={isSubmitting ? 'Надсилання...' : 'Надіслати'}
-            disabled={isSubmitting || !dirty || !captcha.token}
+            // Кнопка лишається клікабельною, навіть якщо токен капчі ще не
+            // прийшов, — інакше при збої завантаження Turnstile (adblock,
+            // мережа) форма приймання заявок ставала недоступною без жодного
+            // пояснення. Реальна перевірка токена відбувається в onSubmit.
+            disabled={isSubmitting || !dirty}
             className="w-full"
           />
         </Form>

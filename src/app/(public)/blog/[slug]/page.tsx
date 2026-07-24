@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { articlePublicActions } from '@/app/actions/article.actions';
 import { pageSettingsActions } from '@/app/actions/page-settings.actions';
 import { reviewPublicActions } from '@/app/actions/review.actions';
-import PublicReviewForm from '@/app/components/forms/public/PulicReviewForm';
+import PublicReviewForm from '@/app/components/forms/public/PublicReviewForm';
 import { baseUrl } from '@/app/config/routes';
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
 import { LayoutNode, renderLayout } from '@/app/lib/layouts/renderLayout';

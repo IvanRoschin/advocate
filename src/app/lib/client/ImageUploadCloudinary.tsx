@@ -76,7 +76,7 @@ const ImageUploadCloudinary: React.FC<ImageUploadCloudinaryProps> = ({
             type="button"
             disabled={!open}
             onClick={() => open?.()}
-            className="relative flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed p-4 text-neutral-600 transition hover:opacity-80"
+            className="border-border text-muted-foreground relative flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed p-4 transition hover:opacity-80"
           >
             <AiOutlineCloudUpload size={28} />
             <span className="text-center text-sm">
@@ -88,7 +88,7 @@ const ImageUploadCloudinary: React.FC<ImageUploadCloudinaryProps> = ({
 
       {previews.length > 0 && (
         <div className="mt-4">
-          <p className="mb-3 text-center text-sm text-gray-600">
+          <p className="text-muted-foreground mb-3 text-center text-sm">
             Прев&apos;ю завантажених зображень
           </p>
 
@@ -96,7 +96,7 @@ const ImageUploadCloudinary: React.FC<ImageUploadCloudinaryProps> = ({
             {previews.map(img => (
               <div
                 key={img}
-                className="group relative h-28 w-28 rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
+                className="border-border bg-card group relative h-28 w-28 rounded-xl border shadow-sm transition hover:shadow-md"
               >
                 <div className="relative h-full w-full overflow-hidden rounded-xl">
                   <NextImage
@@ -118,7 +118,7 @@ const ImageUploadCloudinary: React.FC<ImageUploadCloudinaryProps> = ({
                     e.stopPropagation();
                     handleRemove(img);
                   }}
-                  className="absolute top-1.5 right-1.5 z-20 flex h-6 w-6 min-w-0 items-center justify-center bg-white/85 p-0 text-neutral-700 hover:bg-white hover:text-red-600"
+                  className="bg-background/85 text-foreground hover:bg-background absolute top-1.5 right-1.5 z-20 flex h-6 w-6 min-w-0 items-center justify-center p-0 hover:text-red-600"
                 />
               </div>
             ))}
