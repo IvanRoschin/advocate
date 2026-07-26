@@ -18,16 +18,17 @@ const isBuildPhase = process.env.SKIP_DB_ON_BUILD === 'true';
 
 export async function dbConnect() {
   if (cached.conn) return cached.conn;
+
+  if (isBuildPhase) {
+    console.warn(
+      'SKIP_DB_ON_BUILD увімкнено — пропускаємо підключення до MongoDB'
+    );
+    return null;
+  }
+
   const uri = serverEnv.mongoUri;
 
   if (!uri) {
-    if (isBuildPhase) {
-      console.warn(
-        'MONGODB_URI missing — пропускаємо підключення (SKIP_DB_ON_BUILD)'
-      );
-      return null;
-    }
-
     throw new Error('MONGODB_URI missing');
   }
 

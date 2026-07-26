@@ -29,19 +29,29 @@ const HeaderClient = async ({
   ctaHref,
   ctaLabel,
 }: HeaderClient) => {
+  // Нижній плаваючий pill-навбар розрахований на публічну навігацію
+  // (NAV_ITEMS_BY_SCOPE.mobile завжди повертає пункти публічного сайту).
+  // Для admin/client/manager-скоупів мобільну навігацію вже забезпечує
+  // верхній гамбургер-меню (MobileMenu) з коректними пунктами свого скоупу,
+  // тож дублювати її тут не потрібно — це лише плутало користувача і
+  // показувало невірні посилання в кабінеті/адмінці.
+  const showMobilePillNav = scope === 'public';
+
   return (
     <>
-      <div className="xl:hidden">
-        <div className="mx-auto w-full max-w-6xl px-3">
-          <MobileHeader
-            scope="mobile"
-            showTime={showTime}
-            timeZone={timeZone}
-            showThemeToggle={showThemeToggle}
-            publicAuth={publicAuth}
-          />
+      {showMobilePillNav && (
+        <div className="xl:hidden">
+          <div className="mx-auto w-full max-w-6xl px-3">
+            <MobileHeader
+              scope="mobile"
+              showTime={showTime}
+              timeZone={timeZone}
+              showThemeToggle={showThemeToggle}
+              publicAuth={publicAuth}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <DesktopHeader
         scope={scope}

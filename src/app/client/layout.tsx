@@ -7,7 +7,7 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-export default function BlogLayout({
+export default function ClientLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

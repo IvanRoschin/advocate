@@ -24,7 +24,7 @@ export const servicesSection = {
     },
     {
       id: 'commercial-disputes',
-      icon: 'boringCompany',
+      icon: 'disputes',
       title: 'Господарські спори',
       text: 'Відшкодування шкоди внаслідок невиконання договірних зобов’язань, представництво в суді',
     },

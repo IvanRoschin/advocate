@@ -19,6 +19,19 @@ export type RequestResetResult =
 export type ResetPasswordInput = { token: string; newPassword: string };
 export type ResetPasswordResult = { ok: true; message: string };
 
+export type ChangeOwnPasswordInput = {
+  userId: string;
+  oldPassword: string;
+  newPassword: string;
+};
+export type ChangeOwnPasswordResult =
+  | { ok: true; code: 'PASSWORD_CHANGED'; message: string }
+  | {
+      ok: false;
+      code: 'USER_NOT_FOUND' | 'INVALID_OLD_PASSWORD';
+      message: string;
+    };
+
 export async function requestPasswordResetLogic(
   args: RequestResetInput
 ): Promise<RequestResetResult> {
@@ -78,4 +91,37 @@ export async function resetPasswordLogic(
   await tokenRepo.markUsed(tokenDoc);
 
   return { ok: true, message: 'Пароль успішно змінено.' };
+}
+
+export async function changeOwnPasswordLogic(
+  args: ChangeOwnPasswordInput
+): Promise<ChangeOwnPasswordResult> {
+  const user = await userRepo.findById(args.userId);
+
+  if (!user) {
+    return {
+      ok: false,
+      code: 'USER_NOT_FOUND' as const,
+      message: 'Користувача не знайдено.',
+    };
+  }
+
+  const isOldPasswordValid = user.comparePassword(args.oldPassword);
+
+  if (!isOldPasswordValid) {
+    return {
+      ok: false,
+      code: 'INVALID_OLD_PASSWORD' as const,
+      message: 'Старий пароль невірний.',
+    };
+  }
+
+  user.password = args.newPassword;
+  await user.save();
+
+  return {
+    ok: true,
+    code: 'PASSWORD_CHANGED' as const,
+    message: 'Пароль успішно змінено.',
+  };
 }
