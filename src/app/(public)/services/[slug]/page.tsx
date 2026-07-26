@@ -2,7 +2,7 @@ import { articlePublicActions } from '@/app/actions/article.actions';
 import { pageSettingsActions } from '@/app/actions/page-settings.actions';
 import { reviewPublicActions } from '@/app/actions/review.actions';
 import { servicePublicActions } from '@/app/actions/service.actions';
-import PublicReviewForm from '@/app/components/forms/public/PulicReviewForm';
+import PublicReviewForm from '@/app/components/forms/public/PublicReviewForm';
 import { LayoutNode, renderLayout } from '@/app/lib/layouts/renderLayout';
 import { ServiceSectionKey } from '@/app/types';
 

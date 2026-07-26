@@ -37,7 +37,11 @@ const ForgotPasswordForm = () => {
     }
 
     if (!captcha.token) {
-      toast.error('Будь ласка, підтвердіть, що ви не робот');
+      toast.error(
+        captcha.loadFailed
+          ? 'Перевірка безпеки не завантажилась. Оновіть сторінку і спробуйте ще раз.'
+          : 'Будь ласка, підтвердіть, що ви не робот'
+      );
       return;
     }
 
@@ -89,7 +93,7 @@ const ForgotPasswordForm = () => {
               <Btn
                 type="submit"
                 label={isSubmitting ? 'Завантаження...' : 'Надіслати посилання'}
-                disabled={isSubmitting || !captcha.token}
+                disabled={isSubmitting}
                 className="min-w-30 px-5 py-2 text-base md:min-w-37.5"
               />
             </div>

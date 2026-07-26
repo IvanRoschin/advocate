@@ -1,4 +1,4 @@
-import ForgotPasswordForm from '@/app/components/forms/public/PulicForgotPasswordForm';
+import ForgotPasswordForm from '@/app/components/forms/public/PublicForgotPasswordForm';
 
 import AuthCard from '../_components/AuthCard';
 import AuthStatusBadge from '../_components/AuthStatusBadge';
