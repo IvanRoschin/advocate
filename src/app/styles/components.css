@@ -47,7 +47,16 @@
   }
 
   .section-first-after-hero {
-    @apply pt-150 pb-20 sm:pt-110 sm:pb-24 md:pt-20 lg:pt-60 lg:pb-28;
+    @apply pt-165 pb-20 sm:pt-110 sm:pb-24 md:pt-90 lg:pt-60 lg:pb-28;
+  }
+
+  /* Дуже вузькі екрани (менше ~360px) — картки Services стають вищими
+     (текст переноситься на більше рядків), тож їм треба більший відступ,
+     щоб не перекривати заголовок About. */
+  @media (max-width: 359px) {
+    .section-first-after-hero {
+      padding-top: 52.5rem;
+    }
   }
 
   /* ===== app / text ===== */
