@@ -5,9 +5,9 @@ import ServiceCard from './ServiceCard';
 
 const Services = () => {
   return (
-    <section className="pointer-events-none absolute inset-x-0 top-full z-20 -translate-y-[219px] sm:-translate-y-[205px] lg:-translate-y-16">
+    <section className="pointer-events-none absolute inset-x-0 top-full z-20 -translate-y-10 sm:-translate-y-24 lg:-translate-y-28">
       {' '}
-      <div className="pointer-events-auto container grid grid-cols-2 lg:grid-cols-4">
+      <div className="pointer-events-auto container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {servicesSection.items.map(service => {
           const Icon = iconLibrary[service.icon];
 
