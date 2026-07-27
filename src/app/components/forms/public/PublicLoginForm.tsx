@@ -24,6 +24,7 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   AUTH_USER_NOT_FOUND: 'Користувача з таким емейл не знайдено',
   AUTH_INVALID_PASSWORD: 'Невірний пароль',
   AUTH_USER_NOT_ACTIVATED: 'Кабінет не активовано, перевірте e-mail',
+  AUTH_RATE_LIMITED: 'Забагато спроб входу. Спробуйте пізніше.',
   CredentialsSignin: 'Невірні дані для входу',
   default: 'Не вдалося виконати вхід',
 };

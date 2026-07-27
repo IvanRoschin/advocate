@@ -1,16 +1,13 @@
 import { NextResponse } from 'next/server';
 
-import {
-  reviewActions,
-  reviewPublicActions,
-} from '@/app/actions/review.actions';
+import { reviewPublicActions } from '@/app/actions/review.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
 import { ReviewResponseDTO } from '@/app/types';
 
 import type { ApiResponse } from '@/app/lib/server/ApiError';
 export async function GET() {
   try {
-    const reviews = await reviewActions.getAll();
+    const reviews = await reviewPublicActions.list({});
     return NextResponse.json<ApiResponse<typeof reviews>>({
       ok: true,
       data: reviews,

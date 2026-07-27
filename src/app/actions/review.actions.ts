@@ -68,15 +68,18 @@ export const reviewPublicActions = {
     async ({ args }) => {
       const clean = validatePublicReview(args);
 
-      const review = await reviewActions.create({
+      // Calls the repo directly (not reviewActions.create) — that path is
+      // admin-gated, and this is the public "leave a review" submission.
+      const review = await reviewRepo.create({
         ...clean,
         status: 'pending',
       });
 
       await notifyReviewCreated(clean);
 
-      return review;
-    }
+      return mapReviewToResponse(review);
+    },
+    { rateLimitKey: 'review-create' }
   ),
 
   list: createAction<

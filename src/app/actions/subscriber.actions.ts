@@ -30,22 +30,27 @@ export const subscriberPublicActions = {
   create: createPublicAction<
     { email: string; website?: string; turnstileToken?: string },
     SubscriberResponseDTO
-  >(async ({ args }) => {
-    let subscriber = await Subscriber.findOne({ email: args.email });
+  >(
+    async ({ args }) => {
+      let subscriber = await Subscriber.findOne({ email: args.email });
 
-    if (subscriber) {
-      if (!subscriber.subscribed) {
-        subscriber.subscribed = true;
-        await subscriber.save();
+      if (subscriber) {
+        if (!subscriber.subscribed) {
+          subscriber.subscribed = true;
+          await subscriber.save();
+        }
+      } else {
+        // subscriberRepo directly — subscriberActions.create is admin-gated,
+        // and this is the public newsletter sign-up.
+        subscriber = await subscriberRepo.create({ email: args.email });
       }
-    } else {
-      subscriber = await subscriberActions.create({ email: args.email });
-    }
 
-    await notifySubscriberCreated({ email: args.email });
+      await notifySubscriberCreated({ email: args.email });
 
-    return mapSubscriberToResponse(subscriber);
-  }),
+      return mapSubscriberToResponse(subscriber);
+    },
+    { rateLimitKey: 'subscriber-create' }
+  ),
 
   list: createAction<
     { page?: number; limit?: number },

@@ -4,6 +4,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { routes } from '@/app/config/routes';
 import { UserRole } from './app/types';
 
+const isAdminRole = (role?: UserRole) =>
+  role === UserRole.ADMIN || role === UserRole.MANAGER;
+
+const unauthorizedJson = () =>
+  NextResponse.json(
+    { ok: false, error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } },
+    { status: 401 }
+  );
+
 export async function proxy(req: NextRequest) {
   const token = await getToken({ req });
   const nonce = crypto.randomUUID();
@@ -14,8 +23,20 @@ export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const role = token?.role as UserRole | undefined;
 
-  if (pathname.startsWith('/admin')) {
-    if (role !== UserRole.ADMIN && role !== UserRole.MANAGER) {
+  // /api/admin/** — checked before /admin so its own branch (JSON 401,
+  // not a redirect) always wins for API calls.
+  if (pathname.startsWith('/api/admin')) {
+    if (!isAdminRole(role)) {
+      return unauthorizedJson();
+    }
+  } else if (pathname.startsWith('/admin')) {
+    if (!isAdminRole(role)) {
+      return NextResponse.redirect(new URL(routes.public.auth.signIn, req.url));
+    }
+  }
+
+  if (pathname.startsWith('/client')) {
+    if (!token) {
       return NextResponse.redirect(new URL(routes.public.auth.signIn, req.url));
     }
   }
