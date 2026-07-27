@@ -16,8 +16,14 @@ const Hero = ({ slides }: HeroProps) => {
       ?.link ?? null;
 
   return (
-    <section className="relative flex min-h-dvh w-full items-center overflow-hidden">
-      <HeroCarousel items={slides} className="z-0" showBars showArrows />
+    <section className="4 relative mb-16 flex min-h-[110dvh] w-full items-center overflow-hidden sm:mb-32 sm:min-h-256 lg:min-h-192">
+      {' '}
+      <HeroCarousel
+        items={slides}
+        className="absolute inset-0 z-0 h-full w-full"
+        showBars
+        showArrows
+      />
       <div className="bg-hero-overlay pointer-events-none absolute inset-0 z-10" />
       <div className="font-eukrainehead text-hero relative z-30 container px-4">
         <p className="text-hero-uptitle mb-6 text-xs tracking-widest uppercase md:text-sm">

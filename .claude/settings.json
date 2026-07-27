@@ -1,0 +1,6 @@
+{
+  "env": {
+    "BUN_CONFIG_HTTP_IDLE_TIMEOUT": "300",
+    "CLAUDE_CODE_REMOTE_SEND_KEEPALIVES": "true"
+  }
+}
