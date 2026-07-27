@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { subscriberActions } from '@/app/actions/subscriber.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
+import { UpdateSubscriberDTO, updateSubscriberSchema } from '@/app/types';
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -10,14 +11,7 @@ type RouteContext = {
 export async function GET(_: Request, { params }: RouteContext) {
   try {
     const { id } = await params;
-    const subscriber = await subscriberActions.getById(id); // если есть в actions
-
-    if (!subscriber) {
-      return NextResponse.json(
-        { message: 'Subscriber not found' },
-        { status: 404 }
-      );
-    }
+    const subscriber = await subscriberActions.getById(id);
 
     return NextResponse.json({ ok: true, data: subscriber });
   } catch (error) {
@@ -30,15 +24,15 @@ export async function PATCH(req: Request, { params }: RouteContext) {
     const { id } = await params;
     const body = await req.json();
 
-    // Если нужно валидировать обновление — добавьте схему
-    const subscriber = await subscriberActions.update(id, body);
+    const validated = await updateSubscriberSchema.validate(body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
 
-    if (!subscriber) {
-      return NextResponse.json(
-        { message: 'Subscriber not found' },
-        { status: 404 }
-      );
-    }
+    const subscriber = await subscriberActions.update(
+      id,
+      validated as UpdateSubscriberDTO
+    );
 
     return NextResponse.json({ ok: true, data: subscriber });
   } catch (error) {
@@ -52,14 +46,7 @@ export async function DELETE(_: Request, { params }: RouteContext) {
 
     const result = await subscriberActions.delete(id);
 
-    if (!result) {
-      return NextResponse.json(
-        { message: 'Subscriber not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, data: result });
   } catch (error) {
     return errorToResponse(error);
   }

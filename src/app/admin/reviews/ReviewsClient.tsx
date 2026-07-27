@@ -1,9 +1,14 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+import {
+  InfiniteScroll,
+  InfiniteScrollHandle,
+  PageResult,
+} from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -39,7 +44,25 @@ export default function ReviewsClient({ initialReviews }: Props) {
   const [reviewToDelete, setReviewToDelete] =
     useState<ReviewResponseDTO | null>(null);
 
+  const listRef = useRef<InfiniteScrollHandle<ReviewResponseDTO>>(null);
+
   const deleteModal = useModal('deleteReview');
+
+  const getReviewsPage = useCallback(
+    async (page: number): Promise<PageResult<ReviewResponseDTO>> => {
+      const response = await fetch(
+        apiUrl(routes.api.admin.reviews + `?page=${page}&limit=20`)
+      );
+      const json = (await response.json()) as {
+        ok: boolean;
+        data: ReviewResponseDTO[];
+        meta: { page: number; limit: number; hasMore: boolean };
+      };
+
+      return { data: json.data, hasMore: json.meta.hasMore };
+    },
+    []
+  );
 
   const handleDelete = useCallback(
     (review: ReviewResponseDTO) => {
@@ -62,6 +85,9 @@ export default function ReviewsClient({ initialReviews }: Props) {
       );
 
       setReviews(prev => prev.filter(item => item._id !== reviewToDelete._id));
+      listRef.current?.setItems(prev =>
+        prev.filter(item => item._id !== reviewToDelete._id)
+      );
 
       toast.success('Відгук видалено');
       deleteModal.close();
@@ -140,17 +166,33 @@ export default function ReviewsClient({ initialReviews }: Props) {
           />
         </AdminTableToolbar>
 
-        <AdminTable
-          data={reviews}
-          columns={columns}
-          isLoading={isLoading}
-          globalFilter={search}
-          emptyMessage="Відгуків поки немає"
-          mobileRender={review => (
-            <ReviewMobileCard
-              row={review}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+        <InfiniteScroll<ReviewResponseDTO>
+          ref={listRef}
+          initialData={initialReviews}
+          loadMore={getReviewsPage}
+          emptyState={
+            <EmptyState
+              title="Відгуки відсутні"
+              subtitle="Додайте перший відгук"
+              actionLabel="Додати новий відгук"
+              actionOnClick={handleCreate}
+            />
+          }
+          endMessage={<p className="subtitle">Усі відгуки завантажено</p>}
+          renderContent={items => (
+            <AdminTable
+              data={items}
+              columns={columns}
+              isLoading={isLoading}
+              globalFilter={search}
+              emptyMessage="Відгуків поки немає"
+              mobileRender={review => (
+                <ReviewMobileCard
+                  row={review}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              )}
             />
           )}
         />

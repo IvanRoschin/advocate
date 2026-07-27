@@ -1,3 +1,5 @@
+import { revalidatePath } from 'next/cache';
+
 import { articleQueries, articleRepo } from '../lib/repositories';
 import {
   ArticleListItemDto,
@@ -19,7 +21,7 @@ export type PublicListResult = {
   hasMore: boolean;
 };
 
-export const articleActions = createEntityModule({
+const articleEntityActions = createEntityModule({
   repo: articleRepo,
 
   toDTO: mapArticleToResponse,
@@ -34,6 +36,27 @@ export const articleActions = createEntityModule({
     slugConflictMessage: 'Article slug already exists',
   },
 });
+
+export const articleActions = {
+  ...articleEntityActions,
+  create: async (...args: Parameters<typeof articleEntityActions.create>) => {
+    const result = await articleEntityActions.create(...args);
+    revalidatePath('/blog');
+    revalidatePath(`/blog/${result.slug}`);
+    return result;
+  },
+  update: async (...args: Parameters<typeof articleEntityActions.update>) => {
+    const result = await articleEntityActions.update(...args);
+    revalidatePath('/blog');
+    revalidatePath(`/blog/${result.slug}`);
+    return result;
+  },
+  delete: async (...args: Parameters<typeof articleEntityActions.delete>) => {
+    const result = await articleEntityActions.delete(...args);
+    revalidatePath('/blog');
+    return result;
+  },
+};
 
 export const articlePublicActions = {
   list: createAction<

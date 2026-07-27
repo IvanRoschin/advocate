@@ -1,11 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import {
   InfiniteScroll,
+  InfiniteScrollHandle,
   PageResult,
 } from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
@@ -55,6 +56,8 @@ export default function ArticlesClient({
   const [articleToDelete, setArticleToDelete] =
     useState<ArticleResponseDTO | null>(null);
 
+  const listRef = useRef<InfiniteScrollHandle<ArticleResponseDTO>>(null);
+
   const deleteModal = useModal('deleteArticle');
 
   const authorNameById = useMemo(() => {
@@ -90,6 +93,9 @@ export default function ArticlesClient({
       );
 
       setArticles(prev =>
+        prev.filter(article => article._id !== articleToDelete._id)
+      );
+      listRef.current?.setItems(prev =>
         prev.filter(article => article._id !== articleToDelete._id)
       );
 
@@ -187,6 +193,7 @@ export default function ArticlesClient({
           />
         </AdminTableToolbar>
         <InfiniteScroll<ArticleResponseDTO>
+          ref={listRef}
           initialData={initialArticles}
           loadMore={getArticlesPage}
           emptyState={

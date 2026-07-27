@@ -1,14 +1,25 @@
 import { NextResponse } from 'next/server';
 
-import { subscriberPublicActions } from '@/app/actions/subscriber.actions';
+import {
+  subscriberActions,
+  subscriberPublicActions,
+} from '@/app/actions/subscriber.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { createSubscriberSchema } from '@/app/types'; // предположу, что у вас есть такая схема
+import { createSubscriberSchema } from '@/app/types';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const result = await subscriberPublicActions.list({ limit: 100 });
+    const { searchParams } = new URL(req.url);
+    const page = Number(searchParams.get('page') ?? 1);
+    const limit = Number(searchParams.get('limit') ?? 20);
 
-    return NextResponse.json({ ok: true, data: result });
+    const result = await subscriberActions.getAll({ page, limit });
+
+    return NextResponse.json({
+      ok: true,
+      data: result.items,
+      meta: { page, limit, hasMore: result.hasMore },
+    });
   } catch (error) {
     return errorToResponse(error);
   }
