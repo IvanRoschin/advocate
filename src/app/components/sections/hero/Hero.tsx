@@ -19,7 +19,7 @@ const Hero = ({ slides }: HeroProps) => {
     <section className="relative flex min-h-dvh w-full items-center overflow-hidden">
       <HeroCarousel items={slides} className="z-0" showBars showArrows />
       <div className="bg-hero-overlay pointer-events-none absolute inset-0 z-10" />
-      <div className="font-eukrainehead text-hero relative z-30 container px-4">
+      <div className="font-eukrainehead text-hero relative z-30 container px-4 lg:pb-24">
         <p className="text-hero-uptitle mb-6 text-xs tracking-widest uppercase md:text-sm">
           {heroSection.header.uptitle}
         </p>
