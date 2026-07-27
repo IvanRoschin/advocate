@@ -5,7 +5,7 @@ import ServiceCard from './ServiceCard';
 
 const Services = () => {
   return (
-    <section className="pointer-events-none absolute inset-x-0 top-full z-20 -translate-y-10 sm:-translate-y-24 lg:-translate-y-28">
+    <section className="pointer-events-none absolute inset-x-0 top-full z-20 translate-y-0 sm:-translate-y-24 md:-translate-y-55 lg:-translate-y-32 xl:-translate-y-40">
       {' '}
       <div className="pointer-events-auto container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {servicesSection.items.map(service => {

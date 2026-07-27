@@ -47,7 +47,7 @@
   }
 
   .section-first-after-hero {
-    @apply pt-150 pb-20 sm:pt-110 sm:pb-24 md:pt-90 lg:pt-60 lg:pb-28;
+    @apply pt-150 pb-20 sm:pt-110 sm:pb-24 md:pt-28 lg:pt-24 lg:pb-28;
   }
 
   /* Дуже вузькі екрани (менше ~360px) — картки Services стають вищими
