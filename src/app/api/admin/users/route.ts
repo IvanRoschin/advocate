@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { userActions } from '@/app/actions/user.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
+import { CreateUserRequestDTO, createUserSchema } from '@/app/types';
 
 export async function GET() {
   try {
@@ -16,9 +17,16 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const user = await userActions.create(body);
 
-    return NextResponse.json({ ok: true, data: user });
+    const validated = await createUserSchema.validate(body, {
+      abortEarly: false,
+    });
+
+    const data = validated as CreateUserRequestDTO;
+
+    const user = await userActions.create(data);
+
+    return NextResponse.json({ ok: true, data: user }, { status: 201 });
   } catch (err) {
     return errorToResponse(err);
   }

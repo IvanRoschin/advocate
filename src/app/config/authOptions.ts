@@ -8,6 +8,7 @@ import User from '@/models/User';
 import { ensureUserClient } from '../lib/auth/ensureClientAccess';
 import { resolveActiveClientAccess } from '../lib/auth/resolveActiveClientAccess';
 import { dbConnect } from '../lib/server/mongoose';
+import { assertRateLimit } from '../lib/server/rateLimit';
 import { UserRole } from '../types';
 import { routes } from './routes';
 declare module 'next-auth' {
@@ -66,8 +67,12 @@ const AUTH_ERROR_CODES = {
   USER_NOT_FOUND: 'AUTH_USER_NOT_FOUND',
   INVALID_PASSWORD: 'AUTH_INVALID_PASSWORD',
   USER_NOT_ACTIVATED: 'AUTH_USER_NOT_ACTIVATED',
+  RATE_LIMITED: 'AUTH_RATE_LIMITED',
   UNKNOWN: 'AUTH_UNKNOWN',
 } as const;
+
+// Basic brute-force guard: 10 attempts per email per 15 minutes.
+const LOGIN_RATE_LIMIT = { limit: 10, windowMs: 15 * 60 * 1000 };
 
 async function loadUserSessionContext(userId: string) {
   const dbUser = await User.findById(userId).lean();
@@ -104,6 +109,12 @@ const providers: Provider[] = [
 
       if (!email || !password) {
         throw new Error(AUTH_ERROR_CODES.MISSING_CREDENTIALS);
+      }
+
+      try {
+        assertRateLimit(`login:${email}`, LOGIN_RATE_LIMIT);
+      } catch {
+        throw new Error(AUTH_ERROR_CODES.RATE_LIMITED);
       }
 
       await dbConnect();
