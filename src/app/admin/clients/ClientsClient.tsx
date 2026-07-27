@@ -1,10 +1,15 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import ClientForm from '@/app/components/forms/admin/ClientForm';
+import {
+  InfiniteScroll,
+  InfiniteScrollHandle,
+  PageResult,
+} from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -46,6 +51,24 @@ export default function ClientsClient({ initialClients }: Props) {
   const createModal = useModal('createClient');
   const deleteModal = useModal('deleteClient');
 
+  const listRef = useRef<InfiniteScrollHandle<ClientResponseDTO>>(null);
+
+  const getClientsPage = useCallback(
+    async (page: number): Promise<PageResult<ClientResponseDTO>> => {
+      const response = await fetch(
+        apiUrl(routes.api.admin.clients + `?page=${page}&limit=20`)
+      );
+      const json = (await response.json()) as {
+        ok: boolean;
+        data: ClientResponseDTO[];
+        meta: { page: number; limit: number; hasMore: boolean };
+      };
+
+      return { data: json.data, hasMore: json.meta.hasMore };
+    },
+    []
+  );
+
   const handleDelete = (client: ClientResponseDTO) => {
     setClientToDelete(client);
     deleteModal.open();
@@ -69,6 +92,9 @@ export default function ClientsClient({ initialClients }: Props) {
       );
 
       setClients(prev =>
+        prev.filter(client => client.id !== clientToDelete.id)
+      );
+      listRef.current?.setItems(prev =>
         prev.filter(client => client.id !== clientToDelete.id)
       );
 
@@ -95,6 +121,7 @@ export default function ClientsClient({ initialClients }: Props) {
       );
 
       setClients(prev => [newClient, ...prev]);
+      listRef.current?.setItems(prev => [newClient, ...prev]);
       toast.success('Клієнта створено');
       createModal.close();
     } catch (err) {
@@ -173,20 +200,36 @@ export default function ClientsClient({ initialClients }: Props) {
           />
         </AdminTableToolbar>
 
-        <AdminTable
-          data={clients}
-          columns={clientsColumns({
-            onEdit: handleEdit,
-            onDelete: handleDelete,
-          })}
-          isLoading={isLoading}
-          globalFilter={search}
-          emptyMessage="Клієнтів поки немає"
-          mobileRender={client => (
-            <ClientMobileCard
-              row={client}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+        <InfiniteScroll<ClientResponseDTO>
+          ref={listRef}
+          initialData={initialClients}
+          loadMore={getClientsPage}
+          emptyState={
+            <EmptyState
+              title="Клієнти відсутні"
+              subtitle="Додайте першого клієнта"
+              actionLabel="Додати клієнта"
+              actionOnClick={createModal.open}
+            />
+          }
+          endMessage={<p className="subtitle">Усіх клієнтів завантажено</p>}
+          renderContent={items => (
+            <AdminTable
+              data={items}
+              columns={clientsColumns({
+                onEdit: handleEdit,
+                onDelete: handleDelete,
+              })}
+              isLoading={isLoading}
+              globalFilter={search}
+              emptyMessage="Клієнтів поки немає"
+              mobileRender={client => (
+                <ClientMobileCard
+                  row={client}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              )}
             />
           )}
         />

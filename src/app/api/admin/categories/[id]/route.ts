@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { categoryActions } from '@/app/actions/category.actions';
 import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
-import { mapCategoryToResponse, UpdateCategoryDTO } from '@/app/types';
+import { UpdateCategoryDTO, updateCategorySchema } from '@/app/types';
 
 /* ---------------- GET ---------------- */
 
@@ -29,14 +29,19 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const payload: UpdateCategoryDTO = await request.json();
+    const body = await request.json();
 
-    const updatedCategory = await categoryActions.update(id, payload);
-
-    return NextResponse.json({
-      ok: true,
-      data: mapCategoryToResponse(updatedCategory),
+    const validated = await updateCategorySchema.validate(body, {
+      abortEarly: false,
+      stripUnknown: true,
     });
+
+    const updatedCategory = await categoryActions.update(
+      id,
+      validated as UpdateCategoryDTO
+    );
+
+    return NextResponse.json({ ok: true, data: updatedCategory });
   } catch (err) {
     return errorToResponse(err);
   }

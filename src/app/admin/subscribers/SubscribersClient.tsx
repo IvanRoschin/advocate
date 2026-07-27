@@ -1,9 +1,14 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import SubscriberForm from '@/app/components/forms/admin/SubscriberForm';
+import {
+  InfiniteScroll,
+  InfiniteScrollHandle,
+  PageResult,
+} from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -49,6 +54,24 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
   const deleteModal = useModal('deleteSubscriber');
   const updateModal = useModal('updateSubscriber');
 
+  const listRef = useRef<InfiniteScrollHandle<SubscriberResponseDTO>>(null);
+
+  const getSubscribersPage = useCallback(
+    async (page: number): Promise<PageResult<SubscriberResponseDTO>> => {
+      const response = await fetch(
+        apiUrl(routes.api.admin.subscribe + `?page=${page}&limit=20`)
+      );
+      const json = (await response.json()) as {
+        ok: boolean;
+        data: SubscriberResponseDTO[];
+        meta: { page: number; limit: number; hasMore: boolean };
+      };
+
+      return { data: json.data, hasMore: json.meta.hasMore };
+    },
+    []
+  );
+
   // ==================== HANDLERS ====================
 
   const handleEdit = useCallback(
@@ -80,6 +103,9 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
       setSubscribers(prev =>
         prev.filter(item => item._id !== subscriberToDelete._id)
       );
+      listRef.current?.setItems(prev =>
+        prev.filter(item => item._id !== subscriberToDelete._id)
+      );
       toast.success('Підписника видалено');
       deleteModal.close();
       setSubscriberToDelete(null);
@@ -105,6 +131,9 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
         );
 
         setSubscribers(prev =>
+          prev.map(item => (item._id === updated._id ? updated : item))
+        );
+        listRef.current?.setItems(prev =>
           prev.map(item => (item._id === updated._id ? updated : item))
         );
 
@@ -137,6 +166,9 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
         setSubscribers(prev =>
           prev.map(item => (item._id === updated._id ? updated : item))
         );
+        listRef.current?.setItems(prev =>
+          prev.map(item => (item._id === updated._id ? updated : item))
+        );
 
         toast.success('Підписника оновлено');
         updateModal.close();
@@ -163,6 +195,7 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
         );
 
         setSubscribers(prev => [created, ...prev]);
+        listRef.current?.setItems(prev => [created, ...prev]);
         toast.success('Підписника створено');
         createModal.close();
       } catch (err) {
@@ -178,6 +211,7 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
 
   const columns = useMemo(
     () =>
+      // eslint-disable-next-line react-hooks/refs -- onToggleActive only runs later, from a checkbox handler
       subscribersColumns({
         onDelete: handleDelete,
         onEdit: handleEdit,
@@ -269,18 +303,32 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
           />
         </AdminTableToolbar>
 
-        <AdminTable
-          data={subscribers}
-          columns={columns}
-          isLoading={isLoading}
-          globalFilter={search}
-          emptyMessage="Підписників не знайдено"
-          mobileRender={subscriber => (
-            <SubscriberMobileCard
-              row={subscriber}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onToggleActive={handleToggleActive}
+        <InfiniteScroll<SubscriberResponseDTO>
+          ref={listRef}
+          initialData={initialSubscribers}
+          loadMore={getSubscribersPage}
+          emptyState={
+            <EmptyState
+              title="Підписники відсутні"
+              subtitle="Поки що немає жодного підписника"
+            />
+          }
+          endMessage={<p className="subtitle">Усіх підписників завантажено</p>}
+          renderContent={items => (
+            <AdminTable
+              data={items}
+              columns={columns}
+              isLoading={isLoading}
+              globalFilter={search}
+              emptyMessage="Підписників не знайдено"
+              mobileRender={subscriber => (
+                <SubscriberMobileCard
+                  row={subscriber}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onToggleActive={handleToggleActive}
+                />
+              )}
             />
           )}
         />

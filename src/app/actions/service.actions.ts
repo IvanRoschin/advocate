@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import slugify from 'slugify';
 
 import { serviceQueries, serviceRepo } from '../lib/repositories';
@@ -18,7 +19,7 @@ type PublicListResult = {
   hasMore: boolean;
 };
 
-export const serviceActions = createEntityModule({
+const serviceEntityActions = createEntityModule({
   repo: serviceRepo,
 
   toDTO: mapServiceToResponse,
@@ -36,6 +37,27 @@ export const serviceActions = createEntityModule({
     slugConflictMessage: 'Service slug already exists',
   },
 });
+
+export const serviceActions = {
+  ...serviceEntityActions,
+  create: async (...args: Parameters<typeof serviceEntityActions.create>) => {
+    const result = await serviceEntityActions.create(...args);
+    revalidatePath('/services');
+    revalidatePath(`/services/${result.slug}`);
+    return result;
+  },
+  update: async (...args: Parameters<typeof serviceEntityActions.update>) => {
+    const result = await serviceEntityActions.update(...args);
+    revalidatePath('/services');
+    revalidatePath(`/services/${result.slug}`);
+    return result;
+  },
+  delete: async (...args: Parameters<typeof serviceEntityActions.delete>) => {
+    const result = await serviceEntityActions.delete(...args);
+    revalidatePath('/services');
+    return result;
+  },
+};
 
 export const servicePublicActions = {
   list: createAction<
