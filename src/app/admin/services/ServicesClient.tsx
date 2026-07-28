@@ -2,11 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
-import { toast } from 'sonner';
 
-import { apiUrl, routes } from '@/app/config/routes';
-import { useModal } from '@/app/hooks/useModal';
-import { apiFetch } from '@/app/lib/client/apiFetch';
+import { routes } from '@/app/config/routes';
 import { useLoadingStore } from '@/app/store/loading.store';
 import {
   Breadcrumbs,
@@ -16,6 +13,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -29,8 +27,6 @@ type Props = {
 
 export default function ServicesClient({ initialServices }: Props) {
   const router = useRouter();
-  const start = useLoadingStore.getState().start;
-  const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
 
   const [search, setSearch] = useState('');
@@ -38,45 +34,19 @@ export default function ServicesClient({ initialServices }: Props) {
   const [services, setServices] =
     useState<ServiceResponseDTO[]>(initialServices);
 
-  const [serviceToDelete, setServiceToDelete] =
-    useState<ServiceResponseDTO | null>(null);
-
-  const deleteModal = useModal('deleteService');
-
-  const handleDelete = useCallback(
-    (service: ServiceResponseDTO) => {
-      setServiceToDelete(service);
-      deleteModal.open();
-    },
-    [deleteModal]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!serviceToDelete) return;
-
-    start();
-
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.services + `/${serviceToDelete._id}`),
-        {
-          method: 'DELETE',
-        }
-      );
-
-      setServices(prev =>
-        prev.filter(service => service._id !== serviceToDelete._id)
-      );
-
-      toast.success('Послугу видалено');
-      deleteModal.close();
-      setServiceToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
-  }, [serviceToDelete, start, done, deleteModal]);
+  const {
+    itemToDelete: serviceToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<ServiceResponseDTO>({
+    modalKey: 'deleteService',
+    apiPath: routes.api.admin.services,
+    getId: service => service._id,
+    successMessage: 'Послугу видалено',
+    onDeleted: deleted =>
+      setServices(prev => prev.filter(service => service._id !== deleted._id)),
+  });
 
   const handleEdit = useCallback(
     (service: ServiceResponseDTO) => {

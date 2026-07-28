@@ -45,10 +45,6 @@ export type UpdateCaseRepoInput = Partial<{
 const caseeQuery = createQuery(Case);
 
 export const caseRepo = {
-  async findAll(): Promise<CaseRow[]> {
-    return Case.find().sort({ createdAt: -1 }).lean<CaseRow[]>();
-  },
-
   async findAllPaginated(page: number, limit: number) {
     return caseeQuery()
       .sortBy({ createdAt: -1 })

@@ -1,15 +1,12 @@
 export { default as Article } from './Article';
-export type { ArticleDocument, ArticleInput } from './Article';
 export { default as Case } from './Case';
 export { default as Client } from './Client';
 export { default as ClientAccess } from './ClientAccess';
 export { default as Lead } from './Lead';
-export type { LeadDocument, LeadInput } from './Lead';
 export { default as PageSettings } from './PageSettings';
 export { default as Review } from './Review';
 export { default as Service } from './Service';
 export { default as Slide } from './Slide';
 export { default as Subscriber } from './Subscriber';
-export type { SubscriberDocument, SubscriberInput } from './Subscriber';
 export { default as User } from './User';
 export { default as Category } from './Сategory';

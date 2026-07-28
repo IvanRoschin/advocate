@@ -78,7 +78,7 @@ leadSchema.index({
   message: 'text',
 });
 
-export type LeadInput = InferSchemaType<typeof leadSchema>;
+type LeadInput = InferSchemaType<typeof leadSchema>;
 
 export type LeadDocument = LeadInput & {
   _id: Types.ObjectId;

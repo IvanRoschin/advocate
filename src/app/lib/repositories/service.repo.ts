@@ -51,13 +51,6 @@ const serviceQuery = createQuery(Service);
 export const serviceRepo = {
   /* ================= CRUD================= */
 
-  async findAll(): Promise<ServiceLike[]> {
-    return Service.find()
-      .sort({ createdAt: -1 })
-      .select('_id slug title summary src')
-      .lean<ServiceLike[]>();
-  },
-
   async findAllPaginated(page: number, limit: number) {
     return serviceQuery()
       .sortBy({ createdAt: -1 })

@@ -36,11 +36,6 @@ const clientQuery = createQuery(Client);
 export const clientRepo = {
   /* ================= CRUD ================= */
 
-  async findAll(): Promise<ClientResponseDTO[]> {
-    const clients = await Client.find().sort({ createdAt: -1 });
-    return clients.map(mapClientToResponse);
-  },
-
   async findAllPaginated(page: number, limit: number) {
     const result = await clientQuery()
       .sortBy({ createdAt: -1 })
@@ -54,7 +49,7 @@ export const clientRepo = {
   },
 
   async findById(id: string): Promise<ClientResponseDTO | null> {
-    const client = await Client.findById(id);
+    const client = await Client.findById(id).lean();
     return client ? mapClientToResponse(client) : null;
   },
 

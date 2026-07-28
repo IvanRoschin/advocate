@@ -15,10 +15,6 @@ const articleQuery = createQuery(Article);
 export const articleRepo = {
   /* ================= CRUD ================= */
 
-  async findAll(): Promise<ArticleAdminRow[]> {
-    return Article.find().sort({ createdAt: -1 }).lean<ArticleAdminRow[]>();
-  },
-
   async findAllPaginated(page: number, limit: number) {
     return articleQuery()
       .sortBy({ createdAt: -1 })

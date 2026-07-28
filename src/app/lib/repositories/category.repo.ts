@@ -11,10 +11,6 @@ const categoryQuery = createQuery(Category);
 export const categoryRepo = {
   /* ================= CRUD ================= */
 
-  async findAll(): Promise<CategoryAdminRow[]> {
-    return Category.find().sort({ createdAt: -1 }).lean<CategoryAdminRow[]>();
-  },
-
   async findAllPaginated(page: number, limit: number) {
     return categoryQuery()
       .sortBy({ createdAt: -1 })

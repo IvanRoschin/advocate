@@ -17,6 +17,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -42,9 +43,6 @@ export default function CategoriesClient({ initialCategories }: Props) {
   const [categories, setCategories] =
     useState<CategoryResponseDTO[]>(initialCategories);
 
-  const [categoryToDelete, setCategoryToDelete] =
-    useState<CategoryResponseDTO | null>(null);
-
   const [categoryToUpdate, setCategoryToUpdate] =
     useState<CategoryResponseDTO | null>(null);
 
@@ -59,36 +57,23 @@ export default function CategoriesClient({ initialCategories }: Props) {
   }, [categories, search]);
 
   const createModal = useModal('createCategory');
-  const deleteModal = useModal('deleteCategory');
   const updateModal = useModal('updateCategory');
 
-  const handleDelete = (category: CategoryResponseDTO) => {
-    setCategoryToDelete(category);
-    deleteModal.open();
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!categoryToDelete) return;
-
-    start();
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.categories + `/${categoryToDelete._id}`),
-        { method: 'DELETE' }
-      );
+  const {
+    itemToDelete: categoryToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<CategoryResponseDTO>({
+    modalKey: 'deleteCategory',
+    apiPath: routes.api.admin.categories,
+    getId: category => category._id,
+    successMessage: 'Категорію видалено',
+    onDeleted: deleted =>
       setCategories(prev =>
-        prev.filter(category => category._id !== categoryToDelete._id)
-      );
-
-      toast.success('Категорію видалено');
-      deleteModal.close();
-      setCategoryToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
-  };
+        prev.filter(category => category._id !== deleted._id)
+      ),
+  });
 
   const handleEdit = (category: CategoryResponseDTO) => {
     setCategoryToUpdate(category);

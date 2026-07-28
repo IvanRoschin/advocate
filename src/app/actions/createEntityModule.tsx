@@ -9,8 +9,6 @@ type PaginationResult<T> = {
 };
 
 type BaseRepo<TCreate, TUpdate, TEntity, TListItem> = {
-  findAll: () => Promise<TListItem[]>;
-
   findAllPaginated: (
     page: number,
     limit: number
