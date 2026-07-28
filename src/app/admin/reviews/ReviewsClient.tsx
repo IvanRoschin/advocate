@@ -1,12 +1,14 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
-import { toast } from 'sonner';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
+import {
+  InfiniteScroll,
+  InfiniteScrollHandle,
+  PageResult,
+} from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
-import { useModal } from '@/app/hooks/useModal';
-import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store';
 import {
   Breadcrumbs,
@@ -16,6 +18,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -29,49 +32,47 @@ type Props = {
 
 export default function ReviewsClient({ initialReviews }: Props) {
   const router = useRouter();
-  const start = useLoadingStore.getState().start;
-  const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
 
   const [search, setSearch] = useState('');
 
   const [reviews, setReviews] = useState<ReviewResponseDTO[]>(initialReviews);
-  const [reviewToDelete, setReviewToDelete] =
-    useState<ReviewResponseDTO | null>(null);
 
-  const deleteModal = useModal('deleteReview');
+  const listRef = useRef<InfiniteScrollHandle<ReviewResponseDTO>>(null);
 
-  const handleDelete = useCallback(
-    (review: ReviewResponseDTO) => {
-      setReviewToDelete(review);
-      deleteModal.open();
-    },
-    [deleteModal]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!reviewToDelete) return;
-
-    start();
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.reviews + `/${reviewToDelete._id}`),
-        {
-          method: 'DELETE',
-        }
+  const {
+    itemToDelete: reviewToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<ReviewResponseDTO>({
+    modalKey: 'deleteReview',
+    apiPath: routes.api.admin.reviews,
+    getId: review => review._id,
+    successMessage: 'Відгук видалено',
+    onDeleted: deleted => {
+      setReviews(prev => prev.filter(item => item._id !== deleted._id));
+      listRef.current?.setItems(prev =>
+        prev.filter(item => item._id !== deleted._id)
       );
+    },
+  });
 
-      setReviews(prev => prev.filter(item => item._id !== reviewToDelete._id));
+  const getReviewsPage = useCallback(
+    async (page: number): Promise<PageResult<ReviewResponseDTO>> => {
+      const response = await fetch(
+        apiUrl(routes.api.admin.reviews + `?page=${page}&limit=20`)
+      );
+      const json = (await response.json()) as {
+        ok: boolean;
+        data: ReviewResponseDTO[];
+        meta: { page: number; limit: number; hasMore: boolean };
+      };
 
-      toast.success('Відгук видалено');
-      deleteModal.close();
-      setReviewToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
-  }, [reviewToDelete, start, done, deleteModal]);
+      return { data: json.data, hasMore: json.meta.hasMore };
+    },
+    []
+  );
 
   const handleEdit = useCallback(
     (review: ReviewResponseDTO) => {
@@ -140,17 +141,33 @@ export default function ReviewsClient({ initialReviews }: Props) {
           />
         </AdminTableToolbar>
 
-        <AdminTable
-          data={reviews}
-          columns={columns}
-          isLoading={isLoading}
-          globalFilter={search}
-          emptyMessage="Відгуків поки немає"
-          mobileRender={review => (
-            <ReviewMobileCard
-              row={review}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+        <InfiniteScroll<ReviewResponseDTO>
+          ref={listRef}
+          initialData={initialReviews}
+          loadMore={getReviewsPage}
+          emptyState={
+            <EmptyState
+              title="Відгуки відсутні"
+              subtitle="Додайте перший відгук"
+              actionLabel="Додати новий відгук"
+              actionOnClick={handleCreate}
+            />
+          }
+          endMessage={<p className="subtitle">Усі відгуки завантажено</p>}
+          renderContent={items => (
+            <AdminTable
+              data={items}
+              columns={columns}
+              isLoading={isLoading}
+              globalFilter={search}
+              emptyMessage="Відгуків поки немає"
+              mobileRender={review => (
+                <ReviewMobileCard
+                  row={review}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              )}
             />
           )}
         />

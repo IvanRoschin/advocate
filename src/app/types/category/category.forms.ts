@@ -23,3 +23,9 @@ export const createCategorySchema = Yup.object({
   icon: Yup.mixed<CategoryIconKey>().oneOf(CATEGORY_ICON_KEYS).required(),
 });
 
+/* -------------------------------- Update -------------------------------- */
+
+export const updateCategorySchema = Yup.object({
+  title: baseCategorySchema.title.optional(),
+  icon: Yup.mixed<CategoryIconKey>().oneOf(CATEGORY_ICON_KEYS).optional(),
+}).noUnknown(true);

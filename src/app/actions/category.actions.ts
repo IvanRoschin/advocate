@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import slugify from 'slugify';
 
 import {
@@ -16,7 +17,7 @@ import { createEntityModule } from './createEntityModule';
    ADMIN CRUD (createEntityModule)
    ========================================================= */
 
-export const categoryActions = createEntityModule({
+const categoryEntityActions = createEntityModule({
   repo: categoryRepo,
 
   toDTO: mapCategoryToResponse,
@@ -33,6 +34,32 @@ export const categoryActions = createEntityModule({
     notFoundMessage: 'Категорію не знайдено',
   },
 });
+
+// Category names/filters surface on both /blog and /services, and there's
+// no dedicated category detail page, so revalidate both list routes.
+const revalidateCategoryPages = () => {
+  revalidatePath('/blog');
+  revalidatePath('/services');
+};
+
+export const categoryActions = {
+  ...categoryEntityActions,
+  create: async (...args: Parameters<typeof categoryEntityActions.create>) => {
+    const result = await categoryEntityActions.create(...args);
+    revalidateCategoryPages();
+    return result;
+  },
+  update: async (...args: Parameters<typeof categoryEntityActions.update>) => {
+    const result = await categoryEntityActions.update(...args);
+    revalidateCategoryPages();
+    return result;
+  },
+  delete: async (...args: Parameters<typeof categoryEntityActions.delete>) => {
+    const result = await categoryEntityActions.delete(...args);
+    revalidateCategoryPages();
+    return result;
+  },
+};
 
 /* =========================================================
    PUBLIC

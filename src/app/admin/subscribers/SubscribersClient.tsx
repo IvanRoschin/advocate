@@ -1,9 +1,14 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import SubscriberForm from '@/app/components/forms/admin/SubscriberForm';
+import {
+  InfiniteScroll,
+  InfiniteScrollHandle,
+  PageResult,
+} from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -16,6 +21,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -40,14 +46,47 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
   const [subscribers, setSubscribers] =
     useState<SubscriberResponseDTO[]>(initialSubscribers);
 
-  const [subscriberToDelete, setSubscriberToDelete] =
-    useState<SubscriberResponseDTO | null>(null);
   const [subscriberToUpdate, setSubscriberToUpdate] =
     useState<SubscriberResponseDTO | null>(null);
 
   const createModal = useModal('createSubscriber');
-  const deleteModal = useModal('deleteSubscriber');
   const updateModal = useModal('updateSubscriber');
+
+  const listRef = useRef<InfiniteScrollHandle<SubscriberResponseDTO>>(null);
+
+  const {
+    itemToDelete: subscriberToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<SubscriberResponseDTO>({
+    modalKey: 'deleteSubscriber',
+    apiPath: routes.api.admin.subscribe,
+    getId: subscriber => subscriber._id,
+    successMessage: 'Підписника видалено',
+    onDeleted: deleted => {
+      setSubscribers(prev => prev.filter(item => item._id !== deleted._id));
+      listRef.current?.setItems(prev =>
+        prev.filter(item => item._id !== deleted._id)
+      );
+    },
+  });
+
+  const getSubscribersPage = useCallback(
+    async (page: number): Promise<PageResult<SubscriberResponseDTO>> => {
+      const response = await fetch(
+        apiUrl(routes.api.admin.subscribe + `?page=${page}&limit=20`)
+      );
+      const json = (await response.json()) as {
+        ok: boolean;
+        data: SubscriberResponseDTO[];
+        meta: { page: number; limit: number; hasMore: boolean };
+      };
+
+      return { data: json.data, hasMore: json.meta.hasMore };
+    },
+    []
+  );
 
   // ==================== HANDLERS ====================
 
@@ -58,37 +97,6 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
     },
     [updateModal]
   );
-
-  const handleDelete = useCallback(
-    (subscriber: SubscriberResponseDTO) => {
-      setSubscriberToDelete(subscriber);
-      deleteModal.open();
-    },
-    [deleteModal]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!subscriberToDelete) return;
-
-    start();
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.subscribe + `/${subscriberToDelete._id}`),
-        { method: 'DELETE' }
-      );
-
-      setSubscribers(prev =>
-        prev.filter(item => item._id !== subscriberToDelete._id)
-      );
-      toast.success('Підписника видалено');
-      deleteModal.close();
-      setSubscriberToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
-  }, [deleteModal, done, subscriberToDelete, start]);
 
   const handleToggleActive = useCallback(
     async (subscriber: SubscriberResponseDTO, checked: boolean) => {
@@ -105,6 +113,9 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
         );
 
         setSubscribers(prev =>
+          prev.map(item => (item._id === updated._id ? updated : item))
+        );
+        listRef.current?.setItems(prev =>
           prev.map(item => (item._id === updated._id ? updated : item))
         );
 
@@ -137,6 +148,9 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
         setSubscribers(prev =>
           prev.map(item => (item._id === updated._id ? updated : item))
         );
+        listRef.current?.setItems(prev =>
+          prev.map(item => (item._id === updated._id ? updated : item))
+        );
 
         toast.success('Підписника оновлено');
         updateModal.close();
@@ -163,6 +177,7 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
         );
 
         setSubscribers(prev => [created, ...prev]);
+        listRef.current?.setItems(prev => [created, ...prev]);
         toast.success('Підписника створено');
         createModal.close();
       } catch (err) {
@@ -178,6 +193,7 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
 
   const columns = useMemo(
     () =>
+      // eslint-disable-next-line react-hooks/refs -- onToggleActive only runs later, from a checkbox handler
       subscribersColumns({
         onDelete: handleDelete,
         onEdit: handleEdit,
@@ -269,18 +285,32 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
           />
         </AdminTableToolbar>
 
-        <AdminTable
-          data={subscribers}
-          columns={columns}
-          isLoading={isLoading}
-          globalFilter={search}
-          emptyMessage="Підписників не знайдено"
-          mobileRender={subscriber => (
-            <SubscriberMobileCard
-              row={subscriber}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onToggleActive={handleToggleActive}
+        <InfiniteScroll<SubscriberResponseDTO>
+          ref={listRef}
+          initialData={initialSubscribers}
+          loadMore={getSubscribersPage}
+          emptyState={
+            <EmptyState
+              title="Підписники відсутні"
+              subtitle="Поки що немає жодного підписника"
+            />
+          }
+          endMessage={<p className="subtitle">Усіх підписників завантажено</p>}
+          renderContent={items => (
+            <AdminTable
+              data={items}
+              columns={columns}
+              isLoading={isLoading}
+              globalFilter={search}
+              emptyMessage="Підписників не знайдено"
+              mobileRender={subscriber => (
+                <SubscriberMobileCard
+                  row={subscriber}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onToggleActive={handleToggleActive}
+                />
+              )}
             />
           )}
         />

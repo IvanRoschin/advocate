@@ -40,11 +40,11 @@ userSchema.methods.comparePassword = function (password: string) {
   return bcrypt.compareSync(password, this.password);
 };
 
-export interface UserMethods {
+interface UserMethods {
   comparePassword(password: string): boolean;
 }
 
-export type UserInput = InferSchemaType<typeof userSchema>;
+type UserInput = InferSchemaType<typeof userSchema>;
 export type UserDocument = UserInput & UserMethods;
 
 const User =

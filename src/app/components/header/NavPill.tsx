@@ -80,7 +80,7 @@ export const NavPill = ({
       {
         key: 'dashboard',
         href: resolveDashboardHref(publicAuth.role),
-        label: 'Кабінет',
+        label: 'Увійти',
         Icon: iconLibrary.person,
       },
       {

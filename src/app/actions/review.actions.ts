@@ -1,3 +1,5 @@
+import { revalidatePath } from 'next/cache';
+
 import { reviewQueries, reviewRepo } from '../lib/repositories/review.repo';
 import { ValidationError } from '../lib/server/errors';
 import { mapReviewToResponse, ReviewResponseDTO } from '../types';
@@ -22,7 +24,7 @@ type PublicListResult = {
   hasMore: boolean;
 };
 
-export const reviewActions = createEntityModule({
+const reviewEntityActions = createEntityModule({
   repo: reviewRepo,
 
   toDTO: mapReviewToResponse,
@@ -36,6 +38,30 @@ export const reviewActions = createEntityModule({
     notFoundMessage: 'Review not found',
   },
 });
+
+// Reviews render on the home page and on whichever service/article page
+// they're attached to — resolving the exact page per review isn't worth
+// the extra lookups, so just revalidate everything under the root layout.
+const revalidateReviewPages = () => revalidatePath('/', 'layout');
+
+export const reviewActions = {
+  ...reviewEntityActions,
+  create: async (...args: Parameters<typeof reviewEntityActions.create>) => {
+    const result = await reviewEntityActions.create(...args);
+    revalidateReviewPages();
+    return result;
+  },
+  update: async (...args: Parameters<typeof reviewEntityActions.update>) => {
+    const result = await reviewEntityActions.update(...args);
+    revalidateReviewPages();
+    return result;
+  },
+  delete: async (...args: Parameters<typeof reviewEntityActions.delete>) => {
+    const result = await reviewEntityActions.delete(...args);
+    revalidateReviewPages();
+    return result;
+  },
+};
 
 function validatePublicReview(args: PublicReviewInput) {
   const authorName = args.authorName?.trim();
@@ -68,15 +94,18 @@ export const reviewPublicActions = {
     async ({ args }) => {
       const clean = validatePublicReview(args);
 
-      const review = await reviewActions.create({
+      // Calls the repo directly (not reviewActions.create) — that path is
+      // admin-gated, and this is the public "leave a review" submission.
+      const review = await reviewRepo.create({
         ...clean,
         status: 'pending',
       });
 
       await notifyReviewCreated(clean);
 
-      return review;
-    }
+      return mapReviewToResponse(review);
+    },
+    { rateLimitKey: 'review-create' }
   ),
 
   list: createAction<

@@ -2,6 +2,7 @@
 
 import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
 
 import AdminFormSection from '@/app/components/forms/shared/AdminFormSection';
@@ -10,7 +11,6 @@ import FormDraftPersist from '@/app/components/forms/shared/FormDraftPersist';
 import { fieldMotion } from '@/app/components/forms/shared/formMotion';
 import storageKeys from '@/app/config/storageKeys';
 import { clearFormDraft, loadFormDraft } from '@/app/lib/client/form-draft';
-import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
 import { defaultServiceLayout } from '@/app/resources/content/pages/service.layout';
 import {
   createServiceFormSchema,
@@ -23,10 +23,18 @@ import {
 } from '@/app/types';
 import {
   Input,
+  Loader,
   RepeatableFieldsSection,
   Select,
   Textarea,
 } from '@/components/index';
+
+// Pulls in the Cloudinary upload widget bundle — admin-only, not needed
+// for the initial render of this form.
+const ImageUploadCloudinary = dynamic(
+  () => import('@/app/lib/client/ImageUploadCloudinary'),
+  { ssr: false, loading: () => <Loader /> }
+);
 
 /* ------------------------------------------------------------------ */
 /* Types ------------------------------------------------------------- */

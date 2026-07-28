@@ -26,9 +26,9 @@ subscriberSchema.index({ '$**': 'text' });
 export type SubscriberEntity = InferSchemaType<typeof subscriberSchema>;
 
 // Типы TypeScript
-export type SubscriberInput = InferSchemaType<typeof subscriberSchema>;
+type SubscriberInput = InferSchemaType<typeof subscriberSchema>;
 
-export type SubscriberDocument = SubscriberInput & {
+type SubscriberDocument = SubscriberInput & {
   _id: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;

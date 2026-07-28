@@ -1,28 +1,40 @@
 import { NextResponse } from 'next/server';
 
 import { clientActions } from '@/app/actions/client.actions';
-import { ApiResponse } from '@/app/lib/server/ApiError';
+import { errorToResponse } from '@/app/lib/server/errors/errorToResponse';
+import { clientFormSchema, CreateClientDTO } from '@/app/types';
 
-import type { ClientResponseDTO, CreateClientDTO } from '@/app/types';
-export async function GET() {
-  const result = await clientActions.getAll();
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const page = Number(searchParams.get('page') ?? 1);
+    const limit = Number(searchParams.get('limit') ?? 20);
 
-  return NextResponse.json<ApiResponse<ClientResponseDTO[]>>({
-    ok: true,
-    data: result.items,
-  });
+    const result = await clientActions.getAll({ page, limit });
+
+    return NextResponse.json({
+      ok: true,
+      data: result.items,
+      meta: { page, limit, hasMore: result.hasMore },
+    });
+  } catch (err) {
+    return errorToResponse(err);
+  }
 }
 
 export async function POST(req: Request) {
-  const body = (await req.json()) as CreateClientDTO;
+  try {
+    const body = await req.json();
 
-  const client = await clientActions.create(body);
+    const validated = await clientFormSchema.validate(body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
 
-  return NextResponse.json<ApiResponse<ClientResponseDTO>>(
-    {
-      ok: true,
-      data: client,
-    },
-    { status: 201 }
-  );
+    const client = await clientActions.create(validated as CreateClientDTO);
+
+    return NextResponse.json({ ok: true, data: client }, { status: 201 });
+  } catch (err) {
+    return errorToResponse(err);
+  }
 }

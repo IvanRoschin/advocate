@@ -1,10 +1,15 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import ClientForm from '@/app/components/forms/admin/ClientForm';
+import {
+  InfiniteScroll,
+  InfiniteScrollHandle,
+  PageResult,
+} from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -18,6 +23,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -40,46 +46,47 @@ export default function ClientsClient({ initialClients }: Props) {
   const [search, setSearch] = useState('');
 
   const [clients, setClients] = useState<ClientResponseDTO[]>(initialClients);
-  const [clientToDelete, setClientToDelete] =
-    useState<ClientResponseDTO | null>(null);
 
   const createModal = useModal('createClient');
-  const deleteModal = useModal('deleteClient');
 
-  const handleDelete = (client: ClientResponseDTO) => {
-    setClientToDelete(client);
-    deleteModal.open();
-  };
+  const listRef = useRef<InfiniteScrollHandle<ClientResponseDTO>>(null);
+
+  const {
+    itemToDelete: clientToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<ClientResponseDTO>({
+    modalKey: 'deleteClient',
+    apiPath: routes.api.admin.clients,
+    getId: client => client.id,
+    successMessage: 'Клієнта видалено',
+    onDeleted: deleted => {
+      setClients(prev => prev.filter(client => client.id !== deleted.id));
+      listRef.current?.setItems(prev =>
+        prev.filter(client => client.id !== deleted.id)
+      );
+    },
+  });
+
+  const getClientsPage = useCallback(
+    async (page: number): Promise<PageResult<ClientResponseDTO>> => {
+      const response = await fetch(
+        apiUrl(routes.api.admin.clients + `?page=${page}&limit=20`)
+      );
+      const json = (await response.json()) as {
+        ok: boolean;
+        data: ClientResponseDTO[];
+        meta: { page: number; limit: number; hasMore: boolean };
+      };
+
+      return { data: json.data, hasMore: json.meta.hasMore };
+    },
+    []
+  );
 
   const handleEdit = (client: ClientResponseDTO) => {
     router.push(`/admin/clients/${client.id}/edit`);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!clientToDelete) return;
-
-    start();
-
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.clients + `/${clientToDelete.id}`),
-        {
-          method: 'DELETE',
-        }
-      );
-
-      setClients(prev =>
-        prev.filter(client => client.id !== clientToDelete.id)
-      );
-
-      toast.success('Клієнта видалено');
-      deleteModal.close();
-      setClientToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
   };
 
   const handleCreateClient = async (values: CreateClientDTO) => {
@@ -95,6 +102,7 @@ export default function ClientsClient({ initialClients }: Props) {
       );
 
       setClients(prev => [newClient, ...prev]);
+      listRef.current?.setItems(prev => [newClient, ...prev]);
       toast.success('Клієнта створено');
       createModal.close();
     } catch (err) {
@@ -126,10 +134,7 @@ export default function ClientsClient({ initialClients }: Props) {
         <DeleteConfirmation
           title={`Клієнт: ${clientToDelete?.fullName ?? '—'}`}
           onConfirm={handleDeleteConfirm}
-          onCancel={() => {
-            deleteModal.close();
-            setClientToDelete(null);
-          }}
+          onCancel={deleteModal.close}
         />
       }
     />
@@ -173,20 +178,36 @@ export default function ClientsClient({ initialClients }: Props) {
           />
         </AdminTableToolbar>
 
-        <AdminTable
-          data={clients}
-          columns={clientsColumns({
-            onEdit: handleEdit,
-            onDelete: handleDelete,
-          })}
-          isLoading={isLoading}
-          globalFilter={search}
-          emptyMessage="Клієнтів поки немає"
-          mobileRender={client => (
-            <ClientMobileCard
-              row={client}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+        <InfiniteScroll<ClientResponseDTO>
+          ref={listRef}
+          initialData={initialClients}
+          loadMore={getClientsPage}
+          emptyState={
+            <EmptyState
+              title="Клієнти відсутні"
+              subtitle="Додайте першого клієнта"
+              actionLabel="Додати клієнта"
+              actionOnClick={createModal.open}
+            />
+          }
+          endMessage={<p className="subtitle">Усіх клієнтів завантажено</p>}
+          renderContent={items => (
+            <AdminTable
+              data={items}
+              columns={clientsColumns({
+                onEdit: handleEdit,
+                onDelete: handleDelete,
+              })}
+              isLoading={isLoading}
+              globalFilter={search}
+              emptyMessage="Клієнтів поки немає"
+              mobileRender={client => (
+                <ClientMobileCard
+                  row={client}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              )}
             />
           )}
         />

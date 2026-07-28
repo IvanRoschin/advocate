@@ -11,3 +11,15 @@ export const createSubscriberSchema = yup.object({
   website: yup.string().trim().default(''),
   turnstileToken: yup.string().trim().required(),
 });
+
+export const updateSubscriberSchema = yup
+  .object({
+    email: yup
+      .string()
+      .trim()
+      .email('Вкажіть коректний email')
+      .max(255, 'Email не може бути довшим за 255 символів')
+      .optional(),
+    subscribed: yup.boolean().optional(),
+  })
+  .noUnknown(true);

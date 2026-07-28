@@ -16,7 +16,7 @@ const Hero = ({ slides }: HeroProps) => {
       ?.link ?? null;
 
   return (
-    <section className="4 relative mb-16 flex min-h-[110dvh] w-full items-center overflow-hidden sm:mb-32 sm:min-h-256 lg:min-h-192">
+    <section className="4 relative flex w-full items-center overflow-hidden sm:min-h-256 lg:min-h-192">
       {' '}
       <HeroCarousel
         items={slides}

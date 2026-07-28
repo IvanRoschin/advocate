@@ -1,11 +1,31 @@
 'use client';
 
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Dispatch,
+  ForwardedRef,
+  forwardRef,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { TailSpin } from 'react-loader-spinner';
 
 export interface PageResult<T> {
   data: T[];
   hasMore: boolean;
+}
+
+export interface InfiniteScrollHandle<T> {
+  /**
+   * Updates the currently loaded items directly (same functional-update
+   * style as useState) — use after create/update/delete so the visible
+   * list stays in sync; the component only seeds from `initialData` once.
+   */
+  setItems: Dispatch<SetStateAction<T[]>>;
 }
 
 interface InfiniteScrollProps<T> {
@@ -18,15 +38,18 @@ interface InfiniteScrollProps<T> {
   loader?: ReactNode;
 }
 
-export function InfiniteScroll<T>({
-  initialData,
-  initialHasMore = true,
-  loadMore,
-  renderContent,
-  emptyState,
-  endMessage,
-  loader,
-}: InfiniteScrollProps<T>) {
+function InfiniteScrollInner<T>(
+  {
+    initialData,
+    initialHasMore = true,
+    loadMore,
+    renderContent,
+    emptyState,
+    endMessage,
+    loader,
+  }: InfiniteScrollProps<T>,
+  ref: ForwardedRef<InfiniteScrollHandle<T>>
+) {
   const [items, setItems] = useState<T[]>(initialData);
   const [isLoading, setIsLoading] = useState(false);
   const [allLoaded, setAllLoaded] = useState(initialHasMore);
@@ -35,6 +58,8 @@ export function InfiniteScroll<T>({
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   const isLoadingRef = useRef(false);
+
+  useImperativeHandle(ref, () => ({ setItems }), []);
 
   const handleLoadMore = useCallback(async () => {
     if (isLoadingRef.current || allLoaded) return;
@@ -100,3 +125,11 @@ export function InfiniteScroll<T>({
     </>
   );
 }
+
+// forwardRef erases generics on the component's type; recast so callers
+// still see InfiniteScroll<T> with a working ref instead of `unknown`.
+export const InfiniteScroll = forwardRef(InfiniteScrollInner) as <T>(
+  props: InfiniteScrollProps<T> & {
+    ref?: ForwardedRef<InfiniteScrollHandle<T>>;
+  }
+) => ReturnType<typeof InfiniteScrollInner>;

@@ -1,5 +1,7 @@
 import mongoose, { InferSchemaType, Types } from 'mongoose';
 
+import { sanitizeArticleHtml } from '@/app/lib/server/sanitizeArticleHtml';
+
 const { Schema } = mongoose;
 
 const ArticleSchema = new Schema(
@@ -99,11 +101,25 @@ ArticleSchema.pre('save', function () {
   ) {
     this.publishedAt = new Date();
   }
+
+  if (this.isModified('content') && this.content) {
+    this.content = sanitizeArticleHtml(this.content);
+  }
 });
 
-export type ArticleInput = InferSchemaType<typeof ArticleSchema>;
+// findByIdAndUpdate/findOneAndUpdate bypass 'save' hooks, so content
+// written through those paths needs sanitizing here too.
+ArticleSchema.pre('findOneAndUpdate', function () {
+  const update = this.getUpdate() as { content?: string } | null;
 
-export type ArticleDocument = ArticleInput & {
+  if (update?.content) {
+    update.content = sanitizeArticleHtml(update.content);
+  }
+});
+
+type ArticleInput = InferSchemaType<typeof ArticleSchema>;
+
+type ArticleDocument = ArticleInput & {
   _id: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;

@@ -1,3 +1,4 @@
+import { requireAdmin } from '@/app/lib/auth/requireAdmin';
 import { ValidationError } from '@/app/lib/server/errors';
 import { dbConnect } from '@/app/lib/server/mongoose';
 
@@ -8,8 +9,6 @@ type PaginationResult<T> = {
 };
 
 type BaseRepo<TCreate, TUpdate, TEntity, TListItem> = {
-  findAll: () => Promise<TListItem[]>;
-
   findAllPaginated: (
     page: number,
     limit: number
@@ -82,6 +81,7 @@ export function createEntityModule<
 
   return {
     getAll: async (args?: { page?: number; limit?: number }) => {
+      await requireAdmin();
       await dbConnect();
 
       const page = Math.max(1, args?.page ?? 1);
@@ -95,6 +95,7 @@ export function createEntityModule<
     },
 
     getById: async (id: string) => {
+      await requireAdmin();
       await dbConnect();
 
       const item = await config.repo.findById(id);
@@ -103,6 +104,7 @@ export function createEntityModule<
     },
 
     create: async (data: TCreateInput) => {
+      await requireAdmin();
       await dbConnect();
 
       let payload = data as unknown as TCreateRepo;
@@ -123,6 +125,7 @@ export function createEntityModule<
     },
 
     update: async (id: string, data: TUpdateRepo) => {
+      await requireAdmin();
       await dbConnect();
 
       const existing = await config.repo.findById(id);
@@ -154,6 +157,7 @@ export function createEntityModule<
     },
 
     delete: async (id: string) => {
+      await requireAdmin();
       await dbConnect();
 
       const existing = await config.repo.findById(id);

@@ -7,10 +7,6 @@ const slideQuery = createQuery(Slide);
 export const slideRepo = {
   /* ================= CRUD ================= */
 
-  async findAll(): Promise<SlideLike[]> {
-    return Slide.find().lean<SlideLike[]>();
-  },
-
   async findAllPaginated(page: number, limit: number) {
     return slideQuery()
       .sortBy({ createdAt: -1 })

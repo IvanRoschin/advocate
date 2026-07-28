@@ -1,4 +1,4 @@
-import mongoose, { InferSchemaType, Types } from 'mongoose';
+import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
@@ -84,14 +84,6 @@ clientSchema.index({
   taxId: 'text',
   notes: 'text',
 });
-
-export type ClientInput = InferSchemaType<typeof clientSchema>;
-
-export type ClientDocument = ClientInput & {
-  _id: Types.ObjectId;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
 
 const Client = mongoose.models.Client || mongoose.model('Client', clientSchema);
 

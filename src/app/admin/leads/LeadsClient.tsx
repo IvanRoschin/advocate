@@ -1,9 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import LeadForm from '@/app/components/forms/admin/LeadForm';
+import {
+  InfiniteScroll,
+  InfiniteScrollHandle,
+  PageResult,
+} from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
 import { useModal } from '@/app/hooks/useModal';
 import { apiFetch } from '@/app/lib/client/apiFetch';
@@ -17,6 +22,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -40,44 +46,48 @@ export default function LeadsClient({ initialLeads }: Props) {
   const [search, setSearch] = useState('');
 
   const [leads, setLeads] = useState<LeadResponseDTO[]>(initialLeads);
-  const [leadToDelete, setLeadToDelete] = useState<LeadResponseDTO | null>(
-    null
-  );
   const [leadToUpdate, setLeadToUpdate] = useState<LeadResponseDTO | null>(
     null
   );
 
   const createModal = useModal('createLead');
-  const deleteModal = useModal('deleteLead');
   const updateModal = useModal('updateLead');
 
-  const handleDelete = (lead: LeadResponseDTO) => {
-    setLeadToDelete(lead);
-    deleteModal.open();
-  };
+  const listRef = useRef<InfiniteScrollHandle<LeadResponseDTO>>(null);
 
-  const handleDeleteConfirm = async () => {
-    if (!leadToDelete) return;
-
-    start();
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.leads + `/${leadToDelete.id}`),
-        {
-          method: 'DELETE',
-        }
+  const {
+    itemToDelete: leadToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<LeadResponseDTO>({
+    modalKey: 'deleteLead',
+    apiPath: routes.api.admin.leads,
+    getId: lead => lead.id,
+    successMessage: 'Лід видалений',
+    onDeleted: deleted => {
+      setLeads(prev => prev.filter(lead => lead.id !== deleted.id));
+      listRef.current?.setItems(prev =>
+        prev.filter(lead => lead.id !== deleted.id)
       );
+    },
+  });
 
-      setLeads(prev => prev.filter(lead => lead.id !== leadToDelete.id));
-      toast.success('Лід видалений');
-      deleteModal.close();
-      setLeadToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
-  };
+  const getLeadsPage = useCallback(
+    async (page: number): Promise<PageResult<LeadResponseDTO>> => {
+      const response = await fetch(
+        apiUrl(routes.api.admin.leads + `?page=${page}&limit=20`)
+      );
+      const json = (await response.json()) as {
+        ok: boolean;
+        data: LeadResponseDTO[];
+        meta: { page: number; limit: number; hasMore: boolean };
+      };
+
+      return { data: json.data, hasMore: json.meta.hasMore };
+    },
+    []
+  );
 
   const handleEdit = (lead: LeadResponseDTO) => {
     setLeadToUpdate(lead);
@@ -104,6 +114,7 @@ export default function LeadsClient({ initialLeads }: Props) {
       );
 
       setLeads(prev => [newLead, ...prev]);
+      listRef.current?.setItems(prev => [newLead, ...prev]);
       toast.success('Лід створений');
       createModal.close();
     } catch (err) {
@@ -139,6 +150,9 @@ export default function LeadsClient({ initialLeads }: Props) {
       setLeads(prev =>
         prev.map(lead => (lead.id === updatedLead.id ? updatedLead : lead))
       );
+      listRef.current?.setItems(prev =>
+        prev.map(lead => (lead.id === updatedLead.id ? updatedLead : lead))
+      );
 
       toast.success('Лід оновлений');
       updateModal.close();
@@ -170,6 +184,9 @@ export default function LeadsClient({ initialLeads }: Props) {
       });
 
       setLeads(prev => prev.filter(lead => lead.id !== leadToUpdate.id));
+      listRef.current?.setItems(prev =>
+        prev.filter(lead => lead.id !== leadToUpdate.id)
+      );
       updateModal.close();
       setLeadToUpdate(null);
 
@@ -231,20 +248,36 @@ export default function LeadsClient({ initialLeads }: Props) {
           />
         </AdminTableToolbar>
 
-        <AdminTable
-          data={leads}
-          columns={leadColumns({
-            onEdit: handleEdit,
-            onDelete: handleDelete,
-          })}
-          isLoading={false}
-          globalFilter={search}
-          emptyMessage="Заявок поки немає"
-          mobileRender={lead => (
-            <LeadMobileCard
-              row={lead}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+        <InfiniteScroll<LeadResponseDTO>
+          ref={listRef}
+          initialData={initialLeads}
+          loadMore={getLeadsPage}
+          emptyState={
+            <EmptyState
+              title="Ліди відсутні"
+              subtitle="Додайте перший лід"
+              actionLabel="Додати лід"
+              actionOnClick={createModal.open}
+            />
+          }
+          endMessage={<p className="subtitle">Усі ліди завантажено</p>}
+          renderContent={items => (
+            <AdminTable
+              data={items}
+              columns={leadColumns({
+                onEdit: handleEdit,
+                onDelete: handleDelete,
+              })}
+              isLoading={false}
+              globalFilter={search}
+              emptyMessage="Заявок поки немає"
+              mobileRender={lead => (
+                <LeadMobileCard
+                  row={lead}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              )}
             />
           )}
         />

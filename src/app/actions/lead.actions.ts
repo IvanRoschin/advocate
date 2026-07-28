@@ -52,15 +52,18 @@ export const leadPublicActions = {
       turnstileToken?: string;
     },
     LeadResponseDTO
-  >(async ({ args: payload }) => {
-    const body = await validate(createLeadRequestSchema, payload);
-    const leadData = normalizeLeadData(body);
-    const lead = await leadRepo.create(leadData);
+  >(
+    async ({ args: payload }) => {
+      const body = await validate(createLeadRequestSchema, payload);
+      const leadData = normalizeLeadData(body);
+      const lead = await leadRepo.create(leadData);
 
-    await notifyLeadCreated(leadData);
+      await notifyLeadCreated(leadData);
 
-    return mapLeadToResponse(lead);
-  }),
+      return mapLeadToResponse(lead);
+    },
+    { rateLimitKey: 'lead-create' }
+  ),
 };
 
 /* ================= Admin ================= */
