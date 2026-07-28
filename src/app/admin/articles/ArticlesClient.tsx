@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { toast } from 'sonner';
 
 import {
   InfiniteScroll,
@@ -10,9 +9,6 @@ import {
   PageResult,
 } from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
-import { useModal } from '@/app/hooks/useModal';
-import { apiFetch } from '@/app/lib/client/apiFetch';
-import { useLoadingStore } from '@/app/store/loading.store';
 import {
   Breadcrumbs,
   Btn,
@@ -21,6 +17,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -45,20 +42,31 @@ export default function ArticlesClient({
   categories,
 }: Props) {
   const router = useRouter();
-  const start = useLoadingStore.getState().start;
-  const done = useLoadingStore.getState().done;
 
   const [search, setSearch] = useState('');
 
   const [articles, setArticles] =
     useState<ArticleResponseDTO[]>(initialArticles);
 
-  const [articleToDelete, setArticleToDelete] =
-    useState<ArticleResponseDTO | null>(null);
-
   const listRef = useRef<InfiniteScrollHandle<ArticleResponseDTO>>(null);
 
-  const deleteModal = useModal('deleteArticle');
+  const {
+    itemToDelete: articleToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<ArticleResponseDTO>({
+    modalKey: 'deleteArticle',
+    apiPath: routes.api.admin.articles,
+    getId: article => article._id,
+    successMessage: 'Статтю видалено',
+    onDeleted: deleted => {
+      setArticles(prev => prev.filter(article => article._id !== deleted._id));
+      listRef.current?.setItems(prev =>
+        prev.filter(article => article._id !== deleted._id)
+      );
+    },
+  });
 
   const authorNameById = useMemo(() => {
     const map = new Map<string, string>();
@@ -71,43 +79,6 @@ export default function ArticlesClient({
     for (const category of categories) map.set(category.id, category.title);
     return map;
   }, [categories]);
-
-  const handleDelete = useCallback(
-    (article: ArticleResponseDTO) => {
-      setArticleToDelete(article);
-      deleteModal.open();
-    },
-    [deleteModal]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!articleToDelete) return;
-
-    start();
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.articles + `/${articleToDelete._id}`),
-        {
-          method: 'DELETE',
-        }
-      );
-
-      setArticles(prev =>
-        prev.filter(article => article._id !== articleToDelete._id)
-      );
-      listRef.current?.setItems(prev =>
-        prev.filter(article => article._id !== articleToDelete._id)
-      );
-
-      toast.success('Статтю видалено');
-      deleteModal.close();
-      setArticleToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
-  }, [articleToDelete, start, done, deleteModal]);
 
   const handleEdit = useCallback(
     (article: ArticleResponseDTO) => {

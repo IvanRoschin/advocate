@@ -59,9 +59,9 @@ const ReviewSchema = new Schema(
 ReviewSchema.index({ targetType: 1, targetId: 1, status: 1 });
 ReviewSchema.index({ targetType: 1, pageKey: 1, status: 1 });
 
-export type ReviewInput = InferSchemaType<typeof ReviewSchema>;
+type ReviewInput = InferSchemaType<typeof ReviewSchema>;
 
-export type ReviewDocument = ReviewInput & {
+type ReviewDocument = ReviewInput & {
   _id: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;

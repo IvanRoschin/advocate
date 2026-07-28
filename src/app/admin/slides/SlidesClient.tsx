@@ -17,6 +17,7 @@ import {
   SlideForm,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -41,29 +42,31 @@ export default function SlidesClient({ initialSlides }: Props) {
   const [search, setSearch] = useState('');
 
   const [slides, setSlides] = useState<SlideResponseDTO[]>(initialSlides);
-  const [slideToDelete, setSlideToDelete] = useState<SlideResponseDTO | null>(
-    null
-  );
   const [slideToUpdate, setSlideToUpdate] = useState<SlideResponseDTO | null>(
     null
   );
   const [togglingIds, setTogglingIds] = useState<string[]>([]);
 
   const createModal = useModal('createSlide');
-  const deleteModal = useModal('deleteSlide');
   const updateModal = useModal('updateSlide');
+
+  const {
+    itemToDelete: slideToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<SlideResponseDTO>({
+    modalKey: 'deleteSlide',
+    apiPath: routes.api.admin.slides,
+    getId: slide => slide._id,
+    successMessage: 'Слайд видалено',
+    onDeleted: deleted =>
+      setSlides(prev => prev.filter(item => item._id !== deleted._id)),
+  });
 
   const isSlideToggling = useCallback(
     (slideId: string) => togglingIds.includes(slideId),
     [togglingIds]
-  );
-
-  const handleDelete = useCallback(
-    (slide: SlideResponseDTO) => {
-      setSlideToDelete(slide);
-      deleteModal.open();
-    },
-    [deleteModal]
   );
 
   const handleEdit = useCallback(
@@ -110,29 +113,6 @@ export default function SlidesClient({ initialSlides }: Props) {
     },
     [isSlideToggling]
   );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!slideToDelete) return;
-
-    start();
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.slides + `/${slideToDelete._id}`),
-        {
-          method: 'DELETE',
-        }
-      );
-
-      setSlides(prev => prev.filter(item => item._id !== slideToDelete._id));
-      toast.success('Слайд видалено');
-      deleteModal.close();
-      setSlideToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
-  }, [deleteModal, done, slideToDelete, start]);
 
   const handleCreateSlide = useCallback(
     async (payload: CreateSlideDTO) => {

@@ -39,9 +39,9 @@ const clientAccessSchema = new Schema(
 
 clientAccessSchema.index({ userId: 1, clientId: 1 }, { unique: true });
 
-export type ClientAccessInput = InferSchemaType<typeof clientAccessSchema>;
+type ClientAccessInput = InferSchemaType<typeof clientAccessSchema>;
 
-export type ClientAccessDocument = ClientAccessInput & {
+type ClientAccessDocument = ClientAccessInput & {
   _id: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;

@@ -1,4 +1,4 @@
-import mongoose, { HydratedDocument, InferSchemaType, Model } from 'mongoose';
+import mongoose, { InferSchemaType, Model } from 'mongoose';
 
 const { Schema, models, model } = mongoose;
 
@@ -36,8 +36,7 @@ const slideSchema = new Schema(
 slideSchema.index({ '$**': 'text' });
 
 export type SlideEntity = InferSchemaType<typeof slideSchema>;
-export type SlideDocument = HydratedDocument<SlideEntity>;
-export type SlideModel = Model<SlideEntity>;
+type SlideModel = Model<SlideEntity>;
 
 const Slide =
   (models.Slide as SlideModel | undefined) ||

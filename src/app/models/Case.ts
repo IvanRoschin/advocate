@@ -63,9 +63,9 @@ const caseSchema = new Schema(
 
 caseSchema.index({ clientId: 1, updatedAt: -1 });
 
-export type CaseInput = InferSchemaType<typeof caseSchema>;
+type CaseInput = InferSchemaType<typeof caseSchema>;
 
-export type CaseDocument = CaseInput & {
+type CaseDocument = CaseInput & {
   _id: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;

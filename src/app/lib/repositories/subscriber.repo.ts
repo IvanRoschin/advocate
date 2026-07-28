@@ -11,10 +11,6 @@ const subscriberQuery = createQuery(Subscriber);
 export const subscriberRepo = {
   /* ================= CRUD ================= */
 
-  async findAll(): Promise<SubscriberLike[]> {
-    return Subscriber.find().lean<SubscriberLike[]>();
-  },
-
   async findAllPaginated(page: number, limit: number) {
     return subscriberQuery()
       .sortBy({ createdAt: -1 })

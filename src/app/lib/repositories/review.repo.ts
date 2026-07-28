@@ -16,10 +16,6 @@ const reviewQuery = createQuery(Review);
 export const reviewRepo = {
   /* ================= CRUD ================= */
 
-  async findAll(): Promise<ReviewResponseDTO[]> {
-    return Review.find().sort({ createdAt: -1 }).lean<ReviewResponseDTO[]>();
-  },
-
   async findAllPaginated(page: number, limit: number) {
     return reviewQuery()
       .sortBy({ createdAt: -1 })

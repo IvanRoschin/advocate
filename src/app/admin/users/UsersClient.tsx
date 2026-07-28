@@ -17,6 +17,7 @@ import {
   UserForm,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -42,44 +43,28 @@ export default function UsersClient({ initialUsers }: Props) {
 
   const [users, setUsers] = useState<UserResponseDTO[]>(initialUsers);
 
-  const [userToDelete, setUserToDelete] = useState<UserResponseDTO | null>(
-    null
-  );
   const [userToUpdate, setUserToUpdate] = useState<UserResponseDTO | null>(
     null
   );
 
   const createModal = useModal('createUser');
-  const deleteModal = useModal('deleteUser');
   const updateModal = useModal('updateUser');
 
+  const {
+    itemToDelete: userToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<UserResponseDTO>({
+    modalKey: 'deleteUser',
+    apiPath: routes.api.admin.users,
+    getId: user => user._id,
+    successMessage: 'Користувача видалено',
+    onDeleted: deleted =>
+      setUsers(prev => prev.filter(u => u._id !== deleted._id)),
+  });
+
   /* ---------- handlers ---------- */
-
-  const handleDelete = (user: UserResponseDTO) => {
-    setUserToDelete(user);
-    deleteModal.open();
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!userToDelete) return;
-
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.users + `/${userToDelete._id}`),
-        {
-          method: 'DELETE',
-        }
-      );
-
-      setUsers(prev => prev.filter(u => u._id !== userToDelete._id));
-
-      toast.success('Користувача видалено');
-      deleteModal.close();
-      setUserToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    }
-  };
 
   const handleEdit = (user: UserResponseDTO) => {
     setUserToUpdate(user);

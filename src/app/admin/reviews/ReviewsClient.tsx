@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { toast } from 'sonner';
 
 import {
   InfiniteScroll,
@@ -10,8 +9,6 @@ import {
   PageResult,
 } from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
-import { useModal } from '@/app/hooks/useModal';
-import { apiFetch } from '@/app/lib/client/apiFetch';
 import { useLoadingStore } from '@/app/store/loading.store';
 import {
   Breadcrumbs,
@@ -21,6 +18,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -34,19 +32,31 @@ type Props = {
 
 export default function ReviewsClient({ initialReviews }: Props) {
   const router = useRouter();
-  const start = useLoadingStore.getState().start;
-  const done = useLoadingStore.getState().done;
   const isLoading = useLoadingStore(state => state.isLoading);
 
   const [search, setSearch] = useState('');
 
   const [reviews, setReviews] = useState<ReviewResponseDTO[]>(initialReviews);
-  const [reviewToDelete, setReviewToDelete] =
-    useState<ReviewResponseDTO | null>(null);
 
   const listRef = useRef<InfiniteScrollHandle<ReviewResponseDTO>>(null);
 
-  const deleteModal = useModal('deleteReview');
+  const {
+    itemToDelete: reviewToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<ReviewResponseDTO>({
+    modalKey: 'deleteReview',
+    apiPath: routes.api.admin.reviews,
+    getId: review => review._id,
+    successMessage: 'Відгук видалено',
+    onDeleted: deleted => {
+      setReviews(prev => prev.filter(item => item._id !== deleted._id));
+      listRef.current?.setItems(prev =>
+        prev.filter(item => item._id !== deleted._id)
+      );
+    },
+  });
 
   const getReviewsPage = useCallback(
     async (page: number): Promise<PageResult<ReviewResponseDTO>> => {
@@ -63,41 +73,6 @@ export default function ReviewsClient({ initialReviews }: Props) {
     },
     []
   );
-
-  const handleDelete = useCallback(
-    (review: ReviewResponseDTO) => {
-      setReviewToDelete(review);
-      deleteModal.open();
-    },
-    [deleteModal]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!reviewToDelete) return;
-
-    start();
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.reviews + `/${reviewToDelete._id}`),
-        {
-          method: 'DELETE',
-        }
-      );
-
-      setReviews(prev => prev.filter(item => item._id !== reviewToDelete._id));
-      listRef.current?.setItems(prev =>
-        prev.filter(item => item._id !== reviewToDelete._id)
-      );
-
-      toast.success('Відгук видалено');
-      deleteModal.close();
-      setReviewToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
-  }, [reviewToDelete, start, done, deleteModal]);
 
   const handleEdit = useCallback(
     (review: ReviewResponseDTO) => {
