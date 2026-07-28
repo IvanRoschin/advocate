@@ -19,13 +19,6 @@ const userQuery = createQuery(User);
 export const userRepo = {
   /* ================= LIST ================= */
 
-  async findAll(): Promise<UserLean[]> {
-    return User.find()
-      .sort({ createdAt: -1 })
-      .select('_id name surname email phone role isActive createdAt updatedAt')
-      .lean<UserLean[]>();
-  },
-
   async findAllPaginated(page: number, limit: number) {
     return userQuery()
       .sortBy({ createdAt: -1 })

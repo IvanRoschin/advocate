@@ -6,10 +6,6 @@ import { createQuery } from './queryFactory';
 const leadQuery = createQuery(Lead);
 
 export const leadRepo = {
-  async findAll() {
-    return Lead.find().sort({ createdAt: -1 });
-  },
-
   async findAllPaginated(page: number, limit: number) {
     return leadQuery()
       .sortBy({ createdAt: -1 })

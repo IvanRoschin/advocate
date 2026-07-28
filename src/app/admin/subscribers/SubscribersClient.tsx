@@ -21,6 +21,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -45,16 +46,31 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
   const [subscribers, setSubscribers] =
     useState<SubscriberResponseDTO[]>(initialSubscribers);
 
-  const [subscriberToDelete, setSubscriberToDelete] =
-    useState<SubscriberResponseDTO | null>(null);
   const [subscriberToUpdate, setSubscriberToUpdate] =
     useState<SubscriberResponseDTO | null>(null);
 
   const createModal = useModal('createSubscriber');
-  const deleteModal = useModal('deleteSubscriber');
   const updateModal = useModal('updateSubscriber');
 
   const listRef = useRef<InfiniteScrollHandle<SubscriberResponseDTO>>(null);
+
+  const {
+    itemToDelete: subscriberToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<SubscriberResponseDTO>({
+    modalKey: 'deleteSubscriber',
+    apiPath: routes.api.admin.subscribe,
+    getId: subscriber => subscriber._id,
+    successMessage: 'Підписника видалено',
+    onDeleted: deleted => {
+      setSubscribers(prev => prev.filter(item => item._id !== deleted._id));
+      listRef.current?.setItems(prev =>
+        prev.filter(item => item._id !== deleted._id)
+      );
+    },
+  });
 
   const getSubscribersPage = useCallback(
     async (page: number): Promise<PageResult<SubscriberResponseDTO>> => {
@@ -81,40 +97,6 @@ export default function SubscribersClient({ initialSubscribers }: Props) {
     },
     [updateModal]
   );
-
-  const handleDelete = useCallback(
-    (subscriber: SubscriberResponseDTO) => {
-      setSubscriberToDelete(subscriber);
-      deleteModal.open();
-    },
-    [deleteModal]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!subscriberToDelete) return;
-
-    start();
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.subscribe + `/${subscriberToDelete._id}`),
-        { method: 'DELETE' }
-      );
-
-      setSubscribers(prev =>
-        prev.filter(item => item._id !== subscriberToDelete._id)
-      );
-      listRef.current?.setItems(prev =>
-        prev.filter(item => item._id !== subscriberToDelete._id)
-      );
-      toast.success('Підписника видалено');
-      deleteModal.close();
-      setSubscriberToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
-  }, [deleteModal, done, subscriberToDelete, start]);
 
   const handleToggleActive = useCallback(
     async (subscriber: SubscriberResponseDTO, checked: boolean) => {

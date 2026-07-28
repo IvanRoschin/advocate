@@ -1,32 +1,8 @@
 import mongoose, { InferSchemaType, Types } from 'mongoose';
 
+import { LayoutNodeSchema } from './layoutNode.schema';
+
 const { Schema } = mongoose;
-
-const ServiceLayoutItemSchema = new Schema(
-  {
-    key: { type: String, required: true, trim: true },
-    display: { type: Boolean, required: true, default: true },
-  },
-  { _id: false }
-);
-
-const ServiceLayoutNodeSchema = new Schema(
-  {
-    type: {
-      type: String,
-      enum: ['section', 'group'],
-      required: true,
-    },
-    key: { type: String, required: true, trim: true },
-    display: { type: Boolean, required: true, default: true },
-    wrapperClassName: { type: String, trim: true },
-    items: {
-      type: [ServiceLayoutItemSchema],
-      default: undefined,
-    },
-  },
-  { _id: false }
-);
 
 const ServiceSchema = new Schema(
   {
@@ -57,7 +33,7 @@ const ServiceSchema = new Schema(
     },
 
     layout: {
-      type: [ServiceLayoutNodeSchema],
+      type: [LayoutNodeSchema],
       required: true,
       default: [],
     },
@@ -110,9 +86,9 @@ ServiceSchema.pre('save', function () {
   }
 });
 
-export type ServiceInput = InferSchemaType<typeof ServiceSchema>;
+type ServiceInput = InferSchemaType<typeof ServiceSchema>;
 
-export type ServiceDocument = ServiceInput & {
+type ServiceDocument = ServiceInput & {
   _id: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;

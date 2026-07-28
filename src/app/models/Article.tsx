@@ -117,9 +117,9 @@ ArticleSchema.pre('findOneAndUpdate', function () {
   }
 });
 
-export type ArticleInput = InferSchemaType<typeof ArticleSchema>;
+type ArticleInput = InferSchemaType<typeof ArticleSchema>;
 
-export type ArticleDocument = ArticleInput & {
+type ArticleDocument = ArticleInput & {
   _id: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;

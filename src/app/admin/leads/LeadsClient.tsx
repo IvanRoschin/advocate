@@ -22,6 +22,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -45,18 +46,32 @@ export default function LeadsClient({ initialLeads }: Props) {
   const [search, setSearch] = useState('');
 
   const [leads, setLeads] = useState<LeadResponseDTO[]>(initialLeads);
-  const [leadToDelete, setLeadToDelete] = useState<LeadResponseDTO | null>(
-    null
-  );
   const [leadToUpdate, setLeadToUpdate] = useState<LeadResponseDTO | null>(
     null
   );
 
   const createModal = useModal('createLead');
-  const deleteModal = useModal('deleteLead');
   const updateModal = useModal('updateLead');
 
   const listRef = useRef<InfiniteScrollHandle<LeadResponseDTO>>(null);
+
+  const {
+    itemToDelete: leadToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<LeadResponseDTO>({
+    modalKey: 'deleteLead',
+    apiPath: routes.api.admin.leads,
+    getId: lead => lead.id,
+    successMessage: 'Лід видалений',
+    onDeleted: deleted => {
+      setLeads(prev => prev.filter(lead => lead.id !== deleted.id));
+      listRef.current?.setItems(prev =>
+        prev.filter(lead => lead.id !== deleted.id)
+      );
+    },
+  });
 
   const getLeadsPage = useCallback(
     async (page: number): Promise<PageResult<LeadResponseDTO>> => {
@@ -73,37 +88,6 @@ export default function LeadsClient({ initialLeads }: Props) {
     },
     []
   );
-
-  const handleDelete = (lead: LeadResponseDTO) => {
-    setLeadToDelete(lead);
-    deleteModal.open();
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!leadToDelete) return;
-
-    start();
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.leads + `/${leadToDelete.id}`),
-        {
-          method: 'DELETE',
-        }
-      );
-
-      setLeads(prev => prev.filter(lead => lead.id !== leadToDelete.id));
-      listRef.current?.setItems(prev =>
-        prev.filter(lead => lead.id !== leadToDelete.id)
-      );
-      toast.success('Лід видалений');
-      deleteModal.close();
-      setLeadToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
-  };
 
   const handleEdit = (lead: LeadResponseDTO) => {
     setLeadToUpdate(lead);

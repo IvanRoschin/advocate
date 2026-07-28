@@ -23,6 +23,7 @@ import {
   Modal,
 } from '@/components';
 
+import { useAdminDeleteFlow } from '../_hooks/useAdminDeleteFlow';
 import { AdminPageContainer } from '../_components/AdminPageContainer';
 import { AdminTable } from '../_components/table';
 import { AdminTableToolbar } from '../_components/table/AdminTableToolbar';
@@ -45,13 +46,28 @@ export default function ClientsClient({ initialClients }: Props) {
   const [search, setSearch] = useState('');
 
   const [clients, setClients] = useState<ClientResponseDTO[]>(initialClients);
-  const [clientToDelete, setClientToDelete] =
-    useState<ClientResponseDTO | null>(null);
 
   const createModal = useModal('createClient');
-  const deleteModal = useModal('deleteClient');
 
   const listRef = useRef<InfiniteScrollHandle<ClientResponseDTO>>(null);
+
+  const {
+    itemToDelete: clientToDelete,
+    deleteModal,
+    handleDelete,
+    handleDeleteConfirm,
+  } = useAdminDeleteFlow<ClientResponseDTO>({
+    modalKey: 'deleteClient',
+    apiPath: routes.api.admin.clients,
+    getId: client => client.id,
+    successMessage: 'Клієнта видалено',
+    onDeleted: deleted => {
+      setClients(prev => prev.filter(client => client.id !== deleted.id));
+      listRef.current?.setItems(prev =>
+        prev.filter(client => client.id !== deleted.id)
+      );
+    },
+  });
 
   const getClientsPage = useCallback(
     async (page: number): Promise<PageResult<ClientResponseDTO>> => {
@@ -69,43 +85,8 @@ export default function ClientsClient({ initialClients }: Props) {
     []
   );
 
-  const handleDelete = (client: ClientResponseDTO) => {
-    setClientToDelete(client);
-    deleteModal.open();
-  };
-
   const handleEdit = (client: ClientResponseDTO) => {
     router.push(`/admin/clients/${client.id}/edit`);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!clientToDelete) return;
-
-    start();
-
-    try {
-      await apiFetch<void>(
-        apiUrl(routes.api.admin.clients + `/${clientToDelete.id}`),
-        {
-          method: 'DELETE',
-        }
-      );
-
-      setClients(prev =>
-        prev.filter(client => client.id !== clientToDelete.id)
-      );
-      listRef.current?.setItems(prev =>
-        prev.filter(client => client.id !== clientToDelete.id)
-      );
-
-      toast.success('Клієнта видалено');
-      deleteModal.close();
-      setClientToDelete(null);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Помилка видалення');
-    } finally {
-      done();
-    }
   };
 
   const handleCreateClient = async (values: CreateClientDTO) => {
@@ -153,10 +134,7 @@ export default function ClientsClient({ initialClients }: Props) {
         <DeleteConfirmation
           title={`Клієнт: ${clientToDelete?.fullName ?? '—'}`}
           onConfirm={handleDeleteConfirm}
-          onCancel={() => {
-            deleteModal.close();
-            setClientToDelete(null);
-          }}
+          onCancel={deleteModal.close}
         />
       }
     />
