@@ -2,6 +2,7 @@
 
 import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 
 import AdminFormShell from '@/app/components/forms/shared/AdminFormShell';
@@ -9,15 +10,27 @@ import { fieldMotion } from '@/app/components/forms/shared/formMotion';
 import storageKeys from '@/app/config/storageKeys';
 import { useFormDraft } from '@/app/hooks/useFormDraft';
 import { clearFormDraft } from '@/app/lib/client/form-draft';
-import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
 import { createSlideSchema, updateSlideSchema } from '@/app/types';
-import { Checkbox, FormDraftPersist, Input, Textarea } from '@/components';
+import {
+  Checkbox,
+  FormDraftPersist,
+  Input,
+  Loader,
+  Textarea,
+} from '@/components';
 
 import type {
   CreateSlideDTO,
   SlideResponseDTO,
   UpdateSlideDTO,
 } from '@/app/types';
+
+// Pulls in the Cloudinary upload widget bundle — admin-only, not needed
+// for the initial render of this form.
+const ImageUploadCloudinary = dynamic(
+  () => import('@/app/lib/client/ImageUploadCloudinary'),
+  { ssr: false, loading: () => <Loader /> }
+);
 
 type SlideFormValues = {
   title: string;
