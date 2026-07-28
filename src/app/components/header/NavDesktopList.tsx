@@ -49,7 +49,7 @@ export const NavDesktopList = ({
         {
           key: 'signin',
           href: routes.public.auth.signIn,
-          label: 'Кабінет',
+          label: 'Увійти',
           Icon: iconLibrary.person,
         },
       ];
