@@ -2,6 +2,7 @@
 
 import { Form, Formik } from 'formik';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 
 import AdminFormSection from '@/app/components/forms/shared/AdminFormSection';
@@ -10,11 +11,11 @@ import { fieldMotion } from '@/app/components/forms/shared/formMotion';
 import storageKeys from '@/app/config/storageKeys';
 import { useFormDraft } from '@/app/hooks/useFormDraft';
 import { clearFormDraft } from '@/app/lib/client/form-draft';
-import ImageUploadCloudinary from '@/app/lib/client/ImageUploadCloudinary';
 import { createArticleSchema, updateArticleSchema } from '@/app/types';
 import {
   FormDraftPersist,
   Input,
+  Loader,
   Select,
   TagsInputField,
   Textarea,
@@ -27,6 +28,13 @@ import type {
   CreateArticleRequestDTO,
   UpdateArticleDTO,
 } from '@/app/types';
+
+// Pulls in the Cloudinary upload widget bundle — admin-only, not needed
+// for the initial render of this form.
+const ImageUploadCloudinary = dynamic(
+  () => import('@/app/lib/client/ImageUploadCloudinary'),
+  { ssr: false, loading: () => <Loader /> }
+);
 
 /* Helpers — без изменений */
 const parseTags = (raw: string): string[] =>
