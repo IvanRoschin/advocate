@@ -96,7 +96,7 @@ export const HeroSection = ({
                 fill
                 sizes={variant.sizes}
                 useSkeleton
-                preload
+                priority
                 className="object-cover"
               />
             </div>

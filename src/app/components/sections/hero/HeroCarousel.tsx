@@ -137,7 +137,7 @@ export function HeroCarousel({
                 fill
                 sizes={variant.sizes}
                 useSkeleton
-                preload={safeIndex === 0}
+                priority={safeIndex === 0}
                 className="object-cover"
               />
             </motion.div>

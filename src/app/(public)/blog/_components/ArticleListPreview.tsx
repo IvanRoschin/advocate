@@ -51,7 +51,7 @@ export function ArticleListPreview({
                           fill
                           sizes={variant.sizes}
                           useSkeleton
-                          preload
+                          priority={index === 0}
                           className="object-cover"
                         />
                       ) : (

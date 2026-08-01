@@ -19,7 +19,7 @@ const Logo: React.FC<LogoProps> = ({ variant = 'dark' }) => {
         src={src}
         alt="Company logo"
         fill
-        preload
+        priority
         sizes="160px"
         className="object-contain"
       />

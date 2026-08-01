@@ -42,7 +42,6 @@ export default function RelatedArticles({ articles }: Props) {
                   fill
                   sizes={variant.sizes}
                   useSkeleton
-                  preload
                   className="object-cover transition group-hover:scale-105"
                 />
               </div>
