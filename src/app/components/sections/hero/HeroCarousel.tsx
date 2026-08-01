@@ -153,7 +153,8 @@ export function HeroCarousel({
             aria-label="Previous slide"
             onClick={prev}
             className={cn(
-              'hero-control absolute top-1/2 left-3 z-50 -translate-y-1/2 rounded-full p-2 backdrop-blur transition',
+              'hero-control absolute bottom-4 left-3 z-50 rounded-full p-2 backdrop-blur transition',
+              'sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2',
               'focus:outline-none focus-visible:ring-2'
             )}
           >
@@ -165,7 +166,8 @@ export function HeroCarousel({
             aria-label="Next slide"
             onClick={next}
             className={cn(
-              'hero-control absolute top-1/2 right-3 z-50 -translate-y-1/2 rounded-full p-2 backdrop-blur transition',
+              'hero-control absolute right-3 bottom-4 z-50 rounded-full p-2 backdrop-blur transition',
+              'sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2',
               'focus:outline-none focus-visible:ring-2'
             )}
           >
