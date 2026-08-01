@@ -1,4 +1,5 @@
 export type ContactPageSectionKey =
+  | 'socials'
   | 'header'
   | 'hero'
   | 'info'
@@ -8,6 +9,7 @@ export type ContactPageSectionKey =
   | 'footer';
 
 export const CONTACT_PAGE_LAYOUT: ContactPageSectionKey[] = [
+  'socials',
   'header',
   'hero',
   'info',

@@ -17,8 +17,8 @@ services:
         NEXT_PUBLIC_ADVOCATE_PN_1: ${NEXT_PUBLIC_ADVOCATE_PN_1}
         NEXT_PUBLIC_ADVOCATE_PN_2: ${NEXT_PUBLIC_ADVOCATE_PN_2}
 
-    ports:
-      - '3000:3000'
+    expose:
+      - '3000'
 
     environment:
       # DB (MongoDB Atlas)
@@ -66,3 +66,19 @@ services:
       options:
         max-size: '10m'
         max-file: '3'
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: advocate-caddy
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

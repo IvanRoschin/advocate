@@ -58,7 +58,9 @@ export function usePublicCaptcha(size: CaptchaSize = 'normal') {
           setLoadFailed(false);
         }}
         onExpire={() => setToken(null)}
-        onError={() => {
+        onError={error => {
+          // eslint-disable-next-line no-console
+          console.error('Turnstile error code:', error);
           setToken(null);
           setLoadFailed(true);
           toast.error('Помилка перевірки Cloudflare Turnstile');

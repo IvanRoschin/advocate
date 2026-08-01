@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import Footer from '@/app/components/footer/Footer';
 import { ContactPageSectionKey } from '@/app/resources/content/pages/contact.layout';
-import { Header } from '@/components';
+import { Header, Socials } from '@/components';
 
 import ContactHero from './ContactHero';
 import ContactInfo from './ContactInfo';
@@ -27,6 +27,8 @@ export type ContactPageProps = {
 export type ContactPageSectionComponent = (
   props: ContactPageProps
 ) => ReactNode;
+
+const ContactSocialsSection: ContactPageSectionComponent = () => <Socials />;
 
 const ContactHeaderSection: ContactPageSectionComponent = () => <Header />;
 
@@ -66,6 +68,7 @@ export const CONTACT_PAGE_SECTIONS: Record<
   ContactPageSectionKey,
   ContactPageSectionComponent
 > = {
+  socials: ContactSocialsSection,
   header: ContactHeaderSection,
   hero: ContactHeroSection,
   info: ContactInfoSection,

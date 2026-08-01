@@ -1,3 +1,5 @@
+import { headers } from 'next/headers';
+
 import {
   eUkraine,
   eUkrainehead,
@@ -31,6 +33,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
+
   return (
     <html
       lang="uk"
@@ -39,7 +43,7 @@ export default async function RootLayout({
       className={` ${geistSans.variable} ${geistMono.variable} ${eUkrainehead.variable} ${eUkraine.variable} ${manrope.variable} ${sacramento.variable} `}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body>
         <Providers>{children}</Providers>

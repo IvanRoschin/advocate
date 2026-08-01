@@ -2,13 +2,15 @@ import type { ReactNode } from 'react';
 
 import Footer from '@/app/components/footer/Footer';
 import { PaymentSectionKey } from '@/app/resources/content/pages/payment.layout';
-import { Header } from '@/components';
+import { Header, Socials } from '@/components';
 import PaymentsAside from './paymentsAside';
 import PaymentsContent from './paymentsContent';
 
 export type PaymentSectionProps = Record<string, never>;
 
 export type PaymentSectionComponent = (props: PaymentSectionProps) => ReactNode;
+
+const SocialsSection: PaymentSectionComponent = () => <Socials />;
 
 const HeaderSection: PaymentSectionComponent = () => <Header />;
 
@@ -37,6 +39,7 @@ export const PAYMENT_SECTIONS: Record<
   PaymentSectionKey,
   PaymentSectionComponent
 > = {
+  socials: SocialsSection,
   header: HeaderSection,
   orderSummary: OrderSummarySection,
   paymentForm: FormSection,

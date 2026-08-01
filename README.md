@@ -1,27 +1,29 @@
 # ⚖️ Advocate
 
 <p align="center">
-  <b>Fullstack Legal Platform</b><br/>
-  Modern web platform for legal services, content management and client interaction.
+  <b>Fullstack Legal Services Platform</b><br/>
+  Public website, blog, service catalog, admin panel and client portal for a law practice.
 </p>
 
 <p align="center">
   <a href="#overview">Overview</a> •
   <a href="#features">Features</a> •
   <a href="#architecture">Architecture</a> •
-  <a href="#screenshots">Screenshots</a> •
   <a href="#getting-started">Getting Started</a> •
+  <a href="#environment-variables">Environment</a> •
   <a href="#deployment">Deployment</a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Next.js-15-black?logo=next.js" />
+  <img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" />
   <img src="https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
   <img src="https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tailwind-UI-06B6D4?logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white" />
   <img src="https://img.shields.io/badge/Auth-NextAuth-000000" />
   <img src="https://img.shields.io/badge/Media-Cloudinary-3448C5?logo=cloudinary&logoColor=white" />
+  <img src="https://img.shields.io/badge/Bot_protection-Turnstile-F38020?logo=cloudflare&logoColor=white" />
+  <img src="https://img.shields.io/badge/Deploy-Docker%20%2B%20Caddy-2496ED?logo=docker&logoColor=white" />
   <img src="https://img.shields.io/badge/License-MIT-green.svg" />
 </p>
 
@@ -29,23 +31,20 @@
 
 ## ✨ Overview
 
-**Advocate** — это production-ready fullstack приложение для юридических услуг.
+**Advocate** is a production fullstack platform for a law practice, combining:
 
-Система объединяет:
+- Public marketing site with service pages and a blog
+- SEO-focused content (dynamic sitemap, structured metadata, legacy-URL redirects)
+- Admin panel for managing services, articles, categories and reviews
+- Client portal with role-based access
+- Lead capture, subscriptions, reviews and paid consultations (WayForPay)
 
-- публичный сайт
-- блог
-- управление услугами
-- админ-панель
-- отзывы
-- клиентский кабинет
+Built with an emphasis on:
 
-Проект построен с акцентом на:
-
-- ⚡ производительность
-- 🧠 чистую архитектуру
-- 🔒 безопасность
-- 🧩 масштабируемость
+- ⚡ Performance — App Router, server components, optimized media delivery
+- 🧠 Clean architecture — actions → services → repositories, no leaking business logic into routes
+- 🔒 Security — nonce-based CSP, bot protection, role-gated middleware
+- 🧩 Type safety — DTO/mapper layer per domain entity, no `any`
 
 ---
 
@@ -53,196 +52,215 @@
 
 ### Public Platform
 
-- 📰 Blog (articles, categories, SEO)
-- ⚖️ Services pages (modular layout sections)
-- 🔍 Related content & navigation
-- 📱 Fully responsive UI
-- 🌙 Dark / light mode
+- 📰 Blog (articles, categories, tags, related content, SEO metadata)
+- ⚖️ Service pages built from modular, DB-driven layout sections
+- 💳 Paid consultations via WayForPay
+- 🤖 Cloudflare Turnstile on every public form (leads, subscriptions, reviews)
+- 📱 Fully responsive, dark / light mode
+- 🗺️ Auto-generated `sitemap.xml` / `robots.txt`, 301 redirects from legacy URLs
 
 ### Admin Panel
 
-- CRUD for services, articles, categories
-- Review moderation system
-- Image upload (Cloudinary)
-- Data tables & actions
+- CRUD for services, articles, categories, tags, slides
+- Review moderation
+- Lead and subscriber management (CRM-lite)
+- Image upload via Cloudinary widget
 
-### Client Features
+### Client Portal
 
-- Role-based access
-- Protected routes
-- Personalized flows
+- Role-based access (client / manager / admin)
+- Case, document and message views
+- Account and access recovery flows
 
-### UX / UI
+### Integrations
 
-- Smooth animations (Framer Motion)
-- Adaptive mobile navigation
-- Scroll interactions
-- Optimized image delivery
+- 📧 Transactional email via SMTP (Nodemailer)
+- 💬 Telegram notifications for new leads
+- 🔑 Auth via credentials and Google OAuth (NextAuth)
 
 ---
 
 ## 🧱 Architecture
 
-### High-level flow
+### Request flow
 
 ```
 Client (Browser)
       ↓
-Next.js App (App Router)
+Next.js App Router (middleware: auth guard + CSP nonce)
       ↓
-API Routes (route.ts)
+Server Actions / API Routes (route.ts)
       ↓
 Services Layer (business logic)
       ↓
-Repositories Layer (DB access)
+Repositories Layer (Mongoose models)
       ↓
-MongoDB
+MongoDB (Atlas)
 ```
 
 ### Media pipeline
 
 ```
-Upload Widget
-      ↓
-Cloudinary (store original)
-      ↓
-Save publicId
-      ↓
-Helper (transform)
-      ↓
-Responsive images (card / hero)
+Upload widget → Cloudinary (original stored)
+             → publicId saved on the document
+             → helper resolves a transformed URL at render time
+                 getServiceImageUrl(id, 'hero')
+                 getArticleImageUrl(id, 'card')
 ```
 
-### 📁 Project Structure
+### Project structure
 
 ```
 src/
 ├─ app/
-│  ├─ api/
-│  ├─ components/
+│  ├─ (public)/        # marketing site, blog, services, contact
+│  ├─ admin/           # admin panel
+│  ├─ client/          # client portal
+│  ├─ api/             # route handlers
+│  ├─ actions/         # server actions (thin, delegate to services)
 │  ├─ lib/
-│  │  ├─ services/
-│  │  ├─ repositories/
+│  │  ├─ services/     # business logic
+│  │  ├─ repositories/ # DB access
 │  │  └─ cloudinary/
-│  └─ ...
-├─ components/
-├─ hooks/
-├─ store/
+│  ├─ models/          # Mongoose schemas
+│  └─ components/
+├─ proxy.ts            # middleware: route guards + per-request CSP nonce
 └─ types/
-   ├─ article/
-   ├─ service/
-   └─ ...
+   └─ <entity>/
+      ├─ index.ts
+      ├─ *.dto.ts
+      ├─ *.forms.ts
+      └─ *.mapper.ts
 ```
 
-### 🧠 Type System
+### Type system
 
-```
-Все типы централизованы по сущностям:
+Types are centralized per domain entity and re-exported from a single barrel:
 
-/types/<entity>/
-  index.ts
-  *.dto.ts
-  *.forms.ts
-  *.mapper.ts
-```
-
-Пример:
-
-```
+```ts
+// types/service/index.ts
 export * from './service.dto';
 export * from './service.forms';
 export * from './service.mapper';
 ```
 
-### ⚙️ Getting Started
+### Development rules
 
-```
+- ❌ No `any`
+- ❌ No business logic in `route.ts` — routes delegate to the services layer
+- ❌ No direct DB calls outside repositories
+- ✅ Strict typing end to end (DTO → mapper → UI)
+- ✅ Minimal abstractions — no speculative layers
+
+---
+
+## ⚙️ Getting Started
+
+```bash
 npm install
-```
-
-### Run dev server
-
-```
 npm run dev
 ```
 
-### Open:
+Open [http://localhost:3000](http://localhost:3000).
 
-```
-[npm run dev](http://localhost:3000)
-```
+---
 
-### 🔐 Environment Variables
+## 🔐 Environment Variables
 
-```
-</> env
-
-MONGODB_URI=
-NEXTAUTH_SECRET=
+```env
+# App
+NEXT_PUBLIC_URL=
 NEXTAUTH_URL=
+NEXTAUTH_SECRET=
 
+# Database
+MONGODB_URI=
+
+# Auth (Google)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# Cloudinary
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
 NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=
+
+# Cloudflare Turnstile
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=
+TURNSTILE_SECRET_KEY=
+
+# SMTP
+SMTP_HOST=
+SMTP_PORT=
+SMTP_EMAIL=
+SMTP_PASSWORD=
+SMTP_FROM_NAME=
+
+# Telegram notifications
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+
+# WayForPay
+WAYFORPAY_MERCHANT_ACCOUNT=
+WAYFORPAY_MERCHANT_DOMAIN=
+WAYFORPAY_SECRET_KEY=
+WAYFORPAY_URL=
 ```
 
-### 🖼 Media / Cloudinary
+---
 
-Подход:
+## 🧪 Testing & Quality
 
-upload → оригинал (без resize) хранение → publicId render → через helper
-
-Пример:
-
-```
-getArticleImageUrl(id, 'card')
-getServiceImageUrl(id, 'hero')
+```bash
+npm run test        # Vitest
+npm run lint         # ESLint
+npm run typecheck    # tsc --noEmit
+npm run knip         # unused code / exports
 ```
 
-### 🧪 Validation
+Forms use **Formik** + **Yup**, validated against the same DTO layer used server-side. Git hooks (Husky + lint-staged) run linting and formatting on commit.
 
-Formik (forms) Yup (validation) DTO + mapper layer
+---
 
-### 🧑‍💻 Development Rules
+## 📦 Scripts
 
-❌ no any ❌ no business logic in route.ts ❌ no DB calls outside repository ✅
-strict typing ✅ clean architecture ✅ minimal abstractions
-
-### 📦 Scripts
-
-```
-npm run dev
-npm run build
-npm run start
-npm run lint
-npm run typecheck
+```bash
+npm run dev         # start dev server (Turbopack)
+npm run build        # production build
+npm run start        # start production server
+npm run lint          # eslint --fix
+npm run typecheck    # type-check only
+npm run test          # run tests
+npm run format        # prettier --write
 ```
 
-### 🚀 Deployment
+---
 
-Recommended:
+## 🚀 Deployment
 
-Vercel MongoDB Atlas Cloudinary
+Self-hosted via **Docker Compose**, behind **Caddy** for automatic HTTPS (Let's Encrypt) and reverse proxying — no separate nginx/certbot setup required.
 
-Build:
-
-```
-npm run build
-npm run start
+```bash
+git pull
+docker compose up -d --build
 ```
 
-### 📌 Roadmap
+- `Dockerfile` — multi-stage build, Next.js `standalone` output
+- `docker-compose.yml` — app container + Caddy reverse proxy, runtime secrets from `.env`
+- `Caddyfile` — domain routing + TLS
 
-Search Pagination SEO improvements Caching / ISR Analytics
+Database (MongoDB Atlas) and media (Cloudinary) are managed cloud services — the app server itself is stateless and disposable.
 
-### 🧑‍⚖️ Author
+---
 
-Fullstack legal platform focused on performance, scalability and clean
-architecture.
+## 📌 Roadmap
 
-### 📄 License
+- Search across services and articles
+- Pagination for blog/admin lists
+- ISR / caching for public pages
+- Analytics dashboard
+
+---
+
+## 📄 License
 
 MIT
-
-```
-
-```

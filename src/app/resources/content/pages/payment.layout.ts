@@ -1,4 +1,5 @@
 export type PaymentSectionKey =
+  | 'socials'
   | 'header'
   | 'orderSummary'
   | 'paymentForm'
@@ -21,6 +22,7 @@ export type PaymentLayoutNode =
     };
 
 export const paymentLayout: PaymentLayoutNode[] = [
+  { type: 'section', key: 'socials', display: true },
   { type: 'section', key: 'header', display: true },
 
   {
