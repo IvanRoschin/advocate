@@ -54,7 +54,7 @@ export async function proxy(req: NextRequest) {
       "img-src 'self' data: blob: https://res.cloudinary.com https://upload-widget.cloudinary.com",
       "font-src 'self' data: https://upload-widget.cloudinary.com",
       "connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://upload-widget.cloudinary.com https://challenges.cloudflare.com",
-      'frame-src https://upload-widget.cloudinary.com https://challenges.cloudflare.com',
+      'frame-src https://upload-widget.cloudinary.com https://challenges.cloudflare.com https://www.google.com',
       "worker-src 'self' blob:",
       "object-src 'none'",
       "base-uri 'self'",
