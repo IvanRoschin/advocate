@@ -58,7 +58,7 @@ export function PremiumLoader() {
                 alt="Logo"
                 width={38}
                 height={38}
-                preload
+                priority
               />
             </div>
 

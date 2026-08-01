@@ -40,7 +40,7 @@ const ServiceHero = ({ service }: ServiceSectionProps) => {
               fill
               sizes={variant.sizes}
               useSkeleton
-              preload
+              priority
               className="object-cover"
             />
           </div>

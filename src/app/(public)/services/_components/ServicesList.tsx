@@ -30,7 +30,7 @@ const ServicesList = ({ services }: ListSectionProps) => {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {services.map(service => {
+      {services.map((service, index) => {
         const publicId = service.src
           ? getCloudinarySrc(service.src)
           : undefined;
@@ -53,7 +53,7 @@ const ServicesList = ({ services }: ListSectionProps) => {
                     fill
                     sizes={variant.sizes}
                     useSkeleton
-                    preload
+                    priority={index === 0}
                     className="object-cover"
                   />
                 ) : (
