@@ -3,6 +3,9 @@ import { AppLink, NextImage } from '@/components';
 import { person, social } from '@/resources/content';
 
 const About = () => {
+  const [aboutLeadBefore, aboutLeadAfter] =
+    aboutSection.paragraphs[0].split('10 років');
+
   const phones = social
     .filter(s => s.icon === 'phone' && Boolean(s.link))
     .map(s => s.link)
@@ -63,9 +66,9 @@ const About = () => {
             </h3>
 
             <p itemProp="description">
-              {aboutSection.paragraphs[0].replace('10 років', '')}
-              <strong>10 років</strong>.
-              {aboutSection.paragraphs[0].split('10 років.')[1] ?? ''}
+              {aboutLeadBefore}
+              <strong>10 років</strong>
+              {aboutLeadAfter}
             </p>
 
             <p>{aboutSection.paragraphs[1]}</p>
