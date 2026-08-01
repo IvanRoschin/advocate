@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 import Footer from '@/app/components/footer/Footer';
 import { ServiceListItemDto } from '@/app/types';
-import { Header } from '@/components';
+import { Header, Socials } from '@/components';
 
 import { ServicesFeed } from './ServicesFeed';
 
@@ -15,6 +15,8 @@ export type ServicesSectionProps = {
 export type ServicesSectionComponent = (
   props: ServicesSectionProps
 ) => ReactNode;
+
+const SocialsSection: ServicesSectionComponent = () => <Socials />;
 
 const HeaderSection: ServicesSectionComponent = () => <Header />;
 
@@ -50,6 +52,7 @@ export const SERVICES_SECTIONS: Record<
   ServicesSectionKey,
   ServicesSectionComponent
 > = {
+  socials: SocialsSection,
   header: HeaderSection,
   hero: HeroSection,
   list: ListSection,

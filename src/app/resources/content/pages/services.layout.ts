@@ -1,4 +1,9 @@
-export type ServicesSectionKey = 'header' | 'hero' | 'list' | 'footer';
+export type ServicesSectionKey =
+  | 'socials'
+  | 'header'
+  | 'hero'
+  | 'list'
+  | 'footer';
 
 export type ServicesLayoutNode =
   | {
@@ -15,6 +20,7 @@ export type ServicesLayoutNode =
     };
 
 export const servicesLayout: ServicesLayoutNode[] = [
+  { type: 'section', key: 'socials', display: true },
   { type: 'section', key: 'header', display: true },
 
   {
