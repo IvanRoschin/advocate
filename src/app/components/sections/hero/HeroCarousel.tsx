@@ -112,30 +112,38 @@ export function HeroCarousel({
   const variant = imageVariants.card;
 
   return (
-    <div className={cn('absolute inset-0', className)} {...pauseHandlers}>
-      <AnimatePresence mode="wait">
-        {current && publicId ? (
-          <motion.div
-            key={current._id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
-            className="absolute inset-0"
-          >
-            <NextImage
-              as={CldImage}
-              src={publicId}
-              alt={current.title}
-              fill
-              sizes={variant.sizes}
-              useSkeleton
-              preload={safeIndex === 0}
-              className="object-cover"
-            />
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+    <div className="absolute inset-0" {...pauseHandlers}>
+      {/*
+        `className` (e.g. `z-0`) belongs only to the image layer. Applying
+        it to this outer wrapper instead would create a stacking context
+        that traps the arrows/bars below it — no button z-index could then
+        lift them above the hero's z-30 content block on top.
+      */}
+      <div className={cn('absolute inset-0', className)}>
+        <AnimatePresence mode="wait">
+          {current && publicId ? (
+            <motion.div
+              key={current._id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.45, ease: 'easeOut' }}
+              className="absolute inset-0"
+            >
+              <NextImage
+                as={CldImage}
+                src={publicId}
+                alt={current.title}
+                fill
+                sizes={variant.sizes}
+                useSkeleton
+                preload={safeIndex === 0}
+                className="object-cover"
+              />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </div>
 
       {/* Arrows */}
       {showArrows && count > 1 && (
