@@ -10,6 +10,20 @@ import {
 
 const phoneRegExp = /^\+?[0-9\s\-()]{7,20}$/;
 
+// Requires at least one letter and only letters/spaces/hyphens/apostrophes —
+// blocks purely numeric or symbol-only input (e.g. "1234") while still
+// allowing Cyrillic and hyphenated/apostrophe names ("Іван-Петро", "О'Коннор").
+const nameRegExp = /^\p{L}[\p{L}\s'-]*$/u;
+
+// RFC 5321 caps the local part (before @) at 64 octets. Yup's built-in
+// .email() only checks overall shape, so an absurdly long local part with a
+// syntactically valid domain still passes it.
+const hasValidEmailLocalPartLength = (value: string | undefined) => {
+  if (!value) return true;
+  const [localPart] = value.split('@');
+  return (localPart?.length ?? 0) <= 64;
+};
+
 // =========================
 // FORM TYPES
 // =========================
@@ -51,12 +65,18 @@ const basePublicFields = {
     .trim()
     .min(2, 'Імʼя має містити щонайменше 2 символи')
     .max(100, 'Імʼя не може бути довшим за 100 символів')
+    .matches(nameRegExp, 'Імʼя може містити лише літери, пробіли, дефіс і апостроф')
     .required('Вкажіть ваше імʼя'),
 
   email: Yup.string()
     .trim()
     .email('Вкажіть коректний email')
     .max(255, 'Email не може бути довшим за 255 символів')
+    .test(
+      'local-part-length',
+      'Вкажіть коректний email',
+      hasValidEmailLocalPartLength
+    )
     .required('Вкажіть email'),
 
   phone: Yup.string()
@@ -119,12 +139,18 @@ export const adminLeadSubmitSchema: Yup.ObjectSchema<LeadAdminFormSubmitValues> 
       .trim()
       .min(2, 'Імʼя має містити щонайменше 2 символи')
       .max(100, 'Імʼя не може бути довшим за 100 символів')
+      .matches(nameRegExp, 'Імʼя може містити лише літери, пробіли, дефіс і апостроф')
       .required('Вкажіть імʼя'),
 
     email: Yup.string()
       .trim()
       .email('Вкажіть коректний email')
       .max(255, 'Email не може бути довшим за 255 символів')
+      .test(
+        'local-part-length',
+        'Вкажіть коректний email',
+        hasValidEmailLocalPartLength
+      )
       .required('Вкажіть email'),
 
     phone: Yup.string()
