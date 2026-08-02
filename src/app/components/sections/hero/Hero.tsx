@@ -23,6 +23,7 @@ const Hero = ({ slides }: HeroProps) => {
         className="absolute inset-0 z-0 h-full w-full"
         showBars
         showArrows
+        autoplay={false}
       />
       <div className="bg-hero-overlay pointer-events-none absolute inset-0 z-10" />
       <div className="font-eukrainehead text-hero relative z-30 container px-4">
