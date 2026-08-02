@@ -22,7 +22,6 @@ const Advantages = () => {
         src={advantagesSection.background.src}
         alt={advantagesSection.background.alt}
         fill
-        priority
         className="-z-20 object-cover"
         useSkeleton
       />
