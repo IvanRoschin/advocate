@@ -43,6 +43,7 @@ export default async function RootLayout({
       className={` ${geistSans.variable} ${geistMono.variable} ${eUkrainehead.variable} ${eUkraine.variable} ${manrope.variable} ${sacramento.variable} `}
     >
       <head>
+        <link rel="preconnect" href="https://challenges.cloudflare.com" />
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body>
