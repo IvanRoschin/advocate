@@ -1,7 +1,20 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+
 import { iconLibrary, orderSection } from '@/app/resources';
-import { LeadForm, NextImage } from '@/components';
+import { NextImage, Skeleton } from '@/components';
+
+// Defers Formik/Yup/Turnstile (~pulled into the app's largest shared JS
+// chunk) until this below-the-fold section is actually needed, instead of
+// paying that parse/execute cost before the hero above it can even paint.
+const LeadForm = dynamic(
+  () => import('@/app/components/forms/public/PublicLeadForm'),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-full min-h-100 w-full rounded-xl" />,
+  }
+);
 
 const Order = () => {
   const UptitleIcon = iconLibrary[orderSection.left.uptitleIcon];
@@ -16,7 +29,6 @@ const Order = () => {
         src={orderSection.background.src}
         alt={orderSection.background.alt}
         fill
-        priority
         className="-z-20 object-cover"
       />
 
