@@ -2,7 +2,10 @@
 
 import { getRouteUrl } from '@/app/config/routes';
 import { useThemeStore } from '@/app/store/theme.store';
-import { BlogCategoryItemDto } from '@/app/types';
+// Direct path, not the `@/app/types` barrel — Footer renders on every page,
+// and that barrel's `export *` drags in every domain's runtime code (see
+// user.store.ts for the full explanation).
+import type { BlogCategoryItemDto } from '@/app/types/article/article.dto';
 import { AppLink, Logo } from '@/components';
 import { footerSection, iconLibrary, person, social } from '@/resources';
 

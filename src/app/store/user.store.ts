@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 
-import { SessionUserDTO } from '../types';
+// Import the type directly, not from the root `../types` barrel — that
+// barrel re-exports every domain (admin, client, lead, ...) via `export *`.
+// This store is pulled into every page through UserProvider in the root
+// layout, so going through the barrel dragged admin/client/lead runtime
+// code into the shared chunk every page has to download and parse.
+import type { SessionUserDTO } from '../types/user/user.dto';
 
 export interface UserState {
   user: SessionUserDTO | null;
