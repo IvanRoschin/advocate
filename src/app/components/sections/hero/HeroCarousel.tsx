@@ -178,7 +178,7 @@ export function HeroCarousel({
 
       {/* Progress bars */}
       {showBars && count > 1 && (
-        <div className="pointer-events-auto absolute top-24 right-6 z-50 sm:top-6">
+        <div className="pointer-events-auto absolute top-16 right-6 z-50 sm:top-6">
           <div className="flex items-center gap-2">
             {safeItems.map((it, i) => {
               const active = i === safeIndex;
