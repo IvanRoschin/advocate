@@ -1,11 +1,11 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { NAV_ITEMS_BY_SCOPE } from '@/app/config/nav';
+import { PUBLIC_NAV_ITEMS, PUBLIC_NAV_MOBILE_ITEMS } from '@/app/config/nav.public';
 
-import type { NavItem, NavScope } from '@/app/config/nav';
+import type { NavItem, NavScope } from '@/app/config/nav.types';
 
 export type { NavScope };
 
@@ -29,11 +29,54 @@ const isNavItemLink = (
 ): item is Extract<NavItem, { href: string }> =>
   'href' in item && typeof item.href === 'string' && item.href.length > 0;
 
+const PUBLIC_ITEMS_BY_SCOPE = {
+  public: PUBLIC_NAV_ITEMS,
+  mobile: PUBLIC_NAV_MOBILE_ITEMS,
+} as const;
+
+const isPublicScope = (
+  scope: NavScope
+): scope is keyof typeof PUBLIC_ITEMS_BY_SCOPE =>
+  scope === 'public' || scope === 'mobile';
+
+// admin/client/manager nav items are dynamically imported (see
+// nav.private.ts) — an anonymous visitor on a public page should never have
+// to download signOut + admin routes + their icons just because this hook
+// exists. Public/mobile scopes resolve synchronously, no loading gap.
 export function useNavItems(scope: NavScope) {
-  return useMemo(
-    () => NAV_ITEMS_BY_SCOPE[scope].filter(item => item.enabled !== false),
-    [scope]
+  const [privateItems, setPrivateItems] = useState<readonly NavItem[] | null>(
+    null
   );
+
+  useEffect(() => {
+    if (isPublicScope(scope)) return;
+
+    let cancelled = false;
+
+    import('@/app/config/nav.private').then(mod => {
+      if (cancelled) return;
+
+      const itemsByScope = {
+        admin: mod.ADMIN_NAV_ITEMS,
+        client: mod.CLIENT_NAV_ITEMS,
+        manager: mod.MANAGER_NAV_ITEMS,
+      } as const;
+
+      setPrivateItems(itemsByScope[scope]);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [scope]);
+
+  return useMemo(() => {
+    const items = isPublicScope(scope)
+      ? PUBLIC_ITEMS_BY_SCOPE[scope]
+      : (privateItems ?? []);
+
+    return items.filter(item => item.enabled !== false);
+  }, [scope, privateItems]);
 }
 
 export function useNavLinkItems(scope: NavScope) {
