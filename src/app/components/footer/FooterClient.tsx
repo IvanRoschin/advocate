@@ -1,13 +1,17 @@
 'use client';
 
+import { FaEnvelope } from 'react-icons/fa';
+import { FaPhone } from 'react-icons/fa6';
+
 import { getRouteUrl } from '@/app/config/routes';
 import { useThemeStore } from '@/app/store/theme.store';
-// Direct path, not the `@/app/types` barrel — Footer renders on every page,
-// and that barrel's `export *` drags in every domain's runtime code (see
-// user.store.ts for the full explanation).
+// Direct paths, not the `@/app/types`/`iconLibrary` barrels — Footer renders
+// on every page, and both barrels drag in unrelated runtime code (every
+// domain's types, every icon in the app) just by being imported at all. See
+// user.store.ts / nav.public.ts for the full explanation.
 import type { BlogCategoryItemDto } from '@/app/types/article/article.dto';
 import { AppLink, Logo } from '@/components';
-import { footerSection, iconLibrary, person, social } from '@/resources';
+import { footerSection, person, social } from '@/resources';
 
 type Props = {
   categories: BlogCategoryItemDto[];
@@ -18,8 +22,8 @@ export default function FooterClient({ categories }: Props) {
 
   const logoVariant = theme === 'dark' ? 'dark' : 'light';
 
-  const PhoneIcon = iconLibrary.phone;
-  const EmailIcon = iconLibrary.envelope;
+  const PhoneIcon = FaPhone;
+  const EmailIcon = FaEnvelope;
 
   const phoneLinks = social
     .filter(s => s.icon === 'phone' && Boolean(s.link))
