@@ -8,7 +8,8 @@ export default function Skeleton({ className, ...rest }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'bg-muted animate-shimmer from-muted via-foreground/10 to-muted rounded bg-linear-to-r bg-size-[200%_100%]',
+        'bg-muted relative overflow-hidden rounded',
+        "after:absolute after:inset-0 after:animate-shimmer after:bg-linear-to-r after:from-transparent after:via-foreground/10 after:to-transparent after:content-['']",
         className
       )}
       {...rest}
