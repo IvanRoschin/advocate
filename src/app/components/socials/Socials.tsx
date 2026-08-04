@@ -1,10 +1,30 @@
 'use client';
 
-import { iconLibrary } from '@/app/resources/icons';
+import {
+  FaFacebook,
+  FaInstagram,
+  FaPhone,
+  FaTelegram,
+  FaViber,
+} from 'react-icons/fa6';
+import { HiEnvelope } from 'react-icons/hi2';
+
 import { AppLink } from '@/components';
 import { social } from '@/resources/content';
 
 import type { IconName } from '@/app/resources/icons';
+
+// Small fixed map of just the icons `social` ever references, not the full
+// `iconLibrary` barrel (60+ icons, including admin-only ones) — same
+// reasoning as nav.public.ts. This component renders on every page.
+const socialIcons = {
+  email: HiEnvelope,
+  phone: FaPhone,
+  telegram: FaTelegram,
+  viber: FaViber,
+  instagram: FaInstagram,
+  facebook: FaFacebook,
+} satisfies Partial<Record<IconName, unknown>>;
 
 const Socials = () => {
   const essential = social.filter(
@@ -15,7 +35,8 @@ const Socials = () => {
   );
 
   const renderIcon = (name: IconName) => {
-    const Icon = iconLibrary[name];
+    const Icon = socialIcons[name as keyof typeof socialIcons];
+    if (!Icon) return null;
     return <Icon className="h-5 w-5" aria-hidden />;
   };
 

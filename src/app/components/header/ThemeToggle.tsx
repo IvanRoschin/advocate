@@ -1,6 +1,7 @@
 'use client';
 
-import { iconLibrary } from '@/app/resources/icons';
+import { FiMoon, FiSun } from 'react-icons/fi';
+
 import { useThemeStore } from '@/app/store/theme.store';
 import { Button } from '@/components/ui/button';
 
@@ -16,7 +17,7 @@ export const ThemeToggle = () => {
   const toggleTheme = useThemeStore(state => state.toggleTheme);
 
   const isDark = theme === 'dark';
-  const Icon = isDark ? iconLibrary.sun : iconLibrary.moon;
+  const Icon = isDark ? FiSun : FiMoon;
   const label = isDark ? 'Світла тема' : 'Темна тема';
 
   return (

@@ -3,13 +3,15 @@
 import { signOut } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
+import { PiUserCircleDuotone } from 'react-icons/pi';
 
 import { routes } from '@/app/config/routes';
 import { getUserScope } from '@/app/lib/auth/getUserScope';
 import { cn } from '@/app/lib/utils';
 import { useUserStore } from '@/app/store/user.store';
 import { AppLink } from '@/components';
-import { iconLibrary, menuText } from '@/resources';
+import { menuText } from '@/resources';
 
 import { isSelected, useNavLinkItems } from './nav.shared';
 
@@ -50,7 +52,7 @@ export const NavDesktopList = ({
           key: 'signin',
           href: routes.public.auth.signIn,
           label: 'Увійти',
-          Icon: iconLibrary.person,
+          Icon: PiUserCircleDuotone,
         },
       ];
     }
@@ -60,7 +62,7 @@ export const NavDesktopList = ({
       {
         key: 'signout',
         label: 'Вихід',
-        Icon: iconLibrary.arrowUpRightFromSquare,
+        Icon: HiArrowTopRightOnSquare,
         onClick: async () => {
           useUserStore.getState().clearUser();
 

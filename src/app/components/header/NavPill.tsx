@@ -2,11 +2,12 @@
 
 import { signOut } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
+import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
+import { PiUserCircleDuotone } from 'react-icons/pi';
 
 import { routes } from '@/app/config/routes';
 import { getUserScope } from '@/app/lib/auth/getUserScope';
 import { cn } from '@/app/lib/utils';
-import { iconLibrary } from '@/app/resources';
 import { useUserStore } from '@/app/store/user.store';
 import { AppLink } from '@/components';
 import { Button } from '@/components/ui/button';
@@ -70,7 +71,7 @@ export const NavPill = ({
           key: 'signin',
           href: routes.public.auth.signIn,
           label: 'Увійти',
-          Icon: iconLibrary.person,
+          Icon: PiUserCircleDuotone,
         },
       ];
     }
@@ -81,12 +82,12 @@ export const NavPill = ({
         key: 'dashboard',
         href: resolveDashboardHref(publicAuth.role),
         label: 'Увійти',
-        Icon: iconLibrary.person,
+        Icon: PiUserCircleDuotone,
       },
       {
         key: 'signout',
         label: 'Вихід',
-        Icon: iconLibrary.arrowUpRightFromSquare,
+        Icon: HiArrowTopRightOnSquare,
         onClick: async () => {
           useUserStore.getState().clearUser();
 
