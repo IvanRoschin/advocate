@@ -30,10 +30,10 @@ html {
 }
 @keyframes shimmer {
   from {
-    background-position: 200% 0;
+    transform: translateX(-100%);
   }
   to {
-    background-position: -200% 0;
+    transform: translateX(100%);
   }
 }
 
