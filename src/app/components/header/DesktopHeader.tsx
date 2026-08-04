@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { NavScope } from '@/app/config/nav';
 import { routes } from '@/app/config/routes';
 import { cn } from '@/app/lib/utils';
 import { useThemeStore } from '@/app/store/theme.store';
@@ -12,6 +11,7 @@ import { DesktopControlRail } from './DesktopControlRail';
 import { TimeDisplay } from './TimeDisplay';
 
 import type { HeaderPublicAuthState } from './HeaderClient';
+import type { NavScope } from '@/app/config/nav';
 
 type DesktopHeaderProps = {
   scope?: NavScope;
