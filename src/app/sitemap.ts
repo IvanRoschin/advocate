@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next';
 import { baseUrl, routes } from '@/app/config/routes';
 
 // auth-страницы (signin/register/...) не индексируем
-const AUTH_PATHS = new Set(Object.values(routes.public.auth));
+const AUTH_PATHS = new Set<string>(Object.values(routes.public.auth));
 
 /**
  * Берём только реальные страницы (строки, начинающиеся с "/"),
