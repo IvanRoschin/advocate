@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 
+import { buildSiteJsonLd } from '@/app/helpers';
 import {
   eUkraine,
   eUkrainehead,
@@ -34,6 +35,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const nonce = (await headers()).get('x-nonce') ?? undefined;
+  const siteJsonLd = buildSiteJsonLd();
 
   return (
     <html
@@ -45,6 +47,13 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://challenges.cloudflare.com" />
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {siteJsonLd.map((item, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
+          />
+        ))}
       </head>
       <body>
         <Providers>{children}</Providers>
