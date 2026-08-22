@@ -2,9 +2,12 @@ import type { MetadataRoute } from 'next';
 
 import { baseUrl, routes } from '@/app/config/routes';
 
+// auth-страницы (signin/register/...) не индексируем
+const AUTH_PATHS = new Set(Object.values(routes.public.auth));
+
 /**
  * Берём только реальные страницы (строки, начинающиеся с "/"),
- * игнорируем якоря "#..." и любые вложенные объекты.
+ * игнорируем якоря "#...", auth-страницы и любые вложенные объекты.
  */
 const collectPublicPaths = (): string[] => {
   const result: string[] = [];
@@ -13,7 +16,9 @@ const collectPublicPaths = (): string[] => {
     if (!node) return;
 
     if (typeof node === 'string') {
-      if (node.startsWith('/')) result.push(node);
+      if (node.startsWith('/') && !node.includes('#') && !AUTH_PATHS.has(node)) {
+        result.push(node);
+      }
       return;
     }
 
