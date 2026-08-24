@@ -36,50 +36,9 @@ export const metadata: Metadata = {
   },
 };
 
+// Organization/LegalService JSON-LD now lives sitewide in the root layout
+// (see buildSiteJsonLd) — this page only adds its own WebPage entry.
 function buildJsonLd(data: typeof contact) {
-  const organization = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: data.structuredData.organizationName,
-    url: data.structuredData.siteUrl,
-    email: data.email,
-    telephone: data.phonePretty,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: data.address,
-      addressLocality: data.city,
-      addressRegion: data.region,
-      postalCode: data.postalCode,
-      addressCountry: data.country ?? 'UA',
-    },
-  };
-
-  const legalService = {
-    '@context': 'https://schema.org',
-    '@type': 'LegalService',
-    name: data.structuredData.organizationName,
-    url: `${data.structuredData.siteUrl}${data.path}`,
-    email: data.email,
-    telephone: data.phonePretty,
-    areaServed: data.city,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: data.address,
-      addressLocality: data.city,
-      addressRegion: data.region,
-      postalCode: data.postalCode,
-      addressCountry: data.country ?? 'UA',
-    },
-    geo:
-      typeof data.latitude === 'number' && typeof data.longitude === 'number'
-        ? {
-            '@type': 'GeoCoordinates',
-            latitude: data.latitude,
-            longitude: data.longitude,
-          }
-        : undefined,
-  };
-
   const webPage = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -88,7 +47,7 @@ function buildJsonLd(data: typeof contact) {
     description: data.seo.description,
   };
 
-  return [organization, legalService, webPage];
+  return [webPage];
 }
 
 export default function ContactPage() {
