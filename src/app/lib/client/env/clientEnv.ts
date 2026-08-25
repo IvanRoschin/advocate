@@ -25,4 +25,6 @@ export const clientEnv = {
   cloudflare: {
     turnstileSiteKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
   },
+
+  gaMeasurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
 };
