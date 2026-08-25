@@ -23,32 +23,32 @@ export const sacramento = Sacramento({
 export const eUkrainehead = localFont({
   src: [
     {
-      path: './e-Ukraine Head/e-UkraineHead-Thin.otf',
+      path: './e-Ukraine Head/e-UkraineHead-Thin.woff2',
       weight: '100',
       style: 'normal',
     },
     {
-      path: './e-Ukraine Head/e-UkraineHead-UltraLight.otf',
+      path: './e-Ukraine Head/e-UkraineHead-UltraLight.woff2',
       weight: '200',
       style: 'normal',
     },
     {
-      path: './e-Ukraine Head/e-UkraineHead-Light.otf',
+      path: './e-Ukraine Head/e-UkraineHead-Light.woff2',
       weight: '300',
       style: 'normal',
     },
     {
-      path: './e-Ukraine Head/e-UkraineHead-Regular.otf',
+      path: './e-Ukraine Head/e-UkraineHead-Regular.woff2',
       weight: '400',
       style: 'normal',
     },
     {
-      path: './e-Ukraine Head/e-UkraineHead-Medium.otf',
+      path: './e-Ukraine Head/e-UkraineHead-Medium.woff2',
       weight: '500',
       style: 'normal',
     },
     {
-      path: './e-Ukraine Head/e-UkraineHead-Bold.otf',
+      path: './e-Ukraine Head/e-UkraineHead-Bold.woff2',
       weight: '700',
       style: 'normal',
     },
@@ -59,24 +59,24 @@ export const eUkrainehead = localFont({
 
 export const eUkraine = localFont({
   src: [
-    { path: './e-Ukraine/e-Ukraine-Thin.otf', weight: '100', style: 'normal' },
+    { path: './e-Ukraine/e-Ukraine-Thin.woff2', weight: '100', style: 'normal' },
     {
-      path: './e-Ukraine/e-Ukraine-UltraLight.otf',
+      path: './e-Ukraine/e-Ukraine-UltraLight.woff2',
       weight: '200',
       style: 'normal',
     },
-    { path: './e-Ukraine/e-Ukraine-Light.otf', weight: '300', style: 'normal' },
+    { path: './e-Ukraine/e-Ukraine-Light.woff2', weight: '300', style: 'normal' },
     {
-      path: './e-Ukraine/e-Ukraine-Regular.otf',
+      path: './e-Ukraine/e-Ukraine-Regular.woff2',
       weight: '400',
       style: 'normal',
     },
     {
-      path: './e-Ukraine/e-Ukraine-Medium.otf',
+      path: './e-Ukraine/e-Ukraine-Medium.woff2',
       weight: '500',
       style: 'normal',
     },
-    { path: './e-Ukraine/e-Ukraine-Bold.otf', weight: '700', style: 'normal' },
+    { path: './e-Ukraine/e-Ukraine-Bold.woff2', weight: '700', style: 'normal' },
   ],
   variable: '--font-eukraine',
   display: 'swap',
