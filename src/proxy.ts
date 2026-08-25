@@ -49,11 +49,11 @@ export async function proxy(req: NextRequest) {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' https://upload-widget.cloudinary.com https://challenges.cloudflare.com`,
+      `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' https://upload-widget.cloudinary.com https://challenges.cloudflare.com https://www.googletagmanager.com`,
       "style-src 'self' 'unsafe-inline' https://upload-widget.cloudinary.com",
       "img-src 'self' data: blob: https://res.cloudinary.com https://upload-widget.cloudinary.com",
       "font-src 'self' data: https://upload-widget.cloudinary.com",
-      "connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://upload-widget.cloudinary.com https://challenges.cloudflare.com",
+      "connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://upload-widget.cloudinary.com https://challenges.cloudflare.com https://www.googletagmanager.com https://*.google-analytics.com",
       'frame-src https://upload-widget.cloudinary.com https://challenges.cloudflare.com https://www.google.com',
       "worker-src 'self' blob:",
       "object-src 'none'",

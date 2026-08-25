@@ -1,6 +1,8 @@
 import { headers } from 'next/headers';
+import Script from 'next/script';
 
 import { buildSiteJsonLd } from '@/app/helpers';
+import { clientEnv } from '@/app/lib/client/env/clientEnv';
 import {
   eUkraine,
   eUkrainehead,
@@ -57,6 +59,23 @@ export default async function RootLayout({
       </head>
       <body>
         <Providers>{children}</Providers>
+        {clientEnv.gaMeasurementId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${clientEnv.gaMeasurementId}`}
+              strategy="afterInteractive"
+              nonce={nonce}
+            />
+            <Script id="ga4-init" strategy="afterInteractive" nonce={nonce}>
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${clientEnv.gaMeasurementId}');
+              `}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );
