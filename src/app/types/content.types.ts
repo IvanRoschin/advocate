@@ -94,8 +94,11 @@ export type ContactContent = {
   phoneSecondaryPretty?: string;
 
   email: string;
+  /** Публічний опис місця зустрічей (без вуличної адреси — service-area business) */
   address: string;
   city: string;
+  /** Міста/території, де надаються послуги (schema.org areaServed) */
+  serviceArea?: string[];
   region?: string;
   postalCode?: string;
   country?: string;

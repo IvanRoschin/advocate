@@ -1,22 +1,40 @@
-import { contact } from '@/app/resources';
+import { contact, social } from '@/app/resources';
 
 /**
  * Sitewide Organization + LegalService JSON-LD, rendered once in the root
  * layout so every page (not just /contact) carries the business's
  * structured data.
+ *
+ * Service-area business: no street address is published (no public office;
+ * meetings by appointment in Kyiv or online) — only locality/region and
+ * areaServed, consistent with the Google Business Profile.
  */
 export function buildSiteJsonLd() {
-  const { structuredData, email, phonePretty, city, region, postalCode, country, latitude, longitude, address } =
-    contact;
+  const {
+    structuredData,
+    email,
+    phonePretty,
+    city,
+    region,
+    country,
+    serviceArea,
+  } = contact;
 
   const postalAddress = {
     '@type': 'PostalAddress',
-    streetAddress: address,
     addressLocality: city,
     addressRegion: region,
-    postalCode,
     addressCountry: country ?? 'UA',
   };
+
+  const areaServed = (serviceArea?.length ? serviceArea : [city]).map(name => ({
+    '@type': /област/i.test(name) ? 'AdministrativeArea' : 'City',
+    name,
+  }));
+
+  const sameAs = social
+    .map(s => s.link)
+    .filter((l): l is string => typeof l === 'string' && /^https:\/\//.test(l));
 
   const organization = {
     '@context': 'https://schema.org',
@@ -26,6 +44,7 @@ export function buildSiteJsonLd() {
     email,
     telephone: phonePretty,
     address: postalAddress,
+    sameAs,
   };
 
   const legalService = {
@@ -35,16 +54,8 @@ export function buildSiteJsonLd() {
     url: structuredData.siteUrl,
     email,
     telephone: phonePretty,
-    areaServed: city,
+    areaServed,
     address: postalAddress,
-    geo:
-      typeof latitude === 'number' && typeof longitude === 'number'
-        ? {
-            '@type': 'GeoCoordinates',
-            latitude,
-            longitude,
-          }
-        : undefined,
   };
 
   return [organization, legalService];
