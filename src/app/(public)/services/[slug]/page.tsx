@@ -1,3 +1,4 @@
+import { getServicePrice } from '@/app/config/servicePrices';
 import type { Metadata } from 'next';
 
 import { articlePublicActions } from '@/app/actions/article.actions';
@@ -57,6 +58,7 @@ function buildServiceJsonLd(service: {
   seoDescription?: string;
 }) {
   const url = new URL(`/services/${service.slug}`, baseUrl).toString();
+  const price = getServicePrice(service.slug);
   return {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -73,6 +75,21 @@ function buildServiceJsonLd(service: {
       name: 'Адвокат Іван Рощин',
       url: baseUrl,
     },
+    ...(price
+      ? {
+          offers: {
+            '@type': 'Offer',
+            url,
+            priceCurrency: 'UAH',
+            priceSpecification: {
+              '@type': 'PriceSpecification',
+              minPrice: price.from,
+              priceCurrency: 'UAH',
+              ...(price.unit ? { unitText: price.unit } : {}),
+            },
+          },
+        }
+      : {}),
   };
 }
 
