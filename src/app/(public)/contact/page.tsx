@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { baseUrl } from '@/app/config/routes';
 import { contact } from '@/app/resources';
 import { CONTACT_PAGE_LAYOUT } from '@/app/resources/content/pages/contact.layout';
 
@@ -26,13 +27,13 @@ export const metadata: Metadata = {
   title: contact.seo.title,
   description: contact.seo.description,
   alternates: {
-    canonical: contact.seo.canonical,
+    canonical: new URL(contact.seo.canonical, baseUrl).toString(),
   },
   openGraph: {
     title: contact.seo.openGraph.title,
     description: contact.seo.openGraph.description,
     type: contact.seo.openGraph.type,
-    url: contact.seo.openGraph.url,
+    url: new URL(contact.seo.openGraph.url, baseUrl).toString(),
   },
 };
 
