@@ -14,6 +14,12 @@ export function parseArticleContent(html: string) {
   const toc: TocItem[] = [];
   const used = new Set<string>();
 
+  // The page hero already renders the article title as the only <h1>.
+  // Demote any <h1> inside the article body so a page never has two.
+  $('h1').each((_, el) => {
+    el.tagName = 'h2';
+  });
+
   $('h2, h3').each((_, el) => {
     const tag = el.tagName;
     const text = $(el).text().trim();
