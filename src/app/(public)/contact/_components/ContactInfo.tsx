@@ -9,7 +9,7 @@ type Props = {
   city: string;
 };
 
-const ContactInfo = ({ phone, email, address, city }: Props) => {
+const ContactInfo = ({ phone, email, address }: Props) => {
   const items = [
     {
       label: 'Телефон',
@@ -17,7 +17,7 @@ const ContactInfo = ({ phone, email, address, city }: Props) => {
       href: `tel:${phone.replaceAll(' ', '')}`,
     },
     { label: 'Email', value: email, href: `mailto:${email}` },
-    { label: 'Адреса', value: `${address}, ${city}`, href: undefined },
+    { label: 'Де зустрічаємось', value: address, href: undefined },
   ];
 
   return (
