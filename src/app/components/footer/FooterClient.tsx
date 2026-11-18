@@ -1,7 +1,7 @@
 'use client';
 
 import { FaEnvelope } from 'react-icons/fa';
-import { FaPhone } from 'react-icons/fa6';
+import { FaPhone, FaTelegram, FaViber } from 'react-icons/fa6';
 
 import { getRouteUrl } from '@/app/config/routes';
 import { useThemeStore } from '@/app/store/theme.store';
@@ -32,6 +32,13 @@ export default function FooterClient({ categories }: Props) {
       (href): href is string =>
         typeof href === 'string' && href.startsWith('tel:')
     );
+
+  const messengerLinks = social.filter(
+    s =>
+      (s.icon === 'viber' || s.icon === 'telegram') &&
+      Boolean(s.link) &&
+      s.visible !== false
+  );
 
   const emailLink =
     social.find(s => s.icon === 'email' && Boolean(s.link))?.link ??
@@ -120,6 +127,24 @@ export default function FooterClient({ categories }: Props) {
                     ))}
                   </div>
                 </li>
+
+                {messengerLinks.map(item => {
+                  const Icon = item.icon === 'viber' ? FaViber : FaTelegram;
+                  return (
+                    <li key={item.link}>
+                      <AppLink
+                        href={item.link}
+                        {...(item.link.startsWith('http')
+                          ? { target: '_blank', rel: 'noopener noreferrer' }
+                          : {})}
+                        className="footer-link flex items-center"
+                      >
+                        <Icon className="mr-3 h-5 w-5" aria-hidden />
+                        <span className="nav">{item.name}</span>
+                      </AppLink>
+                    </li>
+                  );
+                })}
 
                 {emailLink && (
                   <li>
