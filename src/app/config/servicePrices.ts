@@ -49,9 +49,9 @@ export const SERVICE_PRICES: Record<string, ServicePrice> = {
     from: 2500,
   },
   'yurydychna-konsultatsiya-advokata': {
-    from: 500,
+    from: 2000,
     unit: 'год',
-    note: 'Усна консультація з цивільних питань',
+    note: 'Усна консультація адвоката',
   },
 };
 
