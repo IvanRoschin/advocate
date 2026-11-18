@@ -10,9 +10,9 @@ const ContactMap = ({ mapEmbedUrl, address }: Props) => {
     <section className="container pb-14">
       <div className={`${panelClassName} overflow-hidden`}>
         <div className="border-border border-b px-6 py-5 lg:px-8">
-          <p className={eyebrowClassName}>Локація</p>
+          <p className={eyebrowClassName}>Зона роботи</p>
           <h2 className="text-accent mt-2 text-xl font-semibold">
-            Як нас знайти
+            Київ, Київська область та онлайн по всій Україні
           </h2>
           <p className="text-muted-foreground mt-2 text-sm">{address}</p>
         </div>
@@ -30,14 +30,17 @@ const ContactMap = ({ mapEmbedUrl, address }: Props) => {
             />
           </div>
         ) : (
-          <div className="bg-muted flex h-95 items-center justify-center px-6 text-center">
-            <div>
-              <p className="text-accent text-lg font-semibold">Мапа офісу</p>
-              <p className="text-muted-foreground mt-2 max-w-md text-sm leading-6">
-                Додайте `mapEmbedUrl`, коли буде готовий embed URL з Google
-                Maps.
-              </p>
-            </div>
+          <div className="text-app space-y-3 px-6 py-6 text-sm leading-6 lg:px-8">
+            <p>
+              Окремого приймального офісу немає — зустрічі призначаються за
+              попередньою домовленістю в зручному для вас місці в центрі Києва
+              або в Ірпені, Бучі, Броварах.
+            </p>
+            <p>
+              Більшість питань вирішуємо дистанційно: консультація телефоном, у
+              Viber/Telegram або відеозв’язком, документи — через «Електронний
+              суд» та електронний підпис.
+            </p>
           </div>
         )}
       </div>

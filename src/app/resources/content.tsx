@@ -96,13 +96,13 @@ const social: Social = [
   {
     name: 'Instagram',
     icon: 'instagram',
-    link: '',
+    link: 'https://www.instagram.com/advokat.roschin/',
     essential: false,
   },
   {
     name: 'Facebook',
     icon: 'facebook',
-    link: '',
+    link: 'https://www.facebook.com/attorney.ivan.roschin',
     essential: false,
   },
 ];
@@ -205,10 +205,10 @@ const contact: ContactContent = {
   label: 'Контакти',
   title: `Контакти — ${person.role} ${person.name}`,
   description:
-    'Контактна інформація, консультації, запис на прийом та способи зв’язку для отримання юридичної допомоги.',
+    'Контактна інформація, консультації, запис на зустріч та способи зв’язку для отримання юридичної допомоги.',
   eyebrow: 'Контакти',
   heading: 'Контакти та юридична консультація',
-  lead: 'Зв’яжіться зручним для вас способом для консультації, правового супроводу або запису на прийом.',
+  lead: 'Зв’яжіться зручним для вас способом для консультації, правового супроводу або домовитися про зустріч чи онлайн-консультацію.',
 
   phone: phone1,
   phonePretty: phone1Pretty,
@@ -216,14 +216,11 @@ const contact: ContactContent = {
   phoneSecondaryPretty: phone2Pretty,
 
   email: person.email,
-  address: 'м. Київ, вул. Антоновича, 47',
+  address: 'Зустріч за попередньою домовленістю (центр Києва) або онлайн',
   city: 'Київ',
+  serviceArea: ['Київ', 'Ірпінь', 'Буча', 'Бровари', 'Київська область'],
   region: 'Київська область',
-  postalCode: '03150',
   country: 'UA',
-
-  latitude: 50.4501,
-  longitude: 30.5234,
 
   workHours: [
     { day: 'Понеділок — П’ятниця', hours: '09:00 — 18:00' },
@@ -231,13 +228,10 @@ const contact: ContactContent = {
     { day: 'Неділя', hours: 'Вихідний' },
   ],
 
-  mapEmbedUrl:
-    'https://www.google.com/maps/d/u/2/embed?mid=1jxiKyVm9tBik41i5K1Ecu3XxK3i3yBw&ehbc=2E312F',
-
   seo: {
     title: `Контакти — ${person.role} ${person.name}, Київ`,
     description:
-      'Контактна інформація, консультації, запис на прийом та способи зв’язку для отримання юридичної допомоги.',
+      'Контактна інформація, консультації, запис на зустріч та способи зв’язку для отримання юридичної допомоги.',
     canonical: '/contact',
     openGraph: {
       title: `Контакти — ${person.role} ${person.name}, Київ`,
