@@ -78,10 +78,8 @@ function externalReferrer(): string | undefined {
   }
 }
 
-/** Call on every page view. Cheap and idempotent. */
-export function captureAttribution() {
-  if (typeof window === 'undefined') return;
-
+/** Source signals of the current page view (no storage involved). */
+function currentTouch(): { touch: LeadTouch; hasSignal: boolean } {
   const params = new URLSearchParams(window.location.search);
   const touch: LeadTouch = {};
 
@@ -98,6 +96,15 @@ export function captureAttribution() {
   touch.landingPage = clip(window.location.pathname);
   touch.at = new Date().toISOString();
 
+  return { touch, hasSignal };
+}
+
+/** Call on every page view. Cheap and idempotent. */
+export function captureAttribution() {
+  if (typeof window === 'undefined') return;
+
+  const { touch, hasSignal } = currentTouch();
+
   if (!read(FIRST_KEY)) write(FIRST_KEY, touch);
   if (hasSignal) write(LAST_KEY, touch);
 }
@@ -107,6 +114,13 @@ export function getAttribution(): LeadAttribution {
   if (typeof window === 'undefined') return {};
   const first = read(FIRST_KEY);
   const last = read(LAST_KEY);
+
+  // Storage empty or blocked (private mode, cleared site data): fall back to
+  // the current page view so the lead still carries referrer / UTM if present.
+  if (!first && !last) {
+    return { first: currentTouch().touch };
+  }
+
   return {
     ...(first ? { first } : {}),
     ...(last ? { last } : {}),
