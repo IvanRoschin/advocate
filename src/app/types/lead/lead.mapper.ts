@@ -1,5 +1,6 @@
 import { toIdString, toIsoString } from '@/app/lib/mappers/_utils';
 import type { LeadDocument } from '@/models/Lead';
+import { cleanLeadAttribution } from './lead.attribution';
 import type { LeadResponseDTO } from './lead.dto';
 export function mapLeadToResponse(lead: LeadDocument): LeadResponseDTO {
   return {
@@ -16,6 +17,7 @@ export function mapLeadToResponse(lead: LeadDocument): LeadResponseDTO {
     assignedToUserId: lead.assignedToUserId
       ? toIdString(lead.assignedToUserId)
       : null,
+    attribution: cleanLeadAttribution(lead.attribution),
     createdAt: toIsoString(lead.createdAt),
     updatedAt: toIsoString(lead.updatedAt),
   };

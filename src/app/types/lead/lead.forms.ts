@@ -65,7 +65,10 @@ const basePublicFields = {
     .trim()
     .min(2, 'Імʼя має містити щонайменше 2 символи')
     .max(100, 'Імʼя не може бути довшим за 100 символів')
-    .matches(nameRegExp, 'Імʼя може містити лише літери, пробіли, дефіс і апостроф')
+    .matches(
+      nameRegExp,
+      'Імʼя може містити лише літери, пробіли, дефіс і апостроф'
+    )
     .required('Вкажіть ваше імʼя'),
 
   email: Yup.string()
@@ -139,7 +142,10 @@ export const adminLeadSubmitSchema: Yup.ObjectSchema<LeadAdminFormSubmitValues> 
       .trim()
       .min(2, 'Імʼя має містити щонайменше 2 символи')
       .max(100, 'Імʼя не може бути довшим за 100 символів')
-      .matches(nameRegExp, 'Імʼя може містити лише літери, пробіли, дефіс і апостроф')
+      .matches(
+        nameRegExp,
+        'Імʼя може містити лише літери, пробіли, дефіс і апостроф'
+      )
       .required('Вкажіть імʼя'),
 
     email: Yup.string()
@@ -187,6 +193,35 @@ export const adminLeadSubmitSchema: Yup.ObjectSchema<LeadAdminFormSubmitValues> 
 // SERVER REQUEST VALIDATION
 // =========================
 
+// Attribution comes from the visitor's browser: treat every field as untrusted,
+// optional, short plain text. Anything malformed is dropped, never rejected —
+// a lead must not fail because of tracking data.
+const touchField = Yup.string()
+  .transform(v => (typeof v === 'string' ? v.trim().slice(0, 300) : undefined))
+  .optional();
+
+const leadTouchSchema = Yup.object({
+  utmSource: touchField,
+  utmMedium: touchField,
+  utmCampaign: touchField,
+  utmTerm: touchField,
+  utmContent: touchField,
+  gclid: touchField,
+  fbclid: touchField,
+  referrer: touchField,
+  landingPage: touchField,
+  at: touchField,
+})
+  .optional()
+  .default(undefined);
+
+export const leadAttributionSchema = Yup.object({
+  first: leadTouchSchema,
+  last: leadTouchSchema,
+})
+  .optional()
+  .default(undefined);
+
 // Для home message опционален, для contacts обязателен.
 // Это и есть ключевой фикс для 422.
 export const createLeadRequestSchema = Yup.object({
@@ -206,6 +241,8 @@ export const createLeadRequestSchema = Yup.object({
     }),
 
   turnstileToken: Yup.string().trim().required('Підтвердіть, що ви не робот'),
+
+  attribution: leadAttributionSchema,
 });
 
 export type CreateLeadRequestDTO = Yup.InferType<
