@@ -6,6 +6,10 @@ import Link from 'next/link';
 import { NextImage } from '@/app/components';
 import { NoCoverPlaceholder } from '@/app/components/common/NoCoverPlaceholder';
 import { imageVariants } from '@/app/config/imageVariants';
+import {
+  formatServicePrice,
+  getServicePrice,
+} from '@/app/config/servicePrices';
 import { getCloudinarySrc } from '@/app/lib/cloudinary/getCloudinarySrc';
 import { ServiceListItemDto } from '@/app/types';
 
@@ -31,6 +35,7 @@ const ServicesList = ({ services }: ListSectionProps) => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {services.map((service, index) => {
+        const price = getServicePrice(service.slug);
         const publicId = service.src
           ? getCloudinarySrc(service.src)
           : undefined;
@@ -68,6 +73,11 @@ const ServicesList = ({ services }: ListSectionProps) => {
                 <p className="text-app mt-3 text-sm leading-6">
                   {service.summary}
                 </p>
+                {price ? (
+                  <p className="text-accent mt-4 text-base font-semibold">
+                    {formatServicePrice(price)}
+                  </p>
+                ) : null}
               </div>
             </Link>
           </article>
