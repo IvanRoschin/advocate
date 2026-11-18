@@ -7,7 +7,7 @@ describe('contactMethodFromHref', () => {
     ['tel:+380951983729', 'phone'],
     ['mailto:a@b.ua', 'email'],
     ['https://t.me/ivanroschin', 'telegram'],
-    ['viber://chat?number=%2B380967759569', 'viber'],
+    ['viber://chat?number=%2B380951983729', 'viber'],
     ['/services', null],
     ['https://instagram.com/x', null],
   ])('%s -> %s', (href, expected) => {

@@ -90,7 +90,7 @@ const social: Social = [
   {
     name: 'Viber',
     icon: 'viber',
-    link: 'viber://chat?number=%2B380967759569',
+    link: 'viber://chat?number=%2B380951983729',
     essential: false,
   },
   {
