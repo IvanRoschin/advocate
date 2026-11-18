@@ -33,8 +33,12 @@ export async function generateMetadata({
   const cover = article.src?.[0];
   const isDraft = article.status === 'draft' || !article.publishedAt;
 
+  const title = /Рощин/i.test(article.title)
+    ? article.title
+    : `${article.title} | Іван Рощин`;
+
   return buildMetadata({
-    title: article.title,
+    title,
     description: article.subtitle ?? article.summary ?? undefined,
     path: `/blog/${article.slug}`,
     imageUrl: cover ?? '/images/ivan_roschin.webp',
