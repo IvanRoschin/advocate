@@ -96,13 +96,13 @@ const social: Social = [
   {
     name: 'Instagram',
     icon: 'instagram',
-    link: '',
+    link: 'https://www.instagram.com/advokat.roschin/',
     essential: false,
   },
   {
     name: 'Facebook',
     icon: 'facebook',
-    link: '',
+    link: 'https://www.facebook.com/attorney.ivan.roschin',
     essential: false,
   },
 ];

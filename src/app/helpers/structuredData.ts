@@ -1,4 +1,4 @@
-import { contact } from '@/app/resources';
+import { contact, social } from '@/app/resources';
 
 /**
  * Sitewide Organization + LegalService JSON-LD, rendered once in the root
@@ -32,6 +32,10 @@ export function buildSiteJsonLd() {
     name,
   }));
 
+  const sameAs = social
+    .map(s => s.link)
+    .filter((l): l is string => typeof l === 'string' && /^https:\/\//.test(l));
+
   const organization = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -40,6 +44,7 @@ export function buildSiteJsonLd() {
     email,
     telephone: phonePretty,
     address: postalAddress,
+    sameAs,
   };
 
   const legalService = {
