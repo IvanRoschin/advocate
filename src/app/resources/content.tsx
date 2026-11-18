@@ -146,7 +146,7 @@ const blog: BlogContent = {
 };
 
 const payment: PaymentContent = {
-  path: '/payment',
+  path: '/payments',
   image: '/images/ivan_roschin.webp',
   label: 'Оплата',
   title: `Оплата послуг — ${person.role} ${person.name}`,

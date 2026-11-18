@@ -110,7 +110,7 @@ export default function NotFoundPage() {
                       </Link>
 
                       <Link
-                        href="/payment"
+                        href="/payments"
                         className="text-accent text-sm font-medium hover:underline"
                       >
                         Перейти до сторінки оплати
