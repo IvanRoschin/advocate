@@ -4,9 +4,11 @@ import { articlePublicActions } from '@/app/actions/article.actions';
 import { servicePublicActions } from '@/app/actions/service.actions';
 import { baseUrl, routes } from '@/app/config/routes';
 
-// Regenerate the sitemap at most once an hour so new services and
-// articles from the admin panel show up without a redeploy.
-export const revalidate = 3600;
+// Render on every request. With ISR the sitemap is prerendered at build time,
+// when the DB is skipped (SKIP_DB_ON_BUILD), so after each deploy it served
+// only static pages for up to an hour. Crawlers fetch it rarely, so querying
+// the DB per request is cheap.
+export const dynamic = 'force-dynamic';
 
 // auth-страницы (signin/register/...) не индексируем
 const AUTH_PATHS = new Set<string>(Object.values(routes.public.auth));
@@ -25,7 +27,11 @@ const collectPublicPaths = (): string[] => {
     if (!node) return;
 
     if (typeof node === 'string') {
-      if (node.startsWith('/') && !node.includes('#') && !AUTH_PATHS.has(node)) {
+      if (
+        node.startsWith('/') &&
+        !node.includes('#') &&
+        !AUTH_PATHS.has(node)
+      ) {
         result.push(node);
       }
       return;
