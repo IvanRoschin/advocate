@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import Script from 'next/script';
 
+import AttributionTracker from '@/app/components/analytics/AttributionTracker';
 import { buildSiteJsonLd } from '@/app/helpers';
 import { clientEnv } from '@/app/lib/client/env/clientEnv';
 import {
@@ -48,7 +49,10 @@ export default async function RootLayout({
     >
       <head>
         <link rel="preconnect" href="https://challenges.cloudflare.com" />
-        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
         {siteJsonLd.map((item, index) => (
           <script
             key={index}
@@ -59,6 +63,7 @@ export default async function RootLayout({
       </head>
       <body>
         <Providers>{children}</Providers>
+        <AttributionTracker />
         {clientEnv.gaMeasurementId && (
           <>
             <Script

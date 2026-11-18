@@ -5,6 +5,22 @@ import { LEAD_SOURCES, LEAD_STATUSES } from '../types';
 
 const { Schema } = mongoose;
 
+const leadTouchSchema = new Schema(
+  {
+    utmSource: String,
+    utmMedium: String,
+    utmCampaign: String,
+    utmTerm: String,
+    utmContent: String,
+    gclid: String,
+    fbclid: String,
+    referrer: String,
+    landingPage: String,
+    at: String,
+  },
+  { _id: false }
+);
+
 const leadSchema = new Schema(
   {
     name: {
@@ -63,6 +79,13 @@ const leadSchema = new Schema(
       type: String,
       default: '',
       trim: true,
+    },
+    attribution: {
+      type: new Schema(
+        { first: leadTouchSchema, last: leadTouchSchema },
+        { _id: false }
+      ),
+      default: undefined,
     },
   },
   {

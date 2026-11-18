@@ -4,9 +4,35 @@ import { sendEmail } from '@/app/lib/server/mail/emailService';
 import { createEntityNotifier } from '@/app/lib/server/notifications/createEntityNotifier';
 import { person } from '@/app/resources';
 import { EmailTemplateType } from '@/app/templates/email/types';
-import { CreateLeadDTO, UserRole } from '@/app/types';
+import { CreateLeadDTO, describeLeadTouch, UserRole } from '@/app/types';
 
 import { ConvertLeadToClientResult } from './lead-conversion.types';
+
+// Telegram messages are sent with parse_mode=HTML; attribution values come from
+// the visitor's URL, so they must be escaped before interpolation.
+const escapeHtml = (value: string) =>
+  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+function attributionLines(data: CreateLeadDTO): string[] {
+  const attribution = data.attribution;
+  const last = attribution?.last ?? attribution?.first;
+  const lines = [`Канал: ${escapeHtml(describeLeadTouch(last))}`];
+
+  if (last?.utmTerm) lines.push(`Ключове слово: ${escapeHtml(last.utmTerm)}`);
+  if (last?.landingPage) {
+    lines.push(`Сторінка входу: ${escapeHtml(last.landingPage)}`);
+  }
+
+  const first = attribution?.first;
+  if (first && attribution?.last && first !== attribution.last) {
+    const firstLabel = describeLeadTouch(first);
+    if (firstLabel !== describeLeadTouch(attribution.last)) {
+      lines.push(`Перший візит: ${escapeHtml(firstLabel)}`);
+    }
+  }
+
+  return lines;
+}
 
 export const notifyLeadCreated = createEntityNotifier<CreateLeadDTO>({
   clientEmail: data => ({
@@ -29,14 +55,15 @@ export const notifyLeadCreated = createEntityNotifier<CreateLeadDTO>({
   telegramMessage: data => {
     const lines = [
       '🚨 <b>Нова заявка</b>',
-      `Джерело: ${data.source}`,
-      `Імʼя: ${data.name}`,
-      `Email: ${data.email}`,
-      `Телефон: ${data.phone}`,
+      `Форма: ${data.source}`,
+      ...attributionLines(data),
+      `Імʼя: ${escapeHtml(data.name)}`,
+      `Email: ${escapeHtml(data.email)}`,
+      `Телефон: ${escapeHtml(data.phone)}`,
     ];
 
     if (data.message) {
-      lines.push(`Повідомлення: ${data.message}`);
+      lines.push(`Повідомлення: ${escapeHtml(data.message)}`);
     }
 
     return lines.join('\n');

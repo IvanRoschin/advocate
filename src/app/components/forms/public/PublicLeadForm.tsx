@@ -9,7 +9,9 @@ import { HoneypotField } from '@/app/components/forms/shared/HoneypotField';
 import { usePublicCaptcha } from '@/app/components/forms/shared/usePublicCaptcha';
 import Btn from '@/app/components/ui/button/Btn';
 import { apiUrl, routes } from '@/app/config/routes';
+import { trackEvent } from '@/app/lib/client/analytics';
 import { apiFetch } from '@/app/lib/client/apiFetch';
+import { getAttribution } from '@/app/lib/client/attribution';
 import { useLoadingStore } from '@/app/store/loading.store';
 import { publicLeadContactsSchema, publicLeadHomeSchema } from '@/app/types';
 import { Checkbox, Input, Textarea } from '@/components';
@@ -82,11 +84,16 @@ export default function PublicLeadForm({
                 email: values.email.trim(),
                 phone: values.phone.trim(),
                 turnstileToken: captcha.token,
+                attribution: getAttribution(),
                 ...(normalizedMessage ? { message: normalizedMessage } : {}),
               }),
             }
           );
 
+          trackEvent('generate_lead', {
+            form: values.source,
+            page_path: window.location.pathname,
+          });
           toast.success('Ваша заявка успішно надіслана!');
           resetForm();
           captcha.reset();

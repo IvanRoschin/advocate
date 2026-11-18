@@ -2,7 +2,11 @@ import 'server-only';
 
 import { validate } from '@/app/helpers/validate';
 import { leadRepo } from '@/app/lib/repositories/lead.repo';
-import { createLeadRequestSchema, mapLeadToResponse } from '@/app/types';
+import {
+  cleanLeadAttribution,
+  createLeadRequestSchema,
+  mapLeadToResponse,
+} from '@/app/types';
 
 import { createAction } from './createAction';
 import { createEntityModule } from './createEntityModule';
@@ -42,6 +46,7 @@ function normalizeLeadData(body: CreateLeadRequestDTO): CreateLeadDTO {
     phone: body.phone.trim(),
     message: body.message?.trim() ?? '',
     source: body.source,
+    attribution: cleanLeadAttribution(body.attribution),
   };
 }
 
