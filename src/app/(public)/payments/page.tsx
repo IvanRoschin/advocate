@@ -13,7 +13,7 @@ export const metadata: Metadata = buildMetadata({
   title: 'Оплата послуг адвоката | Іван Рощин',
   description:
     'Сторінка оплати юридичних послуг адвоката Івана Рощина. Реквізити для оплати, призначення платежу та важлива інформація.',
-  path: '/payment',
+  path: '/payments',
   imageUrl: '/images/ivan_roschin.webp',
 });
 
