@@ -1,3 +1,7 @@
-roschin.com.ua, www.roschin.com.ua {
+www.roschin.com.ua {
+	redir https://roschin.com.ua{uri} permanent
+}
+
+roschin.com.ua {
 	reverse_proxy app:3000
 }

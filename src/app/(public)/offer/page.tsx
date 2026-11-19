@@ -1,3 +1,6 @@
+import { Metadata } from 'next/types';
+
+import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
 import { renderLayout } from '@/app/lib/layouts/renderLayout';
 import {
   offerLayout,
@@ -5,6 +8,14 @@ import {
 } from '@/app/resources/content/pages/offer.layout';
 
 import { OFFER_SECTIONS } from './_components/offer.sections';
+
+export const metadata: Metadata = buildMetadata({
+  title: 'Публічний договір (оферта) | Адвокат Іван Рощин',
+  description:
+    'Публічна оферта на надання правничої допомоги адвокатом Іваном Рощиним: умови, порядок оплати, права та обов’язки сторін.',
+  path: '/offer',
+  imageUrl: '/images/ivan_roschin.webp',
+});
 
 export const dynamic = 'force-dynamic';
 
