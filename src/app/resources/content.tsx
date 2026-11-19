@@ -55,8 +55,8 @@ const person: Person = {
   languages: ['Українська'],
 };
 
-const phone1 = '0951983729';
-const phone2 = '0961983729';
+const phone1 = '+380951983729';
+const phone2 = '+380961983729';
 
 const phone1Pretty = '+380 95 198 37 29';
 const phone2Pretty = '+380 96 198 37 29';
