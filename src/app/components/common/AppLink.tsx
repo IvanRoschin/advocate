@@ -3,6 +3,7 @@
 import Link, { LinkProps } from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { watchViberLaunch } from '@/app/lib/client/viber';
 import { useLoadingStore } from '@/app/store/loading.store';
 
 type Props = LinkProps &
@@ -45,7 +46,16 @@ export function AppLink({ onClick, target, href, ...props }: Props) {
       props as React.AnchorHTMLAttributes<HTMLAnchorElement>;
     void _rel;
     return (
-      <a {...anchorProps} href={href as string} onClick={onClick}>
+      <a
+        {...anchorProps}
+        href={href as string}
+        onClick={e => {
+          onClick?.(e);
+          if (!e.defaultPrevented && /^viber:/i.test(href as string)) {
+            watchViberLaunch(href as string);
+          }
+        }}
+      >
         {props.children}
       </a>
     );
