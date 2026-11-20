@@ -16,11 +16,27 @@ type CaptchaSize = 'normal' | 'flexible' | 'compact';
 // і показати користувачу зрозуміле пояснення замість "вічного" стану очікування.
 const LOAD_TIMEOUT_MS = 12000;
 
+// Коди сімейств 300*** / 600*** — це "challenge failed" (Turnstile вважає
+// відвідувача підозрілим: розширення, VPN, DevTools тощо). Cloudflare
+// рекомендує просто повторити спробу, тож перші кілька разів робимо reset()
+// мовчки, без toast і без шуму в консолі.
+const MAX_SILENT_RETRIES = 2;
+const RETRY_DELAY_MS = 1500;
+
+export function isRetryableTurnstileError(code: string | undefined) {
+  return typeof code === 'string' && /^(300|600)\d{3}$/.test(code);
+}
+
 export function usePublicCaptcha(size: CaptchaSize = 'normal') {
   const theme = useThemeStore(state => state.theme);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
+  // Поки користувач проходить інтерактивну перевірку (клік по чекбоксу),
+  // таймаут "не завантажилась" не повинен спрацьовувати.
+  const [interactive, setInteractive] = useState(false);
+  const retriesRef = useRef(0);
+  const retryTimerRef = useRef<number | null>(null);
 
   const siteKey = clientEnv.cloudflare.turnstileSiteKey;
   const isConfigured = Boolean(siteKey);
@@ -28,19 +44,57 @@ export function usePublicCaptcha(size: CaptchaSize = 'normal') {
   useEffect(() => {
     // loadFailed скидається явно в reset()/onSuccess (звичайні колбеки, а
     // не тіло ефекту) — тут лише плануємо таймаут очікування токена.
-    if (!isConfigured || token) return;
+    if (!isConfigured || token || interactive) return;
 
     const timer = window.setTimeout(() => {
       setLoadFailed(true);
     }, LOAD_TIMEOUT_MS);
 
     return () => window.clearTimeout(timer);
-  }, [isConfigured, token]);
+  }, [isConfigured, token, interactive]);
+
+  useEffect(
+    () => () => {
+      if (retryTimerRef.current) window.clearTimeout(retryTimerRef.current);
+    },
+    []
+  );
 
   const reset = () => {
+    retriesRef.current = 0;
     setToken(null);
     setLoadFailed(false);
+    setInteractive(false);
     turnstileRef.current?.reset();
+  };
+
+  const handleError = (code: string) => {
+    setToken(null);
+
+    if (
+      isRetryableTurnstileError(code) &&
+      retriesRef.current < MAX_SILENT_RETRIES
+    ) {
+      retriesRef.current += 1;
+      if (retryTimerRef.current) window.clearTimeout(retryTimerRef.current);
+      retryTimerRef.current = window.setTimeout(() => {
+        turnstileRef.current?.reset();
+      }, RETRY_DELAY_MS);
+      // true = помилку оброблено: Turnstile не дублює її warning'ом у консоль
+      return true;
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('Turnstile error code:', code);
+    }
+    setLoadFailed(true);
+    toast.error(
+      'Перевірка безпеки не пройшла. Оновіть сторінку і спробуйте ще раз.',
+      {
+        id: 'turnstile-error',
+      }
+    );
+    return true;
   };
 
   const widget = isConfigured ? (
@@ -54,17 +108,20 @@ export function usePublicCaptcha(size: CaptchaSize = 'normal') {
           language: 'uk',
         }}
         onSuccess={value => {
+          retriesRef.current = 0;
           setToken(value);
           setLoadFailed(false);
+          setInteractive(false);
         }}
         onExpire={() => setToken(null)}
-        onError={error => {
-          // eslint-disable-next-line no-console
-          console.error('Turnstile error code:', error);
-          setToken(null);
-          setLoadFailed(true);
-          toast.error('Помилка перевірки Cloudflare Turnstile');
+        onBeforeInteractive={() => setInteractive(true)}
+        onAfterInteractive={() => setInteractive(false)}
+        onTimeout={() => {
+          // інтерактивна перевірка не пройдена вчасно — показуємо новий челендж
+          setInteractive(false);
+          turnstileRef.current?.reset();
         }}
+        onError={handleError}
       />
 
       {!token && (
