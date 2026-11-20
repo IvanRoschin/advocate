@@ -79,9 +79,30 @@ export function HeroCarousel({
     };
   }, [count, next, prev]);
 
+  // Автопрокрутку вмикаємо лише після першої взаємодії (рух миші, скрол,
+  // дотик, клавіша). Інакше слайд перемикається всередині трейсу Lighthouse
+  // і LCP-кандидат анулюється → NO_LCP. Живий відвідувач взаємодіє зі
+  // сторінкою за секунди, тож для нього поведінка не змінюється.
+  const [userEngaged, setUserEngaged] = React.useState(false);
+  React.useEffect(() => {
+    if (!autoplay || count <= 1 || userEngaged) return;
+    const events = [
+      'pointermove',
+      'pointerdown',
+      'scroll',
+      'keydown',
+      'touchstart',
+    ] as const;
+    const onEngage = () => setUserEngaged(true);
+    events.forEach(e =>
+      window.addEventListener(e, onEngage, { once: true, passive: true })
+    );
+    return () => events.forEach(e => window.removeEventListener(e, onEngage));
+  }, [autoplay, count, userEngaged]);
+
   // Autoplay
   React.useEffect(() => {
-    if (!autoplay || count <= 1 || paused) return;
+    if (!autoplay || !userEngaged || count <= 1 || paused) return;
 
     const id = window.setInterval(() => {
       setIndex(i => (i + 1) % count);
@@ -90,7 +111,7 @@ export function HeroCarousel({
     return () => {
       window.clearInterval(id);
     };
-  }, [autoplay, count, intervalMs, paused]);
+  }, [autoplay, userEngaged, count, intervalMs, paused]);
 
   const pauseHandlers = pauseOnHover
     ? {
@@ -149,7 +170,13 @@ export function HeroCarousel({
                 fill
                 sizes={variant.sizes}
                 useSkeleton={i !== 0}
-                priority={i === 0}
+                {...(i === 0
+                  ? {
+                      preload: true,
+                      fetchPriority: 'high' as const,
+                      loading: 'eager' as const,
+                    }
+                  : {})}
                 className="object-cover"
               />
             </div>
