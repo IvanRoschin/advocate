@@ -1,6 +1,5 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
 import { CldImage } from 'next-cloudinary';
 import * as React from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -43,10 +42,6 @@ export function HeroCarousel({
   });
 
   const [paused, setPaused] = React.useState(false);
-  // Перший слайд — LCP-елемент: малюємо його одразу з SSR, без fade-in і
-  // skeleton (opacity:0 до гідрації = LCP 9.8 с на мобільних). Анімація
-  // вмикається лише після першої зміни слайду.
-  const [hasNavigated, setHasNavigated] = React.useState(false);
 
   // ✅ derive safe index instead of setState in effect
   const safeIndex = count ? Math.max(0, Math.min(index, count - 1)) : 0;
@@ -55,7 +50,6 @@ export function HeroCarousel({
     (nextIdx: number) => {
       if (count <= 1) return;
       const normalized = ((nextIdx % count) + count) % count;
-      setHasNavigated(true);
       setIndex(normalized);
     },
     [count]
@@ -90,7 +84,6 @@ export function HeroCarousel({
     if (!autoplay || count <= 1 || paused) return;
 
     const id = window.setInterval(() => {
-      setHasNavigated(true);
       setIndex(i => (i + 1) % count);
     }, intervalMs);
 
@@ -108,12 +101,12 @@ export function HeroCarousel({
       }
     : undefined;
 
-  const current = count ? safeItems[safeIndex] : null;
-
-  // Normalize current src
-  const publicId = current?.src?.[0]
-    ? getCloudinarySrc(current.src[0])
-    : undefined;
+  // Слайди, які вже показувались, — лишаємо змонтованими (без повторного
+  // завантаження і без зникнення з DOM). Похідний стан без useEffect.
+  const [mounted, setMounted] = React.useState<Set<number>>(() => new Set([0]));
+  if (!mounted.has(safeIndex)) {
+    setMounted(prev => new Set(prev).add(safeIndex));
+  }
 
   const variant = imageVariants.card;
 
@@ -126,29 +119,42 @@ export function HeroCarousel({
         lift them above the hero's z-30 content block on top.
       */}
       <div className={cn('absolute inset-0', className)}>
-        <AnimatePresence mode="wait">
-          {current && publicId ? (
-            <motion.div
-              key={current._id}
-              initial={hasNavigated ? { opacity: 0 } : false}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.45, ease: 'easeOut' }}
-              className="absolute inset-0"
+        {/*
+          Усі слайди лежать стеком і перемикаються через opacity. Картинку
+          першого слайду НІКОЛИ не прибираємо з DOM: якщо LCP-елемент
+          видалити до появи наступного (як робив AnimatePresence mode="wait"
+          при автопрокрутці), Chrome анулює LCP → Lighthouse NO_LCP.
+          Інші слайди монтуються лише після першого показу (lazy).
+        */}
+        {safeItems.map((item, i) => {
+          const active = i === safeIndex;
+          const src = item.src?.[0] ? getCloudinarySrc(item.src[0]) : undefined;
+          // наступний слайд підвантажуємо заздалегідь, щоб не було порожнього кадру
+          const isNext = count > 1 && i === (safeIndex + 1) % count;
+          if (!src || !(i === 0 || isNext || mounted.has(i))) return null;
+
+          return (
+            <div
+              key={item._id ?? i}
+              aria-hidden={!active}
+              className={cn(
+                'absolute inset-0 transition-opacity duration-500 ease-out',
+                active ? 'opacity-100' : 'opacity-0'
+              )}
             >
               <NextImage
                 as={CldImage}
-                src={publicId}
-                alt={current.title}
+                src={src}
+                alt={item.title}
                 fill
                 sizes={variant.sizes}
-                useSkeleton={hasNavigated}
-                priority={!hasNavigated}
+                useSkeleton={i !== 0}
+                priority={i === 0}
                 className="object-cover"
               />
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+            </div>
+          );
+        })}
       </div>
 
       {/* Arrows */}
