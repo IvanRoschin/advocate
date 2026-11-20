@@ -68,7 +68,7 @@ export default async function RootLayout({
           <>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${clientEnv.gaMeasurementId}`}
-              strategy="afterInteractive"
+              strategy="lazyOnload"
               nonce={nonce}
             />
             <Script id="ga4-init" strategy="afterInteractive" nonce={nonce}>

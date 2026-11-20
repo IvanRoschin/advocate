@@ -27,6 +27,38 @@ export function isRetryableTurnstileError(code: string | undefined) {
   return typeof code === 'string' && /^(300|600)\d{3}$/.test(code);
 }
 
+// Turnstile тягне ~1.7 МБ скриптів/воркерів і навантажує main thread.
+// На головній форма внизу сторінки, тож вантажимо віджет лише коли форма
+// наближається до екрана (Lighthouse: total-byte-weight, TBT).
+const VIEWPORT_MARGIN = '400px';
+
+function useNearViewport<T extends Element>() {
+  const ref = useRef<T | null>(null);
+  const [near, setNear] = useState(
+    () =>
+      typeof IntersectionObserver === 'undefined' &&
+      typeof window !== 'undefined'
+  );
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || near || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      entries => {
+        if (entries.some(e => e.isIntersecting)) {
+          setNear(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: VIEWPORT_MARGIN }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [near]);
+
+  return { ref, near };
+}
+
 export function usePublicCaptcha(size: CaptchaSize = 'normal') {
   const theme = useThemeStore(state => state.theme);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
@@ -37,6 +69,7 @@ export function usePublicCaptcha(size: CaptchaSize = 'normal') {
   const [interactive, setInteractive] = useState(false);
   const retriesRef = useRef(0);
   const retryTimerRef = useRef<number | null>(null);
+  const { ref: mountRef, near } = useNearViewport<HTMLDivElement>();
 
   const siteKey = clientEnv.cloudflare.turnstileSiteKey;
   const isConfigured = Boolean(siteKey);
@@ -44,14 +77,14 @@ export function usePublicCaptcha(size: CaptchaSize = 'normal') {
   useEffect(() => {
     // loadFailed скидається явно в reset()/onSuccess (звичайні колбеки, а
     // не тіло ефекту) — тут лише плануємо таймаут очікування токена.
-    if (!isConfigured || token || interactive) return;
+    if (!isConfigured || !near || token || interactive) return;
 
     const timer = window.setTimeout(() => {
       setLoadFailed(true);
     }, LOAD_TIMEOUT_MS);
 
     return () => window.clearTimeout(timer);
-  }, [isConfigured, token, interactive]);
+  }, [isConfigured, near, token, interactive]);
 
   useEffect(
     () => () => {
@@ -98,31 +131,36 @@ export function usePublicCaptcha(size: CaptchaSize = 'normal') {
   };
 
   const widget = isConfigured ? (
-    <div className="flex flex-col items-center gap-2">
-      <Turnstile
-        ref={turnstileRef}
-        siteKey={siteKey as string}
-        options={{
-          theme: theme === 'dark' ? 'dark' : 'light',
-          size,
-          language: 'uk',
-        }}
-        onSuccess={value => {
-          retriesRef.current = 0;
-          setToken(value);
-          setLoadFailed(false);
-          setInteractive(false);
-        }}
-        onExpire={() => setToken(null)}
-        onBeforeInteractive={() => setInteractive(true)}
-        onAfterInteractive={() => setInteractive(false)}
-        onTimeout={() => {
-          // інтерактивна перевірка не пройдена вчасно — показуємо новий челендж
-          setInteractive(false);
-          turnstileRef.current?.reset();
-        }}
-        onError={handleError}
-      />
+    <div ref={mountRef} className="flex flex-col items-center gap-2">
+      {/* min-h = висота віджета, щоб не було CLS при лінивому монтуванні */}
+      <div className="flex min-h-[65px] w-full justify-center">
+        {near && (
+          <Turnstile
+            ref={turnstileRef}
+            siteKey={siteKey as string}
+            options={{
+              theme: theme === 'dark' ? 'dark' : 'light',
+              size,
+              language: 'uk',
+            }}
+            onSuccess={value => {
+              retriesRef.current = 0;
+              setToken(value);
+              setLoadFailed(false);
+              setInteractive(false);
+            }}
+            onExpire={() => setToken(null)}
+            onBeforeInteractive={() => setInteractive(true)}
+            onAfterInteractive={() => setInteractive(false)}
+            onTimeout={() => {
+              // інтерактивна перевірка не пройдена вчасно — показуємо новий челендж
+              setInteractive(false);
+              turnstileRef.current?.reset();
+            }}
+            onError={handleError}
+          />
+        )}
+      </div>
 
       {!token && (
         <p className="text-secondary text-center text-xs">
