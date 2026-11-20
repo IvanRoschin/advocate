@@ -4,6 +4,10 @@
 
   /* brand */
   --accentcolor: #b89b5e;
+  /* WCAG AA (≥4.5:1): фон кнопки під білим текстом і золотий текст на світлому фоні.
+     #b89b5e з білим дає лише 2.66:1 — Lighthouse color-contrast. */
+  --accent-strong: #8a6f32;
+  --accent-text: #8a6f32;
 
   /* semantic aliases (оставляем, если уже используются в проекте) */
   --color-accentbackground: var(--accentcolor);

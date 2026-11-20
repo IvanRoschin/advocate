@@ -35,11 +35,11 @@ function cn(...classes: Array<string | undefined | false>) {
 
 const variantClasses: Record<BtnVariant, string> = {
   accent:
-    'bg-[var(--accentcolor)] text-white hover:opacity-90 active:opacity-95',
+    'bg-[var(--accent-strong)] text-white hover:opacity-90 active:opacity-95',
   outline:
-    'bg-transparent text-[var(--accentcolor)] border-2 border-[var(--accentcolor)] hover:bg-[color-mix(in_srgb,var(--accentcolor)_10%,transparent)]',
+    'bg-transparent text-[var(--accent-text)] border-2 border-[var(--accentcolor)] hover:bg-[color-mix(in_srgb,var(--accentcolor)_10%,transparent)]',
   ghost:
-    'bg-transparent text-[var(--accentcolor)] hover:bg-[color-mix(in_srgb,var(--accentcolor)_8%,transparent)]',
+    'bg-transparent text-[var(--accent-text)] hover:bg-[color-mix(in_srgb,var(--accentcolor)_8%,transparent)]',
   destructive:
     'bg-red-600 text-white hover:brightness-105 active:brightness-95',
 };
