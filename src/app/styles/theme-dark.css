@@ -1,4 +1,6 @@
 .dark {
+  /* на темному фоні оригінальне золото контрастне — лишаємо його для тексту */
+  --accent-text: var(--accentcolor);
   /* ===== app base ===== */
   --background: #171717;
   --foreground: #f6f7f9;

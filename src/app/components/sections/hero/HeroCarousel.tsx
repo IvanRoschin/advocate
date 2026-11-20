@@ -43,6 +43,10 @@ export function HeroCarousel({
   });
 
   const [paused, setPaused] = React.useState(false);
+  // Перший слайд — LCP-елемент: малюємо його одразу з SSR, без fade-in і
+  // skeleton (opacity:0 до гідрації = LCP 9.8 с на мобільних). Анімація
+  // вмикається лише після першої зміни слайду.
+  const [hasNavigated, setHasNavigated] = React.useState(false);
 
   // ✅ derive safe index instead of setState in effect
   const safeIndex = count ? Math.max(0, Math.min(index, count - 1)) : 0;
@@ -51,6 +55,7 @@ export function HeroCarousel({
     (nextIdx: number) => {
       if (count <= 1) return;
       const normalized = ((nextIdx % count) + count) % count;
+      setHasNavigated(true);
       setIndex(normalized);
     },
     [count]
@@ -85,6 +90,7 @@ export function HeroCarousel({
     if (!autoplay || count <= 1 || paused) return;
 
     const id = window.setInterval(() => {
+      setHasNavigated(true);
       setIndex(i => (i + 1) % count);
     }, intervalMs);
 
@@ -124,7 +130,7 @@ export function HeroCarousel({
           {current && publicId ? (
             <motion.div
               key={current._id}
-              initial={{ opacity: 0 }}
+              initial={hasNavigated ? { opacity: 0 } : false}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.45, ease: 'easeOut' }}
@@ -136,8 +142,8 @@ export function HeroCarousel({
                 alt={current.title}
                 fill
                 sizes={variant.sizes}
-                useSkeleton
-                priority={safeIndex === 0}
+                useSkeleton={hasNavigated}
+                priority={!hasNavigated}
                 className="object-cover"
               />
             </motion.div>
@@ -150,7 +156,7 @@ export function HeroCarousel({
         <>
           <button
             type="button"
-            aria-label="Previous slide"
+            aria-label="Попередній слайд"
             onClick={prev}
             className={cn(
               'hero-control absolute bottom-4 left-3 z-50 rounded-full p-2 backdrop-blur transition',
@@ -163,7 +169,7 @@ export function HeroCarousel({
 
           <button
             type="button"
-            aria-label="Next slide"
+            aria-label="Наступний слайд"
             onClick={next}
             className={cn(
               'hero-control absolute right-3 bottom-4 z-50 rounded-full p-2 backdrop-blur transition',
@@ -187,6 +193,8 @@ export function HeroCarousel({
                 <button
                   key={`${it._id}-${i}`}
                   type="button"
+                  aria-label={`Слайд ${i + 1} з ${count}`}
+                  aria-current={active ? 'true' : undefined}
                   onClick={() => go(i)}
                   className={cn(
                     'relative h-2 w-12 overflow-hidden rounded-full',
