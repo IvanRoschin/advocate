@@ -41,9 +41,22 @@ const FiltersSection: BlogSectionComponent = ({
   </aside>
 );
 
-const ArticlesSection: BlogSectionComponent = ({ initialItems, hasMore }) => (
+const ArticlesSection: BlogSectionComponent = ({
+  initialItems,
+  hasMore,
+  category,
+}) => (
   <section className="min-w-0 flex-1">
-    <BlogArticlesFeed initialItems={initialItems} hasMore={hasMore} />
+    {/*
+      key: при переході між категоріями (клієнтська навігація в межах /blog)
+      компонент перемонтовується, інакше InfiniteScroll лишав старий список.
+    */}
+    <BlogArticlesFeed
+      key={category ?? 'all'}
+      initialItems={initialItems}
+      hasMore={hasMore}
+      category={category}
+    />
   </section>
 );
 
