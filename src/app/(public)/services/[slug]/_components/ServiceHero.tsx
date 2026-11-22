@@ -60,7 +60,11 @@ const ServiceHero = ({ service }: ServiceSectionProps) => {
               fill
               sizes={variant.sizes}
               useSkeleton
-              priority
+              // CldImage ігнорує `priority` (Next 16) — LCP-картинка йшла з
+              // пріоритетом Low. Явно: preload + high + eager.
+              preload
+              fetchPriority="high"
+              loading="eager"
               className="object-cover"
             />
           </div>
