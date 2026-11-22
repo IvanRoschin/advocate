@@ -1,6 +1,5 @@
 import { pageSettingsActions } from './actions/page-settings.actions';
 import { reviewPublicActions } from './actions/review.actions';
-import { slidePublicActions } from './actions/slide.actions';
 import { buildOgImageUrl, generateMetadata } from './helpers';
 import { HOME_SECTIONS, HomeSectionProps } from './_components/home.sections';
 import { LayoutNode, renderLayout } from './lib/layouts/renderLayout';
@@ -26,11 +25,8 @@ export default async function Home() {
   });
   const reviews = reviewsRaw.items;
 
-  const slides = await slidePublicActions.active();
-
   const sectionProps: HomeSectionProps = {
     reviews,
-    slides,
   };
   const layout = (await pageSettingsActions.getLayout(
     'home'
