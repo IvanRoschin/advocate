@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
-import Script from 'next/script';
 
 import AttributionTracker from '@/app/components/analytics/AttributionTracker';
+import { GoogleAnalytics } from '@/app/components/analytics/GoogleAnalytics';
 import { buildSiteJsonLd } from '@/app/helpers';
 import { clientEnv } from '@/app/lib/client/env/clientEnv';
 import {
@@ -65,21 +65,10 @@ export default async function RootLayout({
         <Providers>{children}</Providers>
         <AttributionTracker />
         {clientEnv.gaMeasurementId && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${clientEnv.gaMeasurementId}`}
-              strategy="lazyOnload"
-              nonce={nonce}
-            />
-            <Script id="ga4-init" strategy="afterInteractive" nonce={nonce}>
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${clientEnv.gaMeasurementId}');
-              `}
-            </Script>
-          </>
+          <GoogleAnalytics
+            measurementId={clientEnv.gaMeasurementId}
+            nonce={nonce}
+          />
         )}
       </body>
     </html>

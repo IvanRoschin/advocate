@@ -1,7 +1,5 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
-
 import { brand } from '@/app/resources';
 import { useLoadingStore } from '@/app/store/loading.store';
 
@@ -11,29 +9,15 @@ export function PremiumLoader() {
   const isLoading = useLoadingStore(s => s.isLoading);
 
   return (
-    <AnimatePresence>
+    <>
       {isLoading && (
-        <motion.div
-          className="bg-background/70 fixed inset-0 z-9998 grid place-items-center backdrop-blur-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
-        >
-          <motion.div
-            className="flex flex-col items-center gap-4"
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.94 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-          >
+        <div className="bg-background/70 animate-in fade-in fixed inset-0 z-9998 grid place-items-center backdrop-blur-sm duration-150">
+          <div className="animate-in fade-in zoom-in-95 flex flex-col items-center gap-4 duration-200 ease-out">
             <div className="relative flex h-20 w-20 items-center justify-center">
-              <motion.svg
-                className="absolute inset-0 h-full w-full"
+              <svg
+                className="absolute inset-0 h-full w-full animate-spin [animation-duration:2.2s]"
                 viewBox="0 0 80 80"
                 fill="none"
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 2.2, ease: 'linear' }}
               >
                 {/* тонке фонове кільце */}
                 <circle
@@ -51,7 +35,7 @@ export function PremiumLoader() {
                   strokeWidth="1.5"
                   strokeLinecap="round"
                 />
-              </motion.svg>
+              </svg>
 
               <NextImage
                 src={brand.logoSrc}
@@ -62,17 +46,12 @@ export function PremiumLoader() {
               />
             </div>
 
-            <motion.p
-              className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-            >
+            <p className="text-muted-foreground animate-in fade-in text-xs font-medium tracking-[0.2em] uppercase delay-100 duration-200">
               {brand.label}
-            </motion.p>
-          </motion.div>
-        </motion.div>
+            </p>
+          </div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }
