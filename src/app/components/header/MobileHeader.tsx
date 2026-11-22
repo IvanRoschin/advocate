@@ -1,6 +1,5 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
 import { IoIosArrowUp } from 'react-icons/io';
 
 import { useScrollToTopVisibility } from '@/app/hooks/useScrollToTopVisibility';
@@ -52,58 +51,26 @@ export const MobileHeader = ({
             ) : null}
           </div>
 
-          <motion.div
-            className="absolute left-1/2 w-full max-w-[min(calc(100vw-24px),32rem)] -translate-x-1/2 px-3"
-            initial={{ y: 8, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.2 }}
-          >
+          <div className="animate-in fade-in slide-in-from-bottom-2 absolute left-1/2 w-full max-w-[min(calc(100vw-24px),32rem)] -translate-x-1/2 px-3 duration-200">
             <div className="mobile-header-shell supports-[backdrop-filter]:mobile-header-shell-supported flex w-full min-w-0 items-center justify-center gap-1.5 overflow-hidden rounded-2xl border px-1.5 py-1 shadow-lg backdrop-blur">
               <div className="min-w-0 flex-1 overflow-hidden">
                 <NavPill scope={scope} publicAuth={publicAuth} />
               </div>
 
-              <AnimatePresence initial={false}>
-                {showScrollTop ? (
-                  <motion.div
-                    key="scroll-top"
-                    initial={{ width: 0, opacity: 0, scale: 0.92 }}
-                    animate={{ width: 'auto', opacity: 1, scale: 1 }}
-                    exit={{ width: 0, opacity: 0, scale: 0.92 }}
-                    transition={{ duration: 0.2 }}
-                    className="shrink-0 overflow-hidden"
-                  >
-                    <div className="border-mobile-header-divider border-l pl-1.5">
-                      <motion.button
-                        type="button"
-                        onClick={handleScrollToTop}
-                        aria-label="Повернутися нагору"
-                        className="mobile-header-action-btn inline-flex h-8 w-8 items-center justify-center rounded-xl transition-colors focus:outline-none"
-                        whileTap={{ scale: 0.9 }}
-                        whileHover={{ scale: 1.03 }}
-                        transition={{
-                          type: 'spring',
-                          stiffness: 500,
-                          damping: 28,
-                          mass: 0.6,
-                        }}
-                      >
-                        <motion.span
-                          initial={false}
-                          whileTap={{ y: -1 }}
-                          transition={{
-                            type: 'spring',
-                            stiffness: 700,
-                            damping: 22,
-                          }}
-                        >
-                          <IoIosArrowUp size={16} />
-                        </motion.span>
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
+              {showScrollTop ? (
+                <div className="animate-in fade-in zoom-in-90 shrink-0 overflow-hidden duration-200">
+                  <div className="border-mobile-header-divider border-l pl-1.5">
+                    <button
+                      type="button"
+                      onClick={handleScrollToTop}
+                      aria-label="Повернутися нагору"
+                      className="mobile-header-action-btn inline-flex h-8 w-8 items-center justify-center rounded-xl transition-[color,background-color,transform] duration-150 hover:scale-[1.03] focus:outline-none active:scale-90"
+                    >
+                      <IoIosArrowUp size={16} />
+                    </button>
+                  </div>
+                </div>
+              ) : null}
 
               {showThemeToggle ? (
                 <div className="border-mobile-header-divider ml-0.5 shrink-0 border-l pl-1.5">
@@ -111,7 +78,7 @@ export const MobileHeader = ({
                 </div>
               ) : null}
             </div>
-          </motion.div>
+          </div>
 
           <div className="min-w-18 shrink-0" />
         </div>

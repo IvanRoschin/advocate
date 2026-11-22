@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useEffect, useRef, useState } from 'react';
 
 import { iconLibrary, orderSection } from '@/app/resources';
 import { NextImage, Skeleton } from '@/components';
@@ -16,8 +17,37 @@ const LeadForm = dynamic(
   }
 );
 
+// ssr:false сам по собі не відкладає завантаження: чанк форми (~450 КБ:
+// Formik, Yup, Turnstile, motion) тягнувся одразу після гідратації і
+// блокував головний потік на мобільному. Монтуємо форму, лише коли секція
+// наближається до вʼюпорту (або користувач перейшов на #order).
+const useNearViewport = (rootMargin = '800px') => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [near, setNear] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node || near) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setNear(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [near, rootMargin]);
+
+  return { ref, near };
+};
+
 const Order = () => {
   const UptitleIcon = iconLibrary[orderSection.left.uptitleIcon];
+  const { ref: formRef, near } = useNearViewport();
 
   return (
     <section
@@ -52,8 +82,15 @@ const Order = () => {
           </p>
         </div>
 
-        <div className="bg-app/85 surface-dark flex w-full max-w-md flex-1 flex-col rounded-2xl p-6 shadow-md backdrop-blur-md">
-          <LeadForm publicVariant="home" source="home" />
+        <div
+          ref={formRef}
+          className="bg-app/85 surface-dark flex w-full max-w-md flex-1 flex-col rounded-2xl p-6 shadow-md backdrop-blur-md"
+        >
+          {near ? (
+            <LeadForm publicVariant="home" source="home" />
+          ) : (
+            <Skeleton className="h-full min-h-100 w-full rounded-xl" />
+          )}
         </div>
       </div>
     </section>
