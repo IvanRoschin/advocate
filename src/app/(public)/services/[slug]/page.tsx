@@ -5,12 +5,12 @@ import { articlePublicActions } from '@/app/actions/article.actions';
 import { pageSettingsActions } from '@/app/actions/page-settings.actions';
 import { reviewPublicActions } from '@/app/actions/review.actions';
 import { servicePublicActions } from '@/app/actions/service.actions';
-import PublicReviewForm from '@/app/components/forms/public/PublicReviewForm';
 import { baseUrl } from '@/app/config/routes';
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
 import { LayoutNode, renderLayout } from '@/app/lib/layouts/renderLayout';
 import { ServiceSectionKey } from '@/app/types';
 
+import LazyReviewForm from './_components/LazyReviewForm';
 import {
   SERVICE_SECTIONS,
   ServiceSectionProps,
@@ -120,7 +120,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
     service,
     articles: articles.items,
     reviews: reviews.items,
-    reviewForm: <PublicReviewForm targetType="service" targetId={service.id} />,
+    reviewForm: <LazyReviewForm targetType="service" targetId={service.id} />,
   };
 
   return (
