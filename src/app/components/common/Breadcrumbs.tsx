@@ -107,7 +107,7 @@ export default function Breadcrumbs() {
         <li>
           <AppLink
             href={routes.public.home}
-            className="nav text-gray-600 hover:text-gray-600"
+            className="nav text-muted-foreground hover:text-accent"
           >
             Головна
           </AppLink>
@@ -129,7 +129,7 @@ export default function Breadcrumbs() {
               ) : (
                 <AppLink
                   href={crumb.href}
-                  className="nav text-gray-600 hover:text-gray-600"
+                  className="nav text-muted-foreground hover:text-accent"
                 >
                   {crumb.name}
                 </AppLink>

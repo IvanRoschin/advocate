@@ -82,9 +82,9 @@ export function ArticleListPreview({
                       )}
                     </div>
 
-                    <h3 className="text-accent line-clamp-2 text-base leading-snug font-semibold tracking-tight sm:text-lg">
+                    <h2 className="text-accent line-clamp-2 text-base leading-snug font-semibold tracking-tight sm:text-lg">
                       {a.title}
-                    </h3>
+                    </h2>
 
                     <p className="text-muted-foreground line-clamp-3 text-sm">
                       {a.summary}

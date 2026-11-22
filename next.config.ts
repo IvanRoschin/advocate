@@ -27,6 +27,10 @@ if (process.env.NODE_ENV !== 'production') {
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Метадані (title/description/OG) завжди в <head>, а не стрімом у <body>.
+  // Інакше для звичайних браузерів, Lighthouse і частини месенджерів
+  // (прев'ю посилань) опис сторінок послуг/статей «відсутній».
+  htmlLimitedBots: /.*/,
   images: {
     remotePatterns,
   },
