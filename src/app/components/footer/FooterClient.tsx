@@ -1,5 +1,6 @@
 'use client';
 
+import { formatPhone } from '@/app/helpers/formatPhone';
 import { FaEnvelope } from 'react-icons/fa';
 import { FaPhone, FaTelegram, FaViber } from 'react-icons/fa6';
 
@@ -122,7 +123,7 @@ export default function FooterClient({ categories }: Props) {
                         className="footer-link flex items-center"
                       >
                         <PhoneIcon className="mr-3 h-5 w-5" />
-                        <span className="nav">{href.replace(/^tel:/, '')}</span>
+                        <span className="nav">{formatPhone(href)}</span>
                       </AppLink>
                     ))}
                   </div>

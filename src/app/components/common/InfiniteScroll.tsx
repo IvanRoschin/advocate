@@ -52,7 +52,9 @@ function InfiniteScrollInner<T>(
 ) {
   const [items, setItems] = useState<T[]>(initialData);
   const [isLoading, setIsLoading] = useState(false);
-  const [allLoaded, setAllLoaded] = useState(initialHasMore);
+  // «Все завантажено» — коли більше сторінок немає (раніше значення було
+  // інвертоване: при hasMore=true довантаження не запускалось взагалі).
+  const [allLoaded, setAllLoaded] = useState(!initialHasMore);
 
   const pageRef = useRef(1);
   const observerRef = useRef<IntersectionObserver | null>(null);
