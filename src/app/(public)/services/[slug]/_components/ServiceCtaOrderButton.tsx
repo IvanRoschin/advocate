@@ -1,7 +1,19 @@
 'use client';
 
-import { Btn, LeadForm, Modal } from '@/app/components';
+import dynamic from 'next/dynamic';
+
+import { Btn, Modal, Skeleton } from '@/app/components';
 import { useModal } from '@/app/hooks/useModal';
+
+// Форма заявки потрібна лише у відкритій модалці — не тягнемо її JS
+// (Formik/Yup/Turnstile) під час завантаження сторінки послуги.
+const LeadForm = dynamic(
+  () => import('@/app/components/forms/public/PublicLeadForm'),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-80 w-full rounded-xl" />,
+  }
+);
 
 type Props = {
   label: string;
@@ -36,7 +48,7 @@ export default function ServiceCtaOrderButton({ label }: Props) {
             </div>
 
             <div className="mt-2">
-              <LeadForm source={'home'} />
+              {orderModal.isOpen ? <LeadForm source="home" /> : null}
             </div>
           </div>
         }
