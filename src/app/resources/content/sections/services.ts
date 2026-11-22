@@ -5,34 +5,42 @@ export type ServiceItem = {
   icon: IconName;
   title: string;
   text: string;
+  /** slug сторінки послуги; ціна береться з SERVICE_PRICES за цим slug */
+  slug?: string;
 };
 
+// Порядок — від найзатребуваніших напрямів практики.
 export const servicesSection = {
   id: 'services',
+  moreLabel: 'Детальніше',
   items: [
     {
-      id: 'registration',
-      icon: 'registered',
-      title: 'Реєстрація бізнесу',
-      text: 'Реєстрація ФОП, ТОВ, зміна керівника, адреси, КВЕД',
+      id: 'debt-collection',
+      icon: 'payments',
+      title: 'Стягнення боргів',
+      text: 'Розписки, позики, договори: претензія, суд і примусове виконання',
+      slug: 'styahnennya-borhu',
     },
     {
-      id: 'support',
-      icon: 'briefcaseBusiness',
-      title: 'Супроводження бізнесу',
-      text: 'Розробка бізнес-моделі, підготовка проектів договорів, аналіз запропонованого договору',
-    },
-    {
-      id: 'commercial-disputes',
+      id: 'contracts',
       icon: 'disputes',
-      title: 'Господарські спори',
-      text: 'Відшкодування шкоди внаслідок невиконання договірних зобов’язань, представництво в суді',
+      title: 'Договори та господарські спори',
+      text: 'Аналіз і підготовка договорів, представництво бізнесу в суді',
+      slug: 'perevirka-ta-analiz-dohovoriv',
     },
     {
-      id: 'civil-disputes',
-      icon: 'people',
-      title: 'Цивільні спори',
-      text: 'Сімейні, спадкові спори, спори, що виникають з договірних та позадоговірних зобов’язань',
+      id: 'family',
+      icon: 'family',
+      title: 'Сімейні спори',
+      text: 'Розлучення, поділ майна, аліменти, місце проживання дитини',
+      slug: 'podil-mayna-podruzhzhya',
+    },
+    {
+      id: 'inheritance',
+      icon: 'inheritance',
+      title: 'Спадщина',
+      text: 'Оформлення спадщини, поновлення строку, спори між спадкоємцями',
+      slug: 'oformlennya-spadshchyny',
     },
   ] satisfies ServiceItem[],
 };

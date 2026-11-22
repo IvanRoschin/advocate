@@ -9,7 +9,10 @@ type ReviewsProps = {
 export default function Reviews({ reviews }: ReviewsProps) {
   const { id, header } = reviewsSection;
 
-  const limitedReviews = reviews.slice(0, 4);
+  // Відгук без тексту (лише імʼя) виглядає як фейк — не показуємо такі.
+  const limitedReviews = reviews
+    .filter(review => review.text?.trim())
+    .slice(0, 4);
 
   return (
     <section id={id} className="bg-reviews-section section pt-24">

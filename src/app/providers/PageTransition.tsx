@@ -7,7 +7,10 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <AnimatePresence mode="wait">
+    // initial={false}: при першому завантаженні сторінка рендериться одразу
+    // видимою. Інакше SSR-HTML приходив з opacity:0 і до гідратації
+    // відвідувач бачив порожній чорний екран (повільний LCP).
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
         key={pathname}
         initial={{ opacity: 0 }}
