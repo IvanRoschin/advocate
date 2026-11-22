@@ -1,6 +1,7 @@
 import { articlePublicActions } from '@/app/actions/article.actions';
 import { generateMetadata as buildMetadata } from '@/app/helpers/generateMetadata';
 import { renderLayout } from '@/app/lib/layouts/renderLayout';
+import { BLOG_PAGE_SIZE } from '@/app/resources/content';
 import {
   blogLayout,
   BlogLayoutNode,
@@ -26,7 +27,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const { category } = await searchParams;
 
   const [list, recent, categories] = await Promise.all([
-    articlePublicActions.list({ categorySlug: category }),
+    articlePublicActions.list({
+      categorySlug: category,
+      limit: BLOG_PAGE_SIZE,
+    }),
     articlePublicActions.recent(5),
     articlePublicActions.categories(),
   ]);

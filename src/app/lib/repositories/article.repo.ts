@@ -62,6 +62,11 @@ export const articleQueries = {
       ? await resolveCategoryIdBySlug(args.categorySlug)
       : null;
 
+    // Невідома категорія — порожній список, а не всі статті.
+    if (args?.categorySlug && !categoryId) {
+      return { items: [] as ArticlePublicRow[], total: 0, hasMore: false };
+    }
+
     return articleQuery()
       .where({
         status: 'published',

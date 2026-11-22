@@ -1,4 +1,5 @@
 import { aboutSection } from '@/app/resources';
+import { formatPhone } from '@/app/helpers/formatPhone';
 import { AppLink, NextImage } from '@/components';
 import { person, social } from '@/resources/content';
 
@@ -90,7 +91,7 @@ const About = () => {
                 <p className="text-about-card-title font-medium">Телефон:</p>
                 <ul className="space-y-1">
                   {phones.map(href => {
-                    const display = href.replace(/^tel:/, '');
+                    const display = formatPhone(href);
                     return (
                       <li key={href}>
                         <AppLink

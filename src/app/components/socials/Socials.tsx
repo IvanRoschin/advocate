@@ -40,17 +40,23 @@ const Socials = () => {
     return <Icon className="h-5 w-5" aria-hidden />;
   };
 
+  // tel:/viber:/mailto: не відкриваємо в новій вкладці — лише http(s).
+  const linkProps = (link: string) =>
+    /^https?:/.test(link)
+      ? { target: '_blank', rel: 'noopener noreferrer' }
+      : {};
+
   return (
-    <div className="bg-socials text-socials socials-divider hidden pb-3 sm:block">
-      <div className="container flex flex-col gap-6 py-6 sm:flex-row sm:items-center sm:justify-between">
-        <ul className="socials-link flex flex-col items-center gap-2">
+    <div className="bg-socials text-socials socials-divider hidden sm:block">
+      <div className="container flex items-center justify-between gap-6 py-2 lg:py-3">
+        {/* Телефони: в рядок на планшеті, у стовпчик (2 рядки) на десктопі */}
+        <ul className="socials-link flex items-center gap-x-6 gap-y-1 lg:flex-col lg:items-start">
           {essential.map(item => (
             <li key={`${item.icon}-${item.link}`}>
               <AppLink
                 href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
+                {...linkProps(item.link)}
+                className="flex items-center gap-2 text-sm lg:text-base"
               >
                 {renderIcon(item.icon as IconName)}
                 <span className="nav">{item.name}</span>
@@ -59,16 +65,22 @@ const Socials = () => {
           ))}
         </ul>
 
-        <ul className="flex flex-col gap-2 sm:items-end">
+        {/*
+          Месенджери та соцмережі:
+          - планшет: лише іконки в рядок (компактно);
+          - десктоп (lg+): сітка 2×2 з назвами — висота як у блоку телефонів.
+        */}
+        <ul className="flex items-center gap-4 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:gap-y-1">
           {secondary.map(item => (
             <li key={`${item.icon}-${item.link}`}>
               <AppLink
                 href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
+                {...linkProps(item.link)}
+                aria-label={item.name}
+                title={item.name}
+                className="flex items-center gap-2 lg:justify-end"
               >
-                <span className="nav">{item.name}</span>
+                <span className="nav hidden lg:inline">{item.name}</span>
                 {renderIcon(item.icon as IconName)}
               </AppLink>
             </li>

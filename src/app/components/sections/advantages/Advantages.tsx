@@ -1,5 +1,6 @@
 'use client';
 
+import { formatPhone } from '@/app/helpers/formatPhone';
 import { Btn, NextImage } from '@/components';
 import { advantagesSection, social } from '@/resources';
 
@@ -9,7 +10,7 @@ const Advantages = () => {
   const phoneLink =
     social.find(s => s.icon === 'phone' && s.essential && s.link)?.link ?? null;
 
-  const phoneLabel = phoneLink ? phoneLink.replace(/^tel:/, '+38') : null;
+  const phoneLabel = phoneLink ? formatPhone(phoneLink) : null;
 
   return (
     <section

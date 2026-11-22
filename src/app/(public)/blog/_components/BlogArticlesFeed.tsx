@@ -3,7 +3,7 @@
 import { InfiniteScroll } from '@/app/components/common/InfiniteScroll';
 import { apiUrl, routes } from '@/app/config/routes';
 import { apiFetch } from '@/app/lib/client/apiFetch';
-import { blog } from '@/app/resources/content';
+import { BLOG_PAGE_SIZE, blog } from '@/app/resources/content';
 import { ArticleListItemDto } from '@/app/types';
 
 import { ArticleListPreview } from './ArticleListPreview';
@@ -27,6 +27,7 @@ export function BlogArticlesFeed({
   const loadMore = async (page: number) => {
     const params = new URLSearchParams({
       page: String(page),
+      limit: String(BLOG_PAGE_SIZE),
     });
 
     if (category) {
