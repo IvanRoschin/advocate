@@ -37,14 +37,14 @@ const ServiceHero = ({ service }: ServiceSectionProps) => {
           </p>
           {price ? (
             <div className="border-accent/40 mt-6 inline-flex flex-col rounded-2xl border px-5 py-3">
-              <span className="text-app text-xs tracking-wide uppercase opacity-70">
+              <span className="text-muted-foreground text-xs tracking-wide uppercase">
                 Вартість
               </span>
               <span className="text-accent text-2xl font-semibold">
                 {formatServicePrice(price)}
               </span>
               {price.note ? (
-                <span className="text-app mt-1 text-sm opacity-80">
+                <span className="text-muted-foreground mt-1 text-sm">
                   {price.note}
                 </span>
               ) : null}

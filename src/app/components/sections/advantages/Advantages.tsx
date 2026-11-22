@@ -1,5 +1,3 @@
-'use client';
-
 import { formatPhone } from '@/app/helpers/formatPhone';
 import { Btn, NextImage } from '@/components';
 import { advantagesSection, social } from '@/resources';
