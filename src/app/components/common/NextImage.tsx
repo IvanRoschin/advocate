@@ -60,7 +60,17 @@ export default function NextImage<
   onLoad,
   ...props
 }: NextImageProps<TProps>) {
-  const [isLoading, setIsLoading] = React.useState(useSkeleton);
+  // Пріоритетні (LCP) зображення не ховаємо за skeleton/fade-in: інакше
+  // картинка лишається opacity:0 до гідратації та onLoad, і LCP на
+  // мобільному зростає на ~1 с (Lighthouse: «Element render delay»).
+  const extra = props as Record<string, unknown>;
+  const isPriority =
+    extra.priority === true ||
+    extra.preload === true ||
+    extra.fetchPriority === 'high';
+  const fadeIn = useSkeleton && !isPriority;
+
+  const [isLoading, setIsLoading] = React.useState(fadeIn);
 
   const ImageComponent = (as ?? Image) as React.ComponentType<
     CommonImageProps & Record<string, unknown>
@@ -83,7 +93,7 @@ export default function NextImage<
         wrapperClassName
       )}
     >
-      {useSkeleton && isLoading && (
+      {fadeIn && isLoading && (
         <Skeleton className="absolute inset-0 z-0 h-full w-full animate-pulse rounded-md" />
       )}
 
@@ -92,13 +102,13 @@ export default function NextImage<
         src={src}
         alt={alt}
         className={cn(
-          'transition-opacity duration-500',
+          fadeIn && 'transition-opacity duration-500',
           isLoading ? 'opacity-0' : 'opacity-100',
           classNames?.image,
           className
         )}
         onLoad={(event: React.SyntheticEvent<HTMLImageElement>) => {
-          if (useSkeleton) setIsLoading(false);
+          if (fadeIn) setIsLoading(false);
           onLoad?.(event);
         }}
       />
