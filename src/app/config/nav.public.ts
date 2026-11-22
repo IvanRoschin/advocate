@@ -1,5 +1,5 @@
 import { FaEnvelope, FaMoneyBillWave } from 'react-icons/fa';
-import { FiBookOpen, FiGrid, FiHome, FiUser } from 'react-icons/fi';
+import { FiBookOpen, FiHome, FiUser } from 'react-icons/fi';
 import { GrBusinessService } from 'react-icons/gr';
 
 import { routes } from '@/app/config/routes';
@@ -13,7 +13,6 @@ import type { NavItem } from './nav.types';
 const navIcons = {
   home: FiHome,
   about: FiUser,
-  practices: FiGrid,
   services: GrBusinessService,
   blog: FiBookOpen,
   payments: FaMoneyBillWave,
@@ -23,25 +22,13 @@ const navIcons = {
 // Anonymous visitors only ever need this — split out from admin/client/manager
 // so the public bundle (every homepage/marketing page) doesn't have to pull
 // in signOut, admin routes, or client-portal nav data. See nav.private.ts.
+// Десктоп: 5 пунктів. «Головна» — це логотип, «Практики» дублювали «Послуги».
 export const PUBLIC_NAV_ITEMS: readonly NavItem[] = [
-  {
-    key: 'home',
-    href: routes.public.home,
-    label: 'Головна',
-    Icon: navIcons.home,
-  },
   {
     key: 'about',
     href: routes.public.about,
     label: 'Про мене',
     Icon: navIcons.about,
-  },
-  {
-    key: 'practices',
-    href: routes.public.practices,
-    label: 'Практики',
-    Icon: navIcons.practices,
-    startsWith: true,
   },
   {
     key: 'services',

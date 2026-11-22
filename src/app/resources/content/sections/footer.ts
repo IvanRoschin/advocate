@@ -23,7 +23,7 @@ export const footerSection = {
       title: 'Швидкі посилання',
       items: [
         { id: 'about', title: 'Про мене', route: 'about' as const },
-        { id: 'practices', title: 'Послуги', route: 'practices' as const },
+        { id: 'services', title: 'Послуги', route: 'services' as const },
         {
           id: 'contact',
           title: 'Контакти',

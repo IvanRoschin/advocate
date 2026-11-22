@@ -8,16 +8,24 @@ type Props = {
   suffix?: string;
 };
 
+/**
+ * Число завжди присутнє в HTML (SSR) — його бачать пошуковики, AI-краулери
+ * та відвідувачі без JS. Анімація лише «програється» поверх, коли блок
+ * потрапляє у вʼюпорт, і не прибирає значення при виході з нього.
+ */
 export default function AdvantageCounter({ value, suffix }: Props) {
   const ref = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(false);
+  const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
     if (!ref.current) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setActive(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          setAnimate(true);
+          observer.disconnect();
+        }
       },
       { threshold: 0.5 }
     );
@@ -31,7 +39,11 @@ export default function AdvantageCounter({ value, suffix }: Props) {
       ref={ref}
       className="text-advantages flex items-end text-4xl font-bold md:text-5xl lg:text-6xl"
     >
-      {active && <SlotCounter value={value} duration={1.6} />}
+      {animate ? (
+        <SlotCounter value={value} duration={1.6} />
+      ) : (
+        <span>{value}</span>
+      )}
       {suffix && (
         <span className="text-accent ml-1 text-2xl md:text-3xl">{suffix}</span>
       )}

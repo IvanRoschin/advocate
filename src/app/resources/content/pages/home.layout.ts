@@ -10,6 +10,8 @@ export type HomeSectionKey =
   | 'advantages'
   | 'reviews'
   | 'whyChooseMe'
+  | 'process'
+  | 'faq'
   | 'order'
   | 'footer'
   | 'scrollToTop';
@@ -29,11 +31,17 @@ export const defaultHomeLayout: LayoutNode<HomeSectionKey>[] = [
     ],
   },
 
+  // About одразу після hero: його верхній відступ розрахований під картки
+  // Services, що накладаються на низ банера.
   { type: 'section', key: 'about', display: true },
-  { type: 'section', key: 'practices', display: true },
+  { type: 'section', key: 'whyChooseMe', display: true },
+  { type: 'section', key: 'process', display: true },
   { type: 'section', key: 'advantages', display: true },
   { type: 'section', key: 'reviews', display: true },
-  { type: 'section', key: 'whyChooseMe', display: true },
+  // Практики дублювали картки напрямів під банером — приховано за
+  // замовчуванням; повний каталог доступний на /services.
+  { type: 'section', key: 'practices', display: false },
+  { type: 'section', key: 'faq', display: true },
   { type: 'section', key: 'order', display: true },
   { type: 'section', key: 'footer', display: true },
   { type: 'section', key: 'scrollToTop', display: true },
