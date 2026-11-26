@@ -13,7 +13,21 @@ const unauthorizedJson = () =>
     { status: 401 }
   );
 
+// Дублікат сайту на www.* Google вважає окремими сторінками і може обрати
+// їх канонічними замість apex. Основний редирект — у Caddyfile, а це
+// страховка на рівні застосунку (спрацює, навіть якщо Caddy не перечитав конфіг).
+const WWW_PREFIX = 'www.';
+
 export async function proxy(req: NextRequest) {
+  const host = req.headers.get('host') ?? '';
+  if (host.startsWith(WWW_PREFIX)) {
+    const url = req.nextUrl.clone();
+    url.host = host.slice(WWW_PREFIX.length);
+    url.protocol = 'https:';
+    url.port = '';
+    return NextResponse.redirect(url, 308);
+  }
+
   const token = await getToken({ req });
   const nonce = crypto.randomUUID();
 
