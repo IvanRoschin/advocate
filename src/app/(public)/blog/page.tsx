@@ -11,17 +11,45 @@ import { BLOG_SECTIONS } from './_components/blog.sections';
 
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = buildMetadata({
-  title: 'Блог адвоката | Іван Рощин',
-  description:
-    'Статті адвоката Івана Рощина про цивільне, господарське та адміністративне право: практичні поради, роз’яснення законодавства, судова практика.',
-  path: '/blog',
-  imageUrl: '/images/ivan_roschin.webp',
-});
+const BLOG_TITLE = 'Блог адвоката | Іван Рощин';
+const BLOG_DESCRIPTION =
+  'Статті адвоката Івана Рощина про цивільне, господарське та адміністративне право: практичні поради, роз’яснення законодавства, судова практика.';
 
 type BlogPageProps = {
   searchParams: Promise<{ category?: string }>;
 };
+
+/**
+ * /blog?category=… — відфільтрований список, а не окрема сторінка.
+ * Раніше canonical вказував на /blog при іншому вмісті, і Google обирав
+ * власну канонічну («канонічні версії, вибрані Google і користувачем,
+ * не збігаються»). Тепер: self-canonical + noindex,follow — фільтри не
+ * індексуються, а посилання на статті з них Google проходить.
+ */
+export async function generateMetadata({
+  searchParams,
+}: BlogPageProps): Promise<Metadata> {
+  const { category } = await searchParams;
+
+  if (!category) {
+    return buildMetadata({
+      title: BLOG_TITLE,
+      description: BLOG_DESCRIPTION,
+      path: '/blog',
+      imageUrl: '/images/ivan_roschin.webp',
+    });
+  }
+
+  const path = `/blog?category=${encodeURIComponent(category)}`;
+  return buildMetadata({
+    title: BLOG_TITLE,
+    description: BLOG_DESCRIPTION,
+    path,
+    canonical: path,
+    imageUrl: '/images/ivan_roschin.webp',
+    extra: { robots: { index: false, follow: true } },
+  });
+}
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const { category } = await searchParams;
